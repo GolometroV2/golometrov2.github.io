@@ -586,7 +586,7 @@ def main():
     print(" ¡PROCESO COMPLETADO!")
     print(f" Archivo guardado en: {archivo_salida}")
     print("=" * 65)
-    input("\nPresiona ENTER para cerrar la ventana...")
+    #input("\nPresiona ENTER para cerrar la ventana...")#
 
 
 if __name__ == "__main__":
