@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Golómetro V2</title>
+<title>Mister Fantasy Pro Stats</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -59,7 +59,7 @@ code{color:var(--g)}
 <div class="wrap">
   <div class="top">
     <div>
-      <h1 id="titulo">Mister Fantasy Pro Stats</h1>
+      <h1 id="titulo">Golómetro V2</h1>
       <p class="sub" id="sub">Estadísticas de tu liga por jornada</p>
     </div>
     <button class="load" onclick="cargarDatos()">🔄 Actualizar Datos</button>
@@ -87,7 +87,6 @@ function cargar(obj) {
   pintar();
 }
 
-// Función para forzar la recarga de datos por fetch evitando la caché del navegador
 function cargarDatos() {
   $("#app").innerHTML = `<div class="empty">Actualizando datos de la liga...</div>`;
   fetch("mister_fantasy_data.json?t=" + new Date().getTime(), { cache: "no-store" })
@@ -108,10 +107,8 @@ function estadisticas() {
     js.forEach(j => {
       const x = (D.matchdays[j] || {})[m.id];
       if (!x) return;
-      s.points += x.points || 0; 
-      s.goals += x.goals || 0;
-      s.redCards += x.redCards || 0; 
-      s.goalsConceded += x.goalsConceded || 0;
+      s.points += x.points || 0; s.goals += x.goals || 0;
+      s.redCards += x.redCards || 0; s.goalsConceded += x.goalsConceded || 0;
       POS.forEach(p => s.pos[p] += (x.goalsByPos || {})[p] || 0);
       (x.players || []).forEach(p => { s.assists += p.assists || 0; s.yellow += p.yellowCards || 0; });
     });
@@ -122,9 +119,9 @@ function estadisticas() {
 function detalle(m) {
   if (vista !== "General") {
     const x = (D.matchdays[vista] || {})[m.id];
-    if (!x || !(x.players || []).length) return `<p class='off'>No hay alineación detallada guardada para esta jornada.</p>`;
-    const ordenPl = x.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos));
-    return `<p class="off">Formación ${esc(x.formation || "—")}</p><div class="pl">` + ordenPl.map(p => {
+    if (!x || !(x.players || []).length) return "<p class='off'>No hay alineación guardada para esta jornada.</p>";
+    const orden = x.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos));
+    return `<p class="off">Formación ${esc(x.formation || "—")}</p><div class="pl">` + orden.map(p => {
       const ic = "⚽".repeat(p.goals || 0) + "👟".repeat(p.assists || 0) + "🟨".repeat(p.yellowCards || 0) + "🟥".repeat(p.redCards || 0) + (p.ownGoals ? " PP" : "");
       return `<div class="${p.played ? "" : "off"}"><span><span class="tag">${esc(p.pos)}</span>${esc(p.name)}${p.captain ? " (C)" : ""} ${ic}</span><b>${p.played ? esc(p.points) : "no jugó"}</b></div>`;
     }).join("") + "</div>";
@@ -132,10 +129,17 @@ function detalle(m) {
   const js = jornadas();
   const pts = js.map(j => ((D.matchdays[j] || {})[m.id] || {}).points || 0);
   const max = Math.max(...pts, 1);
+  const suma = (x, campo) => (x.players || []).reduce((t, p) => t + (p[campo] || 0), 0);
+  const ic = (emoji, n, nombre) => n ? `<span title="${n} ${nombre}">${n <= 3 ? emoji.repeat(n) : emoji + "×" + n}</span> ` : "";
   const barras = js.map((j, i) => {
-    return `<div class="bar"><span>${esc(j)}</span><i style="width:${Math.max(pts[i], 0) / max * 60}%"></i><span>${pts[i]}</span></div>`;
+    const x = (D.matchdays[j] || {})[m.id] || {};
+    const ev = ic("⚽", x.goals || 0, "goles") + ic("👟", suma(x, "assists"), "asistencias") + ic("🟨", suma(x, "yellowCards"), "amarillas") + ic("🟥", x.redCards || 0, "rojas");
+    return `<div class="bar"><span>${esc(j)}</span><i style="width:${Math.max(pts[i], 0) / max * 60}%"></i><span>${pts[i]}</span><span class="ev">${ev}</span></div>`;
   }).join("");
-  return `<h2>Puntos por jornada</h2>${barras}`;
+  const gol = {};
+  js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => { if (p.goals) gol[p.name] = (gol[p.name] || 0) + p.goals; }));
+  const top = Object.entries(gol).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([n, g]) => `${esc(n)} ⚽${g}`).join(" · ");
+  return `<h2>Puntos por jornada</h2>${barras}<p class="off">${top ? "Goleadores: " + top : "Sin goles registrados."}</p>`;
 }
 
 function grafico() {
@@ -160,28 +164,22 @@ function pintar() {
   const rank = estadisticas();
   const chips = ["General", ...jornadas()].map(j => `<button class="chip ${vista === j ? "on" : ""}" data-v="${esc(j)}">${j === "General" ? "General (acumulado)" : esc(j)}</button>`).join("");
   const cab = cols.map(([k, t]) => k ? `<th class="${orden.k === k ? "on" : ""}"><button data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button></th>` : `<th>${t}</th>`).join("");
-  
-  const filas = rank.map((m, i) => {
-    const ptsCell = `<td class="num" style="color:var(--g)">${m.points}</td>`;
-    const goalsCell = `<td class="num" style="color:var(--b)">${m.goals}</td>`;
-
-    return `
+  const filas = rank.map((m, i) => `
     <tr>
       <td class="l"><button class="who" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
         <span class="rk">${i + 1}</span><span class="av" style="background:${color(m)}">${esc(m.avatar || "MF")}</span>
         <span><b>${esc(m.name)}</b><br><span class="team">${esc(m.teamName)}</span></span></button></td>
-      ${ptsCell}
-      ${goalsCell}
+      <td class="num" style="color:var(--g)">${m.points}</td>
+      <td class="num" style="color:var(--b)">${m.goals}</td>
       <td>${POS.map(p => `<span class="tag">${p}${m.pos[p]}</span>`).join("")}</td>
       <td class="num">${m.assists}</td>
       <td class="num" style="color:var(--y)">${m.goalsConceded}</td>
       <td class="num">${m.yellow}</td>
       <td class="num" style="color:var(--r)">${m.redCards}</td>
-    </tr>${abierto === m.id ? `<tr class="det"><td colspan="8">${detalle(m)}</td></tr>` : ""}`;
-  }).join("");
+    </tr>${abierto === m.id ? `<tr class="det"><td colspan="8">${detalle(m)}</td></tr>` : ""}`).join("");
 
   $("#app").innerHTML = `
-    <section class="card chips"><b>Vista</b>${chips}</section>
+    <section class="card chips"><b>Jornada</b>${chips}</section>
     <section class="card scroll"><table><thead><tr><th class="l">Manager (pulsa para ver el detalle)</th>${cab}</tr></thead><tbody>${filas}</tbody></table></section>
     ${grafico()}`;
 }
