@@ -58,12 +58,12 @@ code{color:var(--g)}
 <div class="wrap">
   <div class="top">
     <div>
-      <h1 id="titulo">Golómetro V2</h1>
+      <h1 id="titulo">Mister Fantasy Pro Stats</h1>
       <p class="sub" id="sub">Estadísticas de tu liga por jornada</p>
     </div>
-    
+    <button class="load" onclick="location.reload()">🔄 Actualizar Datos</button>
   </div>
-  <div id="app"><div class="empty">Sube <code>mister_fantasy_data.json</code> con el botón o arrástralo a esta página.<br>Si usas el servidor local de Python, se carga solo automáticamente.</div></div>
+  <div id="app"><div class="empty">Cargando datos de la liga...</div></div>
 </div>
 
 <script>
@@ -86,19 +86,13 @@ function cargar(obj) {
   pintar();
 }
 
-function leer(f) {
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = e => { try { cargar(JSON.parse(e.target.result)); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
-  r.readAsText(f);
-}
-
-$("#file").onchange = e => leer(e.target.files[0]);
-addEventListener("dragover", e => e.preventDefault());
-addEventListener("drop", e => { e.preventDefault(); leer(e.dataTransfer.files[0]); });
-
-// Carga automática inicial compatible con servidor local
-fetch("mister_fantasy_data.json", { cache: "no-store" }).then(r => r.ok ? r.json() : Promise.reject()).then(cargar).catch(() => {});
+// Carga automática indispensable para Netlify
+fetch("mister_fantasy_data.json", { cache: "no-store" })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(cargar)
+  .catch(() => {
+    $("#app").innerHTML = `<div class="empty">No se pudo cargar automáticamente el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que está subido en el repositorio junto a este index.html.</div>`;
+  });
 
 function estadisticas() {
   const js = vista === "General" ? jornadas() : [vista];
@@ -121,7 +115,7 @@ function estadisticas() {
 function detalle(m) {
   if (vista !== "General") {
     const x = (D.matchdays[vista] || {})[m.id];
-    if (!x || !(x.players || []).length) return `<p class='off'>Sin alineación registrada para esta jornada.</p>`;
+    if (!x || !(x.players || []).length) return `<p class='off'>No hay alineación detallada guardada para esta jornada.</p>`;
     const ordenPl = x.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos));
     return `<p class="off">Formación ${esc(x.formation || "—")}</p><div class="pl">` + ordenPl.map(p => {
       const ic = "⚽".repeat(p.goals || 0) + "👟".repeat(p.assists || 0) + "🟨".repeat(p.yellowCards || 0) + "🟥".repeat(p.redCards || 0) + (p.ownGoals ? " PP" : "");
@@ -161,11 +155,8 @@ function pintar() {
   const cab = cols.map(([k, t]) => k ? `<th class="${orden.k === k ? "on" : ""}"><button data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button></th>` : `<th>${t}</th>`).join("");
   
   const filas = rank.map((m, i) => {
-    const isGen = vista === "General";
-    const xVal = (!isGen && D.matchdays[vista] && D.matchdays[vista][m.id]) ? D.matchdays[vista][m.id] : null;
-    
-    const ptsCell = `<td class="num" style="color:var(--g)">${isGen ? m.points : (xVal ? xVal.points : 0)}</td>`;
-    const goalsCell = `<td class="num" style="color:var(--b)">${isGen ? m.goals : (xVal ? xVal.goals : 0)}</td>`;
+    const ptsCell = `<td class="num" style="color:var(--g)">${m.points}</td>`;
+    const goalsCell = `<td class="num" style="color:var(--b)">${m.goals}</td>`;
 
     return `
     <tr>
@@ -196,7 +187,6 @@ document.addEventListener("click", e => {
   else if (t.dataset.m) { abierto = abierto === t.dataset.m ? null : t.dataset.m; }
   pintar();
 });
-
 </script>
 </body>
 </html>
