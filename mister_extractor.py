@@ -19,6 +19,7 @@ import re
 import sys
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -570,10 +571,14 @@ def main():
         estado = "OK" if suma == fg["points"] else "NO COINCIDE"
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
+    # Obtener la hora actual exacta en la península española
+    zona_espana = ZoneInfo("Europe/Madrid")
+    ahora_espana = datetime.now(zona_espana)
+
     resultado = {
         "leagueName": "Golómetro 2.0",
         "season": "2026/2027",
-        "lastUpdated": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "lastUpdated": ahora_espana.strftime("%d/%m/%Y a las %H:%M"),
         "managers": list(managers.values()),
         "matchdays": matchdays,
     }
