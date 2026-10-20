@@ -19,6 +19,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:16px}
 .sub{color:var(--mut);margin:4px 0 0}
 .load{background:var(--g);color:#06220f;border:0;border-radius:8px;padding:9px 14px;font-weight:600}
+.load:hover{background:#22c55e}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .chips b{color:var(--mut);font-weight:600;margin-right:4px}
@@ -61,7 +62,7 @@ code{color:var(--g)}
       <h1 id="titulo">Mister Fantasy Pro Stats</h1>
       <p class="sub" id="sub">Estadísticas de tu liga por jornada</p>
     </div>
-    <button class="load" onclick="location.reload()">🔄 Actualizar Datos</button>
+    <button class="load" onclick="cargarDatos()">🔄 Actualizar Datos</button>
   </div>
   <div id="app"><div class="empty">Cargando datos de la liga...</div></div>
 </div>
@@ -86,13 +87,19 @@ function cargar(obj) {
   pintar();
 }
 
-// Carga automática indispensable para Netlify
-fetch("mister_fantasy_data.json", { cache: "no-store" })
-  .then(r => r.ok ? r.json() : Promise.reject())
-  .then(cargar)
-  .catch(() => {
-    $("#app").innerHTML = `<div class="empty">No se pudo cargar automáticamente el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que está subido en el repositorio junto a este index.html.</div>`;
-  });
+// Función para forzar la recarga de datos por fetch evitando la caché del navegador
+function cargarDatos() {
+  $("#app").innerHTML = `<div class="empty">Actualizando datos de la liga...</div>`;
+  fetch("mister_fantasy_data.json?t=" + new Date().getTime(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(cargar)
+    .catch(() => {
+      $("#app").innerHTML = `<div class="empty">No se pudo actualizar el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que el proceso automático de GitHub ha finalizado correctamente.</div>`;
+    });
+}
+
+// Carga automática inicial al abrir la página
+cargarDatos();
 
 function estadisticas() {
   const js = vista === "General" ? jornadas() : [vista];
