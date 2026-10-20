@@ -2,8 +2,12 @@ name: Actualizar Mister Fantasy
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Se ejecuta automáticamente todos los días a las 08:00 AM (UTC)
-  workflow_dispatch: # Te permite ejecutarlo manualmente con un botón cuando quieras desde GitHub
+    - cron: '0 0 * * *' # Todos los días a las 00:00 UTC
+  workflow_dispatch:
+
+# Añadimos los permisos aquí arriba para autorizar al bot:
+permissions:
+  contents: write
 
 jobs:
   build:
