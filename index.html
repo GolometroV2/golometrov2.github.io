@@ -3,96 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Golómetro V2</title>
+<title>Golómetro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e1712;--card:#16231b;--card2:#1c2d22;--line:#2b4033;--txt:#eef3ee;--mut:#8fa596;--g:#4ade80;--y:#facc15;--r:#f87171;--b:#7dd3fc}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 Barlow,system-ui,sans-serif;padding:16px}
-.wrap{max-width:1100px;margin:0 auto}
-h1,h2,.num,th{font-family:'Barlow Condensed',Barlow,sans-serif}
-h1{font-size:34px;margin:0;line-height:1}
-h2{font-size:22px;margin:0 0 12px}
-button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--g);outline-offset:2px}
-.top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:16px}
-.sub{color:var(--mut);margin:4px 0 0}
-.load{background:var(--g);color:#06220f;border:0;border-radius:8px;padding:9px 14px;font-weight:600}
-.load:hover{background:#22c55e}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.chip{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
-.chip.on{background:var(--g);color:#06220f;border-color:var(--g);font-weight:600}
-.scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:720px}
-th{font-size:16px;font-weight:600;color:var(--mut);text-align:center;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-th.l{text-align:left}
-th button{background:none;border:0;color:inherit;font:inherit;padding:0}
-th.on{color:var(--g)}
-td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
-td.l{text-align:left}
-.num{font-size:22px;font-weight:700}
-.who{display:flex;align-items:center;gap:10px;background:none;border:0;text-align:left;width:100%;padding:0}
-.rk{width:24px;color:var(--mut);font-family:'Barlow Condensed',sans-serif;font-size:18px}
-.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;flex:none;font-size:13px}
-.team{color:var(--mut);font-size:12px}
-.tag{display:inline-block;background:var(--card2);border-radius:4px;padding:0 5px;margin-right:3px;font-size:12px;color:var(--mut)}
-.det td{background:var(--card2);text-align:left;padding:12px}
-.det table{min-width:0}
-.det td,.det th{border:0;padding:4px 8px}
-.pl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 16px}
-.pl div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:3px 0}
-.off{color:var(--mut)}
-.bar{display:flex;align-items:center;gap:8px;margin:3px 0}
-.bar i{display:block;height:10px;background:var(--g);border-radius:3px}
-.bar span:first-child{width:34px;color:var(--mut)}
-.bar .ev{margin-left:4px;white-space:nowrap}
-.leg{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;color:var(--mut);font-size:13px}
-.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
-.empty{text-align:center;padding:48px 16px;border:1px dashed var(--line);border-radius:12px;color:var(--mut)}
-code{color:var(--g)}
+/* Paleta "Carbón y verde". Para probar otra, copia sus valores sobre estos:
+   Esmeralda y dorado -> --acc:#f5c542; --accTxt:#1a1500
+   Verde menta        -> --acc:#19d3a2; --accTxt:#042119 */
+:root{--bg:#111315;--panel:#1a1d21;--panel2:#23272d;--line:#2f353c;--txt:#f4f6f5;--mut:#9aa3ad;--acc:#2fd46e;--accTxt:#05210f;
+--pt:#ffc94a;--df:#4cc3ff;--mc:#a3e635;--dl:#ff6b7a;--red:#ff6b6b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 Inter,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.nav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.nav div{max-width:680px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.3px}
+.logo span{color:var(--acc)}
+.refresh{background:var(--acc);color:var(--accTxt);border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer}
+.refresh:hover{filter:brightness(1.1)}
+main{max-width:680px;margin:0 auto;padding:16px}
+.head h1{margin:0;font-size:22px;font-weight:800}
+.head p{margin:2px 0 14px;color:var(--mut);font-size:13px}
+.pills,.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.pills::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
+.pill{flex:none;background:var(--panel2);border-radius:999px;padding:7px 16px;font-weight:600;color:var(--mut)}
+.pill.on{background:var(--acc);color:var(--accTxt)}
+.tabs{margin:16px 0 8px;border-bottom:1px solid var(--line);gap:18px}
+.tab{flex:none;padding:8px 0;color:var(--mut);font-weight:600;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--txt);border-color:var(--acc)}
+ul{list-style:none;margin:0;padding:0}
+.row{border-bottom:1px solid var(--line)}
+.rowbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 4px}
+.rowbtn:hover{background:var(--panel)}
+.pos{width:22px;text-align:center;font-weight:700;color:var(--mut)}
+.row:nth-child(-n+3) .pos{color:var(--acc)}
+.av{position:relative;overflow:hidden;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none;color:#fff}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.info{flex:1;min-width:0;display:flex;flex-direction:column}
+.nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub i{font-style:normal;margin-right:8px}
+.sub .z{opacity:.4}
+.pts{text-align:right;line-height:1.1}
+.pts b{font-size:24px;font-weight:800}
+.pts small{font-size:12px;color:var(--mut);margin-left:3px}
+.pts em{display:block;font-style:normal;font-size:12px;color:var(--red);margin-top:2px}
+.det{background:var(--panel);border-radius:12px;margin:0 0 12px;padding:14px}
+.det h3{margin:0 0 10px;font-size:14px;color:var(--mut);font-weight:600}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px}
+.bar>span:first-child{width:30px;color:var(--mut);font-weight:600}
+.bar i{display:block;height:8px;background:var(--acc);border-radius:4px}
+.bar b{min-width:24px}
+.top{color:var(--mut);font-size:13px;margin:10px 0 0}
+.pitch{background:repeating-linear-gradient(180deg,#2a7d47 0 44px,#26733f 44px 88px);border-radius:12px;padding:14px 6px;display:flex;flex-direction:column;gap:14px}
+.line{display:flex;justify-content:space-around;gap:4px}
+.pl{display:flex;flex-direction:column;align-items:center;width:20%;min-width:0}
+.pc{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#111315;border:2px solid #fff}
+.pl.off .pc{background:#5d6f64!important;color:#cfd8d2}
+.cap{position:absolute;top:-6px;right:-8px;background:#fff;color:#111315;border-radius:50%;width:16px;height:16px;font-size:10px;display:grid;place-items:center}
+.pn{max-width:100%;font-size:11.5px;font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0008}
+.pe{font-size:11px;min-height:14px}
+.form{color:var(--mut);font-size:13px;margin:0 0 8px}
+.card{background:var(--panel);border-radius:12px;padding:14px;margin-top:20px}
+.gh{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:10px}
+.gh h2{margin:0;font-size:16px}
+.seg{display:flex;background:var(--panel2);border-radius:8px;padding:2px}
+.seg button{padding:5px 10px;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--mut)}
+.seg button.on{background:var(--acc);color:var(--accTxt)}
+.gbtn{display:flex;gap:6px;margin-bottom:8px}
+.gbtn button{background:var(--panel2);border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:600;color:var(--mut)}
+.gbtn button:hover{color:var(--txt)}
+.chipsg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.gchip{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:4px 11px 4px 8px;font-size:12.5px;font-weight:600;color:var(--mut)}
+.gchip i{width:10px;height:10px;border-radius:50%;background:var(--c);opacity:.35}
+.gchip.on{border-color:var(--c);color:var(--txt);background:var(--panel2)}
+.gchip.on i{opacity:1}
+.gwrap{position:relative;touch-action:pan-y}
+.tip{display:none;position:absolute;top:4px;background:#111315ee;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;pointer-events:none;min-width:130px;z-index:2}
+.tip strong{display:block;margin-bottom:3px}
+.tip div{display:flex;align-items:center;gap:6px}
+.tip div b{margin-left:auto;padding-left:10px}
+.tip i{width:8px;height:8px;border-radius:50%;flex:none}
+.msg{text-align:center;color:var(--mut);padding:48px 16px}
+code{color:var(--acc)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div>
-      <h1 id="titulo">Mister Fantasy Pro Stats</h1>
-      <p class="sub" id="sub">Estadísticas de tu liga por jornada</p>
-    </div>
-    <button class="load" onclick="cargarDatos()">🔄 Actualizar Datos</button>
-  </div>
-  <div id="app"><div class="empty">Cargando datos de la liga...</div></div>
-</div>
+<header class="nav"><div>
+  <div class="logo">Golómetro<span>.</span></div>
+  <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+</div></header>
+<main>
+  <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
+  <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
+</main>
 
 <script>
 const POS = ["PT", "DF", "MC", "DL"];
+const METRICAS = [["points", "Puntos", "Pts"], ["goals", "Goles", "Goles"], ["assists", "Asistencias", "Asist."],
+  ["goalsConceded", "Encajados", "Enc."], ["yellow", "Amarillas", "Amar."], ["redCards", "Rojas", "Rojas"]];
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
+let visibles = new Set(), modoG = "acum", G = null;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const jornadas = () => Object.keys(D.matchdays || {}).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-const color = m => esc(m.color || "#3b82f6");
+const col = i => `hsl(${Math.round((i * 360 / Math.max(D.managers.length, 1) + 200) % 360)} 70% 58%)`;
+const fondo = (m, i) => Number.isFinite(m.hue) ? `hsl(${m.hue} 50% 50%)` : col(i);
+const total = m => jornadas().reduce((t, j) => t + (((D.matchdays[j] || {})[m.id] || {}).points || 0), 0);
+const topIds = n => D.managers.map(m => [m.id, total(m)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(x => x[0]);
+
+function avatar(m, i) {
+  const img = m.avatarUrl ? `<img src="${esc(m.avatarUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" onload="this.previousElementSibling.style.visibility='hidden'" onerror="this.remove()">` : "";
+  return `<span class="av" style="background:${fondo(m, i)}"><span>${esc(m.avatar || "MF")}</span>${img}</span>`;
+}
 
 function cargar(obj) {
   if (!obj || !Array.isArray(obj.managers) || !obj.matchdays) {
     alert("El JSON no tiene el formato esperado (faltan managers o matchdays).");
     return;
   }
-  D = obj; vista = "General"; abierto = null;
-  $("#titulo").textContent = obj.leagueName || "Mister Fantasy Pro Stats";
+  D = obj; vista = "General"; abierto = null; modoG = "acum";
+  visibles = new Set(D.managers.map(m => m.id));
+  $("#titulo").textContent = obj.leagueName || "Mi liga";
   $("#sub").textContent = [obj.season, obj.lastUpdated && "actualizado " + obj.lastUpdated].filter(Boolean).join(" · ");
   pintar();
 }
 
 function cargarDatos() {
-  $("#app").innerHTML = `<div class="empty">Actualizando datos de la liga...</div>`;
-  fetch("mister_fantasy_data.json?t=" + new Date().getTime(), { cache: "no-store" })
+  $("#app").innerHTML = `<div class="msg">Actualizando datos de la liga...</div>`;
+  fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(cargar)
     .catch(() => {
-      $("#app").innerHTML = `<div class="empty">No se pudo actualizar el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que el proceso automático de GitHub ha finalizado correctamente.</div>`;
+      $("#app").innerHTML = `<div class="msg">No se pudo actualizar el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que el proceso automático de GitHub ha finalizado correctamente.</div>`;
     });
 }
 
@@ -101,94 +146,156 @@ cargarDatos();
 
 function estadisticas() {
   const js = vista === "General" ? jornadas() : [vista];
-  return D.managers.map(m => {
-    const s = { ...m, points: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0, pos: { PT: 0, DF: 0, MC: 0, DL: 0 } };
+  return D.managers.map((m, idx) => {
+    const s = { ...m, idx, points: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0 };
     js.forEach(j => {
       const x = (D.matchdays[j] || {})[m.id];
       if (!x) return;
       s.points += x.points || 0; s.goals += x.goals || 0;
       s.redCards += x.redCards || 0; s.goalsConceded += x.goalsConceded || 0;
-      POS.forEach(p => s.pos[p] += (x.goalsByPos || {})[p] || 0);
       (x.players || []).forEach(p => { s.assists += p.assists || 0; s.yellow += p.yellowCards || 0; });
     });
     return s;
   }).sort((a, b) => (a[orden.k] - b[orden.k]) * (orden.asc ? 1 : -1) || b.points - a.points || a.name.localeCompare(b.name));
 }
 
+const rep = (e, n) => n ? (n <= 3 ? e.repeat(n) : e + "×" + n) : "";
+const suma = (x, c) => (x.players || []).reduce((t, p) => t + (p[c] || 0), 0);
+
+function jugador(p) {
+  const ev = rep("⚽", p.goals) + rep("👟", p.assists) + rep("🟨", p.yellowCards) + rep("🟥", p.redCards) + (p.ownGoals ? "PP" : "");
+  const corto = String(p.name || "").split(" ").slice(-1)[0];
+  return `<div class="pl ${p.played ? "" : "off"}"><div class="pc" style="background:var(--${esc(String(p.pos).toLowerCase())})">${p.played ? esc(p.points) : "–"}${p.captain ? '<b class="cap">C</b>' : ""}</div>
+    <span class="pn" title="${esc(p.name)}">${esc(corto)}</span><span class="pe">${ev}</span></div>`;
+}
+
 function detalle(m) {
   if (vista !== "General") {
     const x = (D.matchdays[vista] || {})[m.id];
-    if (!x || !(x.players || []).length) return "<p class='off'>No hay alineación guardada para esta jornada.</p>";
-    const orden = x.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos));
-    return `<p class="off">Formación ${esc(x.formation || "—")}</p><div class="pl">` + orden.map(p => {
-      const ic = "⚽".repeat(p.goals || 0) + "👟".repeat(p.assists || 0) + "🟨".repeat(p.yellowCards || 0) + "🟥".repeat(p.redCards || 0) + (p.ownGoals ? " PP" : "");
-      return `<div class="${p.played ? "" : "off"}"><span><span class="tag">${esc(p.pos)}</span>${esc(p.name)}${p.captain ? " (C)" : ""} ${ic}</span><b>${p.played ? esc(p.points) : "no jugó"}</b></div>`;
-    }).join("") + "</div>";
+    if (!x || !(x.players || []).length) return `<p class="top">No hay alineación guardada para esta jornada.</p>`;
+    const lineas = ["DL", "MC", "DF", "PT"].map(pos => {
+      const ps = x.players.filter(p => p.pos === pos);
+      return ps.length ? `<div class="line">${ps.map(jugador).join("")}</div>` : "";
+    }).join("");
+    return `<p class="form">Formación ${esc(x.formation || "—")}</p><div class="pitch">${lineas}</div>`;
   }
   const js = jornadas();
   const pts = js.map(j => ((D.matchdays[j] || {})[m.id] || {}).points || 0);
   const max = Math.max(...pts, 1);
-  const suma = (x, campo) => (x.players || []).reduce((t, p) => t + (p[campo] || 0), 0);
-  const ic = (emoji, n, nombre) => n ? `<span title="${n} ${nombre}">${n <= 3 ? emoji.repeat(n) : emoji + "×" + n}</span> ` : "";
   const barras = js.map((j, i) => {
     const x = (D.matchdays[j] || {})[m.id] || {};
-    const ev = ic("⚽", x.goals || 0, "goles") + ic("👟", suma(x, "assists"), "asistencias") + ic("🟨", suma(x, "yellowCards"), "amarillas") + ic("🟥", x.redCards || 0, "rojas");
-    return `<div class="bar"><span>${esc(j)}</span><i style="width:${Math.max(pts[i], 0) / max * 60}%"></i><span>${pts[i]}</span><span class="ev">${ev}</span></div>`;
+    const ev = rep("⚽", x.goals || 0) + " " + rep("👟", suma(x, "assists")) + " " + rep("🟨", suma(x, "yellowCards")) + " " + rep("🟥", x.redCards || 0);
+    return `<div class="bar"><span>${esc(j)}</span><i style="width:${Math.max(pts[i], 0) / max * 55}%"></i><b>${pts[i]}</b><span>${ev}</span></div>`;
   }).join("");
   const gol = {};
   js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => { if (p.goals) gol[p.name] = (gol[p.name] || 0) + p.goals; }));
   const top = Object.entries(gol).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([n, g]) => `${esc(n)} ⚽${g}`).join(" · ");
-  return `<h2>Puntos por jornada</h2>${barras}<p class="off">${top ? "Goleadores: " + top : "Sin goles registrados."}</p>`;
+  return `<h3>Puntos por jornada</h3>${barras}<p class="top">${top ? "Goleadores: " + top : "Sin goles registrados."}</p>`;
 }
 
-function grafico() {
+/* ---------- Gráfica interactiva ---------- */
+function pintarGrafico() {
+  const cont = $("#graf");
+  if (!cont) return;
   const js = jornadas();
-  if (js.length < 2) return "";
-  const series = D.managers.map(m => { let a = 0; return { m, v: js.map(j => a += ((D.matchdays[j] || {})[m.id] || {}).points || 0) }; });
-  const max = Math.max(...series.flatMap(s => s.v), 1), W = 800, H = 260, L = 38, R = 10, T = 10, B = 26;
-  const X = i => L + i * (W - L - R) / (js.length - 1), Y = v => H - B - v * (H - B - T) / max;
+  if (js.length < 2) { cont.innerHTML = ""; return; }
+
+  const lista = D.managers.map((m, i) => ({ m, i, t: total(m) })).sort((a, b) => b.t - a.t);
+  const chips = lista.map(({ m, i }) => `<button class="gchip ${visibles.has(m.id) ? "on" : ""}" data-g="${esc(m.id)}" style="--c:${col(i)}" aria-pressed="${visibles.has(m.id)}"><i></i>${esc(m.name)}</button>`).join("");
+  const series = lista.filter(o => visibles.has(o.m.id)).map(({ m, i }) => {
+    let a = 0;
+    return { m, i, v: js.map(j => { const p = ((D.matchdays[j] || {})[m.id] || {}).points || 0; return modoG === "acum" ? (a += p) : p; }) };
+  });
+
+  const W = 640, H = 240, L = 36, R = 14, T = 12, B = 26;
+  const todos = series.flatMap(s => s.v);
+  const max = Math.max(...todos, 1), min = Math.min(0, ...todos);
+  const X = i => L + i * (W - L - R) / (js.length - 1), Y = v => H - B - (v - min) * (H - B - T) / (max - min);
+  G = { W, L, R, js, series, X };
+
   let g = "";
   for (let k = 0; k <= 4; k++) {
-    const v = Math.round(max * k / 4);
-    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#2b4033"/><text x="${L - 5}" y="${Y(v) + 4}" text-anchor="end" fill="#8fa596" font-size="11">${v}</text>`;
+    const v = Math.round(min + (max - min) * k / 4);
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#2f353c"/><text x="${L - 5}" y="${Y(v) + 4}" text-anchor="end" fill="#9aa3ad" font-size="11">${v}</text>`;
   }
-  js.forEach((j, i) => g += `<text x="${X(i)}" y="${H - 8}" text-anchor="middle" fill="#8fa596" font-size="11">${esc(j)}</text>`);
-  series.forEach(s => g += `<polyline fill="none" stroke="${color(s.m)}" stroke-width="2.5" stroke-linejoin="round" points="${s.v.map((v, i) => X(i) + "," + Y(v)).join(" ")}"/>`);
-  return `<section class="card"><h2>Evolución de puntos acumulados</h2><svg viewBox="0 0 ${W} ${H}" style="width:100%" role="img" aria-label="Evolución de puntos acumulados por jornada">${g}</svg>
-  <div class="leg">${series.map(s => `<span><i style="background:${color(s.m)}"></i>${esc(s.m.name)}</span>`).join("")}</div></section>`;
+  js.forEach((j, i) => g += `<text x="${X(i)}" y="${H - 8}" text-anchor="middle" fill="#9aa3ad" font-size="11">${esc(j)}</text>`);
+  g += `<line id="guide" y1="${T}" y2="${H - B}" stroke="#9aa3ad" stroke-dasharray="3 3" style="visibility:hidden"/>`;
+  series.forEach(s => {
+    g += `<polyline fill="none" stroke="${col(s.i)}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="${s.v.map((v, i) => X(i) + "," + Y(v)).join(" ")}"/>`;
+    g += s.v.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="3.5" fill="${col(s.i)}"/>`).join("");
+  });
+
+  cont.innerHTML = `
+    <div class="gh"><h2>Evolución de puntos</h2>
+      <div class="seg"><button data-gm="acum" class="${modoG === "acum" ? "on" : ""}">Acumulados</button><button data-gm="jor" class="${modoG === "jor" ? "on" : ""}">Por jornada</button></div></div>
+    <div class="gbtn"><button data-gs="all">Todos</button><button data-gs="top">Top 3</button><button data-gs="none">Ninguno</button></div>
+    <div class="chipsg">${chips}</div>
+    ${series.length ? `<div class="gwrap"><svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block" role="img" aria-label="Evolución de puntos por jornada">${g}</svg><div class="tip" id="tip"></div></div>`
+      : `<div class="msg">Selecciona al menos un jugador para ver la gráfica.</div>`}`;
+
+  const wrap = cont.querySelector(".gwrap");
+  if (wrap) {
+    wrap.onpointermove = e => {
+      const r = wrap.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width * G.W;
+      const i = Math.max(0, Math.min(G.js.length - 1, Math.round((x - G.L) / ((G.W - G.L - G.R) / (G.js.length - 1)))));
+      const px = G.X(i), guide = $("#guide"), tip = $("#tip");
+      guide.setAttribute("x1", px); guide.setAttribute("x2", px); guide.style.visibility = "visible";
+      tip.innerHTML = `<strong>${esc(G.js[i])}</strong>` + G.series.slice().sort((a, b) => b.v[i] - a.v[i])
+        .map(s => `<div><i style="background:${col(s.i)}"></i>${esc(s.m.name)}<b>${s.v[i]}</b></div>`).join("");
+      const pct = px / G.W * 100;
+      tip.style.display = "block";
+      tip.style.left = pct < 55 ? `calc(${pct}% + 10px)` : "auto";
+      tip.style.right = pct < 55 ? "auto" : `calc(${100 - pct}% + 10px)`;
+    };
+    wrap.onpointerleave = () => { $("#guide").style.visibility = "hidden"; $("#tip").style.display = "none"; };
+  }
 }
 
+/* ---------- Lista principal ---------- */
 function pintar() {
-  const cols = [["points", "Puntos"], ["goals", "Goles"], [null, "PT / DF / MC / DL"], ["assists", "Asist."], ["goalsConceded", "Encajados"], ["yellow", "Amarillas"], ["redCards", "Rojas"]];
+  const meta = METRICAS.find(x => x[0] === orden.k);
   const rank = estadisticas();
-  const chips = ["General", ...jornadas()].map(j => `<button class="chip ${vista === j ? "on" : ""}" data-v="${esc(j)}">${j === "General" ? "General (acumulado)" : esc(j)}</button>`).join("");
-  const cab = cols.map(([k, t]) => k ? `<th class="${orden.k === k ? "on" : ""}"><button data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button></th>` : `<th>${t}</th>`).join("");
+  const lider = rank.length ? rank[0][orden.k] : 0;
+  const pills = ["General", ...jornadas()].map(j => `<button class="pill ${vista === j ? "on" : ""}" data-v="${esc(j)}">${j === "General" ? "Total" : esc(j)}</button>`).join("");
+  const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
+  const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
   const filas = rank.map((m, i) => `
-    <tr>
-      <td class="l"><button class="who" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
-        <span class="rk">${i + 1}</span><span class="av" style="background:${color(m)}">${esc(m.avatar || "MF")}</span>
-        <span><b>${esc(m.name)}</b><br><span class="team">${esc(m.teamName)}</span></span></button></td>
-      <td class="num" style="color:var(--g)">${m.points}</td>
-      <td class="num" style="color:var(--b)">${m.goals}</td>
-      <td>${POS.map(p => `<span class="tag">${p}${m.pos[p]}</span>`).join("")}</td>
-      <td class="num">${m.assists}</td>
-      <td class="num" style="color:var(--y)">${m.goalsConceded}</td>
-      <td class="num">${m.yellow}</td>
-      <td class="num" style="color:var(--r)">${m.redCards}</td>
-    </tr>${abierto === m.id ? `<tr class="det"><td colspan="8">${detalle(m)}</td></tr>` : ""}`).join("");
+    <li class="row">
+      <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
+        <span class="pos">${i + 1}</span>
+        ${avatar(m, m.idx)}
+        <span class="info"><span class="nm">${esc(m.name)}</span>
+          <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span></span>
+        <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${orden.k === "points" && !orden.asc && m.points !== lider ? `<em>${m.points - lider}</em>` : ""}</span>
+      </button>
+      ${abierto === m.id ? `<div class="det">${detalle(m)}</div>` : ""}
+    </li>`).join("");
 
   $("#app").innerHTML = `
-    <section class="card chips">${chips}</section>
-    <section class="card scroll"><table><thead><tr><th class="l">Manager (pulsa para ver el detalle)</th>${cab}</tr></thead><tbody>${filas}</tbody></table></section>
-    ${grafico()}`;
+    <div class="pills" role="group" aria-label="Jornada">${pills}</div>
+    <div class="tabs" role="group" aria-label="Ordenar por">${tabs}</div>
+    <ul>${filas}</ul>
+    <section class="card" id="graf"></section>`;
+  pintarGrafico();
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-o],[data-m]");
+  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm]");
   if (!t || !D) return;
-  if (t.dataset.v) { vista = t.dataset.v; abierto = null; }
-  else if (t.dataset.o) { const k = t.dataset.o; orden = orden.k === k ? { k, asc: !orden.asc } : { k, asc: false }; }
-  else if (t.dataset.m) { abierto = abierto === t.dataset.m ? null : t.dataset.m; }
+  const d = t.dataset;
+  if (d.g !== undefined || d.gs !== undefined || d.gm !== undefined) {
+    if (d.g !== undefined) visibles.has(d.g) ? visibles.delete(d.g) : visibles.add(d.g);
+    else if (d.gs === "all") visibles = new Set(D.managers.map(m => m.id));
+    else if (d.gs === "none") visibles = new Set();
+    else if (d.gs === "top") visibles = new Set(topIds(3));
+    else if (d.gm) modoG = d.gm;
+    pintarGrafico();
+    return;
+  }
+  if (d.v) { vista = d.v; abierto = null; }
+  else if (d.o) { orden = orden.k === d.o ? { k: d.o, asc: !orden.asc } : { k: d.o, asc: false }; }
+  else if (d.m) { abierto = abierto === d.m ? null : d.m; }
   pintar();
 });
 </script>
