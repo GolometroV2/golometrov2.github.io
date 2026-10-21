@@ -8,31 +8,48 @@ on:
 permissions:
   contents: write
 
+# Evita que dos ejecuciones se solapen y se pisen al subir cambios
+concurrency:
+  group: actualizar-datos
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Instalar dependencias
-        run: |
-          pip install requests beautifulsoup4
+        run: pip install requests beautifulsoup4
 
       - name: Ejecutar script extractor
-        run: |
-          python mister_extractor.py
+        env:
+          MISTER_COOKIE: ${{ secrets.MISTER_COOKIE }}
+          X_AUTH_TOKEN: ${{ secrets.X_AUTH_TOKEN }}
+        run: python mister_extractor.py
 
-      - name: Sincronizar y subir cambios al repositorio
+      - name: Guardar y subir cambios
         run: |
-          git config --global user.name "Bot Mister"
-          git config --global user.email "bot@example.com"
-          git pull origin main --rebase || true
-          git add mister_fantasy_data.json
-          git commit -m "Actualización automática de datos de la liga" || exit 0
-          git push origin main
+          git config user.name "Bot Mister"
+          git config user.email "bot@users.noreply.github.com"
+          git add mister_fantasy_data.json cache_mister.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios que guardar"
+            exit 0
+          fi
+          git commit -m "Actualización automática de datos de la liga"
+          for i in 1 2 3; do
+            if git pull --rebase -X theirs origin main && git push origin main; then
+              exit 0
+            fi
+            echo "Intento $i fallido, reintentando..."
+            sleep 5
+          done
+          exit 1
