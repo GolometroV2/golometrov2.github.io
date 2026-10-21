@@ -1,14 +1,14 @@
 {
   "leagueName": "Mi Liga Mister Fantasy",
   "season": "2026/2027",
-  "lastUpdated": "21/10/2026 08:10",
+  "lastUpdated": "21/10/2026 10:24",
   "managers": [
     {
       "id": "8663482",
       "name": "Mediocentro inofensivo 🧙‍♂️🪄",
       "teamName": "Mediocentro inofensivo 🧙‍♂️🪄",
       "avatar": "MI",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6a6e780063576.png",
+      "avatarUrl": "avatars/6a6e780063576.png",
       "hue": 279,
       "color": "#10b981"
     },
@@ -17,7 +17,7 @@
       "name": "edu Hard 304",
       "teamName": "edu Hard 304",
       "avatar": "EH",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6a6684efc7788.png",
+      "avatarUrl": "avatars/6a6684efc7788.png",
       "hue": 133,
       "color": "#3b82f6"
     },
@@ -26,7 +26,7 @@
       "name": "Sr. X",
       "teamName": "Sr. X",
       "avatar": "SX",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6a85ed3137820.png",
+      "avatarUrl": "avatars/6a85ed3137820.png",
       "hue": 280,
       "color": "#f59e0b"
     },
@@ -35,7 +35,7 @@
       "name": "Make Madrid Great Again",
       "teamName": "Make Madrid Great Again",
       "avatar": "MM",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6a7c1dd1c5b13.png",
+      "avatarUrl": "avatars/6a7c1dd1c5b13.png",
       "hue": 49,
       "color": "#ef4444"
     },
@@ -44,7 +44,7 @@
       "name": "Maricarmen 🌹",
       "teamName": "Maricarmen 🌹",
       "avatar": "M🌹",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6abed1452a9fe.png",
+      "avatarUrl": "avatars/6abed1452a9fe.png",
       "hue": 173,
       "color": "#8b5cf6"
     },
@@ -53,7 +53,7 @@
       "name": "Julian FICHADO y GAFADO",
       "teamName": "Julian FICHADO y GAFADO",
       "avatar": "JF",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6a7f50eb6f4c1.png",
+      "avatarUrl": "avatars/6a7f50eb6f4c1.png",
       "hue": 182,
       "color": "#ec4899"
     },
@@ -62,7 +62,7 @@
       "name": "Basicamente",
       "teamName": "Basicamente",
       "avatar": "B",
-      "avatarUrl": "https://cdn-mister.mundodeportivo.com/file/cdn-mister/users/6ab80294b8517.png",
+      "avatarUrl": "avatars/6ab80294b8517.png",
       "hue": 137,
       "color": "#06b6d4"
     }
