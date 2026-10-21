@@ -18,10 +18,11 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;paddin
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .nav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
 .nav div{max-width:680px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.{font-weight:800;font-size:20px;letter-spacing:-.3px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.3px}
 .logo span{color:var(--acc)}
 .refresh{background:var(--acc);color:var(--accTxt);border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer}
 .refresh:hover{filter:brightness(1.1)}
+.acciones{display:flex;gap:8px;align-items:center}
 main{max-width:680px;margin:0 auto;padding:16px}
 .head h1{margin:0;font-size:22px;font-weight:800}
 .head p{margin:2px 0 14px;color:var(--mut);font-size:13px}
@@ -85,14 +86,31 @@ ul{list-style:none;margin:0;padding:0}
 .tip div{display:flex;align-items:center;gap:6px}
 .tip div b{margin-left:auto;padding-left:10px}
 .tip i{width:8px;height:8px;border-radius:50%;flex:none}
+.cp{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cp:last-child{border-bottom:0}
+.cp .n{width:20px;text-align:center;font-weight:800;color:var(--mut)}
+.cp:nth-child(-n+3) .n{color:var(--acc)}
+.cp .qui{flex:1;min-width:0}
+.cp .fn{font-weight:600;display:flex;align-items:center;gap:6px}
+.cp .fn i{width:9px;height:9px;border-radius:50%;flex:none}
+.cp .by{color:var(--mut);font-size:12.5px;display:flex;align-items:center;gap:6px;margin-top:2px}
+.cp .by .av{width:20px;height:20px;font-size:9px}
+.cp .rec{text-align:right;line-height:1.1}
+.cp .rec b{font-size:24px;font-weight:800;color:var(--acc)}
+.cp .rec small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.note{color:var(--mut);font-size:13px;margin:8px 0 0}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
 </style>
 </head>
 <body>
 <header class="nav"><div>
-  <div class="logo" style="font-weight:800;font-size:22px;letter-spacing:-.3px">Golómetro <span style="color:var(--acc)">V2</span></div>
-  <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+  <div class="logo">Golómetro <span>V2</span></div>
+  <span class="acciones">
+    <!-- TEMPORAL: botón de carga manual (borrar este <label> al terminar las pruebas) -->
+    <label class="refresh" id="tmp-carga">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
+    <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+  </span>
 </div></header>
 <main>
   <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
@@ -101,7 +119,11 @@ code{color:var(--acc)}
 
 <script>
 const POS = ["PT", "DF", "MC", "DL"];
-const METRICAS = [["points", "Puntos", "Pts"], ["goals", "Goles", "Goles"], ["assists", "Asistencias", "Asist."],
+// Qué cuentan las columnas "Capitán" y "Sin capitán":
+//   "extra" -> solo los puntos que añade el multiplicador (x1.5, x2 o x3)
+//   "total" -> todos los puntos del capitán (ya multiplicados)
+const MODO_CAP = "extra";
+const METRICAS = [["points", "Puntos", "Pts"], ["sinCap", "Sin capitán", "Pts"], ["cap", "Capitán", "Pts"], ["goals", "Goles", "Goles"], ["assists", "Asistencias", "Asist."],
   ["goalsConceded", "Encajados", "Enc."], ["yellow", "Amarillas", "Amar."], ["redCards", "Rojas", "Rojas"]];
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
 let visibles = new Set(), modoG = "acum", G = null;
@@ -126,6 +148,7 @@ function cargar(obj) {
   }
   D = obj; vista = "General"; abierto = null; modoG = "acum";
   visibles = new Set(D.managers.map(m => m.id));
+  D.hayCap = jornadas().some(j => Object.values(D.matchdays[j] || {}).some(x => x && x.captain));
   $("#titulo").textContent = obj.leagueName || "Mi liga";
   $("#sub").textContent = [obj.season, obj.lastUpdated && "actualizado " + obj.lastUpdated].filter(Boolean).join(" · ");
   pintar();
@@ -144,21 +167,39 @@ function cargarDatos() {
 // Carga automática inicial al abrir la página
 cargarDatos();
 
+// ===== TEMPORAL: carga manual del JSON para pruebas (borrar este bloque y el <label id="tmp-carga">) =====
+function leerArchivo(f) {
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = e => { try { cargar(JSON.parse(e.target.result)); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
+  r.readAsText(f);
+}
+$("#file").onchange = e => { leerArchivo(e.target.files[0]); e.target.value = ""; };
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => { e.preventDefault(); leerArchivo(e.dataTransfer.files[0]); });
+// ===== FIN TEMPORAL =====
+
 function estadisticas() {
   const js = vista === "General" ? jornadas() : [vista];
   return D.managers.map((m, idx) => {
-    const s = { ...m, idx, points: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0 };
+    const s = { ...m, idx, points: 0, cap: 0, sinCap: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0 };
     js.forEach(j => {
       const x = (D.matchdays[j] || {})[m.id];
       if (!x) return;
-      s.points += x.points || 0; s.goals += x.goals || 0;
+      s.points += x.points || 0; s.goals += x.goals || 0; s.cap += capPts(x);
       s.redCards += x.redCards || 0; s.goalsConceded += x.goalsConceded || 0;
       (x.players || []).forEach(p => { s.assists += p.assists || 0; s.yellow += p.yellowCards || 0; });
     });
+    s.sinCap = s.points - s.cap;
     return s;
   }).sort((a, b) => (a[orden.k] - b[orden.k]) * (orden.asc ? 1 : -1) || b.points - a.points || a.name.localeCompare(b.name));
 }
 
+const capPts = x => {
+  const c = x && x.captain;
+  if (!c) return 0;
+  return MODO_CAP === "total" ? (c.points || 0) : (c.bonus || 0);
+};
 const rep = (e, n) => n ? (n <= 3 ? e.repeat(n) : e + "×" + n) : "";
 const suma = (x, c) => (x.players || []).reduce((t, p) => t + (p[c] || 0), 0);
 
@@ -252,6 +293,31 @@ function pintarGrafico() {
   }
 }
 
+/* ---------- Top 5 capitanes ---------- */
+function pintarCapitanes() {
+  const cont = $("#caps");
+  if (!cont) return;
+  if (!D.hayCap) { cont.innerHTML = ""; return; }
+  const lista = [];
+  jornadas().forEach(j => D.managers.forEach((m, i) => {
+    const c = ((D.matchdays[j] || {})[m.id] || {}).captain;
+    if (c && c.played) lista.push({ j, m, i, c });
+  }));
+  lista.sort((a, b) => b.c.points - a.c.points || (b.c.bonus || 0) - (a.c.bonus || 0));
+  const filas = lista.slice(0, 5).map(({ j, m, i, c }, k) => `
+    <li class="cp">
+      <span class="n">${k + 1}</span>
+      <span class="qui">
+        <span class="fn"><i style="background:var(--${esc(String(c.pos).toLowerCase())})"></i>${esc(c.name)}</span>
+        <span class="by">${avatar(m, i)} ${esc(m.name)} · ${esc(j)}</span>
+      </span>
+      <span class="rec"><b>${c.points}</b><small>${c.multiplier ? "x" + esc(c.multiplier) + " · " : ""}${c.bonus >= 0 ? "+" : ""}${c.bonus} extra</small></span>
+    </li>`).join("");
+  cont.innerHTML = `<h2 style="margin:0 0 4px;font-size:16px">Top 5 capitanes</h2>
+    <p class="note" style="margin:0 0 6px">Mejores puntuaciones conseguidas con el capitán (ya multiplicadas).</p>
+    ${filas ? `<ul>${filas}</ul>` : `<p class="note">Aún no hay capitanes que hayan jugado.</p>`}`;
+}
+
 /* ---------- Lista principal ---------- */
 function pintar() {
   const meta = METRICAS.find(x => x[0] === orden.k);
@@ -267,7 +333,7 @@ function pintar() {
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}</span>
           <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span></span>
-        <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${orden.k === "points" && !orden.asc && m.points !== lider ? `<em>${m.points - lider}</em>` : ""}</span>
+        <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
       </button>
       ${abierto === m.id ? `<div class="det">${detalle(m)}</div>` : ""}
     </li>`).join("");
@@ -275,9 +341,12 @@ function pintar() {
   $("#app").innerHTML = `
     <div class="pills" role="group" aria-label="Jornada">${pills}</div>
     <div class="tabs" role="group" aria-label="Ordenar por">${tabs}</div>
+    ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
     <ul>${filas}</ul>
-    <section class="card" id="graf"></section>`;
+    <section class="card" id="graf"></section>
+    <section class="card" id="caps"></section>`;
   pintarGrafico();
+  pintarCapitanes();
 }
 
 document.addEventListener("click", e => {
