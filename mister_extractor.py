@@ -19,7 +19,6 @@ import re
 import sys
 import time
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -135,11 +134,18 @@ def extraer_fila(li):
         m_v = re.search(r"€\s*([\d\.]+)", t)
         valor = int(m_v.group(1).replace(".", "")) if m_v else 0
 
+    av_el = li.select_one(".user-avatar")
+    img_el = av_el.select_one("img") if av_el else None
+    m_hue = re.search(r"hsl\(\s*(\d+)", av_el.get("style", "")) if av_el else None
+    avatar_url = (img_el.get("src") or "") if img_el else ""
+
     m_slug = re.search(r"users/\d+/([^/?#\"']+)", enlace["href"])
 
     return {
         "id": m.group(1),
         "slug": m_slug.group(1) if m_slug else "",
+        "avatarUrl": avatar_url,
+        "hue": int(m_hue.group(1)) if m_hue else None,
         "name": nombre_el.get_text(strip=True),
         "position": limpiar_numero(pos_el.get_text(strip=True)) if pos_el else 0,
         "points": limpiar_numero(texto_pts),
@@ -534,8 +540,12 @@ def main():
                     "name": fg["name"],
                     "teamName": fg["name"],
                     "avatar": iniciales,
+                    "avatarUrl": fg.get("avatarUrl") or fj.get("avatarUrl") or "",
+                    "hue": fg.get("hue") if fg.get("hue") is not None else fj.get("hue"),
                     "color": COLORES_AVATAR[len(managers) % len(COLORES_AVATAR)],
                 }
+            elif not managers[uid].get("avatarUrl"):
+                managers[uid]["avatarUrl"] = fg.get("avatarUrl") or fj.get("avatarUrl") or ""
 
             acumulados[uid] = acumulados.get(uid, 0) + fj["points"]
 
@@ -571,14 +581,10 @@ def main():
         estado = "OK" if suma == fg["points"] else "NO COINCIDE"
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
-    # Obtener la hora actual exacta en la península española
-    zona_espana = ZoneInfo("Europe/Madrid")
-    ahora_espana = datetime.now(zona_espana)
-
     resultado = {
-        "leagueName": "Golómetro 2.0",
+        "leagueName": "Mi Liga Mister Fantasy",
         "season": "2026/2027",
-        "lastUpdated": ahora_espana.strftime("%d/%m/%Y a las %H:%M"),
+        "lastUpdated": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "managers": list(managers.values()),
         "matchdays": matchdays,
     }
