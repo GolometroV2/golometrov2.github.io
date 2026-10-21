@@ -42,7 +42,7 @@ GOLES_ENCAJADOS_MODO = "portero"
 
 PAUSA_ENTRE_PETICIONES = 0.25
 ARCHIVO_CACHE = os.path.join(CARPETA_SCRIPT, "cache_mister.json")
-VERSION_CACHE = 2  # súbela cuando cambie cómo se calculan los datos de jugadores
+VERSION_CACHE = 3  # súbela cuando cambie cómo se calculan los datos de jugadores
 POSICIONES = {1: "PT", 2: "DF", 3: "MC", 4: "DL"}
 
 COLORES_AVATAR = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"]
@@ -334,7 +334,9 @@ def compactar_detalle(d):
     if encajados is None:
         encajados = int(v("goalsAgainst"))
 
+    bp = d.get("points")
     return {
+        "basePoints": int(bp) if isinstance(bp, (int, float)) else None,
         "goals": int(goles),
         "assists": int(asist),
         "yellowCards": int(amarillas),
@@ -361,6 +363,32 @@ def cargar_cache():
 def guardar_cache(cache):
     with open(ARCHIVO_CACHE, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False)
+
+
+def datos_capitan(jugadores):
+    """Capitán de la jornada: puntos finales (ya multiplicados), puntos base y extra que aporta el multiplicador."""
+    cap = next((j for j in jugadores if j["captain"]), None)
+    if not cap:
+        return None
+    final = cap["points"]
+    base = cap.get("basePoints")
+    mult = cap.get("captainMultiplier")
+    if final is None:            # el capitán no jugó
+        final, base, bonus = 0, 0, 0
+    else:
+        if base is None and mult:
+            base = round(final / mult)   # respaldo si no se pudo pedir el detalle del jugador
+        bonus = final - base if base is not None else 0
+    return {
+        "id": cap["id"],
+        "name": cap["name"],
+        "pos": cap["pos"],
+        "multiplier": mult,
+        "played": cap["played"],
+        "points": final,
+        "basePoints": base,
+        "bonus": bonus,
+    }
 
 
 def extra_manager(session, uid, slug, gw, cache):
@@ -392,7 +420,7 @@ def extra_manager(session, uid, slug, gw, cache):
             if pts_num is not None:
                 puntos_alineacion += pts_num
 
-            extra = {"goals": 0, "assists": 0, "yellowCards": 0, "redCards": 0,
+            extra = {"basePoints": None, "goals": 0, "assists": 0, "yellowCards": 0, "redCards": 0,
                      "ownGoals": 0, "minutes": 0, "goalsConceded": 0}
             if jugo:
                 clave_p = f"p:{gw}:{p['id']}"
@@ -414,6 +442,7 @@ def extra_manager(session, uid, slug, gw, cache):
                 "pos": POSICIONES.get(pos_num, "?"),
                 "points": pts_num,
                 "captain": bool(p.get("captain")),
+                "captainMultiplier": p.get("captain_multiplier") if p.get("captain") else None,
                 "played": jugo,
                 **extra,
             })
@@ -436,6 +465,7 @@ def extra_manager(session, uid, slug, gw, cache):
         "goalsConceded": encajados,
         "formation": ugw.get("formation"),
         "lineupPoints": puntos_alineacion,
+        "captain": datos_capitan(jugadores),
         "players": jugadores,
     }
     if cerrada:
@@ -637,6 +667,7 @@ def main():
                 "goalsByPos": ex["goalsByPos"] if ex else {"PT": 0, "DF": 0, "MC": 0, "DL": 0},
                 "redCards": ex["redCards"] if ex else 0,
                 "goalsConceded": ex["goalsConceded"] if ex else 0,
+                "captain": ex["captain"] if ex else None,
                 "players": ex["players"] if ex else [],
             }
 
@@ -652,7 +683,7 @@ def main():
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
     resultado = {
-        "leagueName": "MONEYBALL",
+        "leagueName": "Mi Liga Mister Fantasy",
         "season": "2026/2027",
         "lastUpdated": hora_madrid().strftime("%d/%m/%Y %H:%M"),
         "managers": list(managers.values()),
