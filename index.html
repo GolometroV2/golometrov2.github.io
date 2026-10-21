@@ -97,7 +97,7 @@ ul{list-style:none;margin:0;padding:0}
 .cp .by .av{width:20px;height:20px;font-size:9px}
 .cp .rec{text-align:right;line-height:1.1}
 .cp .rec b{font-size:24px;font-weight:800;color:var(--acc)}
-.cp .rec small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.cp .rec small{display:block;color:var(--mut);font-size:12px;margin-top:2px;white-space:nowrap}
 .note{color:var(--mut);font-size:13px;margin:8px 0 0}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
@@ -107,7 +107,7 @@ code{color:var(--acc)}
 <header class="nav"><div>
   <div class="logo">Golómetro <span>V2</span></div>
   <span class="acciones">
-    <!-- TEMPORAL: botón de carga manual (borrar este <label> al terminar las pruebas) -->
+    <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
     <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
   </span>
@@ -311,7 +311,7 @@ function pintarCapitanes() {
         <span class="fn"><i style="background:var(--${esc(String(c.pos).toLowerCase())})"></i>${esc(c.name)}</span>
         <span class="by">${avatar(m, i)} ${esc(m.name)} · ${esc(j)}</span>
       </span>
-      <span class="rec"><b>${c.points}</b><small>${c.multiplier ? "x" + esc(c.multiplier) + " · " : ""}${c.bonus >= 0 ? "+" : ""}${c.bonus} extra</small></span>
+      <span class="rec"><b>${c.points}</b><small>${c.basePoints != null ? esc(c.basePoints) + " base · " : ""}${c.multiplier ? "x" + esc(c.multiplier) + " · " : ""}${c.bonus >= 0 ? "+" : ""}${c.bonus} extra</small></span>
     </li>`).join("");
   cont.innerHTML = `<h2 style="margin:0 0 4px;font-size:16px">Top 5 capitanes</h2>
     <p class="note" style="margin:0 0 6px">Mejores puntuaciones conseguidas con el capitán (ya multiplicadas).</p>
