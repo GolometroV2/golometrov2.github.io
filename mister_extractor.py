@@ -51,6 +51,15 @@ COLORES_AVATAR = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec489
 # --------------------------------------------------------------------------
 # Credenciales
 # --------------------------------------------------------------------------
+def interactivo():
+    return bool(sys.stdin) and sys.stdin.isatty()
+
+
+def pausa():
+    if interactivo():
+        input("\nPresiona ENTER para cerrar la ventana...")
+
+
 def cargar_credenciales():
     valores = {}
     ruta_env = os.path.join(CARPETA_SCRIPT, "credenciales.env")
@@ -71,7 +80,7 @@ def cargar_credenciales():
         print("    Crea 'credenciales.env' junto al script con las líneas:")
         print("    MISTER_COOKIE=...")
         print("    X_AUTH_TOKEN=...")
-        input("\nPresiona ENTER para cerrar la ventana...")
+        pausa()
         sys.exit(1)
 
     return cookie, x_auth
@@ -451,8 +460,8 @@ def main():
     html_semilla = pedir_gw(session, GW_SEMILLA, carpeta_debug, "semilla")
     if html_semilla is None:
         print("[!] No se pudo descargar la petición inicial. Revisa las credenciales.")
-        input("\nPresiona ENTER para cerrar la ventana...")
-        return
+        pausa()
+        sys.exit(1)
 
     mapa = leer_selector_jornadas(html_semilla, GW_SEMILLA)
     if not mapa:
@@ -499,8 +508,8 @@ def main():
 
     if not datos:
         print("[!] No se obtuvo ninguna jornada con datos.")
-        input("\nPresiona ENTER para cerrar la ventana...")
-        return
+        pausa()
+        sys.exit(1)
 
     # 3. Alineaciones, goles y tarjetas (puede tardar la primera vez; luego usa la caché)
     cache = cargar_cache()
@@ -522,6 +531,13 @@ def main():
             guardar_cache(cache)
         print(f"   J{n} completada")
     guardar_cache(cache)
+
+    faltan = [(n, uid) for (n, uid), ex in extras.items() if ex is None]
+    if faltan or not sesion_ok:
+        print(f"\n[!] Datos incompletos: {len(faltan)} alineación(es) sin descargar.")
+        if not interactivo():
+            print("    Ejecución automática: no se escribe el JSON para no pisar datos buenos.")
+            sys.exit(1)
 
     # 4. Construir el JSON
     managers = {}
@@ -597,7 +613,7 @@ def main():
     print(" ¡PROCESO COMPLETADO!")
     print(f" Archivo guardado en: {archivo_salida}")
     print("=" * 65)
-    #input("\nPresiona ENTER para cerrar la ventana...")#
+    pausa()
 
 
 if __name__ == "__main__":
