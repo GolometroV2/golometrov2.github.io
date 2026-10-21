@@ -18,7 +18,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -51,6 +51,25 @@ COLORES_AVATAR = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec489
 # --------------------------------------------------------------------------
 # Credenciales
 # --------------------------------------------------------------------------
+def hora_madrid():
+    """Hora actual de Madrid (en GitHub Actions el reloj va en UTC)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Europe/Madrid"))
+    except Exception:
+        # Respaldo si no hay base de zonas horarias (p. ej. Windows sin tzdata)
+        return madrid_desde_utc(datetime.now(timezone.utc))
+
+
+def madrid_desde_utc(ahora):
+    def ultimo_domingo(anio, mes):
+        d = datetime(anio, mes, 31, 1, tzinfo=timezone.utc)
+        return d - timedelta(days=(d.weekday() + 1) % 7)
+
+    verano = ultimo_domingo(ahora.year, 3) <= ahora < ultimo_domingo(ahora.year, 10)
+    return ahora + timedelta(hours=2 if verano else 1)
+
+
 def interactivo():
     return bool(sys.stdin) and sys.stdin.isatty()
 
@@ -425,6 +444,41 @@ def extra_manager(session, uid, slug, gw, cache):
 
 
 # --------------------------------------------------------------------------
+# Fotos de perfil (se guardan en avatars/ para no depender del CDN de Mister)
+# --------------------------------------------------------------------------
+CARPETA_AVATARES = os.path.join(CARPETA_SCRIPT, "avatars")
+
+
+def descargar_avatar(url):
+    """Descarga la foto a avatars/ y devuelve su ruta relativa. Si falla, devuelve la URL original."""
+    if not url or not url.startswith("http"):
+        return url
+    nombre = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.basename(url.split("?")[0]))
+    if not nombre:
+        return url
+    if "." not in nombre:
+        nombre += ".png"
+    ruta = os.path.join(CARPETA_AVATARES, nombre)
+    relativa = "avatars/" + nombre
+    if os.path.exists(ruta) and os.path.getsize(ruta) > 0:
+        return relativa
+    try:
+        r = requests.get(
+            url, timeout=15,
+            headers={"user-agent": HEADERS["user-agent"], "referer": "https://mister.mundodeportivo.com/"},
+        )
+        if r.status_code == 200 and r.content and r.headers.get("content-type", "").startswith("image/"):
+            os.makedirs(CARPETA_AVATARES, exist_ok=True)
+            with open(ruta, "wb") as f:
+                f.write(r.content)
+            return relativa
+        print(f"   [!] No se pudo descargar la foto (status {r.status_code}): {url}")
+    except Exception as e:
+        print(f"   [!] Error descargando la foto {url}: {e}")
+    return url
+
+
+# --------------------------------------------------------------------------
 # Descarga
 # --------------------------------------------------------------------------
 def pedir_gw(session, gw, carpeta_debug, etiqueta):
@@ -556,12 +610,12 @@ def main():
                     "name": fg["name"],
                     "teamName": fg["name"],
                     "avatar": iniciales,
-                    "avatarUrl": fg.get("avatarUrl") or fj.get("avatarUrl") or "",
+                    "avatarUrl": descargar_avatar(fg.get("avatarUrl") or fj.get("avatarUrl") or ""),
                     "hue": fg.get("hue") if fg.get("hue") is not None else fj.get("hue"),
                     "color": COLORES_AVATAR[len(managers) % len(COLORES_AVATAR)],
                 }
             elif not managers[uid].get("avatarUrl"):
-                managers[uid]["avatarUrl"] = fg.get("avatarUrl") or fj.get("avatarUrl") or ""
+                managers[uid]["avatarUrl"] = descargar_avatar(fg.get("avatarUrl") or fj.get("avatarUrl") or "")
 
             acumulados[uid] = acumulados.get(uid, 0) + fj["points"]
 
@@ -598,9 +652,9 @@ def main():
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
     resultado = {
-        "leagueName": "MONEYBALL",
+        "leagueName": "Mi Liga Mister Fantasy",
         "season": "2026/2027",
-        "lastUpdated": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "lastUpdated": hora_madrid().strftime("%d/%m/%Y %H:%M"),
         "managers": list(managers.values()),
         "matchdays": matchdays,
     }
