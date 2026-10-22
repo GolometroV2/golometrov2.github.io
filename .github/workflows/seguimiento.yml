@@ -2,7 +2,7 @@ name: Seguimiento de plantillas
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Cada 15 minutos
+    - cron: '*/5 * * * *' # Cada 5 minutos
   workflow_dispatch:
 
 permissions:
