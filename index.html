@@ -7,9 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Paleta "Carbón y verde". Para probar otra, copia sus valores sobre estos:
-   Esmeralda y dorado -> --acc:#f5c542; --accTxt:#1a1500
-   Verde menta        -> --acc:#19d3a2; --accTxt:#042119 */
 :root{--bg:#111315;--panel:#1a1d21;--panel2:#23272d;--line:#2f353c;--txt:#f4f6f5;--mut:#9aa3ad;--acc:#2fd46e;--accTxt:#05210f;
 --pt:#ffc94a;--df:#4cc3ff;--mc:#a3e635;--dl:#ff6b7a;--red:#ff6b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -120,6 +117,16 @@ ul{list-style:none;margin:0;padding:0}
 .mv small{display:block;color:var(--mut);font-size:12px}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
+
+/* Estilos para el panel de bloqueo de Equipos */
+.lock-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:32px 20px;text-align:center;max-width:400px;margin:40px auto}
+.lock-box h2{margin:0 0 8px;font-size:18px}
+.lock-box p{color:var(--mut);font-size:13.5px;margin:0 0 20px}
+.lock-form{display:flex;gap:8px;justify-content:center}
+.lock-input{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--txt);font:inherit;width:160px;text-align:center;letter-spacing:2px;font-weight:700}
+.lock-input:focus{border-color:var(--acc)}
+.lock-btn{background:var(--acc);color:var(--accTxt);border-radius:8px;padding:8px 16px;font-weight:600}
+.lock-error{color:var(--red);font-size:12.5px;margin-top:10px;min-height:18px}
 </style>
 </head>
 <body>
@@ -140,9 +147,6 @@ code{color:var(--acc)}
 
 <script>
 const POS = ["PT", "DF", "MC", "DL"];
-// Qué cuentan las columnas "Capitán" y "Sin capitán":
-//   "extra" -> solo los puntos que añade el multiplicador (x1.5, x2 o x3)
-//   "total" -> todos los puntos del capitán (ya multiplicados)
 const MODO_CAP = "extra";
 const METRICAS = [["points", "Puntos", "Pts"], ["sinCap", "Sin capitán", "Pts"], ["cap", "Capitán", "Pts"], ["goals", "Goles", "Goles"], ["assists", "Asistencias", "Asist."],
   ["goalsConceded", "Encajados", "Enc."], ["yellow", "Amarillas", "Amar."], ["redCards", "Rojas", "Rojas"]];
@@ -182,7 +186,7 @@ function cargar(obj) {
 function cargarEquipos() {
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); })
+    .then(j => { E = j; if (seccion === "eq" && equiposDesbloqueados) pintarEquipos(); })
     .catch(() => {});
 }
 
@@ -192,19 +196,43 @@ function pintarNav() {
 }
 
 function ir(sec) {
-  if (sec === "eq" && !equiposDesbloqueados) {
-    const pwd = prompt("Introduce la contraseña para acceder a la sección de Equipos:");
-    if (pwd !== PASS_EQUIPOS) {
-      alert("Contraseña incorrecta.");
-      return;
-    }
-    equiposDesbloqueados = true;
-  }
   seccion = sec;
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
   pintarNav();
-  if (sec === "eq") pintarEquipos();
+  if (sec === "eq") {
+    if (!equiposDesbloqueados) {
+      pintarLoginEquipos();
+    } else {
+      pintarEquipos();
+    }
+  }
+}
+
+function comprobarPassword(e) {
+  if (e) e.preventDefault();
+  const input = $("#pwd-input");
+  const err = $("#pwd-error");
+  if (input && input.value === PASS_EQUIPOS) {
+    equiposDesbloqueados = true;
+    pintarEquipos();
+  } else {
+    if (err) err.textContent = "Contraseña incorrecta. Prueba de nuevo.";
+    if (input) { input.value = ""; input.focus(); }
+  }
+}
+
+function pintarLoginEquipos() {
+  $("#eq").innerHTML = `
+    <div class="lock-box">
+      <h2>🔒 Sección en desarrollo</h2>
+      <p>Introduce la contraseña para acceder a la pestaña de Equipos.</p>
+      <form class="lock-form" onsubmit="comprobarPassword(event)">
+        <input type="password" id="pwd-input" class="lock-input" placeholder="••••" autocomplete="current-password" autofocus>
+        <button type="submit" class="lock-btn">Entrar</button>
+      </form>
+      <div id="pwd-error" class="lock-error"></div>
+    </div>`;
 }
 
 function cargarDatos() {
@@ -226,7 +254,7 @@ pintarNav();
 function leerArchivo(f) {
   if (!f) return;
   const r = new FileReader();
-  r.onload = e => { try { const j = JSON.parse(e.target.result); if (j && j.history) { E = j; pintarEquipos(); } else cargar(j); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
+  r.onload = e => { try { const j = JSON.parse(e.target.result); if (j && j.history) { E = j; if(equiposDesbloqueados) pintarEquipos(); } else cargar(j); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
   r.readAsText(f);
 }
 $("#file").onchange = e => { leerArchivo(e.target.files[0]); e.target.value = ""; };
@@ -384,7 +412,6 @@ const ETIQ = { sube_acel: "Subiendo · acelerando", sube_const: "Subiendo · rit
 const RANGO = { baja_acel: 0, sube_frena: 1, baja_const: 2, baja_1: 2, baja_frena: 3, plano: 4, sube_const: 5, sube_1: 5, sube_acel: 6, nd: 7 };
 const nombreM = id => (E.managers.find(m => m.id === id) || {}).name || "Alguien";
 
-// h = historial del jugador: [[fecha, valor, valorAnterior], ...]. El cambio diario de cada entrada es valor - valorAnterior.
 function tendencia(h) {
   const d = (h || []).slice(-6).map(e => e[1] - e[2]);
   const n = d.length;
@@ -392,7 +419,7 @@ function tendencia(h) {
   const ult = d[n - 1], pct = ult / Math.max(h[h.length - 1][1] - ult, 1);
   if (Math.abs(pct) < 0.003) return { k: "plano", d: ult, pct, n };
   if (n < 2) return { k: ult > 0 ? "sube_1" : "baja_1", d: ult, pct, n };
-  const pend = (d[n - 1] - d[0]) / (n - 1);   // cuánto cambia el cambio diario cada día
+  const pend = (d[n - 1] - d[0]) / (n - 1);
   const tol = Math.abs(ult) * 0.15;
   let k, eta = null;
   if (ult > 0) {
