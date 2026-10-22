@@ -99,6 +99,25 @@ ul{list-style:none;margin:0;padding:0}
 .cp .rec b{font-size:24px;font-weight:800;color:var(--acc)}
 .cp .rec small{display:block;color:var(--mut);font-size:12px;margin-top:2px;white-space:nowrap}
 .note{color:var(--mut);font-size:13px;margin:8px 0 0}
+.up{color:var(--acc)}.dn{color:var(--red)}.flat{color:var(--mut)}
+.pts em.up{color:var(--acc)}.pts em.flat{color:var(--mut)}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.mini span{background:var(--panel2);border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:600}
+.pj{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.pj .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.pj svg{flex:none}
+.pj .val{text-align:right;line-height:1.15;min-width:84px}
+.pj .val b{font-size:16px;font-weight:700}
+.pj .val small{display:block;font-size:12px;color:var(--mut)}
+.tend{display:inline-block;margin-top:3px;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600}
+.t-sube_acel,.t-sube_const,.t-sube_1{background:#2fd46e26;color:var(--acc)}
+.t-sube_frena{background:#ffc94a26;color:var(--pt)}
+.t-baja_frena{background:#4cc3ff26;color:var(--df)}
+.t-baja_const,.t-baja_acel,.t-baja_1{background:#ff6b6b26;color:var(--red)}
+.t-plano,.t-nd{background:var(--panel2);color:var(--mut)}
+.mv{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.mv:last-child{border-bottom:0}
+.mv small{display:block;color:var(--mut);font-size:12px}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
 </style>
@@ -114,7 +133,9 @@ code{color:var(--acc)}
 </div></header>
 <main>
   <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
+  <div class="tabs" id="nav" role="group" aria-label="Sección"></div>
   <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
+  <div id="eq" hidden></div>
 </main>
 
 <script>
@@ -127,11 +148,12 @@ const METRICAS = [["points", "Puntos", "Pts"], ["sinCap", "Sin capitán", "Pts"]
   ["goalsConceded", "Encajados", "Enc."], ["yellow", "Amarillas", "Amar."], ["redCards", "Rojas", "Rojas"]];
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
 let visibles = new Set(), modoG = "acum", G = null;
+let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const jornadas = () => Object.keys(D.matchdays || {}).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-const col = i => `hsl(${Math.round((i * 360 / Math.max(D.managers.length, 1) + 200) % 360)} 70% 58%)`;
+const col = i => `hsl(${Math.round((i * 360 / Math.max((D || E || { managers: [] }).managers.length, 1) + 200) % 360)} 70% 58%)`;
 const fondo = (m, i) => Number.isFinite(m.hue) ? `hsl(${m.hue} 50% 50%)` : col(i);
 const total = m => jornadas().reduce((t, j) => t + (((D.matchdays[j] || {})[m.id] || {}).points || 0), 0);
 const topIds = n => D.managers.map(m => [m.id, total(m)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(x => x[0]);
@@ -154,7 +176,28 @@ function cargar(obj) {
   pintar();
 }
 
+function cargarEquipos() {
+  fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); })
+    .catch(() => {});
+}
+
+function pintarNav() {
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", "💰 Equipos"]]
+    .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
+}
+
+function ir(sec) {
+  seccion = sec;
+  $("#app").hidden = sec !== "clas";
+  $("#eq").hidden = sec !== "eq";
+  pintarNav();
+  if (sec === "eq") pintarEquipos();
+}
+
 function cargarDatos() {
+  cargarEquipos();
   $("#app").innerHTML = `<div class="msg">Actualizando datos de la liga...</div>`;
   fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
@@ -166,12 +209,13 @@ function cargarDatos() {
 
 // Carga automática inicial al abrir la página
 cargarDatos();
+pintarNav();
 
 // ===== TEMPORAL: carga manual del JSON para pruebas (borrar este bloque y el <label id="tmp-carga">) =====
 function leerArchivo(f) {
   if (!f) return;
   const r = new FileReader();
-  r.onload = e => { try { cargar(JSON.parse(e.target.result)); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
+  r.onload = e => { try { const j = JSON.parse(e.target.result); if (j && j.history) { E = j; pintarEquipos(); } else cargar(j); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
   r.readAsText(f);
 }
 $("#file").onchange = e => { leerArchivo(e.target.files[0]); e.target.value = ""; };
@@ -318,6 +362,107 @@ function pintarCapitanes() {
     ${filas ? `<ul>${filas}</ul>` : `<p class="note">Aún no hay capitanes que hayan jugado.</p>`}`;
 }
 
+/* ---------- Equipos: seguimiento de plantillas ---------- */
+const nf = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 2 });
+const eur = v => Math.abs(v) >= 1e6 ? nf.format(v / 1e6) + " M" : nf.format(Math.round(v / 1e3)) + " k";
+const sig = v => (v > 0 ? "+" : v < 0 ? "−" : "") + eur(Math.abs(v));
+const cl = v => v > 0 ? "up" : v < 0 ? "dn" : "flat";
+const ETIQ = { sube_acel: "Subiendo · acelerando", sube_const: "Subiendo · ritmo constante", sube_frena: "Subiendo · frenando", sube_1: "Subiendo",
+  baja_frena: "Bajando · frenando la caída", baja_const: "Bajando · ritmo constante", baja_acel: "Bajando · cada día más", baja_1: "Bajando",
+  plano: "Estable", nd: "Sin datos" };
+const RANGO = { baja_acel: 0, sube_frena: 1, baja_const: 2, baja_1: 2, baja_frena: 3, plano: 4, sube_const: 5, sube_1: 5, sube_acel: 6, nd: 7 };
+const nombreM = id => (E.managers.find(m => m.id === id) || {}).name || "Alguien";
+
+// h = historial del jugador: [[fecha, valor, valorAnterior], ...]. El cambio diario de cada entrada es valor - valorAnterior.
+function tendencia(h) {
+  const d = (h || []).slice(-6).map(e => e[1] - e[2]);
+  const n = d.length;
+  if (!n) return { k: "nd", d: 0, pct: 0, n: 0 };
+  const ult = d[n - 1], pct = ult / Math.max(h[h.length - 1][1] - ult, 1);
+  if (Math.abs(pct) < 0.003) return { k: "plano", d: ult, pct, n };
+  if (n < 2) return { k: ult > 0 ? "sube_1" : "baja_1", d: ult, pct, n };
+  const pend = (d[n - 1] - d[0]) / (n - 1);   // cuánto cambia el cambio diario cada día
+  const tol = Math.abs(ult) * 0.15;
+  let k, eta = null;
+  if (ult > 0) {
+    if (pend > tol) k = "sube_acel";
+    else if (pend < -tol) { k = "sube_frena"; eta = Math.ceil(ult / -pend); }
+    else k = "sube_const";
+  } else {
+    if (pend < -tol) k = "baja_acel";
+    else if (pend > tol) { k = "baja_frena"; eta = Math.ceil(-ult / pend); }
+    else k = "baja_const";
+  }
+  return { k, d: ult, pct, n, eta };
+}
+
+function spark(h, k) {
+  if (!h.length) return "";
+  const w = h.slice(-8), vals = [w[0][2], ...w.map(e => e[1])];
+  const W = 64, H = 22, mn = Math.min(...vals), rg = Math.max(Math.max(...vals) - mn, 1);
+  const pts = vals.map((v, i) => `${(i * (W - 4) / (vals.length - 1) + 2).toFixed(1)},${(H - 3 - (v - mn) / rg * (H - 6)).toFixed(1)}`).join(" ");
+  const c = k.startsWith("sube") ? "var(--acc)" : k.startsWith("baja") ? "var(--red)" : "var(--mut)";
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline style="fill:none;stroke:${c};stroke-width:2;stroke-linejoin:round;stroke-linecap:round" points="${pts}"/></svg>`;
+}
+
+function textoMov(t) {
+  const j = `<b>${esc(t.name)}</b>`, v = t.value ? ` (${eur(t.value)})` : "";
+  if (!t.from) return `<b>${esc(nombreM(t.to))}</b> ficha a ${j}${v} desde el mercado`;
+  if (!t.to) return `<b>${esc(nombreM(t.from))}</b> vende a ${j}${v} al mercado`;
+  return `<b>${esc(nombreM(t.to))}</b> compra a ${j}${v} a <b>${esc(nombreM(t.from))}</b>`;
+}
+
+function resumenEq(ms, hp) {
+  const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
+    const d = m.squadValue - m.squadPrev;
+    const ts = m.players.map(p => tendencia(hp(p.id)).k);
+    const sube = ts.filter(t => t.startsWith("sube")).length, baja = ts.filter(t => t.startsWith("baja")).length, frena = ts.filter(t => t === "sube_frena").length;
+    return `<li class="row"><button class="rowbtn" data-e="${esc(m.id)}"><span class="pos">${k + 1}</span>${avatar(m, m.i)}
+      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jugadores · ▲${sube} ▼${baja}${frena ? " · ⚠ " + frena + " frenando" : ""}</span></span>
+      <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
+  }).join("");
+  const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.date)}</small></li>`).join("");
+  return `<ul style="margin-top:12px">${filas}</ul>
+    <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
+}
+
+function detalleEq(m, hp) {
+  const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id)) }));
+  const dM = m.squadValue - m.squadPrev;
+  const ord = { delta: (a, b) => b.t.d - a.t.d, valor: (a, b) => b.p.value - a.p.value,
+    alerta: (a, b) => RANGO[a.t.k] - RANGO[b.t.k] || b.p.value - a.p.value }[eqOrden];
+  const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
+    .map(([k, t]) => `<button class="pill ${eqOrden === k ? "on" : ""}" data-es="${k}">${t}</button>`).join("");
+  const filas = L.sort(ord).map(({ p, t, h }) => {
+    const eta = t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
+    return `<li class="pj"><i class="dot" style="background:var(--${esc(String(p.pos).toLowerCase())})"></i>
+      <span class="info"><span class="nm">${esc(p.name)}</span><span class="sub">${esc(p.pos)} · valor ${eur(p.value)}${p.clause ? " · cláusula " + eur(p.clause) : ""}</span>
+        <span><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span></span></span>
+      ${spark(h, t.k)}
+      <span class="val"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small></span></li>`;
+  }).join("");
+  const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
+  return `<section class="card" style="margin-top:12px"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
+      <div style="flex:1;min-width:0"><div class="nm">${esc(m.name)}</div><div class="sub">Valor de plantilla</div></div>
+      <div class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(dM)}">${sig(dM)} hoy</em></div></div>
+    <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div></section>
+    <div class="pills" role="group" aria-label="Ordenar" style="margin-top:12px">${sorts}</div>
+    <ul>${filas}</ul>
+    <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>`;
+}
+
+function pintarEquipos() {
+  const cont = $("#eq");
+  if (!E) { cont.innerHTML = `<div class="msg">Todavía no hay datos de equipos.<br>Se generan con <code>seguimiento_equipos.py</code>.</div>`; return; }
+  const hp = id => (E.history || {})[id] || [];
+  const ms = E.managers.map((m, i) => ({ ...m, i }));
+  const pills = [["resumen", "Resumen"], ...ms.map(m => [m.id, m.name])]
+    .map(([id, t]) => `<button class="pill ${eqSel === id ? "on" : ""}" data-e="${esc(id)}">${esc(t)}</button>`).join("");
+  const sel = ms.find(x => x.id === eqSel);
+  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc(E.updated || "—")} · se actualiza cuando cambian las plantillas o los valores.</p>
+    <div class="pills" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
+}
+
 /* ---------- Lista principal ---------- */
 function pintar() {
   const meta = METRICAS.find(x => x[0] === orden.k);
@@ -350,9 +495,13 @@ function pintar() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm]");
-  if (!t || !D) return;
+  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-s],[data-e],[data-es]");
+  if (!t) return;
   const d = t.dataset;
+  if (d.s) { ir(d.s); return; }
+  if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.es) { eqOrden = d.es; pintarEquipos(); return; }
+  if (!D) return;
   if (d.g !== undefined || d.gs !== undefined || d.gm !== undefined) {
     if (d.g !== undefined) visibles.has(d.g) ? visibles.delete(d.g) : visibles.add(d.g);
     else if (d.gs === "all") visibles = new Set(D.managers.map(m => m.id));
