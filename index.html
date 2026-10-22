@@ -150,6 +150,9 @@ let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = 
 let visibles = new Set(), modoG = "acum", G = null;
 let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
 
+let equiposDesbloqueados = false;
+const PASS_EQUIPOS = "9248";
+
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const jornadas = () => Object.keys(D.matchdays || {}).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
@@ -189,6 +192,14 @@ function pintarNav() {
 }
 
 function ir(sec) {
+  if (sec === "eq" && !equiposDesbloqueados) {
+    const pwd = prompt("Introduce la contraseña para acceder a la sección de Equipos:");
+    if (pwd !== PASS_EQUIPOS) {
+      alert("Contraseña incorrecta.");
+      return;
+    }
+    equiposDesbloqueados = true;
+  }
   seccion = sec;
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
