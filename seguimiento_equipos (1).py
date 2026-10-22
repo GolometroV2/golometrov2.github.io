@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+SEGUIMIENTO DE PLANTILLAS Y ECONOMÍA
+
+Genera equipos.json con:
+  - las plantillas actuales de cada manager (valor, cambio diario, cláusula...)
+  - el historial de valores de cada jugador y de cada plantilla
+  - los fichajes y ventas detectados entre ejecuciones
+
+Se ejecuta con frecuencia (cada ~15 minutos desde GitHub Actions). Solo reescribe
+equipos.json si algo ha cambiado, así que solo hay commit cuando un manager compra
+o vende, o cuando cambian los valores.
+Usa las mismas credenciales que mister_extractor.py.
+"""
+
+import json
+import os
+import sys
+
+import requests
+
+import mister_extractor as m
+
+ARCHIVO = os.path.join(m.CARPETA_SCRIPT, "equipos.json")
+MAX_HISTORIAL = 60        # entradas guardadas por jugador / plantilla
+MAX_MOVIMIENTOS = 100
+POS = {1: "PT", 2: "DF", 3: "MC", 4: "DL"}
+
+
+def cargar_previo():
+    if os.path.exists(ARCHIVO):
+        try:
+            with open(ARCHIVO, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (ValueError, OSError):
+            pass
+    return {}
+
+
+def entero(x):
+    try:
+        return int(round(float(x)))
+    except (TypeError, ValueError):
+        return 0
+
+
+def actualizar_historial(hist, clave, valor, anterior, fecha):
+    """Guarda [fecha, valor, valorAnterior] solo si ha cambiado respecto a la última entrada."""
+    h = hist.setdefault(str(clave), [])
+    if h and h[-1][1] == valor and h[-1][2] == anterior:
+        return
+    if h and h[-1][0] == fecha:
+        h[-1] = [fecha, valor, anterior]
+    else:
+        h.append([fecha, valor, anterior])
+    del h[:-MAX_HISTORIAL]
+
+
+def descargar_plantillas(session):
+    resp = session.post(m.URL_STANDINGS, params={"gw": m.GW_SEMILLA}, headers=m.HEADERS, timeout=20)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Clasificación: status {resp.status_code}")
+    listas = m.extraer_listas(resp.text)
+    if not listas:
+        raise RuntimeError("No se encontró la clasificación en la respuesta")
+
+    managers = []
+    for f in listas[0]:
+        data = m.post_ajax(
+            session, "/ajax/sw/users",
+            {"post": "users", "id": f["id"], "slug": f["slug"], "qs": f"gw={m.GW_SEMILLA}", "comments": "0"},
+            m.GW_SEMILLA,
+        )
+        if not data:
+            # Si falta un manager parecería que ha vendido a todos sus jugadores: se aborta
+            raise RuntimeError(f"No se pudo leer la plantilla de {f['name']}")
+
+        jugadores = []
+        for p in data.get("team_now") or []:
+            clausula = (p.get("clause") or {}).get("value")
+            jugadores.append({
+                "id": str(p["id"]),
+                "name": p.get("name"),
+                "pos": POS.get(entero(p.get("position")), "?"),
+                "teamId": p.get("id_team"),
+                "value": entero(p.get("value")),
+                "prev": entero(p.get("prev_value")),
+                "points": p.get("points"),
+                "avg": p.get("avg"),
+                "clause": entero(clausula) if clausula else None,
+                "acquired": p.get("created"),
+                "origin": p.get("transfer_origin"),
+            })
+        valor = data.get("value") or {}
+        managers.append({
+            "id": f["id"],
+            "name": f["name"],
+            "avatar": "".join(w[0].upper() for w in f["name"].split()[:2]) or "MF",
+            "avatarUrl": m.descargar_avatar(f.get("avatarUrl") or ""),
+            "hue": f.get("hue"),
+            "squadValue": entero(valor.get("value")),
+            "squadPrev": entero(valor.get("prev_value")),
+            "players": jugadores,
+        })
+    return managers
+
+
+def detectar_movimientos(previo, managers, ahora):
+    antes = {p["id"]: mg["id"] for mg in previo.get("managers", []) for p in mg["players"]}
+    despues = {p["id"]: mg["id"] for mg in managers for p in mg["players"]}
+    info = {p["id"]: p for mg in managers + previo.get("managers", []) for p in mg["players"]}
+    nuevos = []
+    if not antes:        # primera ejecución: no hay con qué comparar
+        return nuevos
+    for pid in set(antes) | set(despues):
+        a, b = antes.get(pid), despues.get(pid)
+        if a != b:
+            nuevos.append({"date": ahora, "playerId": pid, "name": info[pid]["name"],
+                           "from": a, "to": b, "value": info[pid]["value"]})
+    return nuevos
+
+
+def main():
+    session = requests.Session()
+    previo = cargar_previo()
+    try:
+        managers = descargar_plantillas(session)
+    except (RuntimeError, m.ErrorSesion) as e:
+        print(f"[!] {e}. No se modifica equipos.json.")
+        sys.exit(1)
+
+    ahora = m.hora_madrid()
+    fecha, fecha_hora = ahora.strftime("%Y-%m-%d"), ahora.strftime("%d/%m %H:%M")
+
+    history = previo.get("history", {})
+    for mg in managers:
+        for p in mg["players"]:
+            actualizar_historial(history, p["id"], p["value"], p["prev"], fecha)
+    squad_history = previo.get("squadHistory", {})
+    for mg in managers:
+        actualizar_historial(squad_history, mg["id"], mg["squadValue"], mg["squadPrev"], fecha)
+
+    movimientos = detectar_movimientos(previo, managers, fecha_hora)
+    for mv in movimientos:
+        print(f"   Movimiento: {mv['name']} | {mv['from']} -> {mv['to']}")
+    transfers = (movimientos + previo.get("transfers", []))[:MAX_MOVIMIENTOS]
+
+    salida = {
+        "updated": ahora.strftime("%d/%m/%Y %H:%M"),
+        "managers": managers,
+        "history": history,
+        "squadHistory": squad_history,
+        "transfers": transfers,
+    }
+
+    if {k: v for k, v in salida.items() if k != "updated"} == {k: v for k, v in previo.items() if k != "updated"}:
+        print("Sin cambios: no se escribe equipos.json.")
+        return
+
+    with open(ARCHIVO, "w", encoding="utf-8") as f:
+        json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"equipos.json actualizado ({len(managers)} managers, {len(movimientos)} movimientos nuevos).")
+
+
+if __name__ == "__main__":
+    main()
