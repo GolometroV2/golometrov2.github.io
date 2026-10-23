@@ -648,7 +648,10 @@ const CAP = {
   SENS_ATAQUE: 0.6,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
   SENS_CS: 0.35,        // 10 % más de probabilidad de portería a cero -> +3,5 % de puntos
   LIMITE_F: [0.55, 1.6],
-  RIESGO: [0, 0.25, 0.6],   // aversión al riesgo: arriesgado, equilibrado, seguro
+  RIESGO: [0, 0.4, 0.9],    // aversión al riesgo: arriesgado, equilibrado, seguro
+  PESO_TEMPORADA: 0.6,  // peso de la regularidad de toda la temporada frente a las últimas 5 jornadas
+  P_XI_BASE: 0.5, P_XI_REGULAR: 0.45,   // prob. de jugar en el once probable = base + regular * tasa de titularidad
+  P_FUERA_BASE: 0.03, P_FUERA_REGULAR: 0.25,  // idem si NO está en el once probable
   POS_DEF: { PT: 3.4, DF: 3.2, MC: 3.5, DL: 3.8 },
   SIGMA_DEF: { PT: 3.2, DF: 3.0, MC: 3.6, DL: 4.0 }
 };
@@ -751,6 +754,9 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
   (cal.games || []).forEach(g => { nombres[g.home] = g.homeName; nombres[g.away] = g.awayName; });
   (E.managers || []).forEach(m => m.players.forEach(p => { if (p.teamLogo) escudos[p.teamId] = p.teamLogo; }));
 
+  const cerradas = (cal.gameweeks || []).filter(g => g.status === "finished").length ||
+    new Set((cal.games || []).filter(g => capNum(g.gh)).map(g => g.gw)).size;
+  const confirmados = obj.games.filter(g => g.confirmed || ((cal.lineups || {})[String(g.id)] && Object.values(cal.lineups[String(g.id)]).some(e => e.confirmed))).length;
   const lambda = CAP.RIESGO[Math.max(0, Math.min(2, riesgo))];
   const lista = [];
 
@@ -788,18 +794,25 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
     const fCtx = capClamp(Math.pow(Math.max(fXg, 0.2), 1 - a) * Math.pow(fPts, a), CAP.LIMITE_F);
 
     // 4) probabilidad de jugar
+    //    Tasa de titularidad: mezcla de las últimas 5 jornadas y de toda la temporada (partidos jugados ≈ puntos / media).
     const pre = (cal.lineups || {})[String(g.id)] || {};
     const eq = pre[String(p.teamId)];
-    const tasa = racha.length ? jugadas.length / racha.length : 0.7;
+    const tasa5 = racha.length ? jugadas.length / racha.length : null;
+    const partidos = capNum(p.points) && avg > 0 ? Math.min(p.points / avg, cerradas) : null;
+    const tasaT = partidos != null && cerradas > 0 ? Math.min(partidos / cerradas, 1) : null;
+    const tasa = tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.6);
+    const confirmado = !!(eq && eq.confirmed) || !!g.confirmed;
     let pj, fuente;
     if (estado === "injury") { pj = 0.03; fuente = "Lesionado"; }
     else if (estado === "susp") { pj = 0; fuente = "Sancionado"; }
     else if (eq) {
       const en11 = eq.players.includes(String(p.id));
-      if (en11) { pj = eq.confirmed ? 0.98 : 0.92; fuente = eq.confirmed ? "En el once confirmado" : "En el once probable"; }
-      else { pj = eq.confirmed ? 0.07 : (tasa >= 0.6 ? 0.3 : 0.15); fuente = eq.confirmed ? "Fuera del once confirmado" : "No está en el once probable"; }
-    } else { pj = 0.15 + 0.8 * tasa; fuente = "Sin once probable aún (según sus últimas jornadas)"; }
+      if (confirmado) { pj = en11 ? 0.99 : 0.02; fuente = en11 ? "✔ Titular confirmado" : "✖ Fuera del once confirmado"; }
+      else if (en11) { pj = Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa); fuente = "En el once probable"; }
+      else { pj = CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa; fuente = "No está en el once probable"; }
+    } else { pj = 0.1 + 0.8 * tasa; fuente = "Sin once probable aún (según su regularidad)"; }
     if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
+    const rota = !confirmado && tasa < 0.8 && estado !== "injury" && estado !== "susp";
 
     // resultado
     const muC = mu * fCtx, sigC = sig * Math.sqrt(fCtx);
@@ -812,13 +825,13 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, esp, sigEf, m, extra, score, conf,
+      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, esp, sigEf, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
 
   lista.sort((a, b) => b.score - a.score || (b.p.value || 0) - (a.p.value || 0));
-  return { gw: obj.gw, partidos: obj.games.length, modelo, candidatos: lista, observaciones: obs.length };
+  return { gw: obj.gw, partidos: obj.games.length, confirmados, modelo, candidatos: lista, observaciones: obs.length };
 }
 // ===== FIN CAPITAN-ENGINE =====
 
@@ -835,7 +848,8 @@ const POSN = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delan
 
 function motivos(c) {
   const o = [];
-  o.push(["fuente", c.fuente, c.pj >= 0.8 ? "ok" : c.pj >= 0.4 ? "mid" : "mal"]);
+  o.push(["fuente", c.fuente, c.pj >= 0.9 ? "ok" : c.pj >= 0.5 ? "mid" : "mal"]);
+  if (c.rota) o.push(["rota", `Rota: titular en ~${Math.round(c.tasa * 100)} % de los partidos`, "mal"]);
   if (c.forma != null) o.push(["forma", `Forma ${nf1.format(c.forma)} pts · media ${c.avg != null ? nf1.format(c.avg) : "–"}`, c.forma >= 6 ? "ok" : c.forma <= 2.5 ? "mal" : "mid"]);
   if (Math.abs(c.fXg - 1) >= 0.05) o.push(["rival", `Goles esperados: ${nf1.format(c.xgf)} a favor · ${nf1.format(c.xgc)} en contra (${signoPct(c.fXg - 1)} para su puesto)`, c.fXg > 1 ? "ok" : "mal"]);
   if (c.nR >= 4 && Math.abs(c.fPts - 1) >= 0.06) o.push(["conc", `${esc(c.rivalNombre)} concede ${signoPct(c.fPts - 1)} puntos a ${POSN[c.pos] || "su posición"} (${c.nR} casos)`, c.fPts > 1 ? "ok" : "mal"]);
@@ -886,7 +900,7 @@ function pintarCapitan() {
         El capitán suma <b>(multiplicador − 1) × puntos esperados</b>; el multiplicador depende del valor: más de 10 M → x1,5 · de 5 a 10 M → x2 · menos de 5 M → x3.
         El modo de riesgo resta una parte de la variabilidad esperada. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>`;
   }
-  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
+  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
     <div class="mgrid" role="group" aria-label="Manager">${pills}</div>
     <div class="pills wrap" role="group" aria-label="Riesgo" style="margin-top:10px">${riesgos}</div>
     <div style="margin-top:12px">${cuerpo}</div>`;
