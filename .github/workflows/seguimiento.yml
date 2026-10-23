@@ -46,6 +46,7 @@ jobs:
             if python seguimiento_equipos.py; then FALLOS=0; else FALLOS=$((FALLOS + 1)); fi
             if [ -f equipos.json ]; then git add equipos.json; fi
             if [ -d avatars ]; then git add avatars; fi
+            if [ -d fotos ]; then git add fotos; fi
             if ! git diff --staged --quiet; then
               git commit -m "Seguimiento de plantillas: cambios detectados"
               for i in 1 2 3; do
