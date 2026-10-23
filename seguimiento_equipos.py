@@ -16,6 +16,7 @@ Usa las mismas credenciales que mister_extractor.py.
 
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 
@@ -26,6 +27,8 @@ import mister_extractor as m
 ARCHIVO = os.path.join(m.CARPETA_SCRIPT, "equipos.json")
 MAX_HISTORIAL = 60        # entradas guardadas por jugador / plantilla
 MAX_MOVIMIENTOS = 100
+CARPETA_FOTOS = os.path.join(m.CARPETA_SCRIPT, "fotos")
+_fallos_foto = {"n": 0}
 POS = {1: "PT", 2: "DF", 3: "MC", 4: "DL"}
 
 
@@ -56,6 +59,33 @@ def actualizar_historial(hist, clave, valor, anterior, fecha):
     else:
         h.append([fecha, valor, anterior])
     del h[:-MAX_HISTORIAL]
+
+
+def descargar_foto(url, subcarpeta, ident):
+    """Guarda la imagen en fotos/<subcarpeta>/ y devuelve la ruta relativa (o la URL original si falla)."""
+    if not url or not str(url).startswith("http") or ident is None:
+        return None
+    version = re.search(r"version=(\d+)", url)
+    nombre = f"{ident}_{version.group(1)}.png" if version else f"{ident}.png"
+    ruta = os.path.join(CARPETA_FOTOS, subcarpeta, nombre)
+    relativa = f"fotos/{subcarpeta}/{nombre}"
+    if os.path.exists(ruta) and os.path.getsize(ruta) > 0:
+        return relativa
+    if _fallos_foto["n"] >= 3:      # si el servidor de imágenes falla, no se insiste en cada jugador
+        return url
+    try:
+        r = requests.get(url, timeout=15, headers={"user-agent": m.HEADERS["user-agent"],
+                                                   "referer": "https://mister.mundodeportivo.com/"})
+        if r.status_code == 200 and r.content and r.headers.get("content-type", "").startswith("image/"):
+            os.makedirs(os.path.dirname(ruta), exist_ok=True)
+            with open(ruta, "wb") as f:
+                f.write(r.content)
+            return relativa
+        print(f"   [!] No se pudo descargar la imagen (status {r.status_code}): {url}")
+    except Exception as e:
+        print(f"   [!] Error descargando {url}: {e}")
+    _fallos_foto["n"] += 1
+    return url
 
 
 def descargar_plantillas(session):
@@ -92,6 +122,11 @@ def descargar_plantillas(session):
                 "clause": entero(clausula) if clausula else None,
                 "acquired": p.get("created"),
                 "origin": p.get("transfer_origin"),
+                "short": p.get("short"),
+                "status": p.get("status"),
+                "streak": p.get("streak"),
+                "photo": descargar_foto(p.get("photoUrl"), "jugadores", p.get("id")),
+                "teamLogo": descargar_foto(p.get("teamLogoUrl"), "escudos", p.get("id_team")),
             })
         valor = data.get("value") or {}
         managers.append({
