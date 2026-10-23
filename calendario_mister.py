@@ -92,6 +92,7 @@ def partidos_de(data, gw_id, gw_num):
             "gh": numero(g.get("goals_home")),
             "ga": numero(g.get("goals_away")),
             "status": g.get("status"),
+            "confirmed": 1 if g.get("confirmed_lineups") else 0,
             "ts": (g.get("date") or {}).get("ts"),
         })
     return out
