@@ -676,12 +676,20 @@ function capModeloEquipos(games) {
   return { lg, hf, af, fuerza, xg, partidos: jug.length };
 }
 
-// Jornada objetivo: la primera con algún partido sin jugar
+// Jornada objetivo: la primera jornada que Mister no da por terminada y tiene partidos por jugar.
+// Los partidos aplazados de jornadas antiguas se ignoran (sus puntos cuentan en aquella jornada, no en la próxima).
 function capJornadaObjetivo(cal) {
-  const pend = (cal.games || []).filter(g => !capNum(g.gh));
-  if (!pend.length) return null;
-  const gw = Math.min(...pend.map(g => g.gw));
-  return { gw, games: cal.games.filter(g => g.gw === gw) };
+  const pend = x => !capNum(x.gh);
+  const juegos = cal.games || [];
+  let gw = null;
+  const abiertas = (cal.gameweeks || []).filter(g => g.status !== "finished").sort((a, b) => a.gw - b.gw);
+  for (const g of abiertas) if (juegos.some(x => x.gw === g.gw && pend(x))) { gw = g.gw; break; }
+  if (gw == null) {   // sin estados de jornada: la primera jornada completamente por jugar, o si no la primera con algo pendiente
+    const gws = [...new Set(juegos.map(x => x.gw))].sort((a, b) => a - b);
+    gw = gws.find(n => juegos.filter(x => x.gw === n).every(pend)) ?? gws.find(n => juegos.some(x => x.gw === n && pend(x)));
+  }
+  if (gw == null) return null;
+  return { gw, games: juegos.filter(g => g.gw === gw) };
 }
 
 function capObservaciones(D, E, cal) {
