@@ -1,7 +1,8 @@
 {
-  "leagueName": "MONEYBALL",
+  "leagueName": "Mi Liga Mister Fantasy",
   "season": "2026/2027",
-  "lastUpdated": "23/10/2026 04:46",
+  "lastUpdated": "23/10/2026 17:02",
+  "updatedAt": "2026-10-23T15:02:53Z",
   "managers": [
     {
       "id": "8663482",
@@ -99,6 +100,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 8,
             "captain": false,
@@ -116,6 +118,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 15,
             "captain": false,
@@ -133,6 +136,7 @@
           {
             "id": 68640,
             "name": "Alex Freeman",
+            "teamId": 20,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -150,6 +154,7 @@
           {
             "id": 65347,
             "name": "Renato Veiga",
+            "teamId": 20,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -167,6 +172,7 @@
           {
             "id": 68498,
             "name": "Zaid Romero",
+            "teamId": 9,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -184,6 +190,7 @@
           {
             "id": 17568,
             "name": "Pol Lozano",
+            "teamId": 8,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -201,6 +208,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -218,6 +226,7 @@
           {
             "id": 70930,
             "name": "Gustavo Puerta",
+            "teamId": 0,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -235,6 +244,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -252,6 +262,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 27,
             "captain": true,
@@ -269,6 +280,7 @@
           {
             "id": 6065,
             "name": "Pere Milla",
+            "teamId": 8,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -315,6 +327,7 @@
           {
             "id": 70925,
             "name": "Simon Eriksson",
+            "teamId": 1490,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -332,6 +345,7 @@
           {
             "id": 70935,
             "name": "Jorge Salinas",
+            "teamId": 1490,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -349,6 +363,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -366,6 +381,7 @@
           {
             "id": 64200,
             "name": "Jeremy Toljan",
+            "teamId": 12,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -383,6 +399,7 @@
           {
             "id": 53143,
             "name": "Abde Rebbach",
+            "teamId": 48,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -400,6 +417,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -417,6 +435,7 @@
           {
             "id": 36046,
             "name": "Gonzalo Villar",
+            "teamId": 23,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -434,6 +453,7 @@
           {
             "id": 58436,
             "name": "Raúl Moro",
+            "teamId": 50,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -451,6 +471,7 @@
           {
             "id": 3728,
             "name": "Marc Roca",
+            "teamId": 4,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -468,6 +489,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 33,
             "captain": true,
@@ -485,6 +507,7 @@
           {
             "id": 59641,
             "name": "Toni Martínez",
+            "teamId": 48,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -531,6 +554,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 4,
             "captain": false,
@@ -548,6 +572,7 @@
           {
             "id": 58438,
             "name": "Flavien Boyomo",
+            "teamId": 50,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -565,6 +590,7 @@
           {
             "id": 70917,
             "name": "Arouna Sangante",
+            "teamId": 17,
             "pos": "DF",
             "points": -1,
             "captain": false,
@@ -582,6 +608,7 @@
           {
             "id": 71038,
             "name": "Justin De Haas",
+            "teamId": 19,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -599,6 +626,7 @@
           {
             "id": 14911,
             "name": "Álvaro García",
+            "teamId": 14,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -616,6 +644,7 @@
           {
             "id": 22527,
             "name": "Aimar Oroz",
+            "teamId": 50,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -633,6 +662,7 @@
           {
             "id": 78750,
             "name": "Orel Mangala",
+            "teamId": 9,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -650,6 +680,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 15,
             "captain": true,
@@ -667,6 +698,7 @@
           {
             "id": 59484,
             "name": "Marc Bernal",
+            "teamId": 3,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -684,6 +716,7 @@
           {
             "id": 27516,
             "name": "Andrés Martín",
+            "teamId": 1490,
             "pos": "DL",
             "points": 10,
             "captain": false,
@@ -701,6 +734,7 @@
           {
             "id": 59789,
             "name": "Orri Óskarsson",
+            "teamId": 16,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -747,6 +781,7 @@
           {
             "id": 71638,
             "name": "Laro Gómez",
+            "teamId": 1490,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -764,6 +799,7 @@
           {
             "id": 23664,
             "name": "Sergio Carreira",
+            "teamId": 5,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -781,6 +817,7 @@
           {
             "id": 59506,
             "name": "Javi Rodríguez",
+            "teamId": 5,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -798,6 +835,7 @@
           {
             "id": 64459,
             "name": "Dávid Hancko",
+            "teamId": 2,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -815,6 +853,7 @@
           {
             "id": 12946,
             "name": "Santi Comesaña",
+            "teamId": 20,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -832,6 +871,7 @@
           {
             "id": 19527,
             "name": "Jon Moncayola",
+            "teamId": 50,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -849,6 +889,7 @@
           {
             "id": 71792,
             "name": "Nico Guillén",
+            "teamId": 17,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -866,6 +907,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 15,
             "captain": true,
@@ -883,6 +925,7 @@
           {
             "id": 70918,
             "name": "Bernardo Silva",
+            "teamId": 15,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -900,6 +943,7 @@
           {
             "id": 48210,
             "name": "Jonathan Dubasin",
+            "teamId": 50,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -917,6 +961,7 @@
           {
             "id": 71794,
             "name": "Umaru Konare",
+            "teamId": 0,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -963,6 +1008,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -980,6 +1026,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -997,6 +1044,7 @@
           {
             "id": 64160,
             "name": "Javi Rueda",
+            "teamId": 5,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -1014,6 +1062,7 @@
           {
             "id": 68716,
             "name": "Buba Sangaré",
+            "teamId": 23,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -1031,6 +1080,7 @@
           {
             "id": 24691,
             "name": "Miguel Rodríguez",
+            "teamId": 48,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -1048,6 +1098,7 @@
           {
             "id": 15342,
             "name": "Ander Barrenetxea",
+            "teamId": 16,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -1065,6 +1116,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -1082,6 +1134,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": 10,
             "captain": false,
@@ -1099,6 +1152,7 @@
           {
             "id": 70996,
             "name": "David Larrubia",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -1116,6 +1170,7 @@
           {
             "id": 70939,
             "name": "Yeremay Hernández",
+            "teamId": 6,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -1133,6 +1188,7 @@
           {
             "id": 35059,
             "name": "Ferran Jutglà",
+            "teamId": 5,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -1179,6 +1235,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 1,
             "captain": false,
@@ -1196,6 +1253,7 @@
           {
             "id": 64151,
             "name": "Davinchi",
+            "teamId": 9,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -1213,6 +1271,7 @@
           {
             "id": 31496,
             "name": "Héctor Bellerín",
+            "teamId": 4,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -1230,6 +1289,7 @@
           {
             "id": 71139,
             "name": "Bright Ede",
+            "teamId": 6,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -1247,6 +1307,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -1264,6 +1325,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -1281,6 +1343,7 @@
           {
             "id": 70923,
             "name": "Enzo Bardeli",
+            "teamId": 12,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -1298,6 +1361,7 @@
           {
             "id": 70998,
             "name": "Izan Merino",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -1315,6 +1379,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 8,
             "captain": false,
@@ -1332,6 +1397,7 @@
           {
             "id": 59476,
             "name": "Julián Álvarez",
+            "teamId": 2,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -1349,6 +1415,7 @@
           {
             "id": 56924,
             "name": "Etta Eyong",
+            "teamId": 12,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -1395,6 +1462,7 @@
           {
             "id": 64410,
             "name": "Alejandro Iturbe",
+            "teamId": 23,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -1412,6 +1480,7 @@
           {
             "id": 432,
             "name": "José Luis Gayà",
+            "teamId": 19,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -1429,6 +1498,7 @@
           {
             "id": 15107,
             "name": "Marc Cucurella",
+            "teamId": 15,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -1446,6 +1516,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -1463,6 +1534,7 @@
           {
             "id": 68248,
             "name": "Oso",
+            "teamId": 0,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -1480,6 +1552,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -1497,6 +1570,7 @@
           {
             "id": 64033,
             "name": "Jon Gorrotxategi",
+            "teamId": 16,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -1514,6 +1588,7 @@
           {
             "id": 71149,
             "name": "Gabriel Moscardo",
+            "teamId": 8,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -1531,6 +1606,7 @@
           {
             "id": 51060,
             "name": "Juan Cruz",
+            "teamId": 13,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -1548,6 +1624,7 @@
           {
             "id": 11866,
             "name": "Hugo Duro",
+            "teamId": 19,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -1565,6 +1642,7 @@
           {
             "id": 68495,
             "name": "Martín Satriano",
+            "teamId": 9,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -1613,6 +1691,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -1630,6 +1709,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -1647,6 +1727,7 @@
           {
             "id": 64160,
             "name": "Javi Rueda",
+            "teamId": 5,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -1664,6 +1745,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -1681,6 +1763,7 @@
           {
             "id": 270,
             "name": "Rubén García",
+            "teamId": 50,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -1698,6 +1781,7 @@
           {
             "id": 60218,
             "name": "Peio Canales",
+            "teamId": 1,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -1715,6 +1799,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -1732,6 +1817,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -1749,6 +1835,7 @@
           {
             "id": 70996,
             "name": "David Larrubia",
+            "teamId": 13,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -1766,6 +1853,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 30,
             "captain": true,
@@ -1783,6 +1871,7 @@
           {
             "id": 35059,
             "name": "Ferran Jutglà",
+            "teamId": 5,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -1829,6 +1918,7 @@
           {
             "id": 64410,
             "name": "Alejandro Iturbe",
+            "teamId": 23,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -1846,6 +1936,7 @@
           {
             "id": 432,
             "name": "José Luis Gayà",
+            "teamId": 19,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -1863,6 +1954,7 @@
           {
             "id": 15107,
             "name": "Marc Cucurella",
+            "teamId": 15,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -1880,6 +1972,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -1897,6 +1990,7 @@
           {
             "id": 68248,
             "name": "Oso",
+            "teamId": 0,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -1914,6 +2008,7 @@
           {
             "id": 28619,
             "name": "Iván Balliu",
+            "teamId": 14,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -1931,6 +2026,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -1948,6 +2044,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 18,
             "captain": true,
@@ -1965,6 +2062,7 @@
           {
             "id": 51060,
             "name": "Juan Cruz",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -1982,6 +2080,7 @@
           {
             "id": 11866,
             "name": "Hugo Duro",
+            "teamId": 19,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -1999,6 +2098,7 @@
           {
             "id": 68495,
             "name": "Martín Satriano",
+            "teamId": 9,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -2045,6 +2145,7 @@
           {
             "id": 31,
             "name": "Jan Oblak",
+            "teamId": 2,
             "pos": "PT",
             "points": 8,
             "captain": false,
@@ -2062,6 +2163,7 @@
           {
             "id": 23664,
             "name": "Sergio Carreira",
+            "teamId": 5,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -2079,6 +2181,7 @@
           {
             "id": 59506,
             "name": "Javi Rodríguez",
+            "teamId": 5,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -2096,6 +2199,7 @@
           {
             "id": 64459,
             "name": "Dávid Hancko",
+            "teamId": 2,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -2113,6 +2217,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -2130,6 +2235,7 @@
           {
             "id": 52372,
             "name": "Javi Guerra",
+            "teamId": 19,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -2147,6 +2253,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -2164,6 +2271,7 @@
           {
             "id": 70918,
             "name": "Bernardo Silva",
+            "teamId": 15,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2181,6 +2289,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -2198,6 +2307,7 @@
           {
             "id": 71132,
             "name": "Facundo Bernal",
+            "teamId": 4,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -2215,6 +2325,7 @@
           {
             "id": 48210,
             "name": "Jonathan Dubasin",
+            "teamId": 50,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -2261,6 +2372,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 6,
             "captain": false,
@@ -2278,6 +2390,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -2295,6 +2408,7 @@
           {
             "id": 65347,
             "name": "Renato Veiga",
+            "teamId": 20,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2312,6 +2426,7 @@
           {
             "id": 68498,
             "name": "Zaid Romero",
+            "teamId": 9,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -2329,6 +2444,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2346,6 +2462,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -2363,6 +2480,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -2380,6 +2498,7 @@
           {
             "id": 70930,
             "name": "Gustavo Puerta",
+            "teamId": 0,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -2397,6 +2516,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 9,
             "captain": true,
@@ -2414,6 +2534,7 @@
           {
             "id": 6065,
             "name": "Pere Milla",
+            "teamId": 8,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -2431,6 +2552,7 @@
           {
             "id": 58951,
             "name": "Endrick",
+            "teamId": 15,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -2477,6 +2599,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 9,
             "captain": true,
@@ -2494,6 +2617,7 @@
           {
             "id": 58438,
             "name": "Flavien Boyomo",
+            "teamId": 50,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -2511,6 +2635,7 @@
           {
             "id": 70917,
             "name": "Arouna Sangante",
+            "teamId": 17,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2528,6 +2653,7 @@
           {
             "id": 71038,
             "name": "Justin De Haas",
+            "teamId": 19,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2545,6 +2671,7 @@
           {
             "id": 14911,
             "name": "Álvaro García",
+            "teamId": 14,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2562,6 +2689,7 @@
           {
             "id": 22527,
             "name": "Aimar Oroz",
+            "teamId": 50,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -2579,6 +2707,7 @@
           {
             "id": 78750,
             "name": "Orel Mangala",
+            "teamId": 9,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -2596,6 +2725,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 10,
             "captain": false,
@@ -2613,6 +2743,7 @@
           {
             "id": 59484,
             "name": "Marc Bernal",
+            "teamId": 3,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -2630,6 +2761,7 @@
           {
             "id": 27516,
             "name": "Andrés Martín",
+            "teamId": 1490,
             "pos": "DL",
             "points": 0,
             "captain": false,
@@ -2647,6 +2779,7 @@
           {
             "id": 59789,
             "name": "Orri Óskarsson",
+            "teamId": 16,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -2693,6 +2826,7 @@
           {
             "id": 30444,
             "name": "Leo Román",
+            "teamId": 6,
             "pos": "PT",
             "points": 6,
             "captain": false,
@@ -2710,6 +2844,7 @@
           {
             "id": 70935,
             "name": "Jorge Salinas",
+            "teamId": 1490,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -2727,6 +2862,7 @@
           {
             "id": 65476,
             "name": "Clemens Riedel",
+            "teamId": 8,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -2744,6 +2880,7 @@
           {
             "id": 1737,
             "name": "Einar Galilea",
+            "teamId": 13,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2761,6 +2898,7 @@
           {
             "id": 53143,
             "name": "Abde Rebbach",
+            "teamId": 48,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2778,6 +2916,7 @@
           {
             "id": 3728,
             "name": "Marc Roca",
+            "teamId": 4,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -2795,6 +2934,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2812,6 +2952,7 @@
           {
             "id": 58436,
             "name": "Raúl Moro",
+            "teamId": 50,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -2829,6 +2970,7 @@
           {
             "id": 36046,
             "name": "Gonzalo Villar",
+            "teamId": 23,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -2846,6 +2988,7 @@
           {
             "id": 59641,
             "name": "Toni Martínez",
+            "teamId": 48,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -2863,6 +3006,7 @@
           {
             "id": 65727,
             "name": "Alemão",
+            "teamId": 14,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -2909,6 +3053,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -2926,6 +3071,7 @@
           {
             "id": 55966,
             "name": "Adrià Altimira",
+            "teamId": 6,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -2943,6 +3089,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2960,6 +3107,7 @@
           {
             "id": 71139,
             "name": "Bright Ede",
+            "teamId": 6,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -2977,6 +3125,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -2994,6 +3143,7 @@
           {
             "id": 70923,
             "name": "Enzo Bardeli",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -3011,6 +3161,7 @@
           {
             "id": 70998,
             "name": "Izan Merino",
+            "teamId": 13,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -3028,6 +3179,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -3045,6 +3197,7 @@
           {
             "id": 71503,
             "name": "Mikel Rodriguez",
+            "teamId": 48,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -3062,6 +3215,7 @@
           {
             "id": 56924,
             "name": "Etta Eyong",
+            "teamId": 12,
             "pos": "DL",
             "points": 0,
             "captain": false,
@@ -3079,6 +3233,7 @@
           {
             "id": 59476,
             "name": "Julián Álvarez",
+            "teamId": 2,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -3127,6 +3282,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -3144,6 +3300,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -3161,6 +3318,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -3178,6 +3336,7 @@
           {
             "id": 68716,
             "name": "Buba Sangaré",
+            "teamId": 23,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -3195,6 +3354,7 @@
           {
             "id": 270,
             "name": "Rubén García",
+            "teamId": 50,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -3212,6 +3372,7 @@
           {
             "id": 60218,
             "name": "Peio Canales",
+            "teamId": 1,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -3229,6 +3390,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -3246,6 +3408,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -3263,6 +3426,7 @@
           {
             "id": 42,
             "name": "Koke",
+            "teamId": 2,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -3280,6 +3444,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 39,
             "captain": true,
@@ -3297,6 +3462,7 @@
           {
             "id": 61012,
             "name": "Pablo García",
+            "teamId": 1490,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -3343,6 +3509,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -3360,6 +3527,7 @@
           {
             "id": 8953,
             "name": "Pablo Maffeo",
+            "teamId": 19,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -3377,6 +3545,7 @@
           {
             "id": 70938,
             "name": "Álvaro Mantilla",
+            "teamId": 1490,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -3394,6 +3563,7 @@
           {
             "id": 29163,
             "name": "Omar El Hilali",
+            "teamId": 8,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -3411,6 +3581,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 11,
             "captain": false,
@@ -3428,6 +3599,7 @@
           {
             "id": 19727,
             "name": "Rodrigo Riquelme",
+            "teamId": 4,
             "pos": "MC",
             "points": 8,
             "captain": false,
@@ -3445,6 +3617,7 @@
           {
             "id": 78750,
             "name": "Orel Mangala",
+            "teamId": 9,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -3462,6 +3635,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -3479,6 +3653,7 @@
           {
             "id": 63871,
             "name": "Marc Aguado",
+            "teamId": 23,
             "pos": "MC",
             "points": 0,
             "captain": false,
@@ -3496,6 +3671,7 @@
           {
             "id": 27516,
             "name": "Andrés Martín",
+            "teamId": 1490,
             "pos": "DL",
             "points": 10,
             "captain": true,
@@ -3513,6 +3689,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 17,
             "captain": false,
@@ -3559,6 +3736,7 @@
           {
             "id": 31,
             "name": "Jan Oblak",
+            "teamId": 2,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -3576,6 +3754,7 @@
           {
             "id": 63,
             "name": "Marc Bartra",
+            "teamId": 4,
             "pos": "DF",
             "points": 11,
             "captain": false,
@@ -3593,6 +3772,7 @@
           {
             "id": 59506,
             "name": "Javi Rodríguez",
+            "teamId": 5,
             "pos": "DF",
             "points": 0,
             "captain": false,
@@ -3610,6 +3790,7 @@
           {
             "id": 64459,
             "name": "Dávid Hancko",
+            "teamId": 2,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -3627,6 +3808,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -3644,6 +3826,7 @@
           {
             "id": 51135,
             "name": "Pablo Barrios",
+            "teamId": 2,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -3661,6 +3844,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -3678,6 +3862,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -3695,6 +3880,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 8,
             "captain": false,
@@ -3712,6 +3898,7 @@
           {
             "id": 52372,
             "name": "Javi Guerra",
+            "teamId": 19,
             "pos": "MC",
             "points": 0,
             "captain": false,
@@ -3729,6 +3916,7 @@
           {
             "id": 48210,
             "name": "Jonathan Dubasin",
+            "teamId": 50,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -3775,6 +3963,7 @@
           {
             "id": 30444,
             "name": "Leo Román",
+            "teamId": 6,
             "pos": "PT",
             "points": 4,
             "captain": false,
@@ -3792,6 +3981,7 @@
           {
             "id": 70935,
             "name": "Jorge Salinas",
+            "teamId": 1490,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -3809,6 +3999,7 @@
           {
             "id": 59623,
             "name": "Jon Martin",
+            "teamId": 16,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -3826,6 +4017,7 @@
           {
             "id": 65476,
             "name": "Clemens Riedel",
+            "teamId": 8,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -3843,6 +4035,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -3860,6 +4053,7 @@
           {
             "id": 3728,
             "name": "Marc Roca",
+            "teamId": 4,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -3877,6 +4071,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -3894,6 +4089,7 @@
           {
             "id": 36046,
             "name": "Gonzalo Villar",
+            "teamId": 23,
             "pos": "MC",
             "points": 15,
             "captain": true,
@@ -3911,6 +4107,7 @@
           {
             "id": 52117,
             "name": "Jon Ander Olasagasti",
+            "teamId": 12,
             "pos": "MC",
             "points": 13,
             "captain": false,
@@ -3928,6 +4125,7 @@
           {
             "id": 59641,
             "name": "Toni Martínez",
+            "teamId": 48,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -3945,6 +4143,7 @@
           {
             "id": 51134,
             "name": "Pablo Durán",
+            "teamId": 5,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -3991,6 +4190,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -4008,6 +4208,7 @@
           {
             "id": 308,
             "name": "Johan Mojica",
+            "teamId": 9,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -4025,6 +4226,7 @@
           {
             "id": 561,
             "name": "Marcos Llorente",
+            "teamId": 2,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -4042,6 +4244,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -4059,6 +4262,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -4076,6 +4280,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4093,6 +4298,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -4110,6 +4316,7 @@
           {
             "id": 71503,
             "name": "Mikel Rodriguez",
+            "teamId": 48,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4127,6 +4334,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 11,
             "captain": false,
@@ -4144,6 +4352,7 @@
           {
             "id": 70998,
             "name": "Izan Merino",
+            "teamId": 13,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -4161,6 +4370,7 @@
           {
             "id": 6044,
             "name": "Enes Ünal",
+            "teamId": 9,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -4207,6 +4417,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -4224,6 +4435,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -4241,6 +4453,7 @@
           {
             "id": 65347,
             "name": "Renato Veiga",
+            "teamId": 20,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -4258,6 +4471,7 @@
           {
             "id": 68498,
             "name": "Zaid Romero",
+            "teamId": 9,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -4275,6 +4489,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -4292,6 +4507,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4309,6 +4525,7 @@
           {
             "id": 27518,
             "name": "Óscar Valentín",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4326,6 +4543,7 @@
           {
             "id": 70930,
             "name": "Gustavo Puerta",
+            "teamId": 0,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -4343,6 +4561,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 12,
             "captain": true,
@@ -4360,6 +4579,7 @@
           {
             "id": 6065,
             "name": "Pere Milla",
+            "teamId": 8,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -4377,6 +4597,7 @@
           {
             "id": 59382,
             "name": "Nicolas Pépé",
+            "teamId": 20,
             "pos": "DL",
             "points": 5,
             "captain": false,
@@ -4423,6 +4644,7 @@
           {
             "id": 64410,
             "name": "Alejandro Iturbe",
+            "teamId": 23,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -4440,6 +4662,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -4457,6 +4680,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": -3,
             "captain": true,
@@ -4474,6 +4698,7 @@
           {
             "id": 68248,
             "name": "Oso",
+            "teamId": 0,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -4491,6 +4716,7 @@
           {
             "id": 71790,
             "name": "Saba Sazonov",
+            "teamId": 9,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -4508,6 +4734,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4525,6 +4752,7 @@
           {
             "id": 1762,
             "name": "Álex Berenguer",
+            "teamId": 1,
             "pos": "MC",
             "points": 13,
             "captain": false,
@@ -4542,6 +4770,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -4559,6 +4788,7 @@
           {
             "id": 51060,
             "name": "Juan Cruz",
+            "teamId": 13,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -4576,6 +4806,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -4593,6 +4824,7 @@
           {
             "id": 11866,
             "name": "Hugo Duro",
+            "teamId": 19,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -4641,6 +4873,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -4658,6 +4891,7 @@
           {
             "id": 33053,
             "name": "Adrián de la Fuente",
+            "teamId": 12,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -4675,6 +4909,7 @@
           {
             "id": 29163,
             "name": "Omar El Hilali",
+            "teamId": 8,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -4692,6 +4927,7 @@
           {
             "id": 70938,
             "name": "Álvaro Mantilla",
+            "teamId": 1490,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -4709,6 +4945,7 @@
           {
             "id": 1762,
             "name": "Álex Berenguer",
+            "teamId": 1,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -4726,6 +4963,7 @@
           {
             "id": 3848779,
             "name": "Gnangoro Bouare",
+            "teamId": 14,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -4743,6 +4981,7 @@
           {
             "id": 25579,
             "name": "Oriol Rey",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4760,6 +4999,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -4777,6 +5017,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -4794,6 +5035,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 17,
             "captain": false,
@@ -4811,6 +5053,7 @@
           {
             "id": 3060,
             "name": "Mariano Díaz",
+            "teamId": 48,
             "pos": "DL",
             "points": 33,
             "captain": true,
@@ -4857,6 +5100,7 @@
           {
             "id": 30444,
             "name": "Leo Román",
+            "teamId": 6,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -4874,6 +5118,7 @@
           {
             "id": 70935,
             "name": "Jorge Salinas",
+            "teamId": 1490,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -4891,6 +5136,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -4908,6 +5154,7 @@
           {
             "id": 71139,
             "name": "Bright Ede",
+            "teamId": 6,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -4925,6 +5172,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": 6,
             "captain": true,
@@ -4942,6 +5190,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -4959,6 +5208,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": 13,
             "captain": false,
@@ -4976,6 +5226,7 @@
           {
             "id": 36046,
             "name": "Gonzalo Villar",
+            "teamId": 23,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -4993,6 +5244,7 @@
           {
             "id": 52117,
             "name": "Jon Ander Olasagasti",
+            "teamId": 12,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -5010,6 +5262,7 @@
           {
             "id": 523868,
             "name": "Robbie Ure",
+            "teamId": 17,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -5027,6 +5280,7 @@
           {
             "id": 59789,
             "name": "Orri Óskarsson",
+            "teamId": 16,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -5073,6 +5327,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -5090,6 +5345,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -5107,6 +5363,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -5124,6 +5381,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 6,
             "captain": true,
@@ -5141,6 +5399,7 @@
           {
             "id": 71790,
             "name": "Saba Sazonov",
+            "teamId": 9,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -5158,6 +5417,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -5175,6 +5435,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -5192,6 +5453,7 @@
           {
             "id": 68383,
             "name": "Thiago Fernández",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5209,6 +5471,7 @@
           {
             "id": 51060,
             "name": "Juan Cruz",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5226,6 +5489,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": 7,
             "captain": false,
@@ -5243,6 +5507,7 @@
           {
             "id": 36334,
             "name": "Adama Traoré",
+            "teamId": 6,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -5289,6 +5554,7 @@
           {
             "id": 24742,
             "name": "Dani Cárdenas",
+            "teamId": 14,
             "pos": "PT",
             "points": 2,
             "captain": false,
@@ -5306,6 +5572,7 @@
           {
             "id": 308,
             "name": "Johan Mojica",
+            "teamId": 9,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -5323,6 +5590,7 @@
           {
             "id": 561,
             "name": "Marcos Llorente",
+            "teamId": 2,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -5340,6 +5608,7 @@
           {
             "id": 28791,
             "name": "Jesús Vázquez",
+            "teamId": 19,
             "pos": "DF",
             "points": 0,
             "captain": false,
@@ -5357,6 +5626,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 0,
             "captain": false,
@@ -5374,6 +5644,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -5391,6 +5662,7 @@
           {
             "id": 70998,
             "name": "Izan Merino",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5408,6 +5680,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -5425,6 +5698,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5442,6 +5716,7 @@
           {
             "id": 25867,
             "name": "Antonio Blanco",
+            "teamId": 48,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -5459,6 +5734,7 @@
           {
             "id": 6044,
             "name": "Enes Ünal",
+            "teamId": 9,
             "pos": "DL",
             "points": 9,
             "captain": true,
@@ -5505,6 +5781,7 @@
           {
             "id": 31,
             "name": "Jan Oblak",
+            "teamId": 2,
             "pos": "PT",
             "points": 0,
             "captain": false,
@@ -5522,6 +5799,7 @@
           {
             "id": 63,
             "name": "Marc Bartra",
+            "teamId": 4,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -5539,6 +5817,7 @@
           {
             "id": 78394,
             "name": "Nicolás Valentini",
+            "teamId": 48,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -5556,6 +5835,7 @@
           {
             "id": 59506,
             "name": "Javi Rodríguez",
+            "teamId": 5,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -5573,6 +5853,7 @@
           {
             "id": 51135,
             "name": "Pablo Barrios",
+            "teamId": 2,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -5590,6 +5871,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -5607,6 +5889,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 10,
             "captain": false,
@@ -5624,6 +5907,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -5641,6 +5925,7 @@
           {
             "id": 58820,
             "name": "Marc Casadó",
+            "teamId": 6,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5658,6 +5943,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 0,
             "captain": false,
@@ -5675,6 +5961,7 @@
           {
             "id": 51134,
             "name": "Pablo Durán",
+            "teamId": 5,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -5721,6 +6008,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 11,
             "captain": false,
@@ -5738,6 +6026,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -5755,6 +6044,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -5772,6 +6062,7 @@
           {
             "id": 23369,
             "name": "Juan Foyth",
+            "teamId": 20,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -5789,6 +6080,7 @@
           {
             "id": 65347,
             "name": "Renato Veiga",
+            "teamId": 20,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -5806,6 +6098,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -5823,6 +6116,7 @@
           {
             "id": 27518,
             "name": "Óscar Valentín",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -5840,6 +6134,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -5857,6 +6152,7 @@
           {
             "id": 28776,
             "name": "Beñat Turrientes",
+            "teamId": 16,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -5874,6 +6170,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -5891,6 +6188,7 @@
           {
             "id": 68676,
             "name": "Ademola Lookman",
+            "teamId": 2,
             "pos": "DL",
             "points": -1,
             "captain": false,
@@ -5937,6 +6235,7 @@
           {
             "id": 17615,
             "name": "Sergio Herrera",
+            "teamId": 50,
             "pos": "PT",
             "points": -2,
             "captain": false,
@@ -5954,6 +6253,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -5971,6 +6271,7 @@
           {
             "id": 64411,
             "name": "Youssef Enríquez",
+            "teamId": 48,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -5988,6 +6289,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -6005,6 +6307,7 @@
           {
             "id": 27861,
             "name": "Pablo Martínez",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -6022,6 +6325,7 @@
           {
             "id": 27907,
             "name": "Roger Brugué",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": true,
@@ -6039,6 +6343,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -6056,6 +6361,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -6073,6 +6379,7 @@
           {
             "id": 15342,
             "name": "Ander Barrenetxea",
+            "teamId": 16,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -6090,6 +6397,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 14,
             "captain": false,
@@ -6107,6 +6415,7 @@
           {
             "id": 70992,
             "name": "Chupete",
+            "teamId": 13,
             "pos": "DL",
             "points": -1,
             "captain": false,
@@ -6155,6 +6464,7 @@
           {
             "id": 24742,
             "name": "Dani Cárdenas",
+            "teamId": 14,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -6172,6 +6482,7 @@
           {
             "id": 29163,
             "name": "Omar El Hilali",
+            "teamId": 8,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -6189,6 +6500,7 @@
           {
             "id": 33053,
             "name": "Adrián de la Fuente",
+            "teamId": 12,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -6206,6 +6518,7 @@
           {
             "id": 65179,
             "name": "Andrés Castrín",
+            "teamId": 17,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -6223,6 +6536,7 @@
           {
             "id": 1762,
             "name": "Álex Berenguer",
+            "teamId": 1,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -6240,6 +6554,7 @@
           {
             "id": 19168,
             "name": "Nemanja Gudelj",
+            "teamId": 9,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -6257,6 +6572,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -6274,6 +6590,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 10,
             "captain": false,
@@ -6291,6 +6608,7 @@
           {
             "id": 3060,
             "name": "Mariano Díaz",
+            "teamId": 48,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -6308,6 +6626,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 16,
             "captain": false,
@@ -6325,6 +6644,7 @@
           {
             "id": 61013,
             "name": "Antony Santos",
+            "teamId": 4,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -6371,6 +6691,7 @@
           {
             "id": 64410,
             "name": "Alejandro Iturbe",
+            "teamId": 23,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -6388,6 +6709,7 @@
           {
             "id": 34,
             "name": "José Giménez",
+            "teamId": 6,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -6405,6 +6727,7 @@
           {
             "id": 63,
             "name": "Marc Bartra",
+            "teamId": 4,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -6422,6 +6745,7 @@
           {
             "id": 5917,
             "name": "Igor Zubeldia",
+            "teamId": 16,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -6439,6 +6763,7 @@
           {
             "id": 51135,
             "name": "Pablo Barrios",
+            "teamId": 2,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -6456,6 +6781,7 @@
           {
             "id": 58820,
             "name": "Marc Casadó",
+            "teamId": 6,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -6473,6 +6799,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 15,
             "captain": true,
@@ -6490,6 +6817,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -6507,6 +6835,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -6524,6 +6853,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 15,
             "captain": false,
@@ -6541,6 +6871,7 @@
           {
             "id": 63727,
             "name": "Marcos Fernández",
+            "teamId": 8,
             "pos": "DL",
             "points": 6,
             "captain": false,
@@ -6587,6 +6918,7 @@
           {
             "id": 7893,
             "name": "Antonio Sivera",
+            "teamId": 48,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -6604,6 +6936,7 @@
           {
             "id": 308,
             "name": "Johan Mojica",
+            "teamId": 9,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -6621,6 +6954,7 @@
           {
             "id": 24792,
             "name": "Juan Iglesias",
+            "teamId": 17,
             "pos": "DF",
             "points": 14,
             "captain": false,
@@ -6638,6 +6972,7 @@
           {
             "id": 58986,
             "name": "Abel Bretones",
+            "teamId": 50,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -6655,6 +6990,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -6672,6 +7008,7 @@
           {
             "id": 71142,
             "name": "Aliou Dieng",
+            "teamId": 19,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -6689,6 +7026,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -6706,6 +7044,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": 0,
             "captain": false,
@@ -6723,6 +7062,7 @@
           {
             "id": 12949,
             "name": "Thomas Lemar",
+            "teamId": 23,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -6740,6 +7080,7 @@
           {
             "id": 6044,
             "name": "Enes Ünal",
+            "teamId": 9,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -6757,6 +7098,7 @@
           {
             "id": 70939,
             "name": "Yeremay Hernández",
+            "teamId": 6,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -6803,6 +7145,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -6820,6 +7163,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -6837,6 +7181,7 @@
           {
             "id": 64411,
             "name": "Youssef Enríquez",
+            "teamId": 48,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -6854,6 +7199,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": null,
             "captain": true,
@@ -6871,6 +7217,7 @@
           {
             "id": 23664,
             "name": "Sergio Carreira",
+            "teamId": 5,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -6888,6 +7235,7 @@
           {
             "id": 3728,
             "name": "Marc Roca",
+            "teamId": 4,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -6905,6 +7253,7 @@
           {
             "id": 27861,
             "name": "Pablo Martínez",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -6922,6 +7271,7 @@
           {
             "id": 7024,
             "name": "Fede Valverde",
+            "teamId": 15,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -6939,6 +7289,7 @@
           {
             "id": 70918,
             "name": "Bernardo Silva",
+            "teamId": 15,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -6956,6 +7307,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -6973,6 +7325,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 11,
             "captain": false,
@@ -7019,6 +7372,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -7036,6 +7390,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -7053,6 +7408,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -7070,6 +7426,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -7087,6 +7444,7 @@
           {
             "id": 71790,
             "name": "Saba Sazonov",
+            "teamId": 9,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -7104,6 +7462,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -7121,6 +7480,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 12,
             "captain": false,
@@ -7138,6 +7498,7 @@
           {
             "id": 68383,
             "name": "Thiago Fernández",
+            "teamId": 12,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -7155,6 +7516,7 @@
           {
             "id": 64033,
             "name": "Jon Gorrotxategi",
+            "teamId": 16,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -7172,6 +7534,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": 11,
             "captain": false,
@@ -7189,6 +7552,7 @@
           {
             "id": 36334,
             "name": "Adama Traoré",
+            "teamId": 6,
             "pos": "DL",
             "points": 9,
             "captain": true,
@@ -7235,6 +7599,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 10,
             "captain": false,
@@ -7252,6 +7617,7 @@
           {
             "id": 23369,
             "name": "Juan Foyth",
+            "teamId": 20,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -7269,6 +7635,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -7286,6 +7653,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -7303,6 +7671,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -7320,6 +7689,7 @@
           {
             "id": 27518,
             "name": "Óscar Valentín",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -7337,6 +7707,7 @@
           {
             "id": 28776,
             "name": "Beñat Turrientes",
+            "teamId": 16,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -7354,6 +7725,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -7371,6 +7743,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -7388,6 +7761,7 @@
           {
             "id": 564,
             "name": "Mikel Oyarzabal",
+            "teamId": 16,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -7405,6 +7779,7 @@
           {
             "id": 11697,
             "name": "Lucas Boyé",
+            "teamId": 48,
             "pos": "DL",
             "points": 4,
             "captain": true,
@@ -7451,6 +7826,7 @@
           {
             "id": 30444,
             "name": "Leo Román",
+            "teamId": 6,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -7468,6 +7844,7 @@
           {
             "id": 361,
             "name": "Yuri Berchiche",
+            "teamId": 1,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -7485,6 +7862,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -7502,6 +7880,7 @@
           {
             "id": 7011,
             "name": "Ximo Navarro",
+            "teamId": 6,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -7519,6 +7898,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -7536,6 +7916,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 9,
             "captain": false,
@@ -7553,6 +7934,7 @@
           {
             "id": 71639,
             "name": "Beñat Gerenabarrena",
+            "teamId": 1,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -7570,6 +7952,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 6,
             "captain": true,
@@ -7587,6 +7970,7 @@
           {
             "id": 52117,
             "name": "Jon Ander Olasagasti",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -7604,6 +7988,7 @@
           {
             "id": 18004,
             "name": "Ante Budimir",
+            "teamId": 50,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -7621,6 +8006,7 @@
           {
             "id": 523868,
             "name": "Robbie Ure",
+            "teamId": 17,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -7669,6 +8055,7 @@
           {
             "id": 17615,
             "name": "Sergio Herrera",
+            "teamId": 50,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -7686,6 +8073,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -7703,6 +8091,7 @@
           {
             "id": 64411,
             "name": "Youssef Enríquez",
+            "teamId": 48,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -7720,6 +8109,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -7737,6 +8127,7 @@
           {
             "id": 27861,
             "name": "Pablo Martínez",
+            "teamId": 13,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -7754,6 +8145,7 @@
           {
             "id": 27907,
             "name": "Roger Brugué",
+            "teamId": 12,
             "pos": "MC",
             "points": 54,
             "captain": true,
@@ -7771,6 +8163,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -7788,6 +8181,7 @@
           {
             "id": 64468,
             "name": "Tyrhys Dolan",
+            "teamId": 8,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -7805,6 +8199,7 @@
           {
             "id": 59395,
             "name": "Pedro Díaz",
+            "teamId": 14,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -7822,6 +8217,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -7839,6 +8235,7 @@
           {
             "id": 70992,
             "name": "Chupete",
+            "teamId": 13,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -7885,6 +8282,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 8,
             "captain": false,
@@ -7902,6 +8300,7 @@
           {
             "id": 36048,
             "name": "Nahuel Tenaglia",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -7919,6 +8318,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -7936,6 +8336,7 @@
           {
             "id": 23369,
             "name": "Juan Foyth",
+            "teamId": 20,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -7953,6 +8354,7 @@
           {
             "id": 65347,
             "name": "Renato Veiga",
+            "teamId": 20,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -7970,6 +8372,7 @@
           {
             "id": 5916,
             "name": "Jon Guridi",
+            "teamId": 17,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -7987,6 +8390,7 @@
           {
             "id": 27518,
             "name": "Óscar Valentín",
+            "teamId": 14,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -8004,6 +8408,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -8021,6 +8426,7 @@
           {
             "id": 28776,
             "name": "Beñat Turrientes",
+            "teamId": 16,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -8038,6 +8444,7 @@
           {
             "id": 130,
             "name": "Iago Aspas",
+            "teamId": 5,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -8055,6 +8462,7 @@
           {
             "id": 68676,
             "name": "Ademola Lookman",
+            "teamId": 2,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -8101,6 +8509,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -8118,6 +8527,7 @@
           {
             "id": 33053,
             "name": "Adrián de la Fuente",
+            "teamId": 12,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -8135,6 +8545,7 @@
           {
             "id": 29163,
             "name": "Omar El Hilali",
+            "teamId": 8,
             "pos": "DF",
             "points": -4,
             "captain": false,
@@ -8152,6 +8563,7 @@
           {
             "id": 70938,
             "name": "Álvaro Mantilla",
+            "teamId": 1490,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -8169,6 +8581,7 @@
           {
             "id": 1762,
             "name": "Álex Berenguer",
+            "teamId": 1,
             "pos": "MC",
             "points": 11,
             "captain": false,
@@ -8186,6 +8599,7 @@
           {
             "id": 19727,
             "name": "Rodrigo Riquelme",
+            "teamId": 4,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -8203,6 +8617,7 @@
           {
             "id": 25579,
             "name": "Oriol Rey",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -8220,6 +8635,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -8237,6 +8653,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -8254,6 +8671,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 13,
             "captain": false,
@@ -8271,6 +8689,7 @@
           {
             "id": 3060,
             "name": "Mariano Díaz",
+            "teamId": 48,
             "pos": "DL",
             "points": 12,
             "captain": true,
@@ -8317,6 +8736,7 @@
           {
             "id": 7025,
             "name": "Marko Dmitrović",
+            "teamId": 8,
             "pos": "PT",
             "points": 2,
             "captain": false,
@@ -8334,6 +8754,7 @@
           {
             "id": 308,
             "name": "Johan Mojica",
+            "teamId": 9,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -8351,6 +8772,7 @@
           {
             "id": 561,
             "name": "Marcos Llorente",
+            "teamId": 2,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -8368,6 +8790,7 @@
           {
             "id": 28791,
             "name": "Jesús Vázquez",
+            "teamId": 19,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -8385,6 +8808,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -8402,6 +8826,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -8419,6 +8844,7 @@
           {
             "id": 70998,
             "name": "Izan Merino",
+            "teamId": 13,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -8436,6 +8862,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -8453,6 +8880,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 12,
             "captain": false,
@@ -8470,6 +8898,7 @@
           {
             "id": 2196106,
             "name": "Francho Serrano",
+            "teamId": 9,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -8487,6 +8916,7 @@
           {
             "id": 6044,
             "name": "Enes Ünal",
+            "teamId": 9,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -8533,6 +8963,7 @@
           {
             "id": 31,
             "name": "Jan Oblak",
+            "teamId": 2,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -8550,6 +8981,7 @@
           {
             "id": 63,
             "name": "Marc Bartra",
+            "teamId": 4,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -8567,6 +8999,7 @@
           {
             "id": 78394,
             "name": "Nicolás Valentini",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -8584,6 +9017,7 @@
           {
             "id": 59506,
             "name": "Javi Rodríguez",
+            "teamId": 5,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -8601,6 +9035,7 @@
           {
             "id": 51135,
             "name": "Pablo Barrios",
+            "teamId": 2,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -8618,6 +9053,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -8635,6 +9071,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -8652,6 +9089,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -8669,6 +9107,7 @@
           {
             "id": 71503,
             "name": "Mikel Rodriguez",
+            "teamId": 48,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -8686,6 +9125,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 11,
             "captain": false,
@@ -8703,6 +9143,7 @@
           {
             "id": 51134,
             "name": "Pablo Durán",
+            "teamId": 5,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -8749,6 +9190,7 @@
           {
             "id": 30444,
             "name": "Leo Román",
+            "teamId": 6,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -8766,6 +9208,7 @@
           {
             "id": 70935,
             "name": "Jorge Salinas",
+            "teamId": 1490,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -8783,6 +9226,7 @@
           {
             "id": 7784,
             "name": "Unai Núñez",
+            "teamId": 8,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -8800,6 +9244,7 @@
           {
             "id": 65476,
             "name": "Clemens Riedel",
+            "teamId": 8,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -8817,6 +9262,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": 24,
             "captain": true,
@@ -8834,6 +9280,7 @@
           {
             "id": 53143,
             "name": "Abde Rebbach",
+            "teamId": 48,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -8851,6 +9298,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -8868,6 +9316,7 @@
           {
             "id": 36046,
             "name": "Gonzalo Villar",
+            "teamId": 23,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -8885,6 +9334,7 @@
           {
             "id": 52117,
             "name": "Jon Ander Olasagasti",
+            "teamId": 12,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -8902,6 +9352,7 @@
           {
             "id": 523868,
             "name": "Robbie Ure",
+            "teamId": 17,
             "pos": "DL",
             "points": 0,
             "captain": false,
@@ -8919,6 +9370,7 @@
           {
             "id": 31128,
             "name": "Julen Lobete",
+            "teamId": 13,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -8965,6 +9417,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -8982,6 +9435,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -8999,6 +9453,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -9016,6 +9471,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 6,
             "captain": true,
@@ -9033,6 +9489,7 @@
           {
             "id": 71790,
             "name": "Saba Sazonov",
+            "teamId": 9,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -9050,6 +9507,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9067,6 +9525,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -9084,6 +9543,7 @@
           {
             "id": 68383,
             "name": "Thiago Fernández",
+            "teamId": 12,
             "pos": "MC",
             "points": 7,
             "captain": false,
@@ -9101,6 +9561,7 @@
           {
             "id": 51060,
             "name": "Juan Cruz",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -9118,6 +9579,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -9135,6 +9597,7 @@
           {
             "id": 60927,
             "name": "Adrián Niño",
+            "teamId": 13,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -9183,6 +9646,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 1,
             "captain": false,
@@ -9200,6 +9664,7 @@
           {
             "id": 118,
             "name": "Jonny Otto",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -9217,6 +9682,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": 9,
             "captain": true,
@@ -9234,6 +9700,7 @@
           {
             "id": 64411,
             "name": "Youssef Enríquez",
+            "teamId": 48,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -9251,6 +9718,7 @@
           {
             "id": 3728,
             "name": "Marc Roca",
+            "teamId": 4,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -9268,6 +9736,7 @@
           {
             "id": 52162,
             "name": "Pape Gueye",
+            "teamId": 20,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -9285,6 +9754,7 @@
           {
             "id": 27907,
             "name": "Roger Brugué",
+            "teamId": 12,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -9302,6 +9772,7 @@
           {
             "id": 27861,
             "name": "Pablo Martínez",
+            "teamId": 13,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -9319,6 +9790,7 @@
           {
             "id": 36410,
             "name": "Pierre-Emerick Aubameyang",
+            "teamId": 6,
             "pos": "DL",
             "points": 5,
             "captain": false,
@@ -9336,6 +9808,7 @@
           {
             "id": 17290,
             "name": "Sergio Camello",
+            "teamId": 14,
             "pos": "DL",
             "points": 10,
             "captain": false,
@@ -9353,6 +9826,7 @@
           {
             "id": 71616,
             "name": "Yassir Zabiri",
+            "teamId": 1490,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -9399,6 +9873,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 7,
             "captain": false,
@@ -9416,6 +9891,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -9433,6 +9909,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -9450,6 +9927,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 0,
             "captain": false,
@@ -9467,6 +9945,7 @@
           {
             "id": 71790,
             "name": "Saba Sazonov",
+            "teamId": 9,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -9484,6 +9963,7 @@
           {
             "id": 24,
             "name": "Unai López",
+            "teamId": 14,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9501,6 +9981,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 8,
             "captain": false,
@@ -9518,6 +9999,7 @@
           {
             "id": 68383,
             "name": "Thiago Fernández",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -9535,6 +10017,7 @@
           {
             "id": 64033,
             "name": "Jon Gorrotxategi",
+            "teamId": 16,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9552,6 +10035,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -9569,6 +10053,7 @@
           {
             "id": 36334,
             "name": "Adama Traoré",
+            "teamId": 6,
             "pos": "DL",
             "points": 9,
             "captain": true,
@@ -9615,6 +10100,7 @@
           {
             "id": 71012,
             "name": "Carlos López",
+            "teamId": 13,
             "pos": "PT",
             "points": null,
             "captain": false,
@@ -9632,6 +10118,7 @@
           {
             "id": 7011,
             "name": "Ximo Navarro",
+            "teamId": 6,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -9649,6 +10136,7 @@
           {
             "id": 4836165,
             "name": "Roy Revivo",
+            "teamId": 23,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -9666,6 +10154,7 @@
           {
             "id": 4947932,
             "name": "Mujaid Sadick",
+            "teamId": 14,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -9683,6 +10172,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -9700,6 +10190,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -9717,6 +10208,7 @@
           {
             "id": 71639,
             "name": "Beñat Gerenabarrena",
+            "teamId": 1,
             "pos": "MC",
             "points": null,
             "captain": true,
@@ -9734,6 +10226,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9751,6 +10244,7 @@
           {
             "id": 65136,
             "name": "Fede Redondo",
+            "teamId": 23,
             "pos": "MC",
             "points": -9,
             "captain": false,
@@ -9768,6 +10262,7 @@
           {
             "id": 48657,
             "name": "Raphinha",
+            "teamId": 3,
             "pos": "DL",
             "points": 20,
             "captain": false,
@@ -9785,6 +10280,7 @@
           {
             "id": 18004,
             "name": "Ante Budimir",
+            "teamId": 50,
             "pos": "DL",
             "points": 10,
             "captain": false,
@@ -9831,6 +10327,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -9848,6 +10345,7 @@
           {
             "id": 71004,
             "name": "Carlos Puga",
+            "teamId": 13,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -9865,6 +10363,7 @@
           {
             "id": 59499,
             "name": "Natan Souza",
+            "teamId": 4,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -9882,6 +10381,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -9899,6 +10399,7 @@
           {
             "id": 59395,
             "name": "Pedro Díaz",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -9916,6 +10417,7 @@
           {
             "id": 20346,
             "name": "Guido Rodríguez",
+            "teamId": 19,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9933,6 +10435,7 @@
           {
             "id": 18109,
             "name": "Luis Rioja",
+            "teamId": 19,
             "pos": "MC",
             "points": 9,
             "captain": true,
@@ -9950,6 +10453,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -9967,6 +10471,7 @@
           {
             "id": 59382,
             "name": "Nicolas Pépé",
+            "teamId": 20,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -9984,6 +10489,7 @@
           {
             "id": 564,
             "name": "Mikel Oyarzabal",
+            "teamId": 16,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -10001,6 +10507,7 @@
           {
             "id": 11697,
             "name": "Lucas Boyé",
+            "teamId": 48,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -10047,6 +10554,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -10064,6 +10572,7 @@
           {
             "id": 308,
             "name": "Johan Mojica",
+            "teamId": 9,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -10081,6 +10590,7 @@
           {
             "id": 64382,
             "name": "Gabriel Suazo",
+            "teamId": 17,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -10098,6 +10608,7 @@
           {
             "id": 3848780,
             "name": "Johaneko Louis-Jean",
+            "teamId": 1,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -10115,6 +10626,7 @@
           {
             "id": 364,
             "name": "Sergio Canales",
+            "teamId": 1490,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -10132,6 +10644,7 @@
           {
             "id": 12949,
             "name": "Thomas Lemar",
+            "teamId": 23,
             "pos": "MC",
             "points": 18,
             "captain": true,
@@ -10149,6 +10662,7 @@
           {
             "id": 14789,
             "name": "Oihan Sancet",
+            "teamId": 1,
             "pos": "MC",
             "points": -1,
             "captain": false,
@@ -10166,6 +10680,7 @@
           {
             "id": 52372,
             "name": "Javi Guerra",
+            "teamId": 19,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -10183,6 +10698,7 @@
           {
             "id": 53095,
             "name": "Bryan Zaragoza",
+            "teamId": 8,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -10200,6 +10716,7 @@
           {
             "id": 6044,
             "name": "Enes Ünal",
+            "teamId": 9,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -10217,6 +10734,7 @@
           {
             "id": 59476,
             "name": "Julián Álvarez",
+            "teamId": 2,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -10263,6 +10781,7 @@
           {
             "id": 28395,
             "name": "Matías Dituro",
+            "teamId": 23,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -10280,6 +10799,7 @@
           {
             "id": 34,
             "name": "José Giménez",
+            "teamId": 6,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -10297,6 +10817,7 @@
           {
             "id": 63,
             "name": "Marc Bartra",
+            "teamId": 4,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -10314,6 +10835,7 @@
           {
             "id": 56925,
             "name": "Jon Aramburu",
+            "teamId": 16,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -10331,6 +10853,7 @@
           {
             "id": 71154,
             "name": "Lorenzo Amatucci",
+            "teamId": 6,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -10348,6 +10871,7 @@
           {
             "id": 58820,
             "name": "Marc Casadó",
+            "teamId": 6,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -10365,6 +10889,7 @@
           {
             "id": 65674,
             "name": "Miguel Román",
+            "teamId": 5,
             "pos": "MC",
             "points": 14,
             "captain": false,
@@ -10382,6 +10907,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -10399,6 +10925,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 1,
             "captain": false,
@@ -10416,6 +10943,7 @@
           {
             "id": 61012,
             "name": "Pablo García",
+            "teamId": 1490,
             "pos": "DL",
             "points": 3,
             "captain": true,
@@ -10433,6 +10961,7 @@
           {
             "id": 4733614,
             "name": "Romain Del Castillo",
+            "teamId": 50,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -10479,6 +11008,7 @@
           {
             "id": 14670,
             "name": "Thibaut Courtois",
+            "teamId": 15,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -10496,6 +11026,7 @@
           {
             "id": 3317698,
             "name": "Ifeanyi Ndukwe",
+            "teamId": 12,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -10513,6 +11044,7 @@
           {
             "id": 63788,
             "name": "Dean Huijsen",
+            "teamId": 15,
             "pos": "DF",
             "points": -6,
             "captain": false,
@@ -10530,6 +11062,7 @@
           {
             "id": 65179,
             "name": "Andrés Castrín",
+            "teamId": 17,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -10547,6 +11080,7 @@
           {
             "id": 3848779,
             "name": "Gnangoro Bouare",
+            "teamId": 14,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -10564,6 +11098,7 @@
           {
             "id": 19168,
             "name": "Nemanja Gudelj",
+            "teamId": 9,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -10581,6 +11116,7 @@
           {
             "id": 71061,
             "name": "Álex Calatrava",
+            "teamId": 8,
             "pos": "MC",
             "points": 1,
             "captain": false,
@@ -10598,6 +11134,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -10615,6 +11152,7 @@
           {
             "id": 3060,
             "name": "Mariano Díaz",
+            "teamId": 48,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -10632,6 +11170,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 10,
             "captain": false,
@@ -10649,6 +11188,7 @@
           {
             "id": 61013,
             "name": "Antony Santos",
+            "teamId": 4,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -10697,6 +11237,7 @@
           {
             "id": 14670,
             "name": "Thibaut Courtois",
+            "teamId": 15,
             "pos": "PT",
             "points": 8,
             "captain": false,
@@ -10714,6 +11255,7 @@
           {
             "id": 13011,
             "name": "Fernando Calero",
+            "teamId": 13,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -10731,6 +11273,7 @@
           {
             "id": 25630,
             "name": "Victor Chust",
+            "teamId": 23,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -10748,6 +11291,7 @@
           {
             "id": 3317698,
             "name": "Ifeanyi Ndukwe",
+            "teamId": 12,
             "pos": "DF",
             "points": 11,
             "captain": false,
@@ -10765,6 +11309,7 @@
           {
             "id": 3117,
             "name": "Diego Rico",
+            "teamId": 50,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -10782,6 +11327,7 @@
           {
             "id": 4888,
             "name": "Carlos Soler",
+            "teamId": 16,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -10799,6 +11345,7 @@
           {
             "id": 17989,
             "name": "Jorge de Frutos",
+            "teamId": 14,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -10816,6 +11363,7 @@
           {
             "id": 53114,
             "name": "Jude Bellingham",
+            "teamId": 15,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -10833,6 +11381,7 @@
           {
             "id": 55009,
             "name": "Fermín López",
+            "teamId": 3,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -10850,6 +11399,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 7,
             "captain": false,
@@ -10867,6 +11417,7 @@
           {
             "id": 68593,
             "name": "Lucas Cepeda",
+            "teamId": 23,
             "pos": "DL",
             "points": 15,
             "captain": true,
@@ -10913,6 +11464,7 @@
           {
             "id": 28395,
             "name": "Matías Dituro",
+            "teamId": 23,
             "pos": "PT",
             "points": 4,
             "captain": false,
@@ -10930,6 +11482,7 @@
           {
             "id": 34,
             "name": "José Giménez",
+            "teamId": 6,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -10947,6 +11500,7 @@
           {
             "id": 78394,
             "name": "Nicolás Valentini",
+            "teamId": 48,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -10964,6 +11518,7 @@
           {
             "id": 28773,
             "name": "Aitor Paredes",
+            "teamId": 1,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -10981,6 +11536,7 @@
           {
             "id": 340,
             "name": "Isco",
+            "teamId": 4,
             "pos": "MC",
             "points": 18,
             "captain": false,
@@ -10998,6 +11554,7 @@
           {
             "id": 33896,
             "name": "Ilias Akhomach",
+            "teamId": 20,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -11015,6 +11572,7 @@
           {
             "id": 68606,
             "name": "Ángel Pérez",
+            "teamId": 48,
             "pos": "MC",
             "points": -4,
             "captain": false,
@@ -11032,6 +11590,7 @@
           {
             "id": 5340038,
             "name": "Aaron Mayol",
+            "teamId": 19,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -11049,6 +11608,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -11066,6 +11626,7 @@
           {
             "id": 4764213,
             "name": "Gabriel Jesus",
+            "teamId": 3,
             "pos": "DL",
             "points": 24,
             "captain": true,
@@ -11083,6 +11644,7 @@
           {
             "id": 4836153,
             "name": "Jonathan David",
+            "teamId": 2,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -11129,6 +11691,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": 6,
             "captain": false,
@@ -11146,6 +11709,7 @@
           {
             "id": 53107,
             "name": "Sergi Cardona",
+            "teamId": 20,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -11163,6 +11727,7 @@
           {
             "id": 561,
             "name": "Marcos Llorente",
+            "teamId": 2,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -11180,6 +11745,7 @@
           {
             "id": 15338,
             "name": "Robin Le Normand",
+            "teamId": 2,
             "pos": "DF",
             "points": -2,
             "captain": false,
@@ -11197,6 +11763,7 @@
           {
             "id": 68640,
             "name": "Alex Freeman",
+            "teamId": 20,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -11214,6 +11781,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 13,
             "captain": false,
@@ -11231,6 +11799,7 @@
           {
             "id": 71138,
             "name": "Ryunosuke Sato",
+            "teamId": 19,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -11248,6 +11817,7 @@
           {
             "id": 33726,
             "name": "Hugo Álvarez",
+            "teamId": 5,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -11265,6 +11835,7 @@
           {
             "id": 52372,
             "name": "Javi Guerra",
+            "teamId": 19,
             "pos": "MC",
             "points": 21,
             "captain": true,
@@ -11282,6 +11853,7 @@
           {
             "id": 20141,
             "name": "Germán Valera",
+            "teamId": 23,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -11299,6 +11871,7 @@
           {
             "id": 59476,
             "name": "Julián Álvarez",
+            "teamId": 2,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -11345,6 +11918,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 3,
             "captain": false,
@@ -11362,6 +11936,7 @@
           {
             "id": 58980,
             "name": "Valentin Rosier",
+            "teamId": 50,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -11379,6 +11954,7 @@
           {
             "id": 59499,
             "name": "Natan Souza",
+            "teamId": 4,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -11396,6 +11972,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -11413,6 +11990,7 @@
           {
             "id": 59395,
             "name": "Pedro Díaz",
+            "teamId": 14,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -11430,6 +12008,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 12,
             "captain": false,
@@ -11447,6 +12026,7 @@
           {
             "id": 66706,
             "name": "Javi Hernandez",
+            "teamId": 8,
             "pos": "MC",
             "points": 12,
             "captain": true,
@@ -11464,6 +12044,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -11481,6 +12062,7 @@
           {
             "id": 59382,
             "name": "Nicolas Pépé",
+            "teamId": 20,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -11498,6 +12080,7 @@
           {
             "id": 564,
             "name": "Mikel Oyarzabal",
+            "teamId": 16,
             "pos": "DL",
             "points": 5,
             "captain": false,
@@ -11515,6 +12098,7 @@
           {
             "id": 28779,
             "name": "Iván Romero",
+            "teamId": 12,
             "pos": "DL",
             "points": 12,
             "captain": false,
@@ -11561,6 +12145,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 7,
             "captain": false,
@@ -11578,6 +12163,7 @@
           {
             "id": 22956,
             "name": "Sergio Gómez",
+            "teamId": 16,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -11595,6 +12181,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -11612,6 +12199,7 @@
           {
             "id": 71623,
             "name": "Roger Hinojo",
+            "teamId": 8,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -11629,6 +12217,7 @@
           {
             "id": 69889,
             "name": "Xavi Espart",
+            "teamId": 3,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -11646,6 +12235,7 @@
           {
             "id": 12949,
             "name": "Thomas Lemar",
+            "teamId": 23,
             "pos": "MC",
             "points": 18,
             "captain": true,
@@ -11663,6 +12253,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -11680,6 +12271,7 @@
           {
             "id": 64033,
             "name": "Jon Gorrotxategi",
+            "teamId": 16,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -11697,6 +12289,7 @@
           {
             "id": 476,
             "name": "Gerard Moreno",
+            "teamId": 20,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -11714,6 +12307,7 @@
           {
             "id": 36334,
             "name": "Adama Traoré",
+            "teamId": 6,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -11731,6 +12325,7 @@
           {
             "id": 20449,
             "name": "Fer Niño",
+            "teamId": 23,
             "pos": "DL",
             "points": 2,
             "captain": false,
@@ -11777,6 +12372,7 @@
           {
             "id": 14379,
             "name": "Aitor Fernández",
+            "teamId": 50,
             "pos": "PT",
             "points": 2,
             "captain": false,
@@ -11794,6 +12390,7 @@
           {
             "id": 55966,
             "name": "Adrià Altimira",
+            "teamId": 6,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -11811,6 +12408,7 @@
           {
             "id": 4836165,
             "name": "Roy Revivo",
+            "teamId": 23,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -11828,6 +12426,7 @@
           {
             "id": 4947932,
             "name": "Mujaid Sadick",
+            "teamId": 14,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -11845,6 +12444,7 @@
           {
             "id": 27874,
             "name": "Iván Martín",
+            "teamId": 1490,
             "pos": "MC",
             "points": 12,
             "captain": false,
@@ -11862,6 +12462,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -11879,6 +12480,7 @@
           {
             "id": 70150,
             "name": "Javi Morcillo",
+            "teamId": 23,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -11896,6 +12498,7 @@
           {
             "id": 71640,
             "name": "Miguel Sierra",
+            "teamId": 17,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -11913,6 +12516,7 @@
           {
             "id": 71639,
             "name": "Beñat Gerenabarrena",
+            "teamId": 1,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -11930,6 +12534,7 @@
           {
             "id": 18004,
             "name": "Ante Budimir",
+            "teamId": 50,
             "pos": "DL",
             "points": 7,
             "captain": false,
@@ -11947,6 +12552,7 @@
           {
             "id": 27516,
             "name": "Andrés Martín",
+            "teamId": 1490,
             "pos": "DL",
             "points": 6,
             "captain": true,
@@ -11993,6 +12599,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 1,
             "captain": false,
@@ -12010,6 +12617,7 @@
           {
             "id": 71502,
             "name": "Andrés García",
+            "teamId": 9,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12027,6 +12635,7 @@
           {
             "id": 24792,
             "name": "Juan Iglesias",
+            "teamId": 17,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -12044,6 +12653,7 @@
           {
             "id": 1385821,
             "name": "Cristian Romero",
+            "teamId": 2,
             "pos": "DF",
             "points": 14,
             "captain": false,
@@ -12061,6 +12671,7 @@
           {
             "id": 27907,
             "name": "Roger Brugué",
+            "teamId": 12,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -12078,6 +12689,7 @@
           {
             "id": 55439,
             "name": "Hugo González",
+            "teamId": 5,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -12095,6 +12707,7 @@
           {
             "id": 60218,
             "name": "Peio Canales",
+            "teamId": 1,
             "pos": "MC",
             "points": null,
             "captain": true,
@@ -12112,6 +12725,7 @@
           {
             "id": 1762,
             "name": "Álex Berenguer",
+            "teamId": 1,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -12129,6 +12743,7 @@
           {
             "id": 6034,
             "name": "Edu Expósito",
+            "teamId": 8,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -12146,6 +12761,7 @@
           {
             "id": 17290,
             "name": "Sergio Camello",
+            "teamId": 14,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -12163,6 +12779,7 @@
           {
             "id": 71616,
             "name": "Yassir Zabiri",
+            "teamId": 1490,
             "pos": "DL",
             "points": 9,
             "captain": false,
@@ -12211,6 +12828,7 @@
           {
             "id": 29167,
             "name": "Ángel Fortuño",
+            "teamId": 8,
             "pos": "PT",
             "points": 9,
             "captain": false,
@@ -12228,6 +12846,7 @@
           {
             "id": 34,
             "name": "José Giménez",
+            "teamId": 6,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -12245,6 +12864,7 @@
           {
             "id": 23369,
             "name": "Juan Foyth",
+            "teamId": 20,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -12262,6 +12882,7 @@
           {
             "id": 78394,
             "name": "Nicolás Valentini",
+            "teamId": 48,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12279,6 +12900,7 @@
           {
             "id": 53107,
             "name": "Sergi Cardona",
+            "teamId": 20,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -12296,6 +12918,7 @@
           {
             "id": 340,
             "name": "Isco",
+            "teamId": 4,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -12313,6 +12936,7 @@
           {
             "id": 24778,
             "name": "Robert Navarro",
+            "teamId": 1,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -12330,6 +12954,7 @@
           {
             "id": 33896,
             "name": "Ilias Akhomach",
+            "teamId": 20,
             "pos": "MC",
             "points": 15,
             "captain": true,
@@ -12347,6 +12972,7 @@
           {
             "id": 58954,
             "name": "Kylian Mbappé",
+            "teamId": 15,
             "pos": "DL",
             "points": 15,
             "captain": false,
@@ -12364,6 +12990,7 @@
           {
             "id": 62904,
             "name": "Yan Diomande",
+            "teamId": 15,
             "pos": "DL",
             "points": 13,
             "captain": false,
@@ -12381,6 +13008,7 @@
           {
             "id": 4764213,
             "name": "Gabriel Jesus",
+            "teamId": 3,
             "pos": "DL",
             "points": 9,
             "captain": false,
@@ -12427,6 +13055,7 @@
           {
             "id": 14670,
             "name": "Thibaut Courtois",
+            "teamId": 15,
             "pos": "PT",
             "points": 7,
             "captain": false,
@@ -12444,6 +13073,7 @@
           {
             "id": 13011,
             "name": "Fernando Calero",
+            "teamId": 13,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -12461,6 +13091,7 @@
           {
             "id": 25630,
             "name": "Victor Chust",
+            "teamId": 23,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -12478,6 +13109,7 @@
           {
             "id": 3317698,
             "name": "Ifeanyi Ndukwe",
+            "teamId": 12,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12495,6 +13127,7 @@
           {
             "id": 4836242,
             "name": "Sebastián Cáceres",
+            "teamId": 5,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -12512,6 +13145,7 @@
           {
             "id": 208,
             "name": "Moi Gómez",
+            "teamId": 50,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -12529,6 +13163,7 @@
           {
             "id": 7024,
             "name": "Fede Valverde",
+            "teamId": 15,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -12546,6 +13181,7 @@
           {
             "id": 17989,
             "name": "Jorge de Frutos",
+            "teamId": 14,
             "pos": "MC",
             "points": 18,
             "captain": true,
@@ -12563,6 +13199,7 @@
           {
             "id": 53114,
             "name": "Jude Bellingham",
+            "teamId": 15,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -12580,6 +13217,7 @@
           {
             "id": 55009,
             "name": "Fermín López",
+            "teamId": 3,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -12597,6 +13235,7 @@
           {
             "id": 52375,
             "name": "Lamine Yamal",
+            "teamId": 3,
             "pos": "DL",
             "points": 14,
             "captain": false,
@@ -12643,6 +13282,7 @@
           {
             "id": 53111,
             "name": "Álvaro Valles",
+            "teamId": 4,
             "pos": "PT",
             "points": 6,
             "captain": false,
@@ -12660,6 +13300,7 @@
           {
             "id": 49424,
             "name": "Kike Salas",
+            "teamId": 17,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12677,6 +13318,7 @@
           {
             "id": 58980,
             "name": "Valentin Rosier",
+            "teamId": 50,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12694,6 +13336,7 @@
           {
             "id": 59623,
             "name": "Jon Martin",
+            "teamId": 16,
             "pos": "DF",
             "points": 18,
             "captain": true,
@@ -12711,6 +13354,7 @@
           {
             "id": 29223,
             "name": "Mario Soriano",
+            "teamId": 6,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -12728,6 +13372,7 @@
           {
             "id": 54817,
             "name": "Arda Güler",
+            "teamId": 15,
             "pos": "MC",
             "points": 13,
             "captain": false,
@@ -12745,6 +13390,7 @@
           {
             "id": 27517,
             "name": "Isi Palazón",
+            "teamId": 14,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -12762,6 +13408,7 @@
           {
             "id": 66706,
             "name": "Javi Hernandez",
+            "teamId": 8,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -12779,6 +13426,7 @@
           {
             "id": 56628,
             "name": "Lucien Agoumé",
+            "teamId": 17,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -12796,6 +13444,7 @@
           {
             "id": 564,
             "name": "Mikel Oyarzabal",
+            "teamId": 16,
             "pos": "DL",
             "points": 17,
             "captain": false,
@@ -12813,6 +13462,7 @@
           {
             "id": 28779,
             "name": "Iván Romero",
+            "teamId": 12,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -12859,6 +13509,7 @@
           {
             "id": 71649,
             "name": "Péter Gulácsi",
+            "teamId": 20,
             "pos": "PT",
             "points": 5,
             "captain": false,
@@ -12876,6 +13527,7 @@
           {
             "id": 561,
             "name": "Marcos Llorente",
+            "teamId": 2,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -12893,6 +13545,7 @@
           {
             "id": 35434,
             "name": "Marc Pubill",
+            "teamId": 2,
             "pos": "DF",
             "points": 6,
             "captain": false,
@@ -12910,6 +13563,7 @@
           {
             "id": 71021,
             "name": "Alejandro Grimaldo",
+            "teamId": 2,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -12927,6 +13581,7 @@
           {
             "id": 68640,
             "name": "Alex Freeman",
+            "teamId": 20,
             "pos": "DF",
             "points": 18,
             "captain": true,
@@ -12944,6 +13599,7 @@
           {
             "id": 270,
             "name": "Rubén García",
+            "teamId": 50,
             "pos": "MC",
             "points": 8,
             "captain": false,
@@ -12961,6 +13617,7 @@
           {
             "id": 22604,
             "name": "Iñigo Vicente",
+            "teamId": 1490,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -12978,6 +13635,7 @@
           {
             "id": 33726,
             "name": "Hugo Álvarez",
+            "teamId": 5,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -12995,6 +13653,7 @@
           {
             "id": 52372,
             "name": "Javi Guerra",
+            "teamId": 19,
             "pos": "MC",
             "points": 5,
             "captain": false,
@@ -13012,6 +13671,7 @@
           {
             "id": 59476,
             "name": "Julián Álvarez",
+            "teamId": 2,
             "pos": "DL",
             "points": 8,
             "captain": false,
@@ -13029,6 +13689,7 @@
           {
             "id": 31355,
             "name": "Alexander Sørloth",
+            "teamId": 2,
             "pos": "DL",
             "points": null,
             "captain": false,
@@ -13075,6 +13736,7 @@
           {
             "id": 28774,
             "name": "Julen Agirrezabala",
+            "teamId": 1490,
             "pos": "PT",
             "points": 8,
             "captain": false,
@@ -13092,6 +13754,7 @@
           {
             "id": 1713,
             "name": "Florian Lejeune",
+            "teamId": 14,
             "pos": "DF",
             "points": 8,
             "captain": false,
@@ -13109,6 +13772,7 @@
           {
             "id": 60919,
             "name": "Yoel Lago",
+            "teamId": 5,
             "pos": "DF",
             "points": 3,
             "captain": false,
@@ -13126,6 +13790,7 @@
           {
             "id": 1385821,
             "name": "Cristian Romero",
+            "teamId": 2,
             "pos": "DF",
             "points": 7,
             "captain": false,
@@ -13143,6 +13808,7 @@
           {
             "id": 55439,
             "name": "Hugo González",
+            "teamId": 5,
             "pos": "MC",
             "points": null,
             "captain": false,
@@ -13160,6 +13826,7 @@
           {
             "id": 27907,
             "name": "Roger Brugué",
+            "teamId": 12,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -13177,6 +13844,7 @@
           {
             "id": 51135,
             "name": "Pablo Barrios",
+            "teamId": 2,
             "pos": "MC",
             "points": 6,
             "captain": false,
@@ -13194,6 +13862,7 @@
           {
             "id": 60218,
             "name": "Peio Canales",
+            "teamId": 1,
             "pos": "MC",
             "points": 3,
             "captain": true,
@@ -13211,6 +13880,7 @@
           {
             "id": 17290,
             "name": "Sergio Camello",
+            "teamId": 14,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -13228,6 +13898,7 @@
           {
             "id": 71616,
             "name": "Yassir Zabiri",
+            "teamId": 1490,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -13245,6 +13916,7 @@
           {
             "id": 70939,
             "name": "Yeremay Hernández",
+            "teamId": 6,
             "pos": "DL",
             "points": 8,
             "captain": false,
@@ -13291,6 +13963,7 @@
           {
             "id": 63705,
             "name": "Ionuț Radu",
+            "teamId": 5,
             "pos": "PT",
             "points": 10,
             "captain": false,
@@ -13308,6 +13981,7 @@
           {
             "id": 27520,
             "name": "Fran García",
+            "teamId": 4,
             "pos": "DF",
             "points": 1,
             "captain": false,
@@ -13325,6 +13999,7 @@
           {
             "id": 71010,
             "name": "Ángel Recio",
+            "teamId": 13,
             "pos": "DF",
             "points": -2,
             "captain": false,
@@ -13342,6 +14017,7 @@
           {
             "id": 69889,
             "name": "Xavi Espart",
+            "teamId": 3,
             "pos": "DF",
             "points": 4,
             "captain": false,
@@ -13359,6 +14035,7 @@
           {
             "id": 12949,
             "name": "Thomas Lemar",
+            "teamId": 23,
             "pos": "MC",
             "points": 24,
             "captain": true,
@@ -13376,6 +14053,7 @@
           {
             "id": 48203,
             "name": "Ramón Terrats",
+            "teamId": 9,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -13393,6 +14071,7 @@
           {
             "id": 64562,
             "name": "Nelson Deossa",
+            "teamId": 4,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -13410,6 +14089,7 @@
           {
             "id": 3845074,
             "name": "Nathan Saliba",
+            "teamId": 20,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -13427,6 +14107,7 @@
           {
             "id": 56502,
             "name": "Mikel Jauregizar",
+            "teamId": 1,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -13444,6 +14125,7 @@
           {
             "id": 14791,
             "name": "Gorka Guruzeta",
+            "teamId": 1,
             "pos": "DL",
             "points": 0,
             "captain": false,
@@ -13461,6 +14143,7 @@
           {
             "id": 20449,
             "name": "Fer Niño",
+            "teamId": 23,
             "pos": "DL",
             "points": 3,
             "captain": false,
@@ -13507,6 +14190,7 @@
           {
             "id": 14379,
             "name": "Aitor Fernández",
+            "teamId": 50,
             "pos": "PT",
             "points": 4,
             "captain": false,
@@ -13524,6 +14208,7 @@
           {
             "id": 55966,
             "name": "Adrià Altimira",
+            "teamId": 6,
             "pos": "DF",
             "points": 2,
             "captain": false,
@@ -13541,6 +14226,7 @@
           {
             "id": 4836165,
             "name": "Roy Revivo",
+            "teamId": 23,
             "pos": "DF",
             "points": 5,
             "captain": false,
@@ -13558,6 +14244,7 @@
           {
             "id": 27852,
             "name": "Daniel Vivian",
+            "teamId": 1,
             "pos": "DF",
             "points": null,
             "captain": false,
@@ -13575,6 +14262,7 @@
           {
             "id": 27874,
             "name": "Iván Martín",
+            "teamId": 1490,
             "pos": "MC",
             "points": 2,
             "captain": false,
@@ -13592,6 +14280,7 @@
           {
             "id": 54900,
             "name": "Carlos Dotor",
+            "teamId": 13,
             "pos": "MC",
             "points": 4,
             "captain": false,
@@ -13609,6 +14298,7 @@
           {
             "id": 19527,
             "name": "Jon Moncayola",
+            "teamId": 50,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -13626,6 +14316,7 @@
           {
             "id": 71639,
             "name": "Beñat Gerenabarrena",
+            "teamId": 1,
             "pos": "MC",
             "points": 3,
             "captain": false,
@@ -13643,6 +14334,7 @@
           {
             "id": 18004,
             "name": "Ante Budimir",
+            "teamId": 50,
             "pos": "DL",
             "points": 11,
             "captain": false,
@@ -13660,6 +14352,7 @@
           {
             "id": 48657,
             "name": "Raphinha",
+            "teamId": 3,
             "pos": "DL",
             "points": 4,
             "captain": false,
@@ -13677,6 +14370,7 @@
           {
             "id": 27516,
             "name": "Andrés Martín",
+            "teamId": 1490,
             "pos": "DL",
             "points": 0,
             "captain": true,
