@@ -17,6 +17,7 @@ Usa las mismas credenciales que mister_extractor.py.
 import json
 import os
 import sys
+from datetime import datetime, timezone
 
 import requests
 
@@ -141,20 +142,24 @@ def main():
     for mg in managers:
         actualizar_historial(squad_history, mg["id"], mg["squadValue"], mg["squadPrev"], fecha)
 
+    ahora_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     movimientos = detectar_movimientos(previo, managers, fecha_hora)
     for mv in movimientos:
+        mv["ts"] = ahora_utc
         print(f"   Movimiento: {mv['name']} | {mv['from']} -> {mv['to']}")
     transfers = (movimientos + previo.get("transfers", []))[:MAX_MOVIMIENTOS]
 
     salida = {
         "updated": ahora.strftime("%d/%m/%Y %H:%M"),
+        "updatedAt": ahora_utc,
         "managers": managers,
         "history": history,
         "squadHistory": squad_history,
         "transfers": transfers,
     }
 
-    if {k: v for k, v in salida.items() if k != "updated"} == {k: v for k, v in previo.items() if k != "updated"}:
+    sin_hora = lambda d: {k: v for k, v in d.items() if k not in ("updated", "updatedAt")}
+    if sin_hora(salida) == sin_hora(previo):
         print("Sin cambios: no se escribe equipos.json.")
         return
 
