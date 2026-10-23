@@ -648,7 +648,19 @@ const CAP = {
   SENS_ATAQUE: 0.6,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
   SENS_CS: 0.35,        // 10 % más de probabilidad de portería a cero -> +3,5 % de puntos
   LIMITE_F: [0.55, 1.6],
-  RIESGO: [0, 0.4, 0.9],    // aversión al riesgo: arriesgado, equilibrado, seguro
+  // Modos: k = premio por el potencial de subida (desviación solo hacia arriba), l = castigo por el riesgo de bajada
+  // (desviación solo hacia abajo). Una racha de 10 puntos no se penaliza; un -3 por goleada o expulsión sí.
+  MODOS: [{ k: 0.25, l: 0.1 }, { k: 0.1, l: 0.4 }, { k: 0, l: 0.9 }],
+  UMBRAL_ALTO: 9,       // puntos que se consideran una "gran jornada"
+  SENS_COLA: 0.35,      // cuánto estira el contexto la cola alta (ataque) o baja (portería) de la distribución
+  MUESTRA_MIN: 10,      // actuaciones mínimas por posición para usar la distribución real de la liga
+  // Distribuciones por defecto (solo hasta tener datos de la liga): el delantero tiene cola alta, el defensa/portero cola baja
+  MUESTRA_DEF: {
+    PT: [-3, -1, 0, 2, 2, 3, 4, 5, 6, 7, 8, 10],
+    DF: [-3, -1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 10],
+    MC: [0, 1, 2, 2, 3, 4, 5, 6, 7, 8, 10, 12],
+    DL: [0, 1, 2, 2, 3, 4, 5, 6, 8, 9, 11, 14]
+  },
   PESO_TEMPORADA: 0.6,  // peso de la regularidad de toda la temporada frente a las últimas 5 jornadas
   P_XI_BASE: 0.5, P_XI_REGULAR: 0.45,   // prob. de jugar en el once probable = base + regular * tasa de titularidad
   P_FUERA_BASE: 0.03, P_FUERA_REGULAR: 0.25,  // idem si NO está en el once probable
@@ -744,6 +756,7 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
   });
   const muPos = pos => (porPos[pos] && porPos[pos].length >= 10) ? capMedia(porPos[pos]) : CAP.POS_DEF[pos];
   const sigPos = pos => (porPos[pos] && porPos[pos].length >= 10) ? capStd(porPos[pos]) : CAP.SIGMA_DEF[pos];
+  const muestraPos = pos => (porPos[pos] && porPos[pos].length >= CAP.MUESTRA_MIN) ? porPos[pos] : CAP.MUESTRA_DEF[pos];
   const porJugador = {};
   obs.forEach(o => (porJugador[o.id] = porJugador[o.id] || []).push(o.pts));
 
@@ -757,7 +770,7 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
   const cerradas = (cal.gameweeks || []).filter(g => g.status === "finished").length ||
     new Set((cal.games || []).filter(g => capNum(g.gh)).map(g => g.gw)).size;
   const confirmados = obj.games.filter(g => g.confirmed || ((cal.lineups || {})[String(g.id)] && Object.values(cal.lineups[String(g.id)]).some(e => e.confirmed))).length;
-  const lambda = CAP.RIESGO[Math.max(0, Math.min(2, riesgo))];
+  const modo = CAP.MODOS[Math.max(0, Math.min(2, riesgo))];
   const lista = [];
 
   mg.players.forEach(p => {
@@ -814,18 +827,36 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
     if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
     const rota = !confirmado && tasa < 0.8 && estado !== "injury" && estado !== "susp";
 
-    // resultado
-    const muC = mu * fCtx, sigC = sig * Math.sqrt(fCtx);
+    // resultado: distribución de puntos del jugador.
+    //   Se parte de la distribución real de su posición en vuestra liga (el delantero tiene cola alta por los goles,
+    //   el defensa y el portero cola baja por goleadas y expulsiones), se desplaza a su media y se escala a su regularidad.
+    //   El contexto estira la cola: un rival goleador alarga la cola baja de defensas y porteros; un rival que concede
+    //   mucho alarga la cola alta de medios y delanteros.
+    const muC = mu * fCtx;
+    const base = muestraPos(pos), muBase = capMedia(base), sdBase = capStd(base) || 3;
+    // La dispersión propia del jugador se mezcla con la de su posición: con solo 5-9 partidos de historial, un gol
+    // inesperado es siempre posible, así que no se deja que una racha estable estreche demasiado las colas.
+    const esc_ = capClamp(0.4 * (sig / sdBase) + 0.6, [0.85, 1.4]);
+    const colaAlta = 1 + CAP.SENS_COLA * (CAP.ATAQUE[pos] * (xgf / modelo.lg - 1));
+    const colaBaja = 1 + CAP.SENS_COLA * (CAP.PORTERIA[pos] * (xgc / modelo.lg - 1));
+    let ys = base.map(x => { const d = (x - muBase) * esc_; return muC + (d > 0 ? d * capClamp(colaAlta, [0.8, 1.4]) : d * capClamp(colaBaja, [0.8, 1.4])); });
+    const desvio = capMedia(ys) - muC;
+    ys = ys.map(y => y - desvio);                           // la media se mantiene en muC
     const esp = pj * muC;
-    const varianza = pj * (sigC ** 2 + muC ** 2) - esp ** 2;
-    const sigEf = Math.sqrt(Math.max(varianza, 0));
+    const w = pj / ys.length;
+    const resultados = [[0, 1 - pj], ...ys.map(y => [y, w])];
+    const sdBajo = Math.sqrt(resultados.reduce((t, [y, q]) => t + q * Math.min(0, y - esp) ** 2, 0));
+    const sdAlto = Math.sqrt(resultados.reduce((t, [y, q]) => t + q * Math.max(0, y - esp) ** 2, 0));
+    const pAlto = ys.filter(y => y >= CAP.UMBRAL_ALTO).length * w;
+    const pNeg = ys.filter(y => y < 0).length * w;
+    const sigEf = Math.sqrt(sdBajo ** 2 + sdAlto ** 2);
     const m = capMult(p.value);
     const extra = (m - 1) * esp;
-    const score = extra - lambda * (m - 1) * sigEf;
+    const score = (m - 1) * (esp + modo.k * sdAlto - modo.l * sdBajo);
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, esp, sigEf, m, extra, score, conf,
+      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
@@ -853,6 +884,7 @@ function motivos(c) {
   if (c.forma != null) o.push(["forma", `Forma ${nf1.format(c.forma)} pts · media ${c.avg != null ? nf1.format(c.avg) : "–"}`, c.forma >= 6 ? "ok" : c.forma <= 2.5 ? "mal" : "mid"]);
   if (Math.abs(c.fXg - 1) >= 0.05) o.push(["rival", `Goles esperados: ${nf1.format(c.xgf)} a favor · ${nf1.format(c.xgc)} en contra (${signoPct(c.fXg - 1)} para su puesto)`, c.fXg > 1 ? "ok" : "mal"]);
   if (c.nR >= 4 && Math.abs(c.fPts - 1) >= 0.06) o.push(["conc", `${esc(c.rivalNombre)} concede ${signoPct(c.fPts - 1)} puntos a ${POSN[c.pos] || "su posición"} (${c.nR} casos)`, c.fPts > 1 ? "ok" : "mal"]);
+  o.push(["riesgo", `Gran jornada (≥ ${CAP.UMBRAL_ALTO} pts): ${Math.round(c.pAlto * 100)} % · puntuación negativa: ${Math.round(c.pNeg * 100)} %`, c.pAlto >= 0.2 && c.pNeg < 0.08 ? "ok" : c.pNeg >= 0.12 ? "mal" : "mid"]);
   o.push(["mult", `Valor ${eur(c.p.value)} → x${String(c.m).replace(".", ",")}`, c.m >= 2 ? "ok" : "mid"]);
   return o;
 }
@@ -866,7 +898,7 @@ function tarjetaCap(c, i, grande) {
       <div class="jp-photo" style="width:${grande ? 52 : 42}px;height:${grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
       <div class="jp-info">
         <div class="jp-name"><span>${esc(c.p.short || c.p.name)}</span><span class="jp-pos2" style="background:var(--${esc(String(c.pos).toLowerCase())})">${esc(c.pos)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
-        <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"} · juega ${Math.round(c.pj * 100)} %</div>
+        <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"} · ${c.confirmado ? (c.pj > 0.5 ? "titular confirmado" : "no está en el once") : `probabilidad de jugar ${Math.round(c.pj * 100)} %`}</div>
       </div>
       <div class="jp-right"><b class="up">+${nf1.format(c.extra)}</b><small>extra · x${String(c.m).replace(".", ",")}</small><small>${nf1.format(c.esp)} pts esp.</small></div>
     </div>
@@ -881,7 +913,7 @@ function pintarCapitan() {
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
   const pills = E.managers.map((m, i) => `<button class="mbtn ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}" title="${esc(m.name)}">${avatar(m, i)}<span class="mn">${esc(m.name)}</span><span class="ms">${m.squadValue ? eur(m.squadValue) : ""}</span></button>`).join("");
-  const riesgos = [["Arriesgado", "Maximiza los puntos esperados"], ["Equilibrado", "Resta algo de riesgo"], ["Seguro", "Prefiere resultados estables"]]
+  const riesgos = [["Arriesgado", "Premia la posibilidad de una gran jornada"], ["Equilibrado", "Premia el techo y castiga el riesgo de bajada"], ["Seguro", "Castiga sobre todo el riesgo de bajada"]]
     .map(([t, d], i) => `<button class="pill ${capRiesgo === i ? "on" : ""}" data-cr="${i}" title="${d}">${t}</button>`).join("");
   const r = recomendarCapitanes({ cal: CAL, D, E, managerId: capMan, riesgo: capRiesgo });
   let cuerpo;
@@ -898,7 +930,7 @@ function pintarCapitan() {
         <p class="note">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
         El contexto mezcla un modelo de goles (ataque, defensa y localía de ambos equipos, ${r.modelo.partidos} partidos) con los puntos que el rival ha concedido a esa posición (${r.observaciones} actuaciones de vuestra liga).
         El capitán suma <b>(multiplicador − 1) × puntos esperados</b>; el multiplicador depende del valor: más de 10 M → x1,5 · de 5 a 10 M → x2 · menos de 5 M → x3.
-        El modo de riesgo resta una parte de la variabilidad esperada. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>`;
+        Los puntos no se reparten igual en todas las posiciones: la distribución sale de las actuaciones reales de vuestra liga, de modo que un delantero tiene cola alta (un gol dispara el resultado) y un defensa o portero cola baja (goleada, expulsión). El modo de riesgo premia la subida posible y castiga solo el riesgo de bajada, así que una gran jornada no se penaliza como variabilidad. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>`;
   }
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
     <div class="mgrid" role="group" aria-label="Manager">${pills}</div>
