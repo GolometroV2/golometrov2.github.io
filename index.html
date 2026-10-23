@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* Paleta "Carbón y verde". Para probar otra, copia sus valores sobre estos:
+   Esmeralda y dorado -> --acc:#f5c542; --accTxt:#1a1500
+   Verde menta        -> --acc:#19d3a2; --accTxt:#042119 */
 :root{--bg:#111315;--panel:#1a1d21;--panel2:#23272d;--line:#2f353c;--txt:#f4f6f5;--mut:#9aa3ad;--acc:#2fd46e;--accTxt:#05210f;
 --pt:#ffc94a;--df:#4cc3ff;--mc:#a3e635;--dl:#ff6b7a;--red:#ff6b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -100,12 +103,6 @@ ul{list-style:none;margin:0;padding:0}
 .pts em.up{color:var(--acc)}.pts em.flat{color:var(--mut)}
 .mini{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
 .mini span{background:var(--panel2);border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:600}
-.pj{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
-.pj .dot{width:10px;height:10px;border-radius:50%;flex:none}
-.pj svg{flex:none}
-.pj .val{text-align:right;line-height:1.15;min-width:84px}
-.pj .val b{font-size:16px;font-weight:700}
-.pj .val small{display:block;font-size:12px;color:var(--mut)}
 .tend{display:inline-block;margin-top:3px;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600}
 .t-sube_acel,.t-sube_const,.t-sube_1{background:#2fd46e26;color:var(--acc)}
 .t-sube_frena{background:#ffc94a26;color:var(--pt)}
@@ -115,18 +112,46 @@ ul{list-style:none;margin:0;padding:0}
 .mv{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .mv:last-child{border-bottom:0}
 .mv small{display:block;color:var(--mut);font-size:12px}
+.lock{text-align:center;padding:40px 16px}
+.lock h2{margin:6px 0 4px;font-size:18px}
+.dots{display:flex;gap:14px;justify-content:center;margin:18px 0 6px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--mut)}
+.dots i.f{background:var(--acc);border-color:var(--acc)}
+.dots.err{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.pad{display:grid;grid-template-columns:repeat(3,68px);gap:12px;justify-content:center;margin:18px auto 0}
+.pad button{height:68px;border-radius:50%;background:var(--panel2);font-size:24px;font-weight:600}
+.pad button:hover{background:var(--line)}
+.pad button:active{background:var(--acc);color:var(--accTxt)}
+.pad .sm{font-size:15px;color:var(--mut);background:none}
+.jp{padding:12px 0;border-bottom:1px solid var(--line)}
+.jp-main{display:flex;align-items:center;gap:10px}
+.jp-side{display:flex;flex-direction:column;align-items:center;gap:5px;width:34px;flex:none}
+.shield{width:20px;height:20px;object-fit:contain}
+.jp-pos{width:34px;text-align:center;border-radius:6px;padding:1px 0;font-size:12px;font-weight:800;color:#111315}
+.jp-pts{width:34px;text-align:center;border-radius:6px;padding:1px 0;font-size:13px;font-weight:700;background:#fff;color:#111315}
+.jp-photo{position:relative;width:68px;height:78px;border-radius:12px;background:var(--panel2);flex:none;overflow:hidden}
+.jp-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.jp-info{flex:1;min-width:0}
+.jp-name{display:flex;align-items:center;font-weight:700;font-size:15px;white-space:nowrap}
+.jp-name>span:first-child{overflow:hidden;text-overflow:ellipsis}
+.jp-val{font-size:13.5px;margin-top:2px}
+.jp-val b{font-weight:800}
+.jp-form{display:flex;align-items:center;gap:8px;margin-top:6px}
+.avg{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px 8px;font-weight:700;font-size:13px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:16px}
+.bars i{display:block;width:4px;border-radius:2px}
+.bars i.dt{height:4px;border-radius:50%;background:var(--mut);opacity:.5}
+.jp-right{text-align:right;line-height:1.15;min-width:74px;flex:none}
+.jp-right b{display:block;font-size:15px;font-weight:700}
+.jp-right small{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+.tendline{margin:8px 0 0 44px}
+.st{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;margin-left:6px;flex:none}
+.st-injury,.st-susp{background:#ff4d4f}
+.st-doubt{background:#ff9f1c}
+.st-otro{background:var(--mut)}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
-
-/* Estilos para el panel de bloqueo de Equipos */
-.lock-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:32px 20px;text-align:center;max-width:400px;margin:40px auto}
-.lock-box h2{margin:0 0 8px;font-size:18px}
-.lock-box p{color:var(--mut);font-size:13.5px;margin:0 0 20px}
-.lock-form{display:flex;gap:8px;justify-content:center}
-.lock-input{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--txt);font:inherit;width:160px;text-align:center;letter-spacing:2px;font-weight:700}
-.lock-input:focus{border-color:var(--acc)}
-.lock-btn{background:var(--acc);color:var(--accTxt);border-radius:8px;padding:8px 16px;font-weight:600}
-.lock-error{color:var(--red);font-size:12.5px;margin-top:10px;min-height:18px}
 </style>
 </head>
 <body>
@@ -147,17 +172,29 @@ code{color:var(--acc)}
 
 <script>
 const POS = ["PT", "DF", "MC", "DL"];
+// Qué cuentan las columnas "Capitán" y "Sin capitán":
+//   "extra" -> solo los puntos que añade el multiplicador (x1.5, x2 o x3)
+//   "total" -> todos los puntos del capitán (ya multiplicados)
 const MODO_CAP = "extra";
+
+// PIN de la pestaña Equipos. Es solo una barrera visual: el hash se ve en el código de la página.
+// Genera el hash de tu contraseña con:
+//   python -c "import hashlib;print(hashlib.sha256('TU_PIN'.encode()).hexdigest())"
+// Si CLAVE_HASH está vacío, la pestaña queda bloqueada para todo el mundo.
+const CLAVE_HASH = "338b4dea5367b50449692de7612b4c85cfd495355ea8f1070d634f40fc0ebec1";
 const METRICAS = [["points", "Puntos", "Pts"], ["sinCap", "Sin capitán", "Pts"], ["cap", "Capitán", "Pts"], ["goals", "Goles", "Goles"], ["assists", "Asistencias", "Asist."],
   ["goalsConceded", "Encajados", "Enc."], ["yellow", "Amarillas", "Amar."], ["redCards", "Rojas", "Rojas"]];
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
 let visibles = new Set(), modoG = "acum", G = null;
 let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
-
-let equiposDesbloqueados = false;
-const PASS_EQUIPOS = "9248";
+let eqOk = false;
+try { eqOk = CLAVE_HASH !== "" && sessionStorage.getItem("eqOk") === CLAVE_HASH; } catch (err) {}
 
 const $ = s => document.querySelector(s);
+// Fechas siempre en hora de España (Madrid), da igual en qué zona se ejecute el script
+const enMadrid = (iso, o) => { try { return new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour12: false, ...o }).format(new Date(iso)).replace(",", ""); } catch (e) { return ""; } };
+const fechaMadrid = iso => enMadrid(iso, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const fechaCorta = iso => enMadrid(iso, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const jornadas = () => Object.keys(D.matchdays || {}).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
 const col = i => `hsl(${Math.round((i * 360 / Math.max((D || E || { managers: [] }).managers.length, 1) + 200) % 360)} 70% 58%)`;
@@ -179,19 +216,20 @@ function cargar(obj) {
   visibles = new Set(D.managers.map(m => m.id));
   D.hayCap = jornadas().some(j => Object.values(D.matchdays[j] || {}).some(x => x && x.captain));
   $("#titulo").textContent = obj.leagueName || "Mi liga";
-  $("#sub").textContent = [obj.season, obj.lastUpdated && "actualizado " + obj.lastUpdated].filter(Boolean).join(" · ");
+  $("#sub").textContent = [obj.season, (obj.updatedAt || obj.lastUpdated) && "actualizado " + (obj.updatedAt ? fechaMadrid(obj.updatedAt) : obj.lastUpdated)].filter(Boolean).join(" · ");
   pintar();
 }
 
 function cargarEquipos() {
+  if (!eqOk) return;
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq" && equiposDesbloqueados) pintarEquipos(); })
+    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); })
     .catch(() => {});
 }
 
 function pintarNav() {
-  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", "💰 Equipos"]]
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"]]
     .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
 }
 
@@ -200,39 +238,7 @@ function ir(sec) {
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
   pintarNav();
-  if (sec === "eq") {
-    if (!equiposDesbloqueados) {
-      pintarLoginEquipos();
-    } else {
-      pintarEquipos();
-    }
-  }
-}
-
-function comprobarPassword(e) {
-  if (e) e.preventDefault();
-  const input = $("#pwd-input");
-  const err = $("#pwd-error");
-  if (input && input.value === PASS_EQUIPOS) {
-    equiposDesbloqueados = true;
-    pintarEquipos();
-  } else {
-    if (err) err.textContent = "Contraseña incorrecta. Prueba de nuevo.";
-    if (input) { input.value = ""; input.focus(); }
-  }
-}
-
-function pintarLoginEquipos() {
-  $("#eq").innerHTML = `
-    <div class="lock-box">
-      <h2>🔒 Sección en desarrollo</h2>
-      <p>Introduce la contraseña para acceder a la pestaña de Equipos.</p>
-      <form class="lock-form" onsubmit="comprobarPassword(event)">
-        <input type="password" id="pwd-input" class="lock-input" placeholder="••••" autocomplete="current-password" autofocus>
-        <button type="submit" class="lock-btn">Entrar</button>
-      </form>
-      <div id="pwd-error" class="lock-error"></div>
-    </div>`;
+  if (sec === "eq") pintarEquipos();
 }
 
 function cargarDatos() {
@@ -254,7 +260,7 @@ pintarNav();
 function leerArchivo(f) {
   if (!f) return;
   const r = new FileReader();
-  r.onload = e => { try { const j = JSON.parse(e.target.result); if (j && j.history) { E = j; if(equiposDesbloqueados) pintarEquipos(); } else cargar(j); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
+  r.onload = e => { try { const j = JSON.parse(e.target.result); if (j && j.history) { E = j; pintarEquipos(); } else cargar(j); } catch (err) { alert("Error al leer el JSON: " + err.message); } };
   r.readAsText(f);
 }
 $("#file").onchange = e => { leerArchivo(e.target.files[0]); e.target.value = ""; };
@@ -410,8 +416,26 @@ const ETIQ = { sube_acel: "Subiendo · acelerando", sube_const: "Subiendo · rit
   baja_frena: "Bajando · frenando la caída", baja_const: "Bajando · ritmo constante", baja_acel: "Bajando · cada día más", baja_1: "Bajando",
   plano: "Estable", nd: "Sin datos" };
 const RANGO = { baja_acel: 0, sube_frena: 1, baja_const: 2, baja_1: 2, baja_frena: 3, plano: 4, sube_const: 5, sube_1: 5, sube_acel: 6, nd: 7 };
+const nf0 = new Intl.NumberFormat("es-ES");
+const nf1 = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const img = (src, cls) => src ? `<img ${cls ? `class="${cls}" ` : ""}src="${esc(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : "";
+const ESTADO = s => {
+  s = String(s || "");
+  if (!s) return null;
+  if (/injur|lesi/i.test(s)) return ["injury", "✚", "Lesionado"];
+  if (/doubt|duda/i.test(s)) return ["doubt", "?", "Duda"];
+  if (/suspen|sanci|card|roja/i.test(s)) return ["susp", "■", "Sancionado"];
+  return ["otro", "!", s];
+};
+// Racha de las últimas 5 jornadas: punto gris = no jugó; rojo < 0; amarillo 0-4; verde >= 5
+const barras = streak => (streak || []).slice(-5).map(n => {
+  if (typeof n !== "number") return `<i class="dt"></i>`;
+  const h = Math.round(Math.max(3, Math.min(14, 3 + Math.abs(n) * 1.1)));
+  return `<i style="height:${h}px;background:${n < 0 ? "var(--red)" : n <= 4 ? "var(--pt)" : "var(--acc)"}"></i>`;
+}).join("");
 const nombreM = id => (E.managers.find(m => m.id === id) || {}).name || "Alguien";
 
+// h = historial del jugador: [[fecha, valor, valorAnterior], ...]. El cambio diario de cada entrada es valor - valorAnterior.
 function tendencia(h) {
   const d = (h || []).slice(-6).map(e => e[1] - e[2]);
   const n = d.length;
@@ -419,7 +443,7 @@ function tendencia(h) {
   const ult = d[n - 1], pct = ult / Math.max(h[h.length - 1][1] - ult, 1);
   if (Math.abs(pct) < 0.003) return { k: "plano", d: ult, pct, n };
   if (n < 2) return { k: ult > 0 ? "sube_1" : "baja_1", d: ult, pct, n };
-  const pend = (d[n - 1] - d[0]) / (n - 1);
+  const pend = (d[n - 1] - d[0]) / (n - 1);   // cuánto cambia el cambio diario cada día
   const tol = Math.abs(ult) * 0.15;
   let k, eta = null;
   if (ult > 0) {
@@ -459,7 +483,7 @@ function resumenEq(ms, hp) {
       <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jugadores · ▲${sube} ▼${baja}${frena ? " · ⚠ " + frena + " frenando" : ""}</span></span>
       <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
   }).join("");
-  const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.date)}</small></li>`).join("");
+  const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></li>`).join("");
   return `<ul style="margin-top:12px">${filas}</ul>
     <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
@@ -473,11 +497,18 @@ function detalleEq(m, hp) {
     .map(([k, t]) => `<button class="pill ${eqOrden === k ? "on" : ""}" data-es="${k}">${t}</button>`).join("");
   const filas = L.sort(ord).map(({ p, t, h }) => {
     const eta = t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
-    return `<li class="pj"><i class="dot" style="background:var(--${esc(String(p.pos).toLowerCase())})"></i>
-      <span class="info"><span class="nm">${esc(p.name)}</span><span class="sub">${esc(p.pos)} · valor ${eur(p.value)}${p.clause ? " · cláusula " + eur(p.clause) : ""}</span>
-        <span><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span></span></span>
-      ${spark(h, t.k)}
-      <span class="val"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small></span></li>`;
+    const est = ESTADO(p.status), dl = p.value - p.prev;
+    return `<li class="jp"><div class="jp-main">
+      <div class="jp-side">${img(p.teamLogo, "shield")}<span class="jp-pos" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span><span class="jp-pts" title="Puntos de la temporada">${esc(p.points ?? 0)}</span></div>
+      <div class="jp-photo">${img(p.photo, "")}</div>
+      <div class="jp-info">
+        <div class="jp-name"><span>${esc(p.short || p.name)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
+        <div class="jp-val">€ ${nf0.format(p.value)} <b class="${cl(dl)}">${dl > 0 ? "↑" : dl < 0 ? "↓" : "="}</b></div>
+        <div class="jp-form"><span class="avg" title="Media">${p.avg != null ? nf1.format(p.avg) : "–"}</span><span class="bars" title="Puntos de las últimas 5 jornadas">${barras(p.streak)}</span></div>
+      </div>
+      <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
+    </div>
+    <div class="tendline"><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span></div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
   return `<section class="card" style="margin-top:12px"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
@@ -489,15 +520,68 @@ function detalleEq(m, hp) {
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>`;
 }
 
+async function sha256(t) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+let pin = "";
+const PIN_LEN = 4;
+
+function pintarPin() {
+  const d = $("#pinDots");
+  if (d) d.innerHTML = Array.from({ length: PIN_LEN }, (_, i) => `<i class="${i < pin.length ? "f" : ""}"></i>`).join("");
+}
+
+async function teclaPin(k) {
+  if (eqOk) return;
+  if (k === "del") pin = pin.slice(0, -1);
+  else if (pin.length < PIN_LEN) pin += k;
+  pintarPin();
+  $("#claveMsg").textContent = "";
+  if (pin.length < PIN_LEN) return;
+  let ok = false;
+  try { ok = !!CLAVE_HASH && (await sha256(pin)) === CLAVE_HASH; }
+  catch (err) { $("#claveMsg").textContent = "Este navegador no puede comprobar el PIN (abre la página con https)."; pin = ""; pintarPin(); return; }
+  if (!ok) {
+    const d = $("#pinDots"); d.classList.add("err");
+    $("#claveMsg").textContent = "PIN incorrecto.";
+    setTimeout(() => { pin = ""; d.classList.remove("err"); pintarPin(); }, 400);
+    return;
+  }
+  eqOk = true; pin = "";
+  try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
+  pintarNav();
+  $("#eq").innerHTML = `<div class="msg">Cargando equipos...</div>`;
+  cargarEquipos();
+}
+
+document.addEventListener("click", e => { const b = e.target.closest("[data-pin]"); if (b) teclaPin(b.dataset.pin); });
+document.addEventListener("keydown", e => {
+  if (eqOk || seccion !== "eq") return;
+  if (/^[0-9]$/.test(e.key)) teclaPin(e.key);
+  else if (e.key === "Backspace") teclaPin("del");
+});
+
 function pintarEquipos() {
   const cont = $("#eq");
+  if (!eqOk) {
+    cont.innerHTML = `<div class="lock"><div style="font-size:34px">🔒</div><h2>Zona protegida</h2>
+      <p class="note">Introduce el PIN para ver el seguimiento de equipos.</p>
+      <div class="dots" id="pinDots" aria-label="PIN"></div>
+      <p class="note" id="claveMsg" style="color:var(--red);min-height:18px"></p>
+      <div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-pin="${n}" aria-label="${n}">${n}</button>`).join("")}
+        <span></span><button data-pin="0" aria-label="0">0</button><button class="sm" data-pin="del" aria-label="Borrar">⌫</button></div></div>`;
+    pin = ""; pintarPin();
+    return;
+  }
   if (!E) { cont.innerHTML = `<div class="msg">Todavía no hay datos de equipos.<br>Se generan con <code>seguimiento_equipos.py</code>.</div>`; return; }
   const hp = id => (E.history || {})[id] || [];
   const ms = E.managers.map((m, i) => ({ ...m, i }));
   const pills = [["resumen", "Resumen"], ...ms.map(m => [m.id, m.name])]
     .map(([id, t]) => `<button class="pill ${eqSel === id ? "on" : ""}" data-e="${esc(id)}">${esc(t)}</button>`).join("");
   const sel = ms.find(x => x.id === eqSel);
-  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc(E.updated || "—")} · se actualiza cuando cambian las plantillas o los valores.</p>
+  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
     <div class="pills" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
 }
 
