@@ -244,7 +244,7 @@ function cargar(obj) {
 }
 
 function cargarEquipos() {
-  if (!eqOk) return;
+  if (!eqOk && seccion !== "cap") return;   // Equipos exige PIN; Capitán es público y solo necesita las plantillas
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); })
@@ -252,7 +252,7 @@ function cargarEquipos() {
 }
 
 function pintarNav() {
-  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", (eqOk ? "🎯" : "🔒") + " Capitán"]]
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"]]
     .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
 }
 
@@ -263,7 +263,7 @@ function ir(sec) {
   $("#cap").hidden = sec !== "cap";
   pintarNav();
   if (sec === "eq") pintarEquipos();
-  if (sec === "cap") { cargarCalendario(); pintarCapitan(); }
+  if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
 }
 
 function cargarDatos() {
@@ -615,14 +615,13 @@ async function teclaPin(k) {
   eqOk = true; pin = "";
   try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
   pintarNav();
-  $(seccion === "cap" ? "#cap" : "#eq").innerHTML = `<div class="msg">Cargando...</div>`;
+  $("#eq").innerHTML = `<div class="msg">Cargando equipos...</div>`;
   cargarEquipos();
-  if (seccion === "cap") cargarCalendario();
 }
 
 document.addEventListener("click", e => { const b = e.target.closest("[data-pin]"); if (b) teclaPin(b.dataset.pin); });
 document.addEventListener("keydown", e => {
-  if (eqOk || (seccion !== "eq" && seccion !== "cap")) return;
+  if (eqOk || seccion !== "eq") return;
   if (/^[0-9]$/.test(e.key)) teclaPin(e.key);
   else if (e.key === "Backspace") teclaPin("del");
 });
@@ -908,7 +907,6 @@ function tarjetaCap(c, i, grande) {
 
 function pintarCapitan() {
   const cont = $("#cap");
-  if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el recomendador de capitán."); pin = ""; pintarPin(); return; }
   if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
