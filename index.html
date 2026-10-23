@@ -124,28 +124,28 @@ ul{list-style:none;margin:0;padding:0}
 .pad button:hover{background:var(--line)}
 .pad button:active{background:var(--acc);color:var(--accTxt)}
 .pad .sm{font-size:15px;color:var(--mut);background:none}
-.jp{padding:12px 0;border-bottom:1px solid var(--line)}
-.jp-main{display:flex;align-items:center;gap:10px}
-.jp-side{display:flex;flex-direction:column;align-items:center;gap:5px;width:34px;flex:none}
-.shield{width:20px;height:20px;object-fit:contain}
-.jp-pos{width:34px;text-align:center;border-radius:6px;padding:1px 0;font-size:12px;font-weight:800;color:#111315}
-.jp-pts{width:34px;text-align:center;border-radius:6px;padding:1px 0;font-size:13px;font-weight:700;background:#fff;color:#111315}
-.jp-photo{position:relative;width:68px;height:78px;border-radius:12px;background:var(--panel2);flex:none;overflow:hidden}
+.jp{padding:7px 0;border-bottom:1px solid var(--line)}
+.jp-main{display:flex;align-items:center;gap:8px}
+.jp-side{display:flex;flex-direction:column;align-items:center;gap:3px;width:28px;flex:none}
+.shield{width:15px;height:15px;object-fit:contain}
+.jp-pos{width:28px;text-align:center;border-radius:5px;padding:0;font-size:10px;font-weight:800;color:#111315}
+.jp-pts{width:28px;text-align:center;border-radius:5px;padding:0;font-size:11px;font-weight:700;background:#fff;color:#111315}
+.jp-photo{position:relative;width:42px;height:48px;border-radius:9px;background:var(--panel2);flex:none;overflow:hidden}
 .jp-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
 .jp-info{flex:1;min-width:0}
-.jp-name{display:flex;align-items:center;font-weight:700;font-size:15px;white-space:nowrap}
+.jp-name{display:flex;align-items:center;font-weight:700;font-size:14px;white-space:nowrap}
 .jp-name>span:first-child{overflow:hidden;text-overflow:ellipsis}
-.jp-val{font-size:13.5px;margin-top:2px}
+.jp-val{font-size:12.5px;margin-top:0}
 .jp-val b{font-weight:800}
-.jp-form{display:flex;align-items:center;gap:8px;margin-top:6px}
-.avg{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px 8px;font-weight:700;font-size:13px}
-.bars{display:flex;align-items:flex-end;gap:3px;height:16px}
+.jp-form{display:flex;align-items:center;gap:6px;margin-top:2px}
+.avg{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-weight:700;font-size:12px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:12px}
 .bars i{display:block;width:4px;border-radius:2px}
 .bars i.dt{height:4px;border-radius:50%;background:var(--mut);opacity:.5}
-.jp-right{text-align:right;line-height:1.15;min-width:74px;flex:none}
-.jp-right b{display:block;font-size:15px;font-weight:700}
-.jp-right small{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
-.tendline{margin:8px 0 0 44px}
+.jp-right{text-align:right;line-height:1.1;min-width:64px;flex:none}
+.jp-right b{display:block;font-size:14px;font-weight:700}
+.jp-right small{display:block;font-size:11px;color:var(--mut);margin-bottom:1px}
+.tendline{margin:3px 0 0 36px}
 .st{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;margin-left:6px;flex:none}
 .st-injury,.st-susp{background:#ff4d4f}
 .st-doubt{background:#ff9f1c}
@@ -461,7 +461,7 @@ function tendencia(h) {
 function spark(h, k) {
   if (!h.length) return "";
   const w = h.slice(-8), vals = [w[0][2], ...w.map(e => e[1])];
-  const W = 64, H = 22, mn = Math.min(...vals), rg = Math.max(Math.max(...vals) - mn, 1);
+  const W = 56, H = 16, mn = Math.min(...vals), rg = Math.max(Math.max(...vals) - mn, 1);
   const pts = vals.map((v, i) => `${(i * (W - 4) / (vals.length - 1) + 2).toFixed(1)},${(H - 3 - (v - mn) / rg * (H - 6)).toFixed(1)}`).join(" ");
   const c = k.startsWith("sube") ? "var(--acc)" : k.startsWith("baja") ? "var(--red)" : "var(--mut)";
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline style="fill:none;stroke:${c};stroke-width:2;stroke-linejoin:round;stroke-linecap:round" points="${pts}"/></svg>`;
