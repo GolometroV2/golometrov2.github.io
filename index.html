@@ -124,6 +124,17 @@ ul{list-style:none;margin:0;padding:0}
 .pad button:hover{background:var(--line)}
 .pad button:active{background:var(--acc);color:var(--accTxt)}
 .pad .sm{font-size:15px;color:var(--mut);background:none}
+.cp{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
+.cp.top{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;list-style:none}
+.jplist{list-style:none;padding:0;margin:0}
+.medal{width:26px;text-align:center;font-size:20px;flex:none}
+.jp-pos2{margin-left:6px;border-radius:5px;padding:0 5px;font-size:10px;font-weight:800;color:#111315}
+.cp .tendline{margin:8px 0 0;text-align:left}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11.5px;border-radius:999px;padding:3px 9px;background:var(--panel2);color:var(--mut)}
+.chip.ok{background:#2fd46e26;color:var(--acc)}
+.chip.mal{background:#ff6b6b26;color:var(--red)}
+.chip.mid{background:#ffc94a26;color:var(--pt)}
 .jp{padding:7px 0;border-bottom:1px solid var(--line)}
 .jp-main{display:flex;align-items:center;gap:8px}
 .jp-side{display:flex;flex-direction:column;align-items:center;gap:3px;width:28px;flex:none}
@@ -170,6 +181,7 @@ code{color:var(--acc)}
   <div class="tabs" id="nav" role="group" aria-label="Sección"></div>
   <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
   <div id="eq" hidden></div>
+  <div id="cap" hidden></div>
 </main>
 
 <script>
@@ -190,6 +202,7 @@ let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = 
 let visibles = new Set(), modoG = "acum", G = null;
 let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
 let eqOk = false;
+let CAL = null, capMan = null, capRiesgo = 1, capTodos = false;
 try { eqOk = CLAVE_HASH !== "" && sessionStorage.getItem("eqOk") === CLAVE_HASH; } catch (err) {}
 
 const $ = s => document.querySelector(s);
@@ -226,12 +239,12 @@ function cargarEquipos() {
   if (!eqOk) return;
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); })
+    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); })
     .catch(() => {});
 }
 
 function pintarNav() {
-  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"]]
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", (eqOk ? "🎯" : "🔒") + " Capitán"]]
     .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
 }
 
@@ -239,8 +252,10 @@ function ir(sec) {
   seccion = sec;
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
+  $("#cap").hidden = sec !== "cap";
   pintarNav();
   if (sec === "eq") pintarEquipos();
+  if (sec === "cap") { cargarCalendario(); pintarCapitan(); }
 }
 
 function cargarDatos() {
@@ -592,26 +607,288 @@ async function teclaPin(k) {
   eqOk = true; pin = "";
   try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
   pintarNav();
-  $("#eq").innerHTML = `<div class="msg">Cargando equipos...</div>`;
+  $(seccion === "cap" ? "#cap" : "#eq").innerHTML = `<div class="msg">Cargando...</div>`;
   cargarEquipos();
+  if (seccion === "cap") cargarCalendario();
 }
 
 document.addEventListener("click", e => { const b = e.target.closest("[data-pin]"); if (b) teclaPin(b.dataset.pin); });
 document.addEventListener("keydown", e => {
-  if (eqOk || seccion !== "eq") return;
+  if (eqOk || (seccion !== "eq" && seccion !== "cap")) return;
   if (/^[0-9]$/.test(e.key)) teclaPin(e.key);
   else if (e.key === "Backspace") teclaPin("del");
 });
 
-function pintarEquipos() {
-  const cont = $("#eq");
-  if (!eqOk) {
-    cont.innerHTML = `<div class="lock"><div style="font-size:34px">🔒</div><h2>Zona protegida</h2>
-      <p class="note">Introduce el PIN para ver el seguimiento de equipos.</p>
+// ===== CAPITAN-ENGINE (recomendador de capitán) =====
+// Entradas: calendario.json (cal), mister_fantasy_data.json (D), equipos.json (E).
+// Para cada jugador de la plantilla estima los puntos que hará en la próxima jornada y los multiplica
+// por lo que añade el capitán. Mezcla cuatro fuentes:
+//   1) Forma del jugador (racha reciente + media de temporada, encogida hacia la media de su posición).
+//   2) Modelo de goles de los equipos (Poisson): goles esperados a favor y en contra según ataque,
+//      defensa y localía de ambos equipos.
+//   3) Puntos que el rival ha concedido históricamente a la posición del jugador (datos de tu liga).
+//   4) Probabilidad de jugar: once probable de Mister, lesión, sanción, duda.
+// Capitán = (multiplicador - 1) * puntos esperados, restando una penalización por riesgo.
+const CAP = {
+  K_EQUIPO: 4,          // partidos "virtuales" de la media de la liga que se mezclan con cada equipo (evita extremos)
+  K_POS: 6,             // idem para los puntos concedidos por posición
+  PESO_EMP_MAX: 0.5,    // peso máximo del dato empírico del rival frente al modelo de goles
+  K_JUGADOR: 2.5,       // partidos virtuales de la media de la posición que se mezclan con cada jugador
+  FORMA: [0.10, 0.12, 0.18, 0.25, 0.35],   // peso de las últimas 5 jornadas (de la más antigua a la más reciente)
+  ATAQUE: { PT: 0, DF: 0.25, MC: 0.7, DL: 1 },        // cuánto depende la posición de los goles a favor
+  PORTERIA: { PT: 1, DF: 0.8, MC: 0.2, DL: 0 },       // cuánto depende de la portería a cero
+  SENS_ATAQUE: 0.6,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
+  SENS_CS: 0.35,        // 10 % más de probabilidad de portería a cero -> +3,5 % de puntos
+  LIMITE_F: [0.55, 1.6],
+  RIESGO: [0, 0.25, 0.6],   // aversión al riesgo: arriesgado, equilibrado, seguro
+  POS_DEF: { PT: 3.4, DF: 3.2, MC: 3.5, DL: 3.8 },
+  SIGMA_DEF: { PT: 3.2, DF: 3.0, MC: 3.6, DL: 4.0 }
+};
+const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
+const capNum = x => typeof x === "number" && isFinite(x);
+const capMedia = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
+const capStd = a => { if (a.length < 2) return null; const m = capMedia(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+const capClamp = (v, [a, b]) => Math.max(a, Math.min(b, v));
+
+function capEstado(s) {
+  s = String(s || "");
+  if (!s) return null;
+  if (/injur|lesi/i.test(s)) return "injury";
+  if (/doubt|duda/i.test(s)) return "doubt";
+  if (/suspen|sanci|card|roja/i.test(s)) return "susp";
+  return "otro";
+}
+
+// Modelo de equipos a partir de los partidos jugados
+function capModeloEquipos(games) {
+  const jug = games.filter(g => capNum(g.gh) && capNum(g.ga));
+  const T = {};
+  const t = id => (T[id] = T[id] || { gf: 0, ga: 0, n: 0 });
+  let sh = 0, sa = 0;
+  jug.forEach(g => { t(g.home).gf += g.gh; t(g.home).ga += g.ga; t(g.home).n++; t(g.away).gf += g.ga; t(g.away).ga += g.gh; t(g.away).n++; sh += g.gh; sa += g.ga; });
+  const N = Math.max(jug.length, 1);
+  const lg = (sh + sa) / (2 * N) || 1.3;                 // goles por equipo y partido
+  const hf = (sh / N) / lg || 1.1, af = (sa / N) / lg || 0.9;   // ventaja de jugar en casa / fuera
+  const k = CAP.K_EQUIPO;
+  const fuerza = id => { const x = T[id] || { gf: 0, ga: 0, n: 0 }; return { att: ((x.gf + k * lg) / (x.n + k)) / lg, def: ((x.ga + k * lg) / (x.n + k)) / lg, n: x.n }; };
+  // goles esperados del equipo "a" contra "b" (aHome: a juega en casa)
+  const xg = (a, b, aHome) => lg * fuerza(a).att * fuerza(b).def * (aHome ? hf : af);
+  return { lg, hf, af, fuerza, xg, partidos: jug.length };
+}
+
+// Jornada objetivo: la primera con algún partido sin jugar
+function capJornadaObjetivo(cal) {
+  const pend = (cal.games || []).filter(g => !capNum(g.gh));
+  if (!pend.length) return null;
+  const gw = Math.min(...pend.map(g => g.gw));
+  return { gw, games: cal.games.filter(g => g.gw === gw) };
+}
+
+function capObservaciones(D, E, cal) {
+  // equipo de cada jugador: primero el dato guardado en la jornada, si no la plantilla actual
+  const equipoDe = {};
+  (E.managers || []).forEach(m => m.players.forEach(p => { equipoDe[String(p.id)] = p.teamId; }));
+  const juegosPorGw = {};
+  (cal.games || []).forEach(g => { (juegosPorGw[g.gw] = juegosPorGw[g.gw] || []).push(g); });
+  const visto = new Set(), obs = [];
+  Object.keys(D.matchdays || {}).forEach(j => {
+    const gw = parseInt(j.slice(1));
+    Object.values(D.matchdays[j] || {}).forEach(x => (x && x.players || []).forEach(p => {
+      if (!p.played || !capNum(p.points)) return;
+      const clave = gw + ":" + p.id;
+      if (visto.has(clave)) return;
+      visto.add(clave);
+      const team = p.teamId ?? equipoDe[String(p.id)];
+      const base = p.captain ? (capNum(p.basePoints) ? p.basePoints : p.points / (p.captainMultiplier || 1)) : p.points;
+      const g = (juegosPorGw[gw] || []).find(g => g.home === team || g.away === team);
+      if (!g || !capNum(base)) return;
+      obs.push({ gw, id: String(p.id), pos: p.pos, pts: base, rival: g.home === team ? g.away : g.home, casa: g.home === team });
+    }));
+  });
+  return obs;
+}
+
+function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
+  const obj = capJornadaObjetivo(cal);
+  if (!obj) return { error: "No hay partidos pendientes en el calendario." };
+  const mg = (E.managers || []).find(m => m.id === managerId);
+  if (!mg) return { error: "Manager no encontrado." };
+  const modelo = capModeloEquipos(cal.games || []);
+  const obs = capObservaciones(D || { matchdays: {} }, E, cal);
+
+  // media y desviación de puntos por posición, y puntos concedidos por rival y posición
+  const porPos = {}, concedido = {};
+  obs.forEach(o => {
+    (porPos[o.pos] = porPos[o.pos] || []).push(o.pts);
+    const k = o.rival + ":" + o.pos;
+    (concedido[k] = concedido[k] || []).push(o.pts);
+  });
+  const muPos = pos => (porPos[pos] && porPos[pos].length >= 10) ? capMedia(porPos[pos]) : CAP.POS_DEF[pos];
+  const sigPos = pos => (porPos[pos] && porPos[pos].length >= 10) ? capStd(porPos[pos]) : CAP.SIGMA_DEF[pos];
+  const porJugador = {};
+  obs.forEach(o => (porJugador[o.id] = porJugador[o.id] || []).push(o.pts));
+
+  // prob. media de portería a cero en la jornada objetivo (referencia para comparar)
+  const p0 = obj.games.flatMap(g => [Math.exp(-modelo.xg(g.home, g.away, true)), Math.exp(-modelo.xg(g.away, g.home, false))]);
+  const p0Liga = capMedia(p0) || Math.exp(-modelo.lg);
+  const nombres = {}, escudos = {};
+  (cal.games || []).forEach(g => { nombres[g.home] = g.homeName; nombres[g.away] = g.awayName; });
+  (E.managers || []).forEach(m => m.players.forEach(p => { if (p.teamLogo) escudos[p.teamId] = p.teamLogo; }));
+
+  const lambda = CAP.RIESGO[Math.max(0, Math.min(2, riesgo))];
+  const lista = [];
+
+  mg.players.forEach(p => {
+    const juegos = obj.games.filter(g => g.home === p.teamId || g.away === p.teamId);
+    const pendientes = juegos.filter(g => !capNum(g.gh));
+    if (!pendientes.length) { lista.push({ p, sinPartido: juegos.length ? "Ya ha jugado" : "No juega esta jornada", score: -Infinity }); return; }
+    const g = pendientes[0], casa = g.home === p.teamId, rival = casa ? g.away : g.home;
+    const estado = capEstado(p.status), pos = p.pos;
+
+    // 1) forma
+    const racha = (p.streak || []).slice(-5);
+    let sw = 0, sx = 0;
+    racha.forEach((v, i) => { if (capNum(v)) { const w = CAP.FORMA[CAP.FORMA.length - racha.length + i]; sw += w; sx += w * v; } });
+    const forma = sw ? sx / sw : null;
+    const jugadas = racha.filter(capNum);
+    const obsJ = porJugador[String(p.id)] || [];
+    const avg = capNum(p.avg) ? p.avg : (obsJ.length ? capMedia(obsJ) : null);
+    const crudo = forma != null && avg != null ? 0.5 * forma + 0.5 * avg : (forma ?? avg);
+    const nPart = Math.max(jugadas.length, capNum(p.points) && avg > 0 ? Math.min(Math.round(p.points / avg), 12) : 0, obsJ.length);
+    const mu0 = muPos(pos);
+    const mu = crudo == null ? mu0 : (nPart * crudo + CAP.K_JUGADOR * mu0) / (nPart + CAP.K_JUGADOR);
+    const sigJ = capStd(jugadas.length >= 3 ? jugadas : obsJ);
+    const sig = Math.max(1.8, sigJ == null ? sigPos(pos) : Math.sqrt((nPart * sigJ ** 2 + CAP.K_JUGADOR * sigPos(pos) ** 2) / (nPart + CAP.K_JUGADOR)));
+
+    // 2) modelo de goles
+    const xgf = modelo.xg(p.teamId, rival, casa), xgc = modelo.xg(rival, p.teamId, !casa);
+    const fXg = 1 + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
+
+    // 3) puntos que concede el rival a esa posición
+    const lista_ = concedido[rival + ":" + pos] || [];
+    const nR = lista_.length;
+    const fPts = (((lista_.reduce((s, v) => s + v, 0)) + CAP.K_POS * mu0) / (nR + CAP.K_POS)) / mu0;
+    const a = CAP.PESO_EMP_MAX * nR / (nR + 8);
+    const fCtx = capClamp(Math.pow(Math.max(fXg, 0.2), 1 - a) * Math.pow(fPts, a), CAP.LIMITE_F);
+
+    // 4) probabilidad de jugar
+    const pre = (cal.lineups || {})[String(g.id)] || {};
+    const eq = pre[String(p.teamId)];
+    const tasa = racha.length ? jugadas.length / racha.length : 0.7;
+    let pj, fuente;
+    if (estado === "injury") { pj = 0.03; fuente = "Lesionado"; }
+    else if (estado === "susp") { pj = 0; fuente = "Sancionado"; }
+    else if (eq) {
+      const en11 = eq.players.includes(String(p.id));
+      if (en11) { pj = eq.confirmed ? 0.98 : 0.92; fuente = eq.confirmed ? "En el once confirmado" : "En el once probable"; }
+      else { pj = eq.confirmed ? 0.07 : (tasa >= 0.6 ? 0.3 : 0.15); fuente = eq.confirmed ? "Fuera del once confirmado" : "No está en el once probable"; }
+    } else { pj = 0.15 + 0.8 * tasa; fuente = "Sin once probable aún (según sus últimas jornadas)"; }
+    if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
+
+    // resultado
+    const muC = mu * fCtx, sigC = sig * Math.sqrt(fCtx);
+    const esp = pj * muC;
+    const varianza = pj * (sigC ** 2 + muC ** 2) - esp ** 2;
+    const sigEf = Math.sqrt(Math.max(varianza, 0));
+    const m = capMult(p.value);
+    const extra = (m - 1) * esp;
+    const score = extra - lambda * (m - 1) * sigEf;
+    const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
+    lista.push({
+      p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
+      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, esp, sigEf, m, extra, score, conf,
+      rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
+    });
+  });
+
+  lista.sort((a, b) => b.score - a.score || (b.p.value || 0) - (a.p.value || 0));
+  return { gw: obj.gw, partidos: obj.games.length, modelo, candidatos: lista, observaciones: obs.length };
+}
+// ===== FIN CAPITAN-ENGINE =====
+
+// ---------- Pestaña Capitán ----------
+function cargarCalendario() {
+  fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); })
+    .catch(() => { if (seccion === "cap") pintarCapitan(); });
+}
+
+const signoPct = v => (v >= 0 ? "+" : "−") + Math.round(Math.abs(v) * 100) + " %";
+const POSN = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
+
+function motivos(c) {
+  const o = [];
+  o.push(["fuente", c.fuente, c.pj >= 0.8 ? "ok" : c.pj >= 0.4 ? "mid" : "mal"]);
+  if (c.forma != null) o.push(["forma", `Forma ${nf1.format(c.forma)} pts · media ${c.avg != null ? nf1.format(c.avg) : "–"}`, c.forma >= 6 ? "ok" : c.forma <= 2.5 ? "mal" : "mid"]);
+  if (Math.abs(c.fXg - 1) >= 0.05) o.push(["rival", `Goles esperados: ${nf1.format(c.xgf)} a favor · ${nf1.format(c.xgc)} en contra (${signoPct(c.fXg - 1)} para su puesto)`, c.fXg > 1 ? "ok" : "mal"]);
+  if (c.nR >= 4 && Math.abs(c.fPts - 1) >= 0.06) o.push(["conc", `${esc(c.rivalNombre)} concede ${signoPct(c.fPts - 1)} puntos a ${POSN[c.pos] || "su posición"} (${c.nR} casos)`, c.fPts > 1 ? "ok" : "mal"]);
+  o.push(["mult", `Valor ${eur(c.p.value)} → x${String(c.m).replace(".", ",")}`, c.m >= 2 ? "ok" : "mid"]);
+  return o;
+}
+
+function tarjetaCap(c, i, grande) {
+  const medalla = ["🥇", "🥈", "🥉"][i] || (i + 1) + "º";
+  const est = ESTADO(c.p.status);
+  const chips = motivos(c).map(([, t, k]) => `<span class="chip ${k}">${t}</span>`).join("");
+  return `<li class="cp ${grande ? "top" : ""}"><div class="jp-main">
+      <div class="medal">${medalla}</div>
+      <div class="jp-photo" style="width:${grande ? 52 : 42}px;height:${grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
+      <div class="jp-info">
+        <div class="jp-name"><span>${esc(c.p.short || c.p.name)}</span><span class="jp-pos2" style="background:var(--${esc(String(c.pos).toLowerCase())})">${esc(c.pos)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
+        <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"} · juega ${Math.round(c.pj * 100)} %</div>
+      </div>
+      <div class="jp-right"><b class="up">+${nf1.format(c.extra)}</b><small>extra · x${String(c.m).replace(".", ",")}</small><small>${nf1.format(c.esp)} pts esp.</small></div>
+    </div>
+    <div class="chips">${chips}</div>
+    <div class="tendline note">Rango típico del extra: ${nf1.format(c.rango[0])} a ${nf1.format(c.rango[1])} · fiabilidad ${["muy baja", "baja", "media", "alta"][c.conf]}</div></li>`;
+}
+
+function pintarCapitan() {
+  const cont = $("#cap");
+  if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el recomendador de capitán."); pin = ""; pintarPin(); return; }
+  if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
+  if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
+  if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
+  const pills = E.managers.map(m => `<button class="pill ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
+  const riesgos = [["Arriesgado", "Maximiza los puntos esperados"], ["Equilibrado", "Resta algo de riesgo"], ["Seguro", "Prefiere resultados estables"]]
+    .map(([t, d], i) => `<button class="pill ${capRiesgo === i ? "on" : ""}" data-cr="${i}" title="${d}">${t}</button>`).join("");
+  const r = recomendarCapitanes({ cal: CAL, D, E, managerId: capMan, riesgo: capRiesgo });
+  let cuerpo;
+  if (r.error) cuerpo = `<div class="msg">${esc(r.error)}</div>`;
+  else {
+    const util = r.candidatos.filter(c => c.score > -Infinity);
+    const fuera = r.candidatos.filter(c => c.score === -Infinity);
+    const top = util.slice(0, 3), resto = util.slice(3);
+    cuerpo = `<ul class="jplist">${top.map((c, i) => tarjetaCap(c, i, true)).join("")}</ul>
+      ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
+      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false)).join("")}</ul>` : ""}
+      ${fuera.length ? `<p class="note">Sin partido pendiente: ${fuera.map(c => esc(c.p.short || c.p.name) + " (" + c.sinPartido.toLowerCase() + ")").join(", ")}.</p>` : ""}
+      <details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Cómo se calcula</summary>
+        <p class="note">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
+        El contexto mezcla un modelo de goles (ataque, defensa y localía de ambos equipos, ${r.modelo.partidos} partidos) con los puntos que el rival ha concedido a esa posición (${r.observaciones} actuaciones de vuestra liga).
+        El capitán suma <b>(multiplicador − 1) × puntos esperados</b>; el multiplicador depende del valor: más de 10 M → x1,5 · de 5 a 10 M → x2 · menos de 5 M → x3.
+        El modo de riesgo resta una parte de la variabilidad esperada. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>`;
+  }
+  cont.innerHTML = `<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
+    <div class="pills" role="group" aria-label="Manager">${pills}</div>
+    <div class="pills" role="group" aria-label="Riesgo" style="margin-top:8px">${riesgos}</div>
+    <div style="margin-top:12px">${cuerpo}</div>`;
+}
+
+function htmlBloqueo(texto) {
+  return `<div class="lock"><div style="font-size:34px">🔒</div><h2>Zona protegida</h2>
+      <p class="note">${texto}</p>
       <div class="dots" id="pinDots" aria-label="PIN"></div>
       <p class="note" id="claveMsg" style="color:var(--red);min-height:18px"></p>
       <div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-pin="${n}" aria-label="${n}">${n}</button>`).join("")}
         <span></span><button data-pin="0" aria-label="0">0</button><button class="sm" data-pin="del" aria-label="Borrar">⌫</button></div></div>`;
+}
+
+function pintarEquipos() {
+  const cont = $("#eq");
+  if (!eqOk) {
+    cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el seguimiento de equipos.");
     pin = ""; pintarPin();
     return;
   }
@@ -657,12 +934,15 @@ function pintar() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-s],[data-e],[data-es]");
+  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-s],[data-e],[data-es],[data-cm],[data-cr],[data-cv]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
   if (d.es) { eqOrden = d.es; pintarEquipos(); return; }
+  if (d.cm !== undefined) { capMan = d.cm; pintarCapitan(); return; }
+  if (d.cr !== undefined) { capRiesgo = +d.cr; pintarCapitan(); return; }
+  if (d.cv !== undefined) { capTodos = !capTodos; pintarCapitan(); return; }
   if (!D) return;
   if (d.g !== undefined || d.gs !== undefined || d.gm !== undefined) {
     if (d.g !== undefined) visibles.has(d.g) ? visibles.delete(d.g) : visibles.add(d.g);
