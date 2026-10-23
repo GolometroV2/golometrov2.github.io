@@ -132,6 +132,29 @@ ul{list-style:none;margin:0;padding:0}
 .pad button:hover{background:var(--line)}
 .pad button:active{background:var(--acc);color:var(--accTxt)}
 .pad .sm{font-size:15px;color:var(--mut);background:none}
+.cp .cph{display:flex;align-items:center;gap:10px}
+.porque{font-size:12px;color:var(--acc);margin-top:3px}
+.alerta{margin:8px 0 0;background:#ff6b6b26;color:var(--red);border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:600}
+.claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.clave,.rv{background:var(--panel2);border-radius:10px;overflow:hidden}
+.clave summary,.rv summary{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;list-style:none}
+.clave summary::-webkit-details-marker,.rv summary::-webkit-details-marker{display:none}
+.clave summary::after,.rv summary::after{content:"▾";color:var(--mut);margin-left:2px;transition:transform .15s}
+.clave[open]>summary::after,.rv[open]>summary::after{transform:rotate(180deg)}
+.ci{font-size:18px;flex:none;width:24px;text-align:center}
+.ct{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.ct b{font-size:13.5px}
+.ct span{font-size:12px;color:var(--mut);line-height:1.3}
+.badge{flex:none;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--panel);color:var(--mut)}
+.badge.ok{background:#2fd46e26;color:var(--acc)}.badge.mal{background:#ff6b6b26;color:var(--red)}.badge.mid{background:#ffc94a26;color:var(--pt)}
+.cd{padding:2px 12px 12px;font-size:13px;line-height:1.5;color:var(--txt)}
+.cd p{margin:8px 0}.cd h4{margin:14px 0 2px;font-size:13.5px}
+.cd .aviso{background:#ffc94a1f;color:var(--pt);border-radius:8px;padding:6px 10px}
+.datos{list-style:none;padding:0;margin:8px 0}.datos li{padding:5px 0;border-bottom:1px solid var(--line)}
+.res{display:inline-block;min-width:34px;text-align:center;border-radius:6px;padding:1px 6px;margin:0 3px 3px 0;font-weight:700;font-size:12px;background:var(--panel);color:var(--mut)}
+.res.g{background:#2fd46e26;color:var(--acc)}.res.p{background:#ff6b6b26;color:var(--red)}.res.e{background:#ffc94a26;color:var(--pt)}
+h3.sec{margin:22px 0 4px;font-size:16px}
+.rv .shield{margin-left:10px}.rv summary{padding:10px 10px}
 .cp{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
 .cp.top{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;list-style:none}
 .jplist{list-style:none;padding:0;margin:0}
@@ -674,6 +697,7 @@ function capAplicarParametros(par) {
   if (!par || typeof par !== "object") return;
   Object.keys(par).forEach(k => { if (typeof CAP[k] === "number" && typeof par[k] === "number" && isFinite(par[k])) CAP[k] = par[k]; });
 }
+const POS_LISTA = ["PT", "DF", "MC", "DL"];
 const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
 const capNum = x => typeof x === "number" && isFinite(x);
 const capMedia = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
@@ -724,8 +748,8 @@ function capJornadaObjetivo(cal) {
 
 function capObservaciones(D, E, cal) {
   // equipo de cada jugador: primero el dato guardado en la jornada, si no la plantilla actual
-  const equipoDe = {};
-  (E.managers || []).forEach(m => m.players.forEach(p => { equipoDe[String(p.id)] = p.teamId; }));
+  const equipoDe = {}, nombreDe = {};
+  (E.managers || []).forEach(m => m.players.forEach(p => { equipoDe[String(p.id)] = p.teamId; nombreDe[String(p.id)] = p.short || p.name; }));
   const juegosPorGw = {};
   (cal.games || []).forEach(g => { (juegosPorGw[g.gw] = juegosPorGw[g.gw] || []).push(g); });
   const visto = new Set(), obs = [];
@@ -740,7 +764,7 @@ function capObservaciones(D, E, cal) {
       const base = p.captain ? (capNum(p.basePoints) ? p.basePoints : p.points / (p.captainMultiplier || 1)) : p.points;
       const g = (juegosPorGw[gw] || []).find(g => g.home === team || g.away === team);
       if (!g || !capNum(base)) return;
-      obs.push({ gw, id: String(p.id), pos: p.pos, pts: base, rival: g.home === team ? g.away : g.home, casa: g.home === team });
+      obs.push({ gw, id: String(p.id), name: p.name || nombreDe[String(p.id)] || "Jugador " + p.id, pos: p.pos, pts: base, goles: p.goals || 0, asist: p.assists || 0, rival: g.home === team ? g.away : g.home, casa: g.home === team });
     }));
   });
   return obs;
@@ -777,6 +801,37 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
   const cerradas = (cal.gameweeks || []).filter(g => g.status === "finished").length ||
     new Set((cal.games || []).filter(g => capNum(g.gh)).map(g => g.gw)).size;
   const confirmados = obj.games.filter(g => g.confirmed || ((cal.lineups || {})[String(g.id)] && Object.values(cal.lineups[String(g.id)]).some(e => e.confirmed))).length;
+  // ---- Análisis de rivales (para explicar cada recomendación) ----
+  const obsRival = {};
+  obs.forEach(o => { const k = o.rival + ":" + o.pos; (obsRival[k] = obsRival[k] || []).push(o); });
+  const equiposTodos = [...new Set((cal.games || []).flatMap(g => [g.home, g.away]))];
+  const filasEquipo = id => (cal.games || []).filter(g => capNum(g.gh) && (g.home === id || g.away === id)).sort((a, b) => a.gw - b.gw)
+    .map(g => { const casa = g.home === id; return { gw: g.gw, casa, gf: casa ? g.gh : g.ga, ga: casa ? g.ga : g.gh, vs: nombres[casa ? g.away : g.home] }; });
+  const resumenEquipo = id => { const f = filasEquipo(id); return { n: f.length, gf: f.length ? capMedia(f.map(x => x.gf)) : null, ga: f.length ? capMedia(f.map(x => x.ga)) : null }; };
+  const todosRes = equiposTodos.map(id => ({ id, ...resumenEquipo(id) })).filter(x => x.n);
+  const rankDef = id => todosRes.slice().sort((a, b) => a.ga - b.ga).findIndex(x => x.id === id) + 1;
+  const rankAtq = id => todosRes.slice().sort((a, b) => b.gf - a.gf).findIndex(x => x.id === id) + 1;
+  const ligaPos = {};
+  POS_LISTA.forEach(pos => { ligaPos[pos] = muPos(pos); });
+  const rivInfo = {};
+  const info = id => rivInfo[id] || (rivInfo[id] = (() => {
+    const f = filasEquipo(id), n = f.length;
+    const med = (arr, k) => arr.length ? capMedia(arr.map(x => x[k])) : null;
+    const casaF = f.filter(x => x.casa), fueraF = f.filter(x => !x.casa);
+    const r = { id, nombre: nombres[id], escudo: escudos[id], n, equipos: todosRes.length, lg: modelo.lg,
+      gf: med(f, "gf"), ga: med(f, "ga"), gaCasa: med(casaF, "ga"), nCasa: casaF.length, gaFuera: med(fueraF, "ga"), nFuera: fueraF.length,
+      gfCasa: med(casaF, "gf"), gfFuera: med(fueraF, "gf"),
+      cs: f.filter(x => x.ga === 0).length, c2: f.filter(x => x.ga >= 2).length, ultimos: f.slice(-5),
+      rankDef: n ? rankDef(id) : null, rankAtq: n ? rankAtq(id) : null, pos: {} };
+    POS_LISTA.forEach(pos => {
+      const l = (obsRival[id + ":" + pos] || []).slice().sort((a, b) => b.gw - a.gw);
+      const media = l.length ? capMedia(l.map(o => o.pts)) : null;
+      r.pos[pos] = { n: l.length, media, liga: ligaPos[pos], ratio: media != null ? media / ligaPos[pos] - 1 : null,
+        goles: l.reduce((t, o) => t + (o.goles || 0), 0), asist: l.reduce((t, o) => t + (o.asist || 0), 0), muestras: l.slice(0, 8) };
+    });
+    return r;
+  })());
+
   const modo = CAP.MODOS[Math.max(0, Math.min(2, riesgo))];
   const lista = [];
 
@@ -862,13 +917,13 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
+      mu, mu0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, modoNombre: ["Arriesgado", "Equilibrado", "Seguro"][Math.max(0, Math.min(2, riesgo))], esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
 
   lista.sort((a, b) => b.score - a.score || (b.p.value || 0) - (a.p.value || 0));
-  return { gw: obj.gw, partidos: obj.games.length, confirmados, modelo, candidatos: lista, observaciones: obs.length };
+  return { gw: obj.gw, partidos: obj.games.length, confirmados, info, nombres, escudos, modo, modelo, candidatos: lista, observaciones: obs.length };
 }
 // ===== FIN CAPITAN-ENGINE =====
 
@@ -924,33 +979,144 @@ function cargarCalendario() {
 const signoPct = v => (v >= 0 ? "+" : "−") + Math.round(Math.abs(v) * 100) + " %";
 const POSN = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
 
-function motivos(c) {
-  const o = [];
-  o.push(["fuente", c.fuente, c.pj >= 0.9 ? "ok" : c.pj >= 0.5 ? "mid" : "mal"]);
-  if (c.rota) o.push(["rota", `Rota: titular en ~${Math.round(c.tasa * 100)} % de los partidos`, "mal"]);
-  if (c.forma != null) o.push(["forma", `Forma ${nf1.format(c.forma)} pts · media ${c.avg != null ? nf1.format(c.avg) : "–"}`, c.forma >= 6 ? "ok" : c.forma <= 2.5 ? "mal" : "mid"]);
-  if (Math.abs(c.fXg - 1) >= 0.05) o.push(["rival", `Goles esperados: ${nf1.format(c.xgf)} a favor · ${nf1.format(c.xgc)} en contra (${signoPct(c.fXg - 1)} para su puesto)`, c.fXg > 1 ? "ok" : "mal"]);
-  if (c.nR >= 4 && Math.abs(c.fPts - 1) >= 0.06) o.push(["conc", `${esc(c.rivalNombre)} concede ${signoPct(c.fPts - 1)} puntos a ${POSN[c.pos] || "su posición"} (${c.nR} casos)`, c.fPts > 1 ? "ok" : "mal"]);
-  o.push(["riesgo", `Gran jornada (≥ ${CAP.UMBRAL_ALTO} pts): ${Math.round(c.pAlto * 100)} % · puntuación negativa: ${Math.round(c.pNeg * 100)} %`, c.pAlto >= 0.2 && c.pNeg < 0.08 ? "ok" : c.pNeg >= 0.12 ? "mal" : "mid"]);
-  o.push(["mult", `Valor ${eur(c.p.value)} → x${String(c.m).replace(".", ",")}`, c.m >= 2 ? "ok" : "mid"]);
-  return o;
+const num = v => v == null ? "–" : nf1.format(v);
+const coma = v => String(v).replace(".", ",");
+const veces = (n, s, p) => n + " " + (n === 1 ? s : p);
+
+function claveHtml(icono, titulo, resumen, insignia, tono, detalle) {
+  return `<details class="clave"><summary><span class="ci">${icono}</span><span class="ct"><b>${titulo}</b><span>${resumen}</span></span><span class="badge ${tono}">${insignia}</span></summary><div class="cd">${detalle}</div></details>`;
 }
 
-function tarjetaCap(c, i, grande) {
+function tablaMuestras(l) {
+  if (!l || !l.length) return "";
+  return `<table class="apr"><thead><tr><th>Jugador</th><th>Jornada</th><th>Puntos</th><th>Goles</th><th>Asist.</th></tr></thead><tbody>${l.map(o => `<tr><td>${esc(o.name)}</td><td>J${o.gw}</td><td><b>${o.pts}</b></td><td>${o.goles || 0}</td><td>${o.asist || 0}</td></tr>`).join("")}</tbody></table>`;
+}
+
+// Cómo puntúan los jugadores de una posición contra un rival, con los casos reales
+function detallePosRival(inf, pos, c) {
+  const ps = inf.pos[pos], pn = POSN[pos], nom = esc(inf.nombre);
+  if (!ps || !ps.n) return `<p>Todavía no hay actuaciones de ${pn} de vuestra liga contra ${nom}, así que no se puede medir cómo puntúan contra ellos.</p>`;
+  let h = `<p>En vuestra liga, los ${pn} han hecho de media <b>${nf1.format(ps.media)} pts</b> contra ${nom} (${veces(ps.n, "actuación", "actuaciones")}), frente a ${nf1.format(ps.liga)} pts de media de su posición: <b>${signoPct(ps.ratio)}</b>.
+    Han marcado ${veces(ps.goles, "gol", "goles")} y dado ${veces(ps.asist, "asistencia", "asistencias")}.</p>`;
+  if (ps.n < 5) h += `<p class="aviso">Solo ${veces(ps.n, "caso", "casos")}: es un dato orientativo, una sola actuación buena o mala lo cambia mucho.</p>`;
+  if (c) {
+    h += `<p>El modelo no usa el dato crudo: lo mezcla con la media de la posición (como si hubiera ${CAP.K_POS} actuaciones medias más), lo que lo deja en <b>${signoPct(c.fPts - 1)}</b>, y solo aplica un ${Math.round(CAP.W_RIVAL * 100)} % de ese efecto.
+      Efecto final sobre sus puntos esperados: <b>${signoPct(CAP.W_RIVAL * (c.fPts - 1))}</b>.</p>`;
+  }
+  return h + tablaMuestras(ps.muestras);
+}
+
+// Datos de defensa y ataque de un equipo
+function bloqueEquipo(inf, enfoque) {
+  if (!inf.n) return `<p>Todavía no hay partidos jugados de ${esc(inf.nombre)} en el calendario.</p>`;
+  const u = inf.ultimos.map(x => `<span class="res ${x.gf > x.ga ? "g" : x.gf < x.ga ? "p" : "e"}" title="J${x.gw} ${x.casa ? "en casa" : "fuera"} vs ${esc(x.vs)}">${x.gf}-${x.ga}</span>`).join("");
+  return `<ul class="datos">
+    <li><b>Goles que encaja:</b> ${num(inf.ga)} por partido (${inf.rankDef}.º de ${inf.equipos} defensas; media de la liga ${num(inf.lg)}). En casa ${num(inf.gaCasa)} (${inf.nCasa} p.) · fuera ${num(inf.gaFuera)} (${inf.nFuera} p.).</li>
+    <li><b>Portería a cero:</b> ${inf.cs} de ${inf.n} partidos (${pc(inf.cs / inf.n)}). Encaja 2 o más goles en ${inf.c2} (${pc(inf.c2 / inf.n)}).</li>
+    <li><b>Goles que marca:</b> ${num(inf.gf)} por partido (${inf.rankAtq}.º de ${inf.equipos} ataques). En casa ${num(inf.gfCasa)} · fuera ${num(inf.gfFuera)}.</li>
+    <li><b>Últimos partidos:</b> ${u} <span class="note">(goles a favor-en contra)</span></li></ul>`;
+}
+
+function clavesCandidato(c, r) {
+  const inf = r.info(c.rival), ps = inf.pos[c.pos], pn = POSN[c.pos], nom = esc(c.rivalNombre || "el rival");
+  const cl = [];
+  // 1) Cómo puntúan los de su posición contra este rival
+  {
+    const ok = ps.n >= 3;
+    const resumen = ok ? `Los ${pn} puntúan un ${Math.abs(Math.round(ps.ratio * 100))} % ${ps.ratio >= 0 ? "mejor" : "peor"} contra ${nom}` : `Pocos datos de ${pn} contra ${nom} (${veces(ps.n, "caso", "casos")})`;
+    cl.push(claveHtml("🎯", "Rival y posición", resumen, ok ? signoPct(ps.ratio) : "?", ok ? (ps.ratio > 0.1 ? "ok" : ps.ratio < -0.1 ? "mal" : "mid") : "mid", detallePosRival(inf, c.pos, c)));
+  }
+  // 2) Goles que encaja / marca el rival
+  {
+    const ataca = c.pos === "DL" || c.pos === "MC";
+    let resumen, ins, tono, extra = "";
+    if (!inf.n) { resumen = `Sin partidos de ${nom} todavía`; ins = "?"; tono = "mid"; }
+    else if (ataca) {
+      resumen = `${nom} encaja ${num(inf.ga)} goles por partido (${inf.rankDef}.º mejor defensa)`; ins = num(inf.ga); tono = inf.ga >= inf.lg * 1.15 ? "ok" : inf.ga <= inf.lg * 0.85 ? "mal" : "mid";
+    } else {
+      resumen = `${nom} marca ${num(inf.gf)} goles por partido (${inf.rankAtq}.º mejor ataque)`; ins = num(inf.gf); tono = inf.gf <= inf.lg * 0.85 ? "ok" : inf.gf >= inf.lg * 1.15 ? "mal" : "mid";
+    }
+    const pcs = Math.round(Math.exp(-c.xgc) * 100);
+    extra = `<p>En este partido el modelo espera <b>${num(c.xgf)} goles de su equipo</b> y <b>${num(c.xgc)} del rival</b>, contando el ataque y la defensa de ambos y la ventaja de jugar ${c.casa ? "en casa" : "fuera"}.
+      Eso da unos <b>${pcs} %</b> de posibilidades de portería a cero. Para un ${c.pos}, ${ataca ? "pesan más los goles que puede marcar su equipo" : "pesa más la portería a cero y el ataque rival"}: efecto en sus puntos <b>${signoPct(c.fXg - 1)}</b>.</p>`;
+    cl.push(claveHtml("⚽", ataca ? "Defensa rival" : "Ataque rival", resumen, ins, tono, bloqueEquipo(inf) + extra));
+  }
+  // 3) Forma
+  {
+    const rel = c.forma != null && c.mu0 ? c.forma / c.mu0 : null;
+    const etiqueta = rel == null ? "Sin datos" : rel >= 1.3 ? "Buena" : rel <= 0.7 ? "Floja" : "Normal";
+    const rac = (c.racha || []).map(v => typeof v === "number" ? `<span class="res ${v >= 6 ? "g" : v <= 2 ? "p" : "e"}">${v}</span>` : `<span class="res n">–</span>`).join("");
+    cl.push(claveHtml("📈", "Forma", c.forma != null ? `${nf1.format(c.forma)} pts en las últimas jornadas · media ${c.avg != null ? nf1.format(c.avg) : "–"}` : "Sin jornadas recientes", etiqueta, rel == null ? "mid" : rel >= 1.3 ? "ok" : rel <= 0.7 ? "mal" : "mid",
+      `<p>Últimas 5 jornadas (de la más antigua a la más reciente; "–" = no jugó): ${rac}</p>
+       <p>Se pondera más lo reciente (cada jornada pesa un ${Math.round(CAP.FORMA_ALPHA * 100)} % de la siguiente) y se mezcla con su media de temporada. Con ${veces(c.nPart, "partido", "partidos")} de historial, el resultado se acerca a la media de su posición (${nf1.format(c.mu0)} pts) por prudencia: <b>${nf1.format(c.mu)} pts</b> de base.</p>
+       <p>Tras el contexto del partido (×${nf2.format(c.fCtx)}) la estimación si juega es de <b>${nf1.format(c.mu * c.fCtx * (c.suplente ? CAP.F_SUPLENTE : 1))} pts</b>.</p>`));
+  }
+  // 4) Disponibilidad
+  {
+    const tono = c.pj >= 0.9 ? "ok" : c.pj >= 0.5 ? "mid" : "mal";
+    let txt;
+    if (c.confirmado) txt = `<p>El once de su partido ya está confirmado, así que no hay incertidumbre: ${c.pj > 0.5 ? "es titular" : "no está en el once"}.</p>`;
+    else if (c.pj <= 0.05) txt = `<p>${esc(c.fuente)}: prácticamente no puede jugar.</p>`;
+    else txt = `<p>El once todavía no está confirmado. Su probabilidad de jugar parte de <b>${pc(CAP.P_XI_BASE)} + ${pc(CAP.P_XI_REGULAR)} × su titularidad</b> si está en el once probable de Mister, y es mucho menor si no está.
+      Su titularidad estimada es del <b>${pc(c.tasa)}</b> (mezcla de las últimas 5 jornadas y de toda la temporada), lo que da <b>${pc(c.pj)}</b>.${c.suplente ? ` Al no estar en el once probable, si juega sería suplente y se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
+    cl.push(claveHtml("🟢", "Disponibilidad", esc(c.fuente) + (c.rota ? ` · rota (titular en ~${pc(c.tasa)})` : ""), c.confirmado ? (c.pj > 0.5 ? "Titular" : "Fuera") : pc(c.pj), tono, txt));
+  }
+  // 5) Multiplicador
+  cl.push(claveHtml("✖️", "Multiplicador", `Vale ${eur(c.p.value)} → capitán ×${coma(c.m)}`, "×" + coma(c.m), c.m >= 2 ? "ok" : "mid",
+    `<p>El multiplicador depende del valor del jugador: más de 10 M → ×1,5 · de 5 a 10 M → ×2 · menos de 5 M → ×3.</p>
+     <p>Como capitán gana (×${coma(c.m)} − 1) × sus puntos: <b>${coma(c.m - 1)} × ${nf1.format(c.esp)} = +${nf1.format(c.extra)}</b> puntos extra esperados.</p>`));
+  // 6) Techo y suelo
+  cl.push(claveHtml("⚖️", "Techo y suelo", `Gran jornada (≥ ${CAP.UMBRAL_ALTO} pts): ${pc(c.pAlto)} · puntuación negativa: ${pc(c.pNeg)}`, pc(c.pAlto), c.pAlto >= 0.2 && c.pNeg < 0.08 ? "ok" : c.pNeg >= 0.12 ? "mal" : "mid",
+    `<p>Rango típico del extra: de <b>${nf1.format(c.rango[0])}</b> a <b>${nf1.format(c.rango[1])}</b> puntos. Los ${pn} de vuestra liga puntúan de forma muy desigual; el modelo usa esa distribución real, no solo la media.</p>
+     <p>Modo <b>${c.modoNombre}</b>: la puntuación final suma un ${Math.round(r.modo.k * 100)} % de la posible subida (${nf1.format(c.sdAlto)}) y resta un ${Math.round(r.modo.l * 100)} % del posible bajón (${nf1.format(c.sdBajo)}), ambos multiplicados por ×${coma(c.m - 1)}. Resultado: <b>${nf1.format(c.score)}</b>.</p>
+     <p class="note">Fiabilidad de la estimación: ${["muy baja", "baja", "media", "alta"][c.conf]}.</p>`));
+  return cl.join("");
+}
+
+function porQue(c) {
+  const f = [];
+  if (c.m >= 3) f.push("multiplicador ×3");
+  else if (c.m >= 2) f.push("multiplicador ×2");
+  if (c.fCtx >= 1.1) f.push("partido favorable");
+  else if (c.fCtx <= 0.9) f.push("partido complicado");
+  if (c.forma != null && c.mu0 && c.forma >= c.mu0 * 1.3) f.push("buena forma");
+  else if (c.forma != null && c.mu0 && c.forma <= c.mu0 * 0.7) f.push("forma floja");
+  if (c.confirmado && c.pj > 0.9) f.push("titular confirmado");
+  else if (c.pj < 0.7) f.push("riesgo de no jugar");
+  if (c.pAlto >= 0.3) f.push("mucho techo");
+  return f.length ? f.join(" · ") : "perfil equilibrado";
+}
+
+function tarjetaCap(c, i, grande, r) {
   const medalla = ["🥇", "🥈", "🥉"][i] || (i + 1) + "º";
   const est = ESTADO(c.p.status);
-  const chips = motivos(c).map(([, t, k]) => `<span class="chip ${k}">${t}</span>`).join("");
-  return `<li class="cp ${grande ? "top" : ""}"><div class="jp-main">
+  const aviso = c.pj < 0.7 && !c.confirmado ? `<div class="alerta">Puede no jugar (${pc(c.pj)})</div>` : "";
+  return `<li class="cp ${grande ? "top" : ""}"><div class="cph">
       <div class="medal">${medalla}</div>
       <div class="jp-photo" style="width:${grande ? 52 : 42}px;height:${grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
       <div class="jp-info">
         <div class="jp-name"><span>${esc(c.p.short || c.p.name)}</span><span class="jp-pos2" style="background:var(--${esc(String(c.pos).toLowerCase())})">${esc(c.pos)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
-        <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"} · ${c.confirmado ? (c.pj > 0.5 ? "titular confirmado" : "no está en el once") : `probabilidad de jugar ${Math.round(c.pj * 100)} %`}</div>
+        <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"}</div>
+        <div class="porque">${esc(porQue(c))}</div>
       </div>
-      <div class="jp-right"><b class="up">+${nf1.format(c.extra)}</b><small>extra · x${String(c.m).replace(".", ",")}</small><small>${nf1.format(c.esp)} pts esp.</small></div>
-    </div>
-    <div class="chips">${chips}</div>
-    <div class="tendline note">Rango típico del extra: ${nf1.format(c.rango[0])} a ${nf1.format(c.rango[1])} · fiabilidad ${["muy baja", "baja", "media", "alta"][c.conf]}</div></li>`;
+      <div class="jp-right"><b class="up">+${nf1.format(c.extra)}</b><small>puntos extra</small><small>${nf1.format(c.esp)} pts × (×${coma(c.m)} − 1)</small></div>
+    </div>${aviso}
+    <div class="claves">${clavesCandidato(c, r)}</div></li>`;
+}
+
+// Resumen de cada rival de la jornada y cómo puntúa contra él cada posición
+function bloqueRivales(r, candidatos) {
+  const vistos = new Map();
+  candidatos.forEach(c => { if (!vistos.has(c.rival)) vistos.set(c.rival, []); vistos.get(c.rival).push(c); });
+  const items = [...vistos.entries()].map(([id, cs]) => {
+    const inf = r.info(id);
+    const filas = POS.map(pos => { const ps = inf.pos[pos];
+      const tono = ps.n >= 3 ? (ps.ratio > 0.1 ? "ok" : ps.ratio < -0.1 ? "mal" : "mid") : "mid";
+      return `<details class="clave"><summary><span class="ct"><b>${POSN[pos].replace(/^./, m => m.toUpperCase())}</b><span>${ps.n ? `${nf1.format(ps.media)} pts de media · ${veces(ps.n, "actuación", "actuaciones")}` : "Sin datos"}</span></span><span class="badge ${tono}">${ps.n >= 3 ? signoPct(ps.ratio) : "?"}</span></summary><div class="cd">${detallePosRival(inf, pos, cs.find(c => c.pos === pos))}</div></details>`; }).join("");
+    return `<details class="rv"><summary>${img(inf.escudo, "shield")}<span class="ct"><b>${esc(inf.nombre)}</b><span>rival de ${esc(cs.map(c => c.p.short || c.p.name).join(", "))}</span></span><span class="badge ${inf.n && inf.ga >= inf.lg * 1.15 ? "ok" : inf.n && inf.ga <= inf.lg * 0.85 ? "mal" : "mid"}">${inf.n ? "encaja " + num(inf.ga) : "?"}</span></summary>
+      <div class="cd">${bloqueEquipo(inf)}<h4>Cómo puntúa cada posición contra ${esc(inf.nombre)}</h4><p class="note">Porcentaje frente a la media de esa posición en vuestra liga. Pulsa una posición para ver los casos.</p><div class="claves">${filas}</div></div></details>`;
+  });
+  return items.length ? `<h3 class="sec">🛡️ Rivales de tus jugadores</h3><div class="claves">${items.join("")}</div>` : "";
 }
 
 function pintarCapitan() {
@@ -969,9 +1135,10 @@ function pintarCapitan() {
     const util = r.candidatos.filter(c => c.score > -Infinity);
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
-    cuerpo = `<ul class="jplist">${top.map((c, i) => tarjetaCap(c, i, true)).join("")}</ul>
+    cuerpo = `<ul class="jplist">${top.map((c, i) => tarjetaCap(c, i, true, r)).join("")}</ul>
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
-      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false)).join("")}</ul>` : ""}
+      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
+      ${bloqueRivales(r, util)}
       ${fuera.length ? `<p class="note">Sin partido pendiente: ${fuera.map(c => esc(c.p.short || c.p.name) + " (" + c.sinPartido.toLowerCase() + ")").join(", ")}.</p>` : ""}
       <details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Cómo se calcula</summary>
         <p class="note">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
