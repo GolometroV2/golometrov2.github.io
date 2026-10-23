@@ -42,7 +42,7 @@ GOLES_ENCAJADOS_MODO = "portero"
 
 PAUSA_ENTRE_PETICIONES = 0.25
 ARCHIVO_CACHE = os.path.join(CARPETA_SCRIPT, "cache_mister.json")
-VERSION_CACHE = 3  # súbela cuando cambie cómo se calculan los datos de jugadores
+VERSION_CACHE = 4  # súbela cuando cambie cómo se calculan los datos de jugadores
 POSICIONES = {1: "PT", 2: "DF", 3: "MC", 4: "DL"}
 
 COLORES_AVATAR = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"]
@@ -439,6 +439,7 @@ def extra_manager(session, uid, slug, gw, cache):
             jugadores.append({
                 "id": p.get("id"),
                 "name": p.get("name"),
+                "teamId": p.get("id_team"),
                 "pos": POSICIONES.get(pos_num, "?"),
                 "points": pts_num,
                 "captain": bool(p.get("captain")),
@@ -683,9 +684,10 @@ def main():
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
     resultado = {
-        "leagueName": "MONEYBALL",
+        "leagueName": "Mi Liga Mister Fantasy",
         "season": "2026/2027",
         "lastUpdated": hora_madrid().strftime("%d/%m/%Y %H:%M"),
+        "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "managers": list(managers.values()),
         "matchdays": matchdays,
     }
