@@ -30,6 +30,14 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .pills::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
 .pill{flex:none;background:var(--panel2);border-radius:999px;padding:7px 16px;font-weight:600;color:var(--mut)}
 .pill.on{background:var(--acc);color:var(--accTxt)}
+.pills.wrap{flex-wrap:wrap;overflow:visible}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.mbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px 8px;border-radius:14px;background:var(--panel);border:2px solid transparent;color:var(--txt);font-weight:600;font-size:13px;min-width:0}
+.mbtn:hover{background:var(--panel2)}
+.mbtn.on{border-color:var(--acc);background:var(--panel2)}
+.mbtn .av{width:46px;height:46px}
+.mbtn .mn{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mbtn .ms{font-size:11px;color:var(--mut);font-weight:500}
 .tabs{margin:16px 0 8px;border-bottom:1px solid var(--line);gap:18px}
 .tab{flex:none;padding:8px 0;color:var(--mut);font-weight:600;border-bottom:3px solid transparent;margin-bottom:-1px}
 .tab.on{color:var(--txt);border-color:var(--acc)}
@@ -858,7 +866,7 @@ function pintarCapitan() {
   if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
-  const pills = E.managers.map(m => `<button class="pill ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
+  const pills = E.managers.map((m, i) => `<button class="mbtn ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}" title="${esc(m.name)}">${avatar(m, i)}<span class="mn">${esc(m.name)}</span><span class="ms">${m.squadValue ? eur(m.squadValue) : ""}</span></button>`).join("");
   const riesgos = [["Arriesgado", "Maximiza los puntos esperados"], ["Equilibrado", "Resta algo de riesgo"], ["Seguro", "Prefiere resultados estables"]]
     .map(([t, d], i) => `<button class="pill ${capRiesgo === i ? "on" : ""}" data-cr="${i}" title="${d}">${t}</button>`).join("");
   const r = recomendarCapitanes({ cal: CAL, D, E, managerId: capMan, riesgo: capRiesgo });
@@ -879,8 +887,8 @@ function pintarCapitan() {
         El modo de riesgo resta una parte de la variabilidad esperada. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>`;
   }
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
-    <div class="pills" role="group" aria-label="Manager">${pills}</div>
-    <div class="pills" role="group" aria-label="Riesgo" style="margin-top:8px">${riesgos}</div>
+    <div class="mgrid" role="group" aria-label="Manager">${pills}</div>
+    <div class="pills wrap" role="group" aria-label="Riesgo" style="margin-top:10px">${riesgos}</div>
     <div style="margin-top:12px">${cuerpo}</div>`;
 }
 
@@ -907,7 +915,7 @@ function pintarEquipos() {
     .map(([id, t]) => `<button class="pill ${eqSel === id ? "on" : ""}" data-e="${esc(id)}">${esc(t)}</button>`).join("");
   const sel = ms.find(x => x.id === eqSel);
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
-    <div class="pills" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
+    <div class="pills wrap" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
 }
 
 /* ---------- Lista principal ---------- */
