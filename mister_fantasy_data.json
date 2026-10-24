@@ -1,8 +1,8 @@
 {
   "leagueName": "Mi Liga Mister Fantasy",
   "season": "2026/2027",
-  "lastUpdated": "23/10/2026 21:17",
-  "updatedAt": "2026-10-23T19:17:58Z",
+  "lastUpdated": "24/10/2026 04:44",
+  "updatedAt": "2026-10-24T02:44:07Z",
   "managers": [
     {
       "id": "8663482",
@@ -14511,18 +14511,18 @@
             "name": "Carlos Dotor",
             "teamId": 13,
             "pos": "MC",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
-            "yellowCards": 0,
+            "yellowCards": 1,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 87,
+            "goalsConceded": 1
           },
           {
             "id": 19527,
@@ -14693,18 +14693,18 @@
             "name": "Ángel Recio",
             "teamId": 13,
             "pos": "DF",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 90,
+            "goalsConceded": 1
           },
           {
             "id": 60210,
@@ -14920,18 +14920,18 @@
             "name": "Nicolás Valentini",
             "teamId": 48,
             "pos": "DF",
-            "points": null,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 55,
+            "goalsConceded": 1
           },
           {
             "id": 340,
