@@ -775,6 +775,33 @@ function capJornadaObjetivo(cal, elegida) {
   return { gw, games: juegos.filter(g => g.gw === gw) };
 }
 
+// Una vez empezada la jornada la recomendación no cambia: se calcula con lo que se sabía ANTES del primer partido.
+// Se ocultan los resultados de la jornada (partidos, puntos, forma y media de los que ya han jugado) y se guardan
+// los puntos reales aparte para enseñarlos, pero no influyen en el orden.
+function capCongelar({ cal, D, E, gw, ahora }) {
+  const ts = ahora || Date.now() / 1000;
+  const juegos = (cal.games || []).filter(g => g.gw === gw);
+  const jugados = juegos.filter(g => capNum(g.gh));
+  const iniciada = jugados.length > 0 || juegos.some(g => g.ts && g.ts <= ts);
+  if (!iniciada) return { cal, D, E, real: {}, iniciada: false };
+  const equiposJugados = new Set(jugados.flatMap(g => [g.home, g.away]));
+  const cal2 = { ...cal, games: (cal.games || []).map(g => g.gw === gw && capNum(g.gh) ? { ...g, gh: null, ga: null, status: "unplayed" } : g) };
+  const D2 = { ...D, matchdays: Object.fromEntries(Object.entries((D || {}).matchdays || {}).filter(([j]) => parseInt(j.slice(1)) < gw)) };
+  const real = {};
+  const E2 = { ...E, managers: ((E || {}).managers || []).map(m => ({ ...m, players: m.players.map(p => {
+    if (!equiposJugados.has(p.teamId) || !Array.isArray(p.streak) || !p.streak.length) return p;
+    const ult = p.streak[p.streak.length - 1];
+    if (capNum(ult)) real[String(p.id)] = ult;
+    const q = { ...p, streak: p.streak.slice(0, -1) };
+    if (capNum(ult) && capNum(p.points) && capNum(p.avg) && p.avg > 0) {
+      const partidos = Math.round(p.points / p.avg), pts = p.points - ult;
+      q.points = pts; q.avg = partidos > 1 ? pts / (partidos - 1) : 0;
+    }
+    return q;
+  }) })) };
+  return { cal: cal2, D: D2, E: E2, real, iniciada: true };
+}
+
 function capObservaciones(D, E, cal) {
   // equipo de cada jugador: primero el dato guardado en la jornada, si no la plantilla actual
   const equipoDe = {}, nombreDe = {};
@@ -1197,7 +1224,7 @@ function panelRendimiento() {
   const m = (PAR && PAR.metricas) || {};
   const dif = (tot.m - tot.h) / tot.n;
   return `<details class="card" style="margin-top:14px" open><summary style="cursor:pointer;font-weight:700">📊 Rendimiento en jornadas anteriores</summary>
-    <p class="note">Qué habría pasado si hubieras fichado de capitán al que recomendaba el algoritmo con los datos que había <b>antes</b> de cada jornada, frente al que eligieron los managers. Puntos base del capitán, sin multiplicador, de media por plantilla.</p>
+    <p class="note">Qué habría pasado si hubieras puesto de capitán al que recomendaba el algoritmo con los datos que había <b>antes</b> de cada jornada, frente al que eligieron los managers. Puntos base del capitán, sin multiplicador, de media por plantilla.</p>
     <p style="margin:8px 0"><b>${gana} de ${js.length} jornadas</b> mejor que los managers${empata ? ` (${empata} empatadas)` : ""}. En total: algoritmo <b>${nf1.format(tot.m / tot.n)}</b> pts · managers <b>${nf1.format(tot.h / tot.n)}</b> · azar ${nf1.format(tot.a / tot.n)} → <b class="${dif >= 0 ? "up" : "dn"}">${dif >= 0 ? "+" : "−"}${nf1.format(Math.abs(dif))} pts</b> por jornada y plantilla.</p>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Algoritmo</th><th>Managers</th><th>Azar</th><th>Diferencia</th></tr></thead><tbody>${filas}</tbody></table></div>
     ${m.rmseCompleto ? `<p class="note">Al predecir los puntos de todos los jugadores, el error medio es ${nf2.format(m.rmseCompleto)} pts, frente a ${nf2.format(m.rmsePosicion)} si solo se usara la media de su posición. Con ${js.length} jornadas la muestra es pequeña: una sola jornada puede cambiar mucho estas cifras.</p>` : ""}</details>`;
@@ -1355,7 +1382,8 @@ function porQue(c) {
 function tarjetaCap(c, i, grande, r) {
   const medalla = ["🥇", "🥈", "🥉"][i] || (i + 1) + "º";
   const est = ESTADO(c.p.status);
-  const aviso = c.pj < 0.7 && !c.confirmado ? `<div class="alerta">Puede no jugar (${pc(c.pj)})</div>` : "";
+  const aviso = c.real != null ? `<div class="alerta" style="background:#4aa8ff1f;color:#4aa8ff">Ya ha jugado: ${c.real} pts${c.m > 1 ? ` · como capitán ×${coma(c.m)} = ${nf1.format(c.real * c.m)}` : ""}</div>`
+    : c.pj < 0.7 && !c.confirmado ? `<div class="alerta">Puede no jugar (${pc(c.pj)})</div>` : "";
   return `<li class="cp ${grande ? "top" : ""}"><div class="cph">
       <div class="medal">${medalla}</div>
       <div class="jp-photo" style="width:${grande ? 52 : 42}px;height:${grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
@@ -1398,7 +1426,11 @@ function pintarCapitan() {
   const riesgos = [["Arriesgado", "Premia la posibilidad de una gran jornada"], ["Equilibrado", "Premia el techo y castiga el riesgo de bajada"], ["Seguro", "Castiga sobre todo el riesgo de bajada"]]
     .map(([t, d], i) => `<button class="pill ${capRiesgo === i ? "on" : ""}" data-cr="${i}" title="${d}">${t}</button>`).join("");
   if (PAR && PAR.params) capAplicarParametros(PAR.params);
-  const r = recomendarCapitanes({ cal: CAL, D, E, managerId: capMan, riesgo: capRiesgo, gw: capGw });
+  const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
+  const cg = capCongelar({ cal: CAL, D, E, gw: gwVer });
+  const r = recomendarCapitanes({ cal: cg.cal, D: cg.D, E: cg.E, managerId: capMan, riesgo: capRiesgo, gw: gwVer });
+  r.congelada = cg.iniciada; r.real = cg.real;
+  (r.candidatos || []).forEach(c => { if (c.p) c.real = cg.real[String(c.p.id)]; });
   let cuerpo;
   if (r.error) cuerpo = `<div class="msg">${esc(r.error)}</div>`;
   else {
@@ -1420,8 +1452,9 @@ function pintarCapitan() {
   }
   const abiertas = capJornadasAbiertas(CAL).slice(0, 2), actual = capJornadaObjetivo(CAL).gw;
   const selJ = abiertas.length > 1 ? `<div class="pills wrap" role="group" aria-label="Jornada" style="margin:0 0 10px">${abiertas.map(n => `<button class="pill ${(capGw ?? actual) === n ? "on" : ""}" data-cg="${n}">J${n}${n === actual ? " · próxima" : n === actual + 1 ? " · siguiente" : ""}</button>`).join("")}</div>` : "";
+  const congel = r.congelada ? `<p class="aviso" style="margin:0 0 10px;background:#4aa8ff1f;color:#4aa8ff">🔒 La jornada ya ha empezado: la recomendación se mantiene como estaba antes del primer partido. Los resultados que van saliendo no la cambian.</p>` : "";
   const futura = r.gw && r.gw !== actual ? `<p class="aviso" style="margin:0 0 10px">Estás viendo una jornada futura: los onces aún no se conocen y la forma de los jugadores puede cambiar con los partidos que quedan.</p>` : "";
-  cont.innerHTML = `${selJ}${futura}<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
+  cont.innerHTML = `${selJ}${futura}${congel}<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
     <div class="mgrid" role="group" aria-label="Manager">${pills}</div>
     <div class="pills wrap" role="group" aria-label="Riesgo" style="margin-top:10px">${riesgos}</div>
     <div style="margin-top:12px">${cuerpo}</div>`;
@@ -1514,5 +1547,4 @@ document.addEventListener("click", e => {
 </script>
 </body>
 </html>
-
 
