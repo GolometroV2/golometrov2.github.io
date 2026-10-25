@@ -205,7 +205,91 @@ def ajustar(H, J, D=None):
         r = recta([math.log10(max(f["valor"] or 1e5, 1e5)) for f in jt], [f["pts"] for f in jt])
         prior[pos] = [round(r[0], 4), round(r[1], 4)] if r else None
     out["priorValor"] = prior
+    out["valorDin"] = valor_dinamica(J, H)
     # efecto de la portería a cero en porteros y defensas (se mide con los partidos jugados)
+    return out
+
+
+# ---------------------------------------------------------------------------------------------
+# Cómo cambia el valor de un jugador cada día
+# ---------------------------------------------------------------------------------------------
+V_NOMBRES = ["const", "media", "pts_ultima", "jugo_ultima", "log_valor", "lesion", "con_dueno", "pts_medios_5"]
+V_CORTE = 1_000_000      # por debajo de 1 M el valor se mueve al azar (±12 % al día) y no se puede predecir
+V_CLIP = 0.10
+
+
+def car_valor(p):
+    s = [x for x in (p.get("streak") or [])][-5:]
+    jug = [x for x in s if isinstance(x, (int, float))]
+    ult = s[-1] if s and isinstance(s[-1], (int, float)) else None
+    return [1.0, p.get("avg") or 0.0, float(ult or 0), 1.0 if ult is not None else 0.0,
+            math.log10(max(p.get("value") or 1e5, 1e5)) - 6, 1.0 if p.get("status") == "injury" else 0.0,
+            1.0 if p.get("owner") else 0.0, media(jug) if jug else 0.0]
+
+
+def ridge(X, y, lam=10.0):
+    k = len(X[0])
+    mu = [0.0] + [media([r[j] for r in X]) for j in range(1, k)]
+    sd = [1.0] + [(media([(r[j] - mu[j]) ** 2 for r in X]) ** 0.5) or 1.0 for j in range(1, k)]
+    Z = [[(r[j] - mu[j]) / sd[j] if j else 1.0 for j in range(k)] for r in X]
+    A = [[sum(z[i] * z[j] for z in Z) + (lam if i == j and i else 0.0) for j in range(k)] for i in range(k)]
+    b = [sum(z[i] * t for z, t in zip(Z, y)) for i in range(k)]
+    w = resolver(A, b)
+    return w, mu, sd
+
+
+def valor_dinamica(J, H):
+    """Cambio diario del valor (%) en función de la media, la última jornada, el valor, si está lesionado y si tiene dueño."""
+    jug = (J or {}).get("jugadores", [])
+    filas = []
+    for p in jug:
+        if p.get("prev") and p.get("value"):
+            filas.append((car_valor(p), max(-V_CLIP, min(V_CLIP, p["value"] / p["prev"] - 1)), p["value"]))
+    # días anteriores guardados en el historial (cada par de días consecutivos aporta un cambio más)
+    hv = (H or {}).get("valor", {})
+    por_id = {p["id"]: p for p in jug}
+    for pid, serie in hv.items():
+        ds = sorted(serie)
+        for a, b in zip(ds[:-1], ds[1:]):
+            p = por_id.get(pid)
+            if p and serie[a] and (p["prev"] is None or True):
+                try:
+                    from datetime import date
+                    dt = (date.fromisoformat(b) - date.fromisoformat(a)).days
+                except ValueError:
+                    continue
+                if 1 <= dt <= 3 and not (p.get("prev") and b == max(ds)):     # el último par ya está en prev
+                    filas.append((car_valor(p), max(-V_CLIP, min(V_CLIP, (serie[b] / serie[a]) ** (1 / dt) - 1)), serie[b]))
+    alto = [f for f in filas if f[2] >= V_CORTE]
+    bajo = [f for f in filas if f[2] < V_CORTE]
+    out = {"n": len(filas), "corte": V_CORTE, "bajo": round(media([f[1] for f in bajo]), 4) if bajo else 0.0}
+    if len(alto) < 60:
+        out["aviso"] = "Pocos datos para modelar el valor."
+        return out
+    # validación cruzada en 5 grupos (sin hacer trampa)
+    idx = list(range(len(alto)))
+    import random
+    random.Random(7).shuffle(idx)
+    pred = [0.0] * len(alto)
+    for k in range(5):
+        test = set(idx[k::5])
+        tr = [alto[i] for i in idx if i not in test]
+        w, mu, sd = ridge([f[0] for f in tr], [f[1] for f in tr])
+        for i in test:
+            z = [alto[i][0][j] if j == 0 else (alto[i][0][j] - mu[j]) / sd[j] for j in range(len(w))]
+            z[0] = 1.0
+            pred[i] = sum(a * b for a, b in zip(w, z))
+    y = [f[1] for f in alto]
+    my = media(y)
+    sst = sum((v - my) ** 2 for v in y)
+    sse = sum((v - p) ** 2 for v, p in zip(y, pred))
+    out["r2"] = round(1 - sse / sst, 3) if sst else None
+    w, mu, sd = ridge([f[0] for f in alto], y)
+    out["nombres"] = V_NOMBRES
+    out["pesos"] = [round(a, 5) for a in w]
+    out["medias"] = [round(a, 5) for a in mu]
+    out["desv"] = [round(a, 5) for a in sd]
+    out["nAlto"] = len(alto)
     return out
 
 
