@@ -67,12 +67,21 @@ jobs:
           done
           if [ -z "$OK" ]; then echo "No se pudo leer el mercado: revisa las credenciales (secretos) o si el juego tardó más de 2 horas."; exit 1; fi
 
+      - name: Leer todos los jugadores de la liga
+        if: steps.hora.outputs.seguir == 'si'
+        env:
+          MISTER_COOKIE: ${{ secrets.MISTER_COOKIE }}
+          X_AUTH_TOKEN: ${{ secrets.X_AUTH_TOKEN }}
+        run: |
+          python jugadores_mister.py || echo "Aviso - no se pudo leer la lista de jugadores"
+
       - name: Guardar cambios
         if: steps.hora.outputs.seguir == 'si'
         run: |
           git config user.name "Bot Mister"
           git config user.email "bot@users.noreply.github.com"
           git add mercado.json mercado_historial.json
+          if [ -f jugadores.json ]; then git add jugadores.json jugadores_historial.json; fi
           if ! git diff --staged --quiet; then
             git commit -m "Mercado actualizado"
             for i in 1 2 3; do

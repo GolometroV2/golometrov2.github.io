@@ -1016,7 +1016,7 @@ const MER = {
 };
 const merUrlEscudo = id => id ? `https://cdn-mister.mundodeportivo.com/file/cdn-common/teams/${id}.png?version=` : "";
 
-function merCrecimiento(id, hist, flecha) {
+function merCrecimiento(id, hist, flecha, jj) {
   // serie de valores por día: [{t, v}] y tasa media diaria de los últimos cambios
   const dias = Object.keys(hist || {}).sort();
   const serie = dias.filter(d => hist[d][id]).map(d => ({ t: Date.parse(d + "T12:00:00Z") / 864e5, v: hist[d][id] }));
@@ -1025,6 +1025,10 @@ function merCrecimiento(id, hist, flecha) {
     const dt = serie[i].t - serie[i - 1].t;
     if (dt > 0 && dt <= 4) tasas.push(Math.pow(serie[i].v / serie[i - 1].v, 1 / dt) - 1);
   }
+  // cambio real de ayer a hoy (lista de jugadores de Mister): es el dato más fiable que hay
+  const ayer = jj && capNum(jj.value) && capNum(jj.prev) && jj.prev > 0 ? jj.value / jj.prev - 1 : null;
+  if (ayer != null && !tasas.length) return { g: capClamp(ayer, [-MER.CREC_MAX, MER.CREC_MAX]), n: 1, fuente: "ayer" };
+  if (ayer != null) tasas.push(ayer);
   if (tasas.length) {
     const u = tasas.slice(-3);
     let sw = 0, sx = 0;
@@ -1110,7 +1114,7 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const espGen = pj * mu * fMed;          // visión de las próximas jornadas
     // valor
     const V = j.price;
-    const cr = merCrecimiento(j.id, M.historial, j.arrow);
+    const cr = merCrecimiento(j.id, M.historial, j.arrow, (M.jug || {})[j.id]);
     const diasJornada = c1 ? Math.max(0, ((c1.g.ts || cierre) - cierre) / 86400) : 0;
 
     // puntuación 0-100
@@ -1156,7 +1160,8 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; if (seccion === "mer") pintarMercado(); })
+    .then(j => { MER_DATA = j; merError = false; if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
 
@@ -1177,7 +1182,7 @@ function merTarjeta(r) {
     <p>Se espera que haga <b>${nf1.format(r.espGen)} pts</b> por jornada (<b>${nf1.format(r.espProx)}</b> en el próximo partido). Su base es ${nf1.format(r.mu)} pts, mezcla de su forma${r.avg != null ? ` y su media (${nf1.format(r.avg)})` : ""}, acercada a la media de su posición porque lleva ${r.nPart} partidos.</p>
     <p><b>Disponibilidad ${pc(r.pj)}:</b> ${esc(r.fuente)}.</p>
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
-    <p><b>Valor:</b> ${r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día hasta tener historial propio (se guarda cada día)` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar.</p>
+    <p><b>Valor:</b> ${r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % (valor actual frente al de ayer); se supone ese ritmo diario` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día hasta tener historial propio (se guarda cada día)` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar.</p>
     <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}», ×${nf2.format(r.tf)} por su precio${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por su ${r.recup > 0 ? "revalorización prevista" : "caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
