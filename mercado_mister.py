@@ -165,4 +165,19 @@ def hora_madrid_str(ahora):
 
 
 if __name__ == "__main__":
-    main()
+    codigo = 0
+    try:
+        main()
+    except SystemExit as e:
+        codigo = e.code if isinstance(e.code, int) else 1
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        codigo = 1
+    if not os.environ.get("GITHUB_ACTIONS"):
+        try:
+            input("\nPresiona ENTER para cerrar la ventana...")
+        except (EOFError, RuntimeError, OSError):
+            import time as _t
+            _t.sleep(60)
+    sys.exit(codigo)
