@@ -778,6 +778,19 @@ function capJornadaObjetivo(cal, elegida) {
 // Una vez empezada la jornada la recomendación no cambia: se calcula con lo que se sabía ANTES del primer partido.
 // Se ocultan los resultados de la jornada (partidos, puntos, forma y media de los que ya han jugado) y se guardan
 // los puntos reales aparte para enseñarlos, pero no influyen en el orden.
+// "2026-10-24 05:00:22" (hora de Madrid) -> segundos
+function capTsMadrid(s) {
+  const m = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2})?)/.exec(String(s || ""));
+  if (!m) return null;
+  const base = Date.parse(m[1] + "T" + m[2] + (m[2].length === 5 ? ":00" : "") + "Z") / 1000;
+  let off = 1;
+  try {
+    const parte = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Madrid", timeZoneName: "shortOffset" }).formatToParts(new Date(base * 1000)).find(x => x.type === "timeZoneName");
+    const o = /GMT([+-]\d+)/.exec(parte && parte.value); if (o) off = +o[1];
+  } catch (e) {}
+  return base - off * 3600;
+}
+
 function capCongelar({ cal, D, E, gw, ahora }) {
   const ts = ahora || Date.now() / 1000;
   const juegos = (cal.games || []).filter(g => g.gw === gw);
@@ -788,7 +801,10 @@ function capCongelar({ cal, D, E, gw, ahora }) {
   const cal2 = { ...cal, games: (cal.games || []).map(g => g.gw === gw && capNum(g.gh) ? { ...g, gh: null, ga: null, status: "unplayed" } : g) };
   const D2 = { ...D, matchdays: Object.fromEntries(Object.entries((D || {}).matchdays || {}).filter(([j]) => parseInt(j.slice(1)) < gw)) };
   const real = {};
-  const E2 = { ...E, managers: ((E || {}).managers || []).map(m => ({ ...m, players: m.players.map(p => {
+  // Solo cuentan los jugadores que ya estaban fichados cuando empezó la jornada
+  const inicio = Math.min(...juegos.map(g => g.ts).filter(Boolean), Infinity);
+  const yaEstaba = p => { const t = capTsMadrid(p.acquired); return t == null || !isFinite(inicio) || t <= inicio; };
+  const E2 = { ...E, managers: ((E || {}).managers || []).map(m => ({ ...m, players: m.players.filter(yaEstaba).map(p => {
     if (!equiposJugados.has(p.teamId) || !Array.isArray(p.streak) || !p.streak.length) return p;
     const ult = p.streak[p.streak.length - 1];
     if (capNum(ult)) real[String(p.id)] = ult;
@@ -1547,4 +1563,3 @@ document.addEventListener("click", e => {
 </script>
 </body>
 </html>
-

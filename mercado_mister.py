@@ -139,6 +139,12 @@ def main():
         print("[!] La página no contiene jugadores del mercado: nada que guardar.")
         sys.exit(1)
     libres = [j for j in todos if j["free"]]
+    # Si el cierre de los libres ya ha pasado, el juego todavía no ha renovado el mercado: no se guarda nada.
+    # Código de salida 2 = "aún no actualizado, vuelve a intentarlo más tarde".
+    cierres = [j["ends"] for j in libres if j["ends"]]
+    if len(sys.argv) == 1 and cierres and min(cierres) <= ahora.timestamp():
+        print("El mercado todavía no se ha renovado (los jugadores de la lista ya han caducado). Se reintentará más tarde.")
+        sys.exit(2)
     hoy = hora_madrid_str(ahora)
     hist = guardar_historial(libres, hoy)
     salida = {

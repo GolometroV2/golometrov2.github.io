@@ -1,9 +1,11 @@
 name: Mercado
 
 # El mercado del juego se renueva a las 05:00 (hora de Madrid) y tarda un rato en actualizarse.
-# Se lee a las 06:30 de invierno (05:30 UTC); en horario de verano GitHub lo ejecuta a las 07:30.
+# GitHub programa en UTC, así que hay dos horarios (invierno y verano) y el primer paso comprueba
+# cuál toca: solo sigue si en Madrid son las 06:xx. Si se lanza a mano, siempre sigue.
 on:
   schedule:
+    - cron: '30 4 * * *'
     - cron: '30 5 * * *'
   workflow_dispatch:
 
@@ -17,31 +19,56 @@ concurrency:
 jobs:
   mercado:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 180
     steps:
+      - name: Comprobar la hora de Madrid
+        id: hora
+        run: |
+          H=$(TZ=Europe/Madrid date +%H)
+          echo "Hora en Madrid: $H"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$H" != "06" ]; then
+            echo "No es la hora (06:30 en Madrid): se omite esta ejecución."
+            echo "seguir=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "seguir=si" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Clonar repositorio
+        if: steps.hora.outputs.seguir == 'si'
         uses: actions/checkout@v4
 
       - name: Configurar Python
+        if: steps.hora.outputs.seguir == 'si'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Instalar dependencias
+        if: steps.hora.outputs.seguir == 'si'
         run: pip install requests beautifulsoup4
 
-      - name: Leer el mercado (hasta 3 intentos)
+      - name: Leer el mercado (reintenta hasta que se renueve)
+        if: steps.hora.outputs.seguir == 'si'
         env:
           MISTER_COOKIE: ${{ secrets.MISTER_COOKIE }}
           X_AUTH_TOKEN: ${{ secrets.X_AUTH_TOKEN }}
         run: |
-          for i in 1 2 3; do
-            if python mercado_mister.py; then OK=1; break; fi
-            sleep 300
+          # Reintenta cada 10 minutos (hasta ~2 horas) si el mercado aún no se ha renovado,
+          # y hasta 3 veces seguidas si falla por otro motivo (red, credenciales...).
+          FALLOS=0
+          for i in $(seq 1 12); do
+            python mercado_mister.py && { OK=1; break; }
+            CODIGO=$?
+            if [ $CODIGO -ne 2 ]; then
+              FALLOS=$((FALLOS + 1))
+              if [ $FALLOS -ge 3 ]; then break; fi
+            fi
+            sleep 600
           done
-          if [ -z "$OK" ]; then echo "No se pudo leer el mercado: revisa las credenciales (secretos)."; exit 1; fi
+          if [ -z "$OK" ]; then echo "No se pudo leer el mercado: revisa las credenciales (secretos) o si el juego tardó más de 2 horas."; exit 1; fi
 
       - name: Guardar cambios
+        if: steps.hora.outputs.seguir == 'si'
         run: |
           git config user.name "Bot Mister"
           git config user.email "bot@users.noreply.github.com"
