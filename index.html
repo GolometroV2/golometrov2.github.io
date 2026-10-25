@@ -681,14 +681,14 @@ document.addEventListener("keydown", e => {
 const CAP = {
   K_EQUIPO: 4,          // partidos "virtuales" de la media de la liga que se mezclan con cada equipo (evita extremos)
   K_POS: 4,             // idem para los puntos concedidos por posición
-  W_RIVAL: 0.75,        // cuánto pesa lo que el rival ha concedido a la posición (1 = por completo)
-  K_JUGADOR: 4,       // partidos virtuales de la media de la posición que se mezclan con cada jugador
+  W_RIVAL: 0.15,        // cuánto pesa lo que el rival ha concedido a la posición (1 = por completo)
+  K_JUGADOR: 12,      // partidos virtuales de la media de la posición que se mezclan con cada jugador
   FORMA_ALPHA: 0.85,    // peso relativo de una jornada respecto a la siguiente más reciente (1 = todas pesan igual)
   ATAQUE: { PT: 0, DF: 0.25, MC: 0.7, DL: 1 },        // cuánto depende la posición de los goles a favor
   PORTERIA: { PT: 0.5, DF: 0.8, MC: 0.2, DL: 0 },       // cuánto depende de la portería a cero
-  SENS_ATAQUE: 0.6,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
-  SENS_CS: 0.2,         // 10 % más de probabilidad de portería a cero -> +2 % de puntos
-  HOME_EXTRA: 0.04,     // ajuste adicional por jugar en casa (+) o fuera (−)
+  SENS_ATAQUE: 0.15,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
+  SENS_CS: 0.35,         // 10 % más de probabilidad de portería a cero -> +2 % de puntos
+  HOME_EXTRA: 0.02,     // ajuste adicional por jugar en casa (+) o fuera (−)
   F_SUPLENTE: 0.59,     // puntos de un suplente que entra, respecto a un jugador normal (medido en vuestra liga: 2,7 frente a 4,5)
   LIMITE_F: [0.55, 1.6],
   // Modos: k = premio por el potencial de subida (desviación solo hacia arriba), l = castigo por el riesgo de bajada
@@ -716,6 +716,30 @@ function capAplicarParametros(par) {
   Object.keys(par).forEach(k => { if (typeof CAP[k] === "number" && typeof par[k] === "number" && isFinite(par[k])) CAP[k] = par[k]; });
 }
 const POS_LISTA = ["PT", "DF", "MC", "DL"];
+// Modelo de la liga entera (lo recalcula cada día modelo_liga.py y llega en parametros_capitan.json -> liga)
+let LIGA = null;
+function capAplicarLiga(l) { LIGA = l && l.juega && l.juega.pesos ? l : null; }
+function capCaract(streak, valor, pos) {
+  const s = (streak || []).slice(-5).map(v => capNum(v) ? v : null), n = s.length, jugo = s.filter(v => v != null);
+  const racha = (() => { let r = 0; for (let i = n - 1; i >= 0 && s[i] != null; i--) r++; return r; })();
+  const u2 = s.slice(-2);
+  return [n ? jugo.length / n : 0.7, u2.length ? u2.filter(v => v != null).length / u2.length : 0.7, n ? (s[n - 1] != null ? 1 : 0) : 0.7, n / 5,
+    jugo.length ? jugo.reduce((a, b) => a + b, 0) / jugo.length : 3.5, Math.log10(Math.max(valor || 1e5, 1e5)), racha / 5,
+    pos === "DF" ? 1 : 0, pos === "MC" ? 1 : 0, pos === "DL" ? 1 : 0];
+}
+// probabilidad de jugar según sus últimas jornadas, su valor y su posición (null si aún no hay modelo)
+function capPJuega(streak, valor, pos) {
+  if (!LIGA) return null;
+  const w = LIGA.juega.pesos, c = capCaract(streak, valor, pos);
+  const z = w[0] + c.reduce((t, v, i) => t + v * w[i + 1], 0);
+  return Math.min(0.98, Math.max(0.02, 1 / (1 + Math.exp(-z))));
+}
+// puntos esperados al jugar según el valor (un jugador de 15 M rinde más que uno de 1 M)
+function capPrior(pos, valor) {
+  const r = LIGA && LIGA.priorValor && LIGA.priorValor[pos];
+  if (!r || !valor) return null;
+  return Math.min(9, Math.max(1, r[0] * Math.log10(Math.max(valor, 1e5)) + r[1]));
+}
 const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
 const capNum = x => typeof x === "number" && isFinite(x);
 const capMedia = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
@@ -925,7 +949,8 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
     const crudo = forma != null && avg != null ? 0.5 * forma + 0.5 * avg : (forma ?? avg);
     const nPart = Math.max(jugadas.length, capNum(p.points) && avg > 0 ? Math.min(Math.round(p.points / avg), 12) : 0, obsJ.length);
     const mu0 = muPos(pos);
-    const mu = crudo == null ? mu0 : (nPart * crudo + CAP.K_JUGADOR * mu0) / (nPart + CAP.K_JUGADOR);
+    const prior0 = capPrior(pos, p.value) ?? mu0;     // nivel esperado según su valor
+    const mu = crudo == null ? prior0 : (nPart * crudo + CAP.K_JUGADOR * prior0) / (nPart + CAP.K_JUGADOR);
     const sigJ = capStd(jugadas.length >= 3 ? jugadas : obsJ);
     const sig = Math.max(1.8, sigJ == null ? sigPos(pos) : Math.sqrt((nPart * sigJ ** 2 + CAP.K_JUGADOR * sigPos(pos) ** 2) / (nPart + CAP.K_JUGADOR)));
 
@@ -946,7 +971,8 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
     const tasa5 = racha.length ? jugadas.length / racha.length : null;
     const partidos = capNum(p.points) && avg > 0 ? Math.min(p.points / avg, cerradas) : null;
     const tasaT = partidos != null && cerradas > 0 ? Math.min(partidos / cerradas, 1) : null;
-    const tasa = tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.6);
+    const pmod = capPJuega(racha, p.value, pos);        // modelo de la liga entera
+    const tasa = pmod != null ? pmod : tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.6);
     const confirmado = !!(eq && eq.confirmed) || !!g.confirmed;
     let pj, fuente, suplente = false;
     if (estado === "injury") { pj = 0.03; fuente = "Lesionado"; }
@@ -956,7 +982,7 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
       if (confirmado) { pj = en11 ? 0.99 : 0.02; fuente = en11 ? "✔ Titular confirmado" : "✖ Fuera del once confirmado"; }
       else if (en11) { pj = Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa); fuente = "En el once probable"; }
       else { pj = CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa; fuente = "No está en el once probable"; suplente = true; }
-    } else { pj = 0.1 + 0.8 * tasa; fuente = "Sin once probable aún (según su regularidad)"; }
+    } else { pj = pmod != null ? pmod : 0.1 + 0.8 * tasa; fuente = "Sin once probable aún (según sus últimas jornadas y su valor)"; }
     if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
     const rota = !confirmado && tasa < 0.8 && estado !== "injury" && estado !== "susp";
 
@@ -989,7 +1015,7 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, mu0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, modoNombre: ["Arriesgado", "Equilibrado", "Seguro"][Math.max(0, Math.min(2, riesgo))], esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
+      mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, modoNombre: ["Arriesgado", "Equilibrado", "Seguro"][Math.max(0, Math.min(2, riesgo))], esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
@@ -1091,10 +1117,12 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const crudo = forma != null && avg != null ? 0.5 * forma + 0.5 * avg : (forma ?? avg);
     const partidos = capNum(j.points) && avg > 0 ? Math.min(j.points / avg, cerradas || 99) : null;
     const nPart = Math.max(jugadas.length, partidos != null ? Math.round(partidos) : 0);
-    const mu = crudo == null ? mu0 : (nPart * crudo + MER.K_JUG * mu0) / (nPart + MER.K_JUG);
+    const prior0 = capPrior(pos, j.price) ?? mu0;
+    const mu = crudo == null ? prior0 : (nPart * crudo + CAP.K_JUGADOR * prior0) / (nPart + CAP.K_JUGADOR);
     const tasa5 = racha.length ? jugadas.length / racha.length : null;
     const tasaT = partidos != null && cerradas > 0 ? Math.min(partidos / cerradas, 1) : null;
-    const tasa = tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.5);
+    const pmod = capPJuega(racha, j.price, pos);
+    const tasa = pmod != null ? pmod : tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.5);
 
     // disponibilidad
     const est = (j.status || []);
@@ -1107,7 +1135,7 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
       const en11 = eq.players.includes(String(j.id));
       pj = en11 ? Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa) : CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa;
       fuente = en11 ? "En el once probable" : "No está en el once probable";
-    } else { pj = 0.1 + 0.8 * tasa; fuente = nPart ? `Juega ${jugadas.length} de las últimas ${racha.length || 5} jornadas` : "Sin partidos jugados todavía"; }
+    } else { pj = pmod != null ? pmod : 0.1 + 0.8 * tasa; fuente = nPart ? `Juega ${jugadas.length} de las últimas ${racha.length || 5} jornadas` : "Sin partidos jugados todavía"; }
     if (duda) { pj *= 0.5; fuente += " · en duda"; }
 
     const espProx = pj * mu * fProx;        // próxima jornada
@@ -1132,7 +1160,7 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     else if (score >= 62 && pj >= 0.6) { prio = "top"; etiqueta = "Top"; }
     else if (score >= 48 && pj >= 0.5) { prio = "bueno"; etiqueta = "Buen fichaje"; }
     else if (fProx >= 1.1 && espProx >= 3.6 && pj >= 0.5) { prio = "favorable"; etiqueta = "Partido favorable"; }
-    else if (cr.g >= 0.03 && pj >= 0.5) { prio = "inversion"; etiqueta = "Sube de valor"; }
+    else if (cr.g >= 0.03 && pj >= 0.5 && espGen >= 3) { prio = "inversion"; etiqueta = "Sube de valor"; }
     else { prio = "normal"; etiqueta = "Sin interés"; }
 
     // puja ideal
@@ -1179,7 +1207,7 @@ function merTarjeta(r) {
   const pctS = r.cr.g >= 0 ? "+" : "−";
   const sobre = Math.round((r.puja / r.V - 1) * 100);
   const detalle = `
-    <p>Se espera que haga <b>${nf1.format(r.espGen)} pts</b> por jornada (<b>${nf1.format(r.espProx)}</b> en el próximo partido). Su base es ${nf1.format(r.mu)} pts, mezcla de su forma${r.avg != null ? ` y su media (${nf1.format(r.avg)})` : ""}, acercada a la media de su posición porque lleva ${r.nPart} partidos.</p>
+    <p>Se espera que haga <b>${nf1.format(r.espGen)} pts</b> por jornada (<b>${nf1.format(r.espProx)}</b> en el próximo partido). Su base es ${nf1.format(r.mu)} pts, mezcla de su forma${r.avg != null ? ` y su media (${nf1.format(r.avg)})` : ""}, acercada al nivel que se espera por su valor y su posición (${nf1.format(r.mu0)} pts), porque lleva ${r.nPart} partidos.</p>
     <p><b>Disponibilidad ${pc(r.pj)}:</b> ${esc(r.fuente)}.</p>
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % (valor actual frente al de ayer); se supone ese ritmo diario` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día hasta tener historial propio (se guarda cada día)` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar.</p>
@@ -1202,7 +1230,7 @@ function pintarMercado() {
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
   if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="msg">Cargando mercado...</div>`; return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
-  if (PAR && PAR.params) capAplicarParametros(PAR.params);
+  if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); }
   const r = recomendarMercado({ M: MER_DATA, cal: CAL, D, E });
   if (r.error) { cont.innerHTML = `<div class="msg">${esc(r.error)}</div>`; return; }
   const cierre = Math.min(...MER_DATA.libres.map(x => x.ends).filter(Boolean));
@@ -1248,6 +1276,7 @@ function panelRendimiento() {
     <p class="note">Qué habría pasado si hubieras puesto de capitán al que recomendaba el algoritmo con los datos que había <b>antes</b> de cada jornada, frente al que eligieron los managers. Puntos base del capitán, sin multiplicador, de media por plantilla.</p>
     <p style="margin:8px 0"><b>${gana} de ${js.length} jornadas</b> mejor que los managers${empata ? ` (${empata} empatadas)` : ""}. En total: algoritmo <b>${nf1.format(tot.m / tot.n)}</b> pts · managers <b>${nf1.format(tot.h / tot.n)}</b> · azar ${nf1.format(tot.a / tot.n)} → <b class="${dif >= 0 ? "up" : "dn"}">${dif >= 0 ? "+" : "−"}${nf1.format(Math.abs(dif))} pts</b> por jornada y plantilla.</p>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Algoritmo</th><th>Managers</th><th>Azar</th><th>Diferencia</th></tr></thead><tbody>${filas}</tbody></table></div>
+    ${PAR && PAR.liga && PAR.liga.validacion ? (v => `<p class="note"><b>Modelo de toda la liga</b> (${PAR.liga.muestra} actuaciones de todos los jugadores, no solo los vuestros): predice si un jugador va a jugar con un error de ${nf2.format(v.brierLogistica)} frente a ${nf2.format(v.brierFormulaAnterior)} de la fórmula anterior (menos es mejor), y sus puntos al jugar con un error medio de ${nf2.format(v.rmsePriorValor)} pts frente a ${nf2.format(v.rmseMediaPosicion)} si solo se usara la media de la posición. Se prueba jornada a jornada con lo que se sabía antes.</p>`)(PAR.liga.validacion) : ""}
     ${m.rmseCompleto ? `<p class="note">Al predecir los puntos de todos los jugadores, el error medio es ${nf2.format(m.rmseCompleto)} pts, frente a ${nf2.format(m.rmsePosicion)} si solo se usara la media de su posición. Con ${js.length} jornadas la muestra es pequeña: una sola jornada puede cambiar mucho estas cifras.</p>` : ""}</details>`;
 }
 
@@ -1361,7 +1390,7 @@ function clavesCandidato(c, r) {
     const rac = (c.racha || []).map(v => typeof v === "number" ? `<span class="res ${v >= 6 ? "g" : v <= 2 ? "p" : "e"}">${v}</span>` : `<span class="res n">–</span>`).join("");
     cl.push(claveHtml("📈", "Forma", c.forma != null ? `${nf1.format(c.forma)} pts en las últimas jornadas · media ${c.avg != null ? nf1.format(c.avg) : "–"}` : "Sin jornadas recientes", etiqueta, rel == null ? "mid" : rel >= 1.3 ? "ok" : rel <= 0.7 ? "mal" : "mid",
       `<p>Últimas 5 jornadas (de la más antigua a la más reciente; "–" = no jugó): ${rac}</p>
-       <p>Se pondera más lo reciente (cada jornada pesa un ${Math.round(CAP.FORMA_ALPHA * 100)} % de la siguiente) y se mezcla con su media de temporada. Con ${veces(c.nPart, "partido", "partidos")} de historial, el resultado se acerca a la media de su posición (${nf1.format(c.mu0)} pts) por prudencia: <b>${nf1.format(c.mu)} pts</b> de base.</p>
+       <p>Se pondera más lo reciente (cada jornada pesa un ${Math.round(CAP.FORMA_ALPHA * 100)} % de la siguiente) y se mezcla con su media de temporada. Con ${veces(c.nPart, "partido", "partidos")} de historial, el resultado se acerca al nivel que se espera por su valor y su posición (${nf1.format(c.mu0)} pts) por prudencia: <b>${nf1.format(c.mu)} pts</b> de base.</p>
        <p>Tras el contexto del partido (×${nf2.format(c.fCtx)}) la estimación si juega es de <b>${nf1.format(c.mu * c.fCtx * (c.suplente ? CAP.F_SUPLENTE : 1))} pts</b>.</p>`));
   }
   // 4) Disponibilidad
@@ -1446,7 +1475,7 @@ function pintarCapitan() {
   const pills = E.managers.map((m, i) => `<button class="mbtn ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}" title="${esc(m.name)}">${avatar(m, i)}<span class="mn">${esc(m.name)}</span><span class="ms">${m.squadValue ? eur(m.squadValue) : ""}</span></button>`).join("");
   const riesgos = [["Arriesgado", "Premia la posibilidad de una gran jornada"], ["Equilibrado", "Premia el techo y castiga el riesgo de bajada"], ["Seguro", "Castiga sobre todo el riesgo de bajada"]]
     .map(([t, d], i) => `<button class="pill ${capRiesgo === i ? "on" : ""}" data-cr="${i}" title="${d}">${t}</button>`).join("");
-  if (PAR && PAR.params) capAplicarParametros(PAR.params);
+  if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); }
   const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
   const cg = capCongelar({ cal: CAL, D, E, gw: gwVer });
   const r = recomendarCapitanes({ cal: cg.cal, D: cg.D, E: cg.E, managerId: capMan, riesgo: capRiesgo, gw: gwVer });

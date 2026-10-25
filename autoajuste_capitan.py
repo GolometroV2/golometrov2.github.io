@@ -37,12 +37,15 @@ GW_MIN_EVAL = 4          # primera jornada que se evalúa (antes no hay historia
 FILAS_MIN = 80           # con menos actuaciones evaluables no se toca nada
 N0 = 300                 # cuanto mayor, más se parece el ajuste a los valores por defecto
 
-# Mismos valores por defecto que CAP en golometro.html
-DEFECTO = {"SENS_ATAQUE": 0.6, "SENS_CS": 0.2, "HOME_EXTRA": 0.04, "W_RIVAL": 0.75,
-           "K_POS": 4, "K_JUGADOR": 4, "FORMA_ALPHA": 0.85, "F_SUPLENTE": 0.59}
-REJILLAS = {"SENS_ATAQUE": [0.2, 0.4, 0.6, 0.8, 1.0], "SENS_CS": [0.0, 0.1, 0.2, 0.35, 0.5],
-            "HOME_EXTRA": [0.0, 0.02, 0.04, 0.06, 0.08], "W_RIVAL": [0.0, 0.25, 0.5, 0.75, 1.0],
-            "K_POS": [2, 4, 8], "K_JUGADOR": [2, 4, 6, 10], "FORMA_ALPHA": [0.6, 0.85, 1.0]}
+# Mismos valores por defecto que CAP en index.html.
+# Se fijaron con las actuaciones de TODA la liga (modelo_liga.py): el contexto del rival apenas ayuda a mediocentros y delanteros
+# (SENS_ATAQUE y W_RIVAL bajos) y sí a porteros y defensas a través de la portería a cero (SENS_CS alto); la forma de un
+# jugador pesa poco frente a su nivel (K_JUGADOR alto).
+DEFECTO = {"SENS_ATAQUE": 0.15, "SENS_CS": 0.35, "HOME_EXTRA": 0.02, "W_RIVAL": 0.15,
+           "K_POS": 4, "K_JUGADOR": 12, "FORMA_ALPHA": 0.85, "F_SUPLENTE": 0.59}
+REJILLAS = {"SENS_ATAQUE": [0.0, 0.15, 0.3, 0.6], "SENS_CS": [0.1, 0.2, 0.35, 0.5],
+            "HOME_EXTRA": [0.0, 0.02, 0.04, 0.06], "W_RIVAL": [0.0, 0.15, 0.4, 0.75],
+            "K_POS": [2, 4, 8], "K_JUGADOR": [4, 8, 12, 20], "FORMA_ALPHA": [0.6, 0.85, 1.0]}
 
 
 def cargar(ruta, defecto=None):
@@ -134,6 +137,7 @@ class Modelo:
             self.hist[o["pid"]].append(o)
         self._eq = {}
         self._pos = {}
+        self._pv = {}
 
     def equipos(self, gw):
         if gw in self._eq:
@@ -173,9 +177,30 @@ class Modelo:
             self._pos[k] = media(x) if len(x) >= 5 else {"PT": 4.8, "DF": 3.8, "MC": 4.3, "DL": 5.0}[pos]
         return self._pos[k]
 
+    def prior_valor(self, gw, pos, valor):
+        """Puntos esperados al jugar según el valor del jugador (recta por posición con datos anteriores a la jornada)."""
+        k = (gw, pos)
+        if k not in self._pv:
+            x = [(math.log10(max(o["valor"] or 1e5, 1e5)), o["pts"]) for o in self.jug if o["gw"] < gw and o["pos"] == pos and o.get("valor")]
+            r = None
+            if len(x) >= 30:
+                mx, my = media([a for a, _ in x]), media([b for _, b in x])
+                sxx = sum((a - mx) ** 2 for a, _ in x)
+                if sxx > 0:
+                    a = sum((u - mx) * (v - my) for u, v in x) / sxx
+                    r = (a, my - a * mx)
+            self._pv[k] = r
+        r = self._pv[k]
+        if r is None or not valor:
+            return None
+        return r[0] * math.log10(max(valor, 1e5)) + r[1]
+
     def prediccion(self, o, P, con_contexto=True):
         gw, pos = o["gw"], o["pos"]
         mu0 = self.mupos(gw, pos)
+        prior = self.prior_valor(gw, pos, o.get("valor"))
+        if prior is None:
+            prior = mu0
         h = [x for x in self.hist[o["pid"]] if x["gw"] < gw]
         racha = h[-5:]
         if racha:
@@ -183,9 +208,9 @@ class Modelo:
             forma = sum(wi * x["pts"] for wi, x in zip(w, racha)) / sum(w)
             crudo = 0.5 * forma + 0.5 * media([x["pts"] for x in h])
             n = min(len(h), 12)
-            mu = (n * crudo + P["K_JUGADOR"] * mu0) / (n + P["K_JUGADOR"])
+            mu = (n * crudo + P["K_JUGADOR"] * prior) / (n + P["K_JUGADOR"])
         else:
-            mu = mu0
+            mu = prior
         if not con_contexto or not (o["team"] and o["game"]):
             return mu
         lg, xg, p0lg = self.equipos(gw)
@@ -320,6 +345,39 @@ def evaluar_jornadas(modelo, P, obs):
     return salida
 
 
+def obs_liga(obs, C):
+    """Actuaciones de TODOS los jugadores (jugadores_historial.json) además de las de vuestros onces: mucha más muestra."""
+    J, H = cargar(os.path.join(CARPETA, "jugadores.json")), cargar(os.path.join(CARPETA, "jugadores_historial.json"))
+    if not J or not H:
+        return obs
+    try:
+        import modelo_liga as ML
+    except Exception:
+        return obs
+    por_gw = collections.defaultdict(list)
+    for g in C.get("games", []):
+        por_gw[g["gw"]].append(g)
+    jug = {p["id"]: p for p in J.get("jugadores", [])}
+    valor = {o["pid"]: None for o in obs}
+    tengo = {(o["gw"], o["pid"]) for o in obs}
+    extra = []
+    for f in ML.construir(H, J, None):
+        if (f["gw"], f["pid"]) in tengo:
+            continue
+        p = jug[f["pid"]]
+        t = p["teamId"]
+        g = next((x for x in por_gw[f["gw"]] if x["home"] == t or x["away"] == t), None)
+        if not g:
+            continue
+        extra.append({"gw": f["gw"], "pid": f["pid"], "name": p["name"], "pos": f["pos"], "pts": f["pts"], "played": f["pts"] is not None,
+                      "minutes": 90 if f["pts"] is not None else 0, "team": t, "rival": g["away"] if g["home"] == t else g["home"],
+                      "casa": g["home"] == t, "game": g, "captain": False, "uid": "liga", "valor": p["value"]})
+    for o in obs:       # el valor actual también sirve para las actuaciones de vuestros onces
+        p = jug.get(o["pid"])
+        o["valor"] = p["value"] if p else None
+    return obs + extra
+
+
 def main():
     D, C = cargar(F_DATOS), cargar(F_CAL)
     if not D or not C or not C.get("games"):
@@ -327,11 +385,13 @@ def main():
         sys.exit(0)
     E = cargar(F_EQ, {})
     obs, por_gw, nombres = construir_datos(D, C, E)
-    modelo = Modelo(obs, C)
-    jug = modelo.jug
+    obs_todo = obs_liga(obs, C)
+    modelo_lineas = Modelo(obs, C)       # solo vuestros onces: patrones y capitanes
+    modelo = Modelo(obs_todo, C)         # toda la liga: ajuste de parámetros y errores
+    jug = modelo_lineas.jug
     total, con_equipo = len(jug), sum(1 for o in jug if o["team"] and o["game"])
-    filas = [o for o in jug if o["gw"] >= GW_MIN_EVAL and o["team"] and o["game"]]
-    print(f"Actuaciones: {total} | con equipo conocido: {con_equipo} | evaluables (J{GW_MIN_EVAL}+): {len(filas)}")
+    filas = [o for o in modelo.jug if o["gw"] >= GW_MIN_EVAL and o["team"] and o["game"]]
+    print(f"Actuaciones de vuestros onces: {total} | con equipo conocido: {con_equipo} | de toda la liga evaluables (J{GW_MIN_EVAL}+): {len(filas)}")
 
     if len(filas) < FILAS_MIN:
         params, r0, r1, cambio = dict(DEFECTO), None, None, False
@@ -365,14 +425,27 @@ def main():
                     "rmseDefecto": round(r0, 3) if r0 else None, "rmseAjustado": round(r1, 3) if r1 else None})
         print(f"RMSE: posición {pos_base:.3f} | forma {sin_ctx:.3f} | forma+contexto {con_ctx:.3f} (corr {corr_f:.2f} -> {corr_c:.2f})")
 
+    # modelo de la liga entera (probabilidad de jugar y nivel esperado según valor)
+    liga = None
+    try:
+        import modelo_liga as ML
+        liga = ML.ajustar(cargar(os.path.join(CARPETA, "jugadores_historial.json")), cargar(os.path.join(CARPETA, "jugadores.json")), D)
+        v = liga.get("validacion")
+        if v:
+            print(f"Modelo de la liga: error de 'juega' {v['brierLogistica']} (fórmula anterior {v['brierFormulaAnterior']}); "
+                  f"error de puntos con nivel por valor {v['rmsePriorValor']} (media de la posición {v['rmseMediaPosicion']}).")
+    except Exception as e:     # nunca debe romper el autoajuste
+        print(f"[!] Modelo de la liga no disponible: {e}")
+
     salida = {
         "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "muestra": {"actuaciones": total, "conEquipo": con_equipo, "jornadas": sorted({o["gw"] for o in obs})[-1] if obs else 0},
         "aviso": aviso,
         "params": {k: v for k, v in P.items()},
         "metricas": metricas,
+        "liga": liga,
         "patrones": patrones(obs, nombres, jug),
-        "jornadas": evaluar_jornadas(modelo, P, obs) if filas else [],
+        "jornadas": evaluar_jornadas(modelo_lineas, P, obs) if filas else [],
     }
     previo = cargar(F_SALIDA, {})
     sin_hora = lambda d: {k: v for k, v in d.items() if k != "updatedAt"}
