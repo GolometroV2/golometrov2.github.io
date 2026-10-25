@@ -197,6 +197,19 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .st-otro{background:var(--mut)}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
 code{color:var(--acc)}
+.mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mut);border-radius:12px;padding:10px 12px}
+.mc.prio-imperdible{border-color:#ff6b6b;border-left-color:#ff4d4f;background:linear-gradient(90deg,#ff4d4f1f,var(--panel) 60%)}
+.mc.prio-top{border-left-color:#ffc94a}.mc.prio-bueno{border-left-color:var(--acc)}.mc.prio-favorable{border-left-color:#4aa8ff}.mc.prio-inversion{border-left-color:#b388ff}.mc.prio-evitar{opacity:.6;border-left-color:#ff4d4f}
+.mrow{display:flex;align-items:center;gap:10px}
+.mbar{position:relative;height:14px;border-radius:7px;background:var(--panel2);margin-top:5px;overflow:hidden}
+.mbar i{display:block;height:100%;background:linear-gradient(90deg,#4aa8ff,var(--acc));border-radius:7px}
+.mbar span{position:absolute;right:6px;top:0;font-size:10.5px;font-weight:800;line-height:14px}
+.mpuja{text-align:right;flex:none;line-height:1.15}.mpuja small{display:block;font-size:11px;color:var(--mut)}
+.mpuja b{display:block;font-size:15px;color:var(--acc);white-space:nowrap}.mpuja span{font-size:11.5px;color:var(--mut)}
+.prio-imperdible .mpuja b{color:#ff6b6b}
+.mdet{margin-top:6px}.mdet summary{cursor:pointer;font-size:12.5px;color:var(--mut);font-weight:600}
+.btn-ghost{background:var(--panel2);color:var(--txt);border:0;border-radius:999px;padding:8px 16px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -214,6 +227,7 @@ code{color:var(--acc)}
   <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
   <div id="eq" hidden></div>
   <div id="cap" hidden></div>
+  <div id="mer" hidden></div>
 </main>
 
 <script>
@@ -268,15 +282,15 @@ function cargar(obj) {
 }
 
 function cargarEquipos() {
-  if (!eqOk && seccion !== "cap") return;   // Equipos exige PIN; Capitán es público y solo necesita las plantillas
+  if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); })
+    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
 function pintarNav() {
-  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"]]
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"], ["mer", (eqOk ? "💸" : "🔒") + " Mercado"]]
     .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
 }
 
@@ -285,9 +299,11 @@ function ir(sec) {
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
   $("#cap").hidden = sec !== "cap";
+  $("#mer").hidden = sec !== "mer";
   pintarNav();
   if (sec === "eq") pintarEquipos();
   if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
+  if (sec === "mer") { cargarMercado(); cargarCalendario(); cargarEquipos(); pintarMercado(); }
 }
 
 function cargarDatos() {
@@ -616,7 +632,7 @@ let pin = "";
 const PIN_LEN = 4;
 
 function pintarPin() {
-  const d = $("#pinDots");
+  const d = $("#" + seccion + " #pinDots");
   if (d) d.innerHTML = Array.from({ length: PIN_LEN }, (_, i) => `<i class="${i < pin.length ? "f" : ""}"></i>`).join("");
 }
 
@@ -625,14 +641,14 @@ async function teclaPin(k) {
   if (k === "del") pin = pin.slice(0, -1);
   else if (pin.length < PIN_LEN) pin += k;
   pintarPin();
-  $("#claveMsg").textContent = "";
+  $("#" + seccion + " #claveMsg").textContent = "";
   if (pin.length < PIN_LEN) return;
   let ok = false;
   try { ok = !!CLAVE_HASH && (await sha256(pin)) === CLAVE_HASH; }
-  catch (err) { $("#claveMsg").textContent = "Este navegador no puede comprobar el PIN (abre la página con https)."; pin = ""; pintarPin(); return; }
+  catch (err) { $("#" + seccion + " #claveMsg").textContent = "Este navegador no puede comprobar el PIN (abre la página con https)."; pin = ""; pintarPin(); return; }
   if (!ok) {
-    const d = $("#pinDots"); d.classList.add("err");
-    $("#claveMsg").textContent = "PIN incorrecto.";
+    const d = $("#" + seccion + " #pinDots"); d.classList.add("err");
+    $("#" + seccion + " #claveMsg").textContent = "PIN incorrecto.";
     setTimeout(() => { pin = ""; d.classList.remove("err"); pintarPin(); }, 400);
     return;
   }
@@ -640,12 +656,14 @@ async function teclaPin(k) {
   try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
   pintarNav();
   $("#eq").innerHTML = `<div class="msg">Cargando equipos...</div>`;
-  cargarEquipos();
+  $("#cap").innerHTML = `<div class="msg">Cargando plantillas...</div>`;
+  $("#mer").innerHTML = `<div class="msg">Cargando mercado...</div>`;
+  cargarEquipos(); cargarCalendario(); if (seccion === "mer") cargarMercado();
 }
 
 document.addEventListener("click", e => { const b = e.target.closest("[data-pin]"); if (b) teclaPin(b.dataset.pin); });
 document.addEventListener("keydown", e => {
-  if (eqOk || seccion !== "eq") return;
+  if (eqOk || (seccion !== "eq" && seccion !== "cap" && seccion !== "mer")) return;
   if (/^[0-9]$/.test(e.key)) teclaPin(e.key);
   else if (e.key === "Backspace") teclaPin("del");
 });
@@ -927,11 +945,229 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1 }) {
 }
 // ===== FIN CAPITAN-ENGINE =====
 
+// ===== MERCADO-ENGINE (recomendador de fichajes) =====
+// Solo analiza jugadores LIBRES (los que pone el juego). Para cada uno estima:
+//   - puntos esperados por jornada (forma + media, encogidos a la media de su posición, por probabilidad de jugar)
+//   - cómo es su próximo partido (modelo de goles + puntos que concede el rival a su posición)
+//   - cuánto crece su valor al día (historial propio; si aún no hay, una estimación por la flecha del mercado)
+// y con eso: prioridad, puntuación 0-100 y puja ideal.
+const MER = {
+  POS_MEDIA: { PT: 4.2, DF: 3.9, MC: 4.1, DL: 3.9 },   // referencia hasta tener datos de la liga
+  K_JUG: 4,
+  CREC_FLECHA: 0.025,       // crecimiento diario supuesto cuando solo se conoce la flecha (↑ / ↓)
+  CREC_MAX: 0.12,
+  SOBRE: { imperdible: 0.20, top: 0.14, bueno: 0.08, favorable: 0.07, inversion: 0.06, normal: 0.03 },  // sobrepuja base por prioridad
+  V_REF: 6e6, V_EXP: 0.3, TIER: [0.7, 1.6],     // la sobrepuja relativa baja con el valor del jugador
+  RECUP: 0.7, RECUP_MAX: 0.10, TECHO: 1.7       // parte del crecimiento previsto que se está dispuesto a adelantar en la puja
+};
+const merUrlEscudo = id => id ? `https://cdn-mister.mundodeportivo.com/file/cdn-common/teams/${id}.png?version=` : "";
+
+function merCrecimiento(id, hist, flecha) {
+  // serie de valores por día: [{t, v}] y tasa media diaria de los últimos cambios
+  const dias = Object.keys(hist || {}).sort();
+  const serie = dias.filter(d => hist[d][id]).map(d => ({ t: Date.parse(d + "T12:00:00Z") / 864e5, v: hist[d][id] }));
+  const tasas = [];
+  for (let i = 1; i < serie.length; i++) {
+    const dt = serie[i].t - serie[i - 1].t;
+    if (dt > 0 && dt <= 4) tasas.push(Math.pow(serie[i].v / serie[i - 1].v, 1 / dt) - 1);
+  }
+  if (tasas.length) {
+    const u = tasas.slice(-3);
+    let sw = 0, sx = 0;
+    u.forEach((x, i) => { const w = i + 1; sw += w; sx += w * x; });
+    return { g: capClamp(sx / sw, [-MER.CREC_MAX, MER.CREC_MAX]), n: tasas.length, fuente: "historial" };
+  }
+  return { g: flecha * MER.CREC_FLECHA, n: 0, fuente: flecha ? "flecha" : "sin datos" };
+}
+
+function recomendarMercado({ M, cal, D, E, ahora }) {
+  const obj = capJornadaObjetivo(cal);
+  if (!obj) return { error: "No hay partidos pendientes en el calendario." };
+  const modelo = capModeloEquipos(cal.games || []);
+  const obs = capObservaciones(D || { matchdays: {} }, E || { managers: [] }, cal);
+  const porPos = {}, concedido = {}, porJugador = {};
+  obs.forEach(o => {
+    (porPos[o.pos] = porPos[o.pos] || []).push(o.pts);
+    (concedido[o.rival + ":" + o.pos] = concedido[o.rival + ":" + o.pos] || []).push(o.pts);
+    (porJugador[o.id] = porJugador[o.id] || []).push(o.pts);
+  });
+  const muPos = pos => (porPos[pos] && porPos[pos].length >= 10) ? capMedia(porPos[pos]) : MER.POS_MEDIA[pos];
+  const p0 = obj.games.flatMap(g => [Math.exp(-modelo.xg(g.home, g.away, true)), Math.exp(-modelo.xg(g.away, g.home, false))]);
+  const p0Liga = capMedia(p0) || Math.exp(-modelo.lg);
+  const nombres = {};
+  (cal.games || []).forEach(g => { nombres[g.home] = g.homeName; nombres[g.away] = g.awayName; });
+  const cerradas = (cal.gameweeks || []).filter(g => g.status === "finished").length ||
+    new Set((cal.games || []).filter(g => capNum(g.gh)).map(g => g.gw)).size;
+  const pend = g => !capNum(g.gh);
+  const ts = ahora || Date.now() / 1000;
+  const cierre = Math.min(...(M.libres || []).map(x => x.ends).filter(Boolean), M.ends || Infinity, ts + 864000);
+  const pendientes = (cal.games || []).filter(pend).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+
+  const contexto = (teamId, pos, mu0, g) => {
+    const casa = g.home === teamId, rival = casa ? g.away : g.home;
+    const xgf = modelo.xg(teamId, rival, casa), xgc = modelo.xg(rival, teamId, !casa);
+    const fXg = 1 + (casa ? CAP.HOME_EXTRA : -CAP.HOME_EXTRA) + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
+    const l = concedido[rival + ":" + pos] || [];
+    const fPts = (((l.reduce((s, v) => s + v, 0)) + CAP.K_POS * mu0) / (l.length + CAP.K_POS)) / mu0;
+    return { g, casa, rival, rivalNombre: nombres[rival], xgf, xgc, fXg, fPts, nR: l.length, f: capClamp(Math.max(fXg, 0.3) * (1 + CAP.W_RIVAL * (fPts - 1)), CAP.LIMITE_F) };
+  };
+
+  const lista = (M.libres || []).map(j => {
+    const pos = j.pos, mu0 = muPos(pos);
+    // próximos partidos que el jugador podría disputar (los que empiezan después de cerrarse el mercado)
+    const mios = pendientes.filter(g => (g.home === j.teamId || g.away === j.teamId));
+    const futuros = mios.filter(g => (g.ts || 0) > cierre);
+    const prox = (futuros.length ? futuros : mios).slice(0, 3);
+    const ctx = prox.map(g => contexto(j.teamId, pos, mu0, g));
+    const c1 = ctx[0] || null;
+    const fProx = c1 ? c1.f : 1;
+    const fMed = ctx.length ? capMedia(ctx.map((c, i) => i === 0 ? c.f : capClamp(Math.max(c.fXg, 0.3), CAP.LIMITE_F))) : 1;
+
+    // forma y regularidad
+    const racha = (j.streak || []).slice(-5);
+    let sw = 0, sx = 0;
+    racha.forEach((v, i) => { if (capNum(v)) { const w = Math.pow(CAP.FORMA_ALPHA, racha.length - 1 - i); sw += w; sx += w * v; } });
+    const forma = sw ? sx / sw : null;
+    const jugadas = racha.filter(capNum);
+    const avg = capNum(j.avg) ? j.avg : null;
+    const crudo = forma != null && avg != null ? 0.5 * forma + 0.5 * avg : (forma ?? avg);
+    const partidos = capNum(j.points) && avg > 0 ? Math.min(j.points / avg, cerradas || 99) : null;
+    const nPart = Math.max(jugadas.length, partidos != null ? Math.round(partidos) : 0);
+    const mu = crudo == null ? mu0 : (nPart * crudo + MER.K_JUG * mu0) / (nPart + MER.K_JUG);
+    const tasa5 = racha.length ? jugadas.length / racha.length : null;
+    const tasaT = partidos != null && cerradas > 0 ? Math.min(partidos / cerradas, 1) : null;
+    const tasa = tasa5 != null && tasaT != null ? (1 - CAP.PESO_TEMPORADA) * tasa5 + CAP.PESO_TEMPORADA * tasaT : (tasaT ?? tasa5 ?? 0.5);
+
+    // disponibilidad
+    const est = (j.status || []);
+    const lesion = est.includes("injury"), sancion = est.some(s => /susp|sanc|card/.test(s)), duda = est.includes("doubt");
+    const eq = c1 ? ((cal.lineups || {})[String(c1.g.id)] || {})[String(j.teamId)] : null;
+    let pj, fuente;
+    if (lesion) { pj = 0.03; fuente = "Lesionado"; }
+    else if (sancion) { pj = 0; fuente = "Sancionado"; }
+    else if (eq && !eq.confirmed) {
+      const en11 = eq.players.includes(String(j.id));
+      pj = en11 ? Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa) : CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa;
+      fuente = en11 ? "En el once probable" : "No está en el once probable";
+    } else { pj = 0.1 + 0.8 * tasa; fuente = nPart ? `Juega ${jugadas.length} de las últimas ${racha.length || 5} jornadas` : "Sin partidos jugados todavía"; }
+    if (duda) { pj *= 0.5; fuente += " · en duda"; }
+
+    const espProx = pj * mu * fProx;        // próxima jornada
+    const espGen = pj * mu * fMed;          // visión de las próximas jornadas
+    // valor
+    const V = j.price;
+    const cr = merCrecimiento(j.id, M.historial, j.arrow);
+    const diasJornada = c1 ? Math.max(0, ((c1.g.ts || cierre) - cierre) / 86400) : 0;
+
+    // puntuación 0-100
+    const sRend = capClamp((espGen - 2) / 5, [0, 1]);
+    const sCtx = capClamp((fProx - 0.85) / 0.5, [0, 1]);
+    const sVal = capClamp((cr.g + 0.02) / 0.07, [0, 1]);
+    const sCho = capClamp(((espGen / mu0) - 0.7) / (1.1 + Math.log10(Math.max(V, 1e5) / 1e5)), [0, 1]);
+    const score = Math.round(100 * (0.5 * sRend + 0.15 * sCtx + 0.2 * sVal + 0.15 * sCho));
+
+    // prioridad
+    let prio, etiqueta;
+    const barato = V < 2.5e6;
+    if (pj < 0.1) { prio = "evitar"; etiqueta = lesion ? "Lesionado" : sancion ? "Sancionado" : "No suele jugar"; }
+    else if ((espGen >= 6.2 && pj >= 0.8) || (espGen >= 5.4 && cr.g >= 0.03 && pj >= 0.7) || (barato && espGen >= 5 && pj >= 0.75)) { prio = "imperdible"; etiqueta = "No dejar pasar"; }
+    else if (score >= 62 && pj >= 0.6) { prio = "top"; etiqueta = "Top"; }
+    else if (score >= 48 && pj >= 0.5) { prio = "bueno"; etiqueta = "Buen fichaje"; }
+    else if (fProx >= 1.1 && espProx >= 3.6 && pj >= 0.5) { prio = "favorable"; etiqueta = "Partido favorable"; }
+    else if (cr.g >= 0.03 && pj >= 0.5) { prio = "inversion"; etiqueta = "Sube de valor"; }
+    else { prio = "normal"; etiqueta = "Sin interés"; }
+
+    // puja ideal
+    const tf = capClamp(Math.pow(MER.V_REF / V, MER.V_EXP), MER.TIER);
+    const base = MER.SOBRE[prio] ?? 0;
+    const horizonte = Math.max(0.5, (cierre - ts) / 86400 + diasJornada);        // días hasta que el jugador puntúa
+    let s = base * tf;
+    const fiab = cr.fuente === "historial" ? 1 : 0.5;   // una tendencia solo supuesta por la flecha pesa la mitad
+    const recup = cr.g > 0 ? capClamp(cr.g * horizonte * MER.RECUP * fiab, [0, MER.RECUP_MAX]) : -capClamp(-cr.g * horizonte * 0.8 * fiab, [0, s * 0.6]);
+    s = capClamp(s + recup, [prio === "evitar" ? 0 : 0.01, prio === "normal" ? 0.08 : 0.45]);   // en un jugador sin interés no se justifica sobrepujar
+    const redondea = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };   // evita empatar en cifras redondas
+    const puja = prio === "evitar" ? V : redondea(V * (1 + s));
+    const techo = prio === "evitar" ? V : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
+    return { j, pos, V, mu, mu0, forma, avg, nPart, tasa, pj, fuente, rival: c1, ctx, fProx, fMed, espProx, espGen, cr, diasJornada, horizonte,
+             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, recup, s, puja, techo };
+  });
+  const orden = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
+  lista.sort((a, b) => orden[a.prio] - orden[b.prio] || b.score - a.score);
+  return { gw: obj.gw, lista, nombres, modelo };
+}
+// ===== FIN MERCADO-ENGINE =====
+
+// ---------- Pestaña Mercado ----------
+let MER_DATA = null, merTodos = false, merError = false;
+function cargarMercado() {
+  fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(j => { MER_DATA = j; merError = false; if (seccion === "mer") pintarMercado(); })
+    .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
+}
+
+const MER_GRUPOS = [
+  ["imperdible", "🔥 No dejar pasar"], ["top", "⭐ Top"], ["bueno", "👍 Buenos fichajes"], ["favorable", "🎯 Partido favorable"], ["inversion", "📈 Suben de valor"]
+];
+const merPuja = v => v.toLocaleString("es-ES") + " €";
+const merEur = v => v >= 1e6 ? nf.format(Math.round(v / 1e4) / 100) + " M" : nf.format(Math.round(v / 1e3)) + " k";
+const merFecha = ts => enMadrid(new Date(ts * 1000).toISOString(), { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+function merTarjeta(r) {
+  const j = r.j, c = r.rival;
+  const est = (j.status || []).includes("injury") ? ["injury", "✚", "Lesionado"] : (j.status || []).includes("doubt") ? ["doubt", "?", "En duda"] : null;
+  const rivalTxt = c ? `vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"}` : "Sin partido próximo";
+  const pctS = r.cr.g >= 0 ? "+" : "−";
+  const sobre = Math.round((r.puja / r.V - 1) * 100);
+  const detalle = `
+    <p>Se espera que haga <b>${nf1.format(r.espGen)} pts</b> por jornada (<b>${nf1.format(r.espProx)}</b> en el próximo partido). Su base es ${nf1.format(r.mu)} pts, mezcla de su forma${r.avg != null ? ` y su media (${nf1.format(r.avg)})` : ""}, acercada a la media de su posición porque lleva ${r.nPart} partidos.</p>
+    <p><b>Disponibilidad ${pc(r.pj)}:</b> ${esc(r.fuente)}.</p>
+    ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
+    <p><b>Valor:</b> ${r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día hasta tener historial propio (se guarda cada día)` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar.</p>
+    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}», ×${nf2.format(r.tf)} por su precio${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por su ${r.recup > 0 ? "revalorización prevista" : "caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
+  return `<li class="mc prio-${r.prio}">
+    <div class="mrow">
+      <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
+      <div class="jp-info">
+        <div class="jp-name"><span>${esc(j.name)}</span><span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span>${est ? `<span class="st st-${est[0]}" title="${est[2]}">${est[1]}</span>` : ""}</div>
+        <div class="jp-val">${img(merUrlEscudo(j.teamId), "shield")} <b>${merEur(r.V)}</b> <span class="note">${rivalTxt}</span></div>
+        <div class="mbar" title="Puntuación ${r.score}/100"><i style="width:${Math.max(4, r.score)}%"></i><span>${r.score}</span></div>
+      </div>
+      <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}</span></div>
+    </div>
+    <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}</div></details></li>`;
+}
+
+function pintarMercado() {
+  const cont = $("#mer");
+  if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
+  if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="msg">Cargando mercado...</div>`; return; }
+  if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
+  if (PAR && PAR.params) capAplicarParametros(PAR.params);
+  const r = recomendarMercado({ M: MER_DATA, cal: CAL, D, E });
+  if (r.error) { cont.innerHTML = `<div class="msg">${esc(r.error)}</div>`; return; }
+  const cierre = Math.min(...MER_DATA.libres.map(x => x.ends).filter(Boolean));
+  const viejo = Date.now() / 1000 - Date.parse(MER_DATA.updatedAt) / 1000 > 30 * 3600;
+  const grupos = MER_GRUPOS.map(([k, t]) => {
+    const l = r.lista.filter(x => x.prio === k);
+    return l.length ? `<h3 class="sec">${t}</h3><ul class="mlist">${l.map(merTarjeta).join("")}</ul>` : "";
+  }).join("");
+  const resto = r.lista.filter(x => x.prio === "normal" || x.prio === "evitar");
+  const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
+  cont.innerHTML = `
+    <section class="card"><h2 style="margin:0 0 2px;font-size:16px">💸 Mercado · jugadores libres</h2>
+      <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
+      ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
+    ${hay ? grupos : `<div class="msg">Hoy no hay ningún libre que merezca la pena.</div>`}
+    ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
+    <p class="note">La puja ideal es una guía: sube con la prioridad, con lo que se espera que crezca su valor hasta que pueda puntuar y baja (en porcentaje) cuanto más caro es el jugador.</p>`;
+}
+
 // ---------- Pestaña Capitán ----------
 function cargarParametros() {
   fetch("parametros_capitan.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); })
+    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -972,8 +1208,8 @@ function cargarCalendario() {
   cargarParametros();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); })
-    .catch(() => { if (seccion === "cap") pintarCapitan(); });
+    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
 const signoPct = v => (v >= 0 ? "+" : "−") + Math.round(Math.abs(v) * 100) + " %";
@@ -1121,6 +1357,11 @@ function bloqueRivales(r, candidatos) {
 
 function pintarCapitan() {
   const cont = $("#cap");
+  if (!eqOk) {
+    cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el recomendador de capitán.");
+    pin = ""; pintarPin();
+    return;
+  }
   if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
@@ -1211,7 +1452,7 @@ function pintar() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-s],[data-e],[data-es],[data-cm],[data-cr],[data-cv]");
+  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-s],[data-e],[data-es],[data-cm],[data-cr],[data-cv],[data-mt]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
@@ -1220,6 +1461,7 @@ document.addEventListener("click", e => {
   if (d.cm !== undefined) { capMan = d.cm; pintarCapitan(); return; }
   if (d.cr !== undefined) { capRiesgo = +d.cr; pintarCapitan(); return; }
   if (d.cv !== undefined) { capTodos = !capTodos; pintarCapitan(); return; }
+  if (d.mt !== undefined) { merTodos = !merTodos; pintarMercado(); return; }
   if (!D) return;
   if (d.g !== undefined || d.gs !== undefined || d.gm !== undefined) {
     if (d.g !== undefined) visibles.has(d.g) ? visibles.delete(d.g) : visibles.add(d.g);
@@ -1238,3 +1480,4 @@ document.addEventListener("click", e => {
 </script>
 </body>
 </html>
+
