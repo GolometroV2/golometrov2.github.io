@@ -1,0 +1,50 @@
+name: Agente de mejoras
+
+# Una vez a la semana (martes por la mañana) el agente revisa el proyecto, elige UNA mejora,
+# la prueba y abre una Pull Request. Tu solo tienes que mirarla y aceptarla (o cerrarla).
+on:
+  schedule:
+    - cron: '23 7 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: agente
+  cancel-in-progress: false
+
+jobs:
+  agente:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Preparar pruebas con navegador
+        run: |
+          pip install requests beautifulsoup4 playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Agente
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Sigue las reglas de CLAUDE.md. Ejecucion automatica sin supervision: elige una sola mejora
+            segun MEJORAS.md y los datos, implementala en una rama nueva, pruebala con Playwright,
+            actualiza MEJORAS.md y abre una Pull Request. Si no encuentras nada que merezca la pena,
+            no cambies nada y explica por que en un comentario del resumen.
+          claude_args: |
+            --max-turns 80
+            --max-budget-usd 4
+            --model claude-sonnet-5-5
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh pr:*),Bash(python:*),Bash(python3:*),Bash(node:*),Bash(pip:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(cp:*)"
