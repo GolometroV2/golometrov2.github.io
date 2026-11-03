@@ -45,5 +45,4 @@ jobs:
             no cambies nada y explica por que en un comentario del resumen.
           claude_args: |
             --max-turns 80
-            --model claude-sonnet-5-5
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh pr:*),Bash(python:*),Bash(python3:*),Bash(node:*),Bash(pip:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(cp:*)"
