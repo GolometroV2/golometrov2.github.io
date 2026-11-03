@@ -37,7 +37,7 @@ jobs:
       - name: Agente
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Sigue las reglas de CLAUDE.md. Ejecucion automatica sin supervision: elige una sola mejora
             segun MEJORAS.md y los datos, implementala en una rama nueva, pruebala con Playwright,
@@ -45,6 +45,5 @@ jobs:
             no cambies nada y explica por que en un comentario del resumen.
           claude_args: |
             --max-turns 80
-            --max-budget-usd 4
             --model claude-sonnet-5-5
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh pr:*),Bash(python:*),Bash(python3:*),Bash(node:*),Bash(pip:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(cp:*)"
