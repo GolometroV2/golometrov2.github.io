@@ -1367,7 +1367,7 @@ function claveHtml(icono, titulo, resumen, insignia, tono, detalle) {
 
 function tablaMuestras(l) {
   if (!l || !l.length) return "";
-  return `<table class="apr"><thead><tr><th>Jugador</th><th>Jornada</th><th>Puntos</th><th>Goles</th><th>Asist.</th></tr></thead><tbody>${l.map(o => `<tr><td>${esc(o.name)}</td><td>J${o.gw}</td><td><b>${o.pts}</b></td><td>${o.goles || 0}</td><td>${o.asist || 0}</td></tr>`).join("")}</tbody></table>`;
+  return `<div style="overflow-x:auto"><table class="apr"><thead><tr><th>Jugador</th><th>Jornada</th><th>Puntos</th><th>Goles</th><th>Asist.</th></tr></thead><tbody>${l.map(o => `<tr><td>${esc(o.name)}</td><td>J${o.gw}</td><td><b>${o.pts}</b></td><td>${o.goles || 0}</td><td>${o.asist || 0}</td></tr>`).join("")}</tbody></table></div>`;
 }
 
 // Cómo puntúan los jugadores de una posición contra un rival, con los casos reales
