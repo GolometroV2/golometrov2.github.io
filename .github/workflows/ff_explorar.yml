@@ -18,20 +18,18 @@ jobs:
           echo "=== $URL ==="
           curl -sS -A "$UA" -o /tmp/p.html -w "HTTP %{http_code} bytes %{size_download}\n" "$URL"
           python3 - <<"PY"
-          import re, collections
+          import re
           h=open('/tmp/p.html',encoding='utf-8',errors='replace').read()
-          print("clases campo-wrapper:",set(re.findall(r'class="([^"]*campo-wrapper[^"]*)"',h)))
-          pr=re.findall(r'data-probabilidad="([^"]*)"',h); print("probabilidad:",collections.Counter(pr))
-          on=re.findall(r'data-onceFF="([^"]*)"',h); print("onceFF:",collections.Counter(on))
-          print("lesion:",collections.Counter(re.findall(r'data-lesion="([^"]*)"',h)))
-          print("jugadores href:",len(set(re.findall(r'href="(https://www.futbolfantasy.com/jugadores/[^"]+)"',h))))
-          # por cada camiseta: nombre y probabilidad
-          for m in list(re.finditer(r'<div class="jugador_(\d+)[^"]*"[^>]*data-onceFF="([^"]*)"',h))[:30]:
-              seg=h[m.start():m.start()+6000]
-              pb=re.search(r'data-probabilidad="([^"]*)"',seg); hr=re.search(r'href="https://www.futbolfantasy.com/jugadores/([^"/]+)',seg)
-              print(m.group(1),m.group(2),pb and pb.group(1),hr and hr.group(1))
-          for k in ['data-match-p11-team','suplentes','convocad','data-estado','data-porcent','probabilidad-titular','prob-']:
-              print(k,h.count(k))
-          i=h.find('class="forma-left view probabilidad')
-          print(re.sub(r'\s+',' ',h[i-200:i+500]))
+          h=re.sub(r'<script.*?</script>|<style.*?</style>|<svg.*?</svg>|<!--.*?-->','',h,flags=re.S)
+          def limpio(s):
+              s=re.sub(r' data-total[A-Za-z]+="[^"]*"','',s)
+              s=re.sub(r'<span class="forma view alineacion-valor.*?</span>','',s,flags=re.S)
+              s=re.sub(r'<span class="forma view (nacionalidad|altura).*?</span>','',s,flags=re.S)
+              return re.sub(r'\s+',' ',s)
+          for nombre in ['cristian-romero','julian-lvarez']:
+              i=h.find('/jugadores/'+nombre)
+              j=h.rfind('<div class="jugador_',0,i)
+              print("=====",nombre); print(limpio(h[j:j+7000])[:2600])
+          for m in list(re.finditer(r'data-lesion="([0-9])"',h))[:3]:
+              print("=== lesion",m.group(1)); print(limpio(h[m.start()-700:m.start()+2200])[:1800])
           PY
