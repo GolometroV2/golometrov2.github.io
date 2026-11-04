@@ -496,6 +496,7 @@ code{color:var(--accFg)}
 .cv-m{white-space:normal!important;line-height:1.3}
 .yo-b{margin-left:6px;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mut)}
 .yo-b.on{background:var(--accBg);border-color:var(--acc);color:var(--accFg)}
+.tu{font-size:10.5px;font-weight:800;color:var(--accTxt);background:var(--acc);border-radius:6px;padding:1px 6px;vertical-align:2px}
 </style>
 </head>
 <body>
@@ -1018,7 +1019,10 @@ function pintarDuelo() {
   const S = serieLiga(), { js, ms, pts, cum } = S, n = js.length;
   if (ms.length < 2 || !n) { cont.innerHTML = ""; return; }
   const orden = ms.map((_, x) => x).sort((a, b) => cum[b][n - 1] - cum[a][n - 1]);
-  if (!duelo || !ms.some(o => o.m.id === duelo[0]) || !ms.some(o => o.m.id === duelo[1]) || duelo[0] === duelo[1]) duelo = [ms[orden[0]].m.id, ms[orden[1]].m.id];
+  if (!duelo || !ms.some(o => o.m.id === duelo[0]) || !ms.some(o => o.m.id === duelo[1]) || duelo[0] === duelo[1]) {
+    const yo = YO && ms.some(o => o.m.id === YO) ? YO : null;
+    duelo = yo ? [yo, ms[orden[0]].m.id === yo ? ms[orden[1]].m.id : ms[orden[orden.findIndex(x => ms[x].m.id === yo) - 1]].m.id] : [ms[orden[0]].m.id, ms[orden[1]].m.id];
+  }
   const xa = ms.findIndex(o => o.m.id === duelo[0]), xb = ms.findIndex(o => o.m.id === duelo[1]);
   const A = ms[xa], B = ms[xb], ca = col(A.i), cb = col(B.i);
   const sel = (lado, x) => `<select data-dsel="${lado}" aria-label="Manager ${lado ? "B" : "A"}">${orden.map(y => `<option value="${esc(ms[y].m.id)}" ${y === x ? "selected" : ""}>${esc(ms[y].m.name)}</option>`).join("")}</select>`;
@@ -2606,7 +2610,7 @@ function pintar() {
       <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
-        <span class="info"><span class="nm">${esc(m.name)}</span>
+        <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
           <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
