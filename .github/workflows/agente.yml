@@ -57,6 +57,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: '*'
           prompt: |
             Sigue las reglas de CLAUDE.md (seccion MODO INTENSIVO). Ejecucion automatica sin supervision:
             trabaja en la rama agente/semana (crea o actualizala desde main y rebasala sobre main),
@@ -73,8 +74,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # GitHub retrasa mucho el cron horario: al terminar, esta ejecucion lanza la siguiente.
-          # Solo durante el modo intensivo (hasta el 11/11/2026) y con una pausa de 10 minutos.
+          # Solo durante el modo intensivo (hasta el 11/11/2026) y con una pausa de 2 minutos.
           HOY=$(TZ=Europe/Madrid date +%F)
           if [[ "$HOY" > "2026-11-11" ]]; then echo "Fin del modo intensivo."; exit 0; fi
-          sleep 600
+          sleep 120
           gh workflow run agente.yml --repo "${{ github.repository }}" --ref main
