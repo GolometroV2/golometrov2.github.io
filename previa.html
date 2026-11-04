@@ -428,6 +428,11 @@ code{color:var(--accFg)}
 .oi-n{max-width:100%;font-size:11px;font-weight:700;margin-top:4px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0009}
 .oi-pt{position:absolute;top:-4px;left:calc(50% + 12px);min-width:20px;height:18px;padding:0 4px;border-radius:9px;background:var(--acc);color:var(--accTxt);font-size:11px;font-weight:800;display:grid;place-items:center}
 .oi-p small{font-size:9.5px;color:#e6f2ea;opacity:.85;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-s{display:inline-flex;gap:2px;margin-right:6px;flex:none}
+.rc-s i{font-style:normal;min-width:20px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10.5px;font-weight:800;background:var(--panel2);color:var(--mut)}
+.rc-s i.a{background:var(--pos);color:#06210f}.rc-s i.m{background:var(--posBg);color:var(--pos)}.rc-s i.b{background:var(--panel2);color:var(--txt)}
+.rc-e{overflow:hidden;text-overflow:ellipsis}
+.rc-e.libre{color:var(--pos);font-weight:700}.rc-e.venta{color:var(--accFg);font-weight:700}
 </style>
 </head>
 <body>
@@ -1922,6 +1927,22 @@ function merTarjeta(r) {
     <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}</div></details></li>`;
 }
 
+// Jugadores de toda la liga con mejores últimas 3 jornadas, y si se pueden conseguir (libres, en venta o de quién son)
+function bloqueRacha(M) {
+  const J = Object.values(M.jug || {});
+  if (!J.length) return "";
+  const libres = new Set((M.libres || []).map(x => String(x.id)));
+  const L = J.map(p => { const s = (p.streak || []).slice(-3), v = s.map(x => capNum(x) ? x : 0); return { p, s, t: v.reduce((a, b) => a + b, 0), jug: s.filter(capNum).length }; })
+    .filter(x => x.jug >= 2 && x.p.status !== "injury").sort((a, b) => b.t - a.t || (b.p.avg || 0) - (a.p.avg || 0)).slice(0, 10);
+  const estado = p => libres.has(String(p.id)) ? `<span class="rc-e libre">Libre en el mercado</span>` : p.onMarket ? `<span class="rc-e venta">En venta · ${esc(p.ownerName || "")}</span>` : p.owner ? `<span class="rc-e">De ${esc(p.ownerName || "otro manager")}</span>` : `<span class="rc-e">Sin dueño</span>`;
+  return `<section class="card"><div class="gh"><h2>En racha</h2></div>
+    <p class="note" style="margin:0 0 6px">Los jugadores de toda la liga que más han puntuado en las 3 últimas jornadas.</p>
+    <ul class="clist">${L.map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+      <span class="cq"><b>${esc(x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
+        <span><span class="rc-s">${x.s.map(v => `<i class="${capNum(v) ? (v >= 10 ? "a" : v >= 5 ? "m" : "b") : "n"}">${capNum(v) ? v : "–"}</i>`).join("")}</span>${estado(x.p)}</span></span>
+      <span class="cr"><b>${x.t}</b><small>${merEur(x.p.value)}</small></span></li>`).join("")}</ul></section>`;
+}
+
 function pintarMercado() {
   const cont = $("#mer");
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
@@ -1947,6 +1968,7 @@ function pintarMercado() {
     ${mejor ? heroMer(mejor, cierre) : ""}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
+    ${bloqueRacha(MER_DATA)}
     <p class="note">La puja ideal es una guía: sube con la prioridad, con lo que se espera que crezca su valor hasta que pueda puntuar y baja (en porcentaje) cuanto más caro es el jugador.</p>`;
 }
 
