@@ -346,6 +346,23 @@ code{color:var(--accFg)}
 .ct-t .ct-x>span{font-size:11.5px;line-height:1.3}
 .ct-n{font-size:13px;color:var(--txt);display:inline}
 @media (max-width:360px){.ct-grid{grid-template-columns:1fr}}
+.ch{list-style:none;background:linear-gradient(165deg,var(--accBg),var(--panel) 55%);border:1px solid var(--acc);border-radius:18px;padding:16px}
+.ch-top{display:flex;align-items:center;gap:14px}
+.ch-q{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ch-q small{font-size:12px;font-weight:700;color:var(--accFg)}
+.ch-q b{font-size:22px;line-height:1.15;letter-spacing:-.4px;display:flex;align-items:center;gap:4px}
+.ch-vs{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut)}
+.ch-kpi{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;margin:14px 0 10px}
+.ch-kpi span{background:var(--panel2);border-radius:12px;padding:9px 8px;display:flex;flex-direction:column;gap:1px}
+.ch-kpi b{font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.1}
+.ch-kpi small{font-size:11px;color:var(--mut);line-height:1.2}
+.ch-por{margin:0 0 12px;font-size:14px;line-height:1.45}
+.ch-bar{position:relative;height:10px;border-radius:5px;background:var(--panel2)}
+.ch-bar i{position:absolute;top:0;bottom:0;border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--pos) 45%,transparent),var(--pos))}
+.ch-bar b{position:absolute;top:-4px;width:4px;height:18px;margin-left:-2px;border-radius:2px;background:var(--txt)}
+.ch-leg{display:flex;justify-content:space-between;gap:6px;margin-top:6px;font-size:11px;color:var(--mut)}
+.ch-leg span:nth-child(2){text-align:center}
+.ch-leg span:last-child{text-align:right}
 </style>
 </head>
 <body>
@@ -1791,6 +1808,33 @@ function porQue(c) {
   return f.length ? f.join(" · ") : "perfil equilibrado";
 }
 
+// Tarjeta destacada del capitán recomendado: lo esencial a la vista y el detalle plegado
+function fraseCap(c) {
+  const f = porQue(c).split(" · ");
+  if (f[0] === "perfil equilibrado") return "Es la opción con mejor equilibrio entre puntos esperados y riesgo.";
+  const t = f.length > 1 ? f.slice(0, -1).join(", ") + " y " + f[f.length - 1] : f[0];
+  return t.charAt(0).toUpperCase() + t.slice(1) + ".";
+}
+function heroCap(c, r) {
+  const est = ESTADO(c.p.status);
+  const cuando = c.g && c.g.ts ? enMadrid(c.g.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+  const lo = c.rango[0], hi = Math.max(c.rango[1], lo + 0.1), escala = Math.max(hi * 1.15, 1);
+  const pct = v => Math.max(0, Math.min(100, v / escala * 100)).toFixed(1);
+  const aviso = c.real != null ? `<div class="alerta" style="background:var(--blueBg);color:var(--blue)">Ya ha jugado: ${c.real} pts${c.m > 1 ? ` · como capitán ×${coma(c.m)} = ${nf1.format(c.real * c.m)}` : ""}</div>`
+    : c.pj < 0.7 && !c.confirmado ? `<div class="alerta">Puede no jugar (${pc(c.pj)})</div>` : "";
+  return `<li class="ch">
+    <div class="ch-top">${cara(c.p.id, c.p.name, c.p.teamId, 84)}
+      <div class="ch-q"><small>Tu capitán para la jornada ${esc(r.gw)}</small>
+        <b>${esc(c.p.short || c.p.name)}${est ? ` <span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</b>
+        <span class="ch-vs">${img(c.rivalEscudo, "shield")} ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}${cuando ? ` · ${esc(cuando)}` : ""}</span></div></div>
+    <div class="ch-kpi"><span><b class="up">+${nf1.format(c.extra)}</b><small>puntos extra esperados</small></span><span><b>${pc(c.pj)}</b><small>de que juegue</small></span><span><b>×${coma(c.m)}</b><small>multiplicador</small></span></div>
+    <p class="ch-por">${esc(fraseCap(c))}</p>
+    <div class="ch-rango" aria-label="Rango típico del extra"><div class="ch-bar"><i style="left:${pct(lo)}%;width:${(pct(hi) - pct(lo)).toFixed(1)}%"></i><b style="left:${pct(c.extra)}%"></b></div>
+      <div class="ch-leg"><span>Mal día: +${nf1.format(lo)}</span><span>Gran jornada (≥ ${CAP.UMBRAL_ALTO}): ${pc(c.pAlto)}</span><span>Buen día: +${nf1.format(hi)}</span></div></div>
+    ${aviso}
+    <details class="cdet"><summary>Ver por qué</summary><div class="claves">${clavesCandidato(c, r)}</div></details></li>`;
+}
+
 function tarjetaCap(c, i, grande, r) {
   const medalla = ["🥇", "🥈", "🥉"][i] || (i + 1) + "º";
   const est = ESTADO(c.p.status);
@@ -1848,7 +1892,8 @@ function pintarCapitan() {
     const util = r.candidatos.filter(c => c.score > -Infinity);
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
-    cuerpo = `<ul class="jplist">${top.map((c, i) => tarjetaCap(c, i, true, r)).join("")}</ul>
+    cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
+      ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
       ${bloqueRivales(r, util)}
