@@ -768,7 +768,7 @@ function pintarGrafico() {
       }).join("");
       return `<tr class="${foco && foco !== o.m.id ? "off" : ""}"><th>${avatar(o.m, o.i)}</th><td class="tot">${cum[x][n - 1]}</td>${celdas}</tr>`;
     }).join("");
-    cuerpo = `<div class="heat"><table><thead><tr><th></th><th class="tot">Total</th>${js.map(j => `<th>${esc(j)}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
+    cuerpo = `<div class="heat"><table aria-label="Puntos de cada manager por jornada"><thead><tr><th></th><th class="tot">Total</th>${js.map(j => `<th>${esc(j)}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
       <p class="note">Cuanto más amarilla la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
   } else {
     const W = 360, L = 26, R = 116, T = 14, B = 22;
@@ -1366,7 +1366,7 @@ function detalleEq(m, hp) {
       <div class="jp-info">
         <div class="jp-name"><span>${esc(p.short || p.name)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
         <div class="jp-val">€ ${nf0.format(p.value)} <b class="${cl(dl)}">${dl > 0 ? "↑" : dl < 0 ? "↓" : "="}</b></div>
-        <div class="jp-form"><span class="avg" title="Media">${p.avg != null ? nf1.format(p.avg) : "–"}</span><span class="bars" title="Puntos de las últimas 5 jornadas">${barras(p.streak)}</span></div>
+        <div class="jp-form"><span class="avg" title="Media">${p.avg != null ? nf1.format(p.avg) : "–"}</span><span class="bars" role="img" aria-label="Puntos de las últimas 5 jornadas" title="Puntos de las últimas 5 jornadas">${barras(p.streak)}</span></div>
       </div>
       <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
     </div>
@@ -2060,7 +2060,7 @@ function merTarjeta(r) {
       <div class="jp-info">
         <div class="jp-name"><span>${esc(j.name)}</span><span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span>${est ? `<span class="st st-${est[0]}" title="${est[2]}">${est[1]}</span>` : ""}</div>
         <div class="jp-val">${img(merUrlEscudo(j.teamId), "shield")} <b>${merEur(r.V)}</b> <span class="note">${rivalTxt}</span></div>
-        <div class="mbar" title="Puntuación ${r.score}/100"><i style="width:${Math.max(4, r.score)}%"></i><span>${r.score}</span></div>
+        <div class="mbar" role="img" aria-label="Puntuación ${r.score} sobre 100" title="Puntuación ${r.score}/100"><i style="width:${Math.max(4, r.score)}%"></i><span>${r.score}</span></div>
       </div>
       <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}</span></div>
     </div>
@@ -2489,7 +2489,7 @@ function pintarCapitan() {
 function htmlBloqueo(texto) {
   return `<div class="lock"><div style="font-size:34px">🔒</div><h2>Zona protegida</h2>
       <p class="note">${texto}</p>
-      <div class="dots" id="pinDots" aria-label="PIN"></div>
+      <div class="dots" id="pinDots" role="img" aria-label="Dígitos del PIN introducidos"></div>
       <p class="note" id="claveMsg" style="color:var(--red);min-height:18px"></p>
       <div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-pin="${n}" aria-label="${n}">${n}</button>`).join("")}
         <span></span><button data-pin="0" aria-label="0">0</button><button class="sm" data-pin="del" aria-label="Borrar">⌫</button></div></div>`;
