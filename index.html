@@ -249,6 +249,13 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .st-doubt{background:#ff9f1c}
 .st-otro{background:var(--mut)}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
+.msg:not(:has(code)):not(:has(br)){position:relative;overflow:hidden;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line);min-height:120px}
+.msg:not(:has(code)):not(:has(br))::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--txt) 8%,transparent) 50%,transparent 70%);transform:translateX(-100%);animation:esq 1.4s infinite}
+@keyframes esq{to{transform:translateX(100%)}}
+@keyframes ent{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#app:not([hidden]),#eq:not([hidden]),#cap:not([hidden]),#mer:not([hidden]){animation:ent .25s ease-out}
+.tab:active,.pills button:active,.pad button:active{transform:scale(.97)}
+.tab:focus-visible,.pills button:focus-visible{outline-offset:-2px}
 code{color:var(--accFg)}
 .mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mut);border-radius:12px;padding:10px 12px}
@@ -528,7 +535,7 @@ function cargarEquipos() {
 
 function pintarNav() {
   $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"], ["mer", (eqOk ? "💸" : "🔒") + " Mercado"]]
-    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
+    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" ${seccion === k ? 'aria-current="page"' : ""} aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
   // En móvil la barra se desplaza: dejar visible la pestaña activa
   const nav = $("#nav"), on = nav.querySelector(".tab.on");
   if (on) nav.scrollLeft = Math.max(0, on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2);
