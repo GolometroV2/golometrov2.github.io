@@ -458,6 +458,10 @@ code{color:var(--accFg)}
 .indice button{flex:none;min-height:40px;padding:0 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap}
 .btn-comp{width:100%;min-height:44px;margin-top:10px;border-radius:12px;background:var(--panel2);font-weight:700;font-size:13.5px}
 .btn-comp:active{background:var(--acc);color:var(--accTxt)}
+.cdet-card>summary.sumh{cursor:pointer;font-weight:800;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:32px}
+.cdet-card>summary.sumh::-webkit-details-marker{display:none}
+.cdet-card>summary.sumh::after{content:"▾";color:var(--mut);transition:transform .2s}
+.cdet-card[open]>summary.sumh::after{transform:rotate(180deg)}
 </style>
 </head>
 <body>
@@ -2270,6 +2274,34 @@ function fraseCap(c) {
   const t = f.length > 1 ? f.slice(0, -1).join(", ") + " y " + f[f.length - 1] : f[0];
   return t.charAt(0).toUpperCase() + t.slice(1) + ".";
 }
+// Once recomendado: la formación válida que más puntos esperados suma con los jugadores de la plantilla
+function onceRecomendado(cands) {
+  const v = cands.filter(c => c.score > -Infinity && c.esp > 0);
+  const por = pos => v.filter(c => c.pos === pos).sort((a, b) => b.esp - a.esp);
+  const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  let mejor = null;
+  FORMACIONES.forEach(([d, m, f]) => {
+    if (!L.PT.length || L.DF.length < d || L.MC.length < m || L.DL.length < f) return;
+    const x = { form: `${d}-${m}-${f}`, PT: L.PT.slice(0, 1), DF: L.DF.slice(0, d), MC: L.MC.slice(0, m), DL: L.DL.slice(0, f) };
+    const todos = [...x.PT, ...x.DF, ...x.MC, ...x.DL];
+    x.cap = todos.slice().sort((a, b) => b.score - a.score)[0];
+    x.total = todos.reduce((t, c) => t + c.esp, 0) + (x.cap ? x.cap.extra : 0);
+    if (!mejor || x.total > mejor.total) mejor = x;
+  });
+  return mejor;
+}
+function htmlOnceRec(r) {
+  const o = onceRecomendado(r.candidatos || []);
+  if (!o) return "";
+  const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : ""}</small></div>`;
+  const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
+  const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
+  return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
+    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número amarillo: puntos esperados de cada uno.</p>
+    <div class="oi">${filas}</div>
+    ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
+}
+
 function heroCap(c, r) {
   const est = ESTADO(c.p.status);
   const cuando = c.g && c.g.ts ? enMadrid(c.g.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
@@ -2348,6 +2380,7 @@ function pintarCapitan() {
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
     cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
+      ${htmlOnceRec(r)}
       ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
