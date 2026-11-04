@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Golómetro V2</title>
+<title>MONEYBALL · Golómetro V2</title>
 <style>
 /* Paleta "Noche de estadio": azul de foco apagado, tarjeta amarilla como único acento (botón, pestaña activa, puestos de honor).
    El verde (--pos) y el rojo (--red) quedan solo para lo que sube o baja. Texto de acento sobre fondo claro: usa --accFg, no --acc. */
@@ -412,7 +412,7 @@ function cargar(obj) {
   D = obj; vista = "General"; abierto = null; modoG = "pos"; foco = null; cronJ = null;
   visibles = new Set(D.managers.map(m => m.id));
   D.hayCap = jornadas().some(j => Object.values(D.matchdays[j] || {}).some(x => x && x.captain));
-  $("#titulo").textContent = obj.leagueName || "Mi liga";
+  $("#titulo").textContent = !obj.leagueName || obj.leagueName === "Mi Liga Mister Fantasy" ? "MONEYBALL" : obj.leagueName;
   $("#sub").textContent = [obj.season, (obj.updatedAt || obj.lastUpdated) && "actualizado " + (obj.updatedAt ? fechaMadrid(obj.updatedAt) : obj.lastUpdated)].filter(Boolean).join(" · ");
   pintar();
 }
