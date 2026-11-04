@@ -442,6 +442,10 @@ code{color:var(--accFg)}
 .pb{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
 .pb i{display:block;height:100%;border-radius:4px;min-width:2px}
 .pp{flex:none;min-width:52px;text-align:right;font-size:19px;font-weight:800}
+.posw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
+.mov{font-size:10px;font-weight:800;line-height:1}
+.rank .pts{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.rank .pts small{margin:0;font-size:10.5px}
 </style>
 </head>
 <body>
@@ -2375,10 +2379,17 @@ function pintar() {
   const pills = ["General", ...jornadas()].map(j => `<button class="pill ${vista === j ? "on" : ""}" data-v="${esc(j)}">${j === "General" ? "Total" : esc(j)}</button>`).join("");
   const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
+  // cambio de puesto en la general respecto a la jornada anterior (solo en la vista Total ordenada por puntos)
+  const mov = {};
+  if (vista === "General" && orden.k === "points" && !orden.asc && jornadas().length > 1) {
+    const S = serieLiga(), n = S.js.length;
+    S.ms.forEach((o, x) => { mov[o.m.id] = S.rank[n - 2][x] - S.rank[n - 1][x]; });
+  }
+  const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
       <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
-        <span class="pos">${i + 1}</span>
+        <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}</span>
           <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
