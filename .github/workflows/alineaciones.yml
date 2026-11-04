@@ -1,0 +1,40 @@
+name: Alineaciones Futbol Fantasy
+
+# Lee las alineaciones probables de futbolfantasy.com y guarda la probabilidad de titular de cada jugador.
+# Cada 2 horas (GitHub puede retrasarlo). Solo hace commit si algo cambia.
+on:
+  schedule:
+    - cron: '41 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: alineaciones
+  cancel-in-progress: false
+
+jobs:
+  alineaciones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install requests
+      - name: Leer alineaciones
+        run: python alineaciones_ff.py
+      - name: Guardar cambios
+        run: |
+          git config user.name "Bot Mister"
+          git config user.email "bot@users.noreply.github.com"
+          git add alineaciones.json alineaciones_historial.json 2>/dev/null || true
+          if ! git diff --staged --quiet; then
+            git commit -m "Alineaciones de Futbol Fantasy actualizadas"
+            for i in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              sleep 5
+            done
+          fi
