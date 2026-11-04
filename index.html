@@ -433,6 +433,15 @@ code{color:var(--accFg)}
 .rc-s i.a{background:var(--pos);color:#06210f}.rc-s i.m{background:var(--posBg);color:var(--pos)}.rc-s i.b{background:var(--panel2);color:var(--txt)}
 .rc-e{overflow:hidden;text-overflow:ellipsis}
 .rc-e.libre{color:var(--pos);font-weight:700}.rc-e.venta{color:var(--accFg);font-weight:700}
+.pron{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.pron li{display:flex;align-items:center;gap:10px}
+.pron .av{width:36px;height:36px;font-size:12px}
+.pq{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pq b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pq small{font-size:11px;color:var(--mut)}
+.pb{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
+.pb i{display:block;height:100%;border-radius:4px;min-width:2px}
+.pp{flex:none;min-width:52px;text-align:right;font-size:19px;font-weight:800}
 </style>
 </head>
 <body>
@@ -954,6 +963,38 @@ function pintarDuelo() {
       <div class="du-m">${avatar(B.m, B.i)}<b style="color:${cb}">${cum[xb][n - 1]}</b></div></div>
     <div class="du-est">${est.map(filaEst).join("")}</div>
     <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>`;
+}
+
+/* ---------- Pronóstico de la liga (simulación de las jornadas que faltan) ---------- */
+const JORNADAS_TOTALES = 38;
+let PRON = null;
+function pintarPronostico() {
+  const cont = $("#pron");
+  if (!cont) return;
+  const S = serieLiga(), n = S.js.length, quedan = JORNADAS_TOTALES - n, N = S.ms.length;
+  if (n < 3 || quedan <= 0) { cont.innerHTML = ""; return; }
+  const clave = n + ":" + S.cum.map(c => c[n - 1]).join(",");
+  if (!PRON || PRON.clave !== clave) {
+    // cada manager: su media y su variación por jornada, encogidas hacia las de la liga (con 11 jornadas una racha engaña)
+    const todas = S.pts.flat(), mL = todas.reduce((a, b) => a + b, 0) / todas.length, sL = Math.sqrt(todas.reduce((t, v) => t + (v - mL) ** 2, 0) / todas.length);
+    const K = 6, par = S.pts.map(p => { const m = p.reduce((a, b) => a + b, 0) / p.length; const s = Math.sqrt(p.reduce((t, v) => t + (v - m) ** 2, 0) / p.length);
+      return { m: (n * m + K * mL) / (n + K), s: Math.sqrt((n * s * s + K * sL * sL) / (n + K)) }; });
+    let semilla = 12345; const azar = () => (semilla = (semilla * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const normal = () => { let u = 0, v = 0; while (!u) u = azar(); while (!v) v = azar(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const SIM = 3000, gana = new Array(N).fill(0), podio = new Array(N).fill(0), ultimo = new Array(N).fill(0), fin = S.ms.map(() => 0);
+    for (let s = 0; s < SIM; s++) {
+      const tot = S.ms.map((_, x) => S.cum[x][n - 1] + par[x].m * quedan + normal() * par[x].s * Math.sqrt(quedan));
+      const ord = tot.map((v, x) => [v, x]).sort((a, b) => b[0] - a[0]);
+      gana[ord[0][1]]++; ord.slice(0, 3).forEach(([, x]) => podio[x]++); ultimo[ord[N - 1][1]]++;
+      tot.forEach((v, x) => fin[x] += v);
+    }
+    PRON = { clave, filas: S.ms.map((o, x) => ({ o, x, g: gana[x] / SIM, p: podio[x] / SIM, u: ultimo[x] / SIM, f: fin[x] / SIM, m: par[x].m })).sort((a, b) => b.g - a.g || b.p - a.p) };
+  }
+  const pct = v => v >= 0.995 ? ">99 %" : v > 0 && v < 0.005 ? "<1 %" : Math.round(v * 100) + " %";
+  cont.innerHTML = `<div class="gh"><h2>¿Quién ganará la liga?</h2></div>
+    <p class="note" style="margin:0 0 10px">Simulación de las ${quedan} jornadas que faltan, 3.000 veces, con el ritmo de cada uno hasta ahora.</p>
+    <ul class="pron">${PRON.filas.map(f => `<li>${avatar(f.o.m, f.o.i)}<span class="pq"><b>${esc(f.o.m.name)}</b><span class="pb"><i style="width:${(f.g * 100).toFixed(1)}%;background:${col(f.o.i)}"></i></span><small>Podio ${pct(f.p)} · último ${pct(f.u)} · acabaría con ~${Math.round(f.f)} pts</small></span><span class="pp">${pct(f.g)}</span></li>`).join("")}</ul>
+    <p class="note">Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -2336,11 +2377,13 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
+    <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="caps"></section>
     <section class="card" id="premios"></section>`;
   pintarCronica();
   pintarGrafico();
+  pintarPronostico();
   pintarDuelo();
   pintarCapitanes();
   pintarPremios();
