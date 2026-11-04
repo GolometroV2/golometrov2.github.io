@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Golómetro V2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* Paleta "Carbón y verde". Para probar otra, copia sus valores sobre estos:
    Esmeralda y dorado -> --acc:#f5c542; --accTxt:#1a1500
@@ -13,7 +11,8 @@
 :root{--bg:#111315;--panel:#1a1d21;--panel2:#23272d;--line:#2f353c;--txt:#f4f6f5;--mut:#9aa3ad;--acc:#2fd46e;--accTxt:#05210f;
 --pt:#ffc94a;--df:#4cc3ff;--mc:#a3e635;--dl:#ff6b7a;--red:#ff6b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 Inter,system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .nav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
