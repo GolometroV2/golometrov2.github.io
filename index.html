@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f5f4" media="(prefers-color-scheme: light)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Golómetro">
 <title>MONEYBALL · Golómetro V2</title>
 <style>
 /* Paleta "Carbón y verde" (la de la primera versión del Golómetro, elegida por el dueño: nada de amarillo).
@@ -611,13 +618,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05";
+const NOVEDADES_V = "2026-11-05b";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>En la clasificación: crónica de cada jornada con su once ideal, la carrera por el título, quién ganará la liga, duelos cara a cara, capitanes con foto y premios. En Capitán: tu once recomendado. En Mercado: quién mejora tu once. En Equipos: evolución del valor, cláusulas rentables y próximos rivales.</span>
+    <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 function pintarAviso() {
