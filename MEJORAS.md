@@ -3,8 +3,8 @@
 El agente lee este archivo al empezar y lo actualiza al terminar.
 
 ## En curso (lo está haciendo Claude a mano: NO lo toques, elige otra cosa)
-- Herramientas nuevas en Clasificación, Capitán, Mercado y Equipos (Claude las va añadiendo).
-- **Para el agente:** las fases 5 y 6 ya están hechas a mano. Tu siguiente trabajo es la **fase 7** (microinteracciones, accesibilidad, rendimiento: foco visible, contraste AA en claro y oscuro, estados de carga con esqueletos, etiquetas aria en gráficas) y después la **fase 8** (revisión de coherencia visual entre todas las tarjetas nuevas: radios, tamaños de título, espaciados).
+- Buscador de jugadores en la cabecera con ficha completa de cada jugador (ventana emergente).
+- Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
 - 2026-11-05 (decisión del dueño): sin PIN en ninguna pestaña, vuelta a la paleta verde de la primera versión y lanzamiento de esta versión en `index.html` (PR #3 aceptada).
