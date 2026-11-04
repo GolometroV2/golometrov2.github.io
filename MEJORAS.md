@@ -3,10 +3,10 @@
 El agente lee este archivo al empezar y lo actualiza al terminar.
 
 ## En curso (lo está haciendo Claude a mano: NO lo toques, elige otra cosa)
-- Buscador de jugadores en la cabecera con ficha completa de cada jugador (ventana emergente).
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (a mano por Claude, ideas de Comuniate, Analítica Fantasy y similares): subidas y bajadas de valor de hoy, calendario de los 20 equipos por facilidad, buscador de jugadores en la cabecera (lupa) y ficha de jugador (valor, puntos, media, cláusula, próximo partido con su % de titular, puntos por jornada y evolución del valor); tocar un jugador en las listas abre su ficha.
 - 2026-11-05 (decisión del dueño): sin PIN en ninguna pestaña, vuelta a la paleta verde de la primera versión y lanzamiento de esta versión en `index.html` (PR #3 aceptada).
 - 2026-11-04 (a mano por Claude): tarjeta destacada del capitán (fase 5), oportunidad del día en Mercado (fase 6), Duelo cara a cara, Evolución del valor de las plantillas, Cláusulas más rentables, Próximos rivales por jugador con dificultad, Premios de la temporada y aviso de cuándo empieza la próxima jornada. Después: once ideal de la jornada, pronóstico «¿Quién ganará la liga?», jugadores en racha, previsión de valor para mañana, flechas de puesto, índice de secciones, copiar resumen para WhatsApp, once recomendado en Capitán, «¿Quién mejora tu once?» en Mercado, movimientos con foto, jugadores que más puntos dieron a cada manager y aviso de novedades.
 - (el agente irá añadiendo aquí cada mejora con su fecha)

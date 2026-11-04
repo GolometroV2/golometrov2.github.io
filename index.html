@@ -523,6 +523,24 @@ code{color:var(--accFg)}
 .rvt th .shield{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
 .rvt tbody th{max-width:118px}
 @media (max-width:400px){.rvt td{min-width:44px}.rvt tbody th{max-width:104px;font-size:12px}}
+.busc{width:40px;height:40px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;color:var(--txt)}
+.ov{position:fixed;inset:0;z-index:50;background:#0009;display:flex;align-items:flex-end;justify-content:center}
+.ov[hidden]{display:none}
+.ov-c{width:100%;max-width:680px;max-height:88vh;overflow:auto;background:var(--panel);border-radius:20px 20px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));animation:sube .22s ease-out}
+@keyframes sube{from{transform:translateY(30px);opacity:.4}}
+.ov-h{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ov-h input{flex:1;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-size:16px;padding:0 12px}
+.ov-x{width:44px;height:44px;border-radius:50%;background:var(--panel2);font-size:16px;flex:none}
+.b-res{width:100%;text-align:left}
+.sin-scroll{overflow:hidden}
+.f4{grid-template-columns:repeat(4,1fr)!important}.f4 b{font-size:16px!important}
+.fbar{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding-bottom:2px}
+.fb{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:26px}
+.fb i{display:block;width:16px;border-radius:4px}
+.fb small{font-size:11px;font-weight:700}.fb em{font-style:normal;font-size:9.5px;color:var(--mut)}
+.fsp{width:100%;height:60px;display:block}
+li[data-ficha]{cursor:pointer}
+li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 </style>
 </head>
 <body>
@@ -532,6 +550,7 @@ code{color:var(--accFg)}
   <span class="acciones">
     <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
+    <button class="busc" id="btnBusc" aria-label="Buscar jugador"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
     <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
@@ -915,7 +934,7 @@ function pintarCapitanes() {
   const seg = [["mejores", "Mejores"], ["peores", "Fallos"], ["managers", "Por manager"]]
     .map(([k, t]) => `<button data-cpv="${k}" class="${capVista === k ? "on" : ""}">${t}</button>`).join("");
   const formula = c => c.played ? `${c.basePoints ?? "–"} × ${c.multiplier || "–"}` : "no jugó";
-  const fila = (x, k) => `<li class="crow">
+  const fila = (x, k) => `<li class="crow" data-ficha="${esc(x.c.id)}">
       <span class="cn">${k + 1}</span>${cara(x.c.id, x.c.name, x.team, 40)}
       <span class="cq"><b>${esc(x.c.name)}</b><span>${avatar(x.m, x.i)}${esc(x.m.name)} · ${esc(x.j)}</span></span>
       <span class="cr"><b class="${x.c.points < 0 || !x.c.played ? "dn" : ""}">${x.c.points}</b><small>${formula(x.c)}</small></span></li>`;
@@ -963,8 +982,73 @@ function cargarLigaJ() {
   if (LIGAJ) return;
   LIGAJ = { cargando: true };
   Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
-    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {} }; if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); } });
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); } });
 }
+/* ---------- Buscador y ficha de jugador ---------- */
+const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+let buscQ = "";
+function abrirBuscador() {
+  cargarLigaJ();
+  let ov = $("#ovBusc");
+  if (!ov) { ov = document.createElement("div"); ov.id = "ovBusc"; ov.className = "ov"; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Buscar jugador"><div class="ov-h"><input id="buscIn" type="search" placeholder="Busca un jugador de la liga" autocomplete="off" value="${esc(buscQ)}"><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div><ul class="clist" id="buscRes"></ul></div>`;
+  ov.hidden = false; document.body.classList.add("sin-scroll");
+  const i = $("#buscIn"); i.focus(); i.oninput = () => { buscQ = i.value; pintarBusqueda(); };
+  pintarBusqueda();
+}
+function pintarBusqueda() {
+  const ul = $("#buscRes"); if (!ul) return;
+  if (!LIGAJ || LIGAJ.cargando) { ul.innerHTML = `<li class="note" style="padding:12px">Cargando jugadores…</li>`; return; }
+  const q = sinTilde(buscQ.trim());
+  const nombreEq = {}; (CAL && CAL.games || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
+  const L = Object.values(LIGAJ.jug).filter(p => p.name && (!q || sinTilde(p.name).includes(q) || sinTilde(nombreEq[p.teamId]).includes(q)))
+    .sort((a, b) => (q && sinTilde(a.name).startsWith(q) ? 0 : 1) - (q && sinTilde(b.name).startsWith(q) ? 0 : 1) || (b.points || 0) - (a.points || 0)).slice(0, 12);
+  ul.innerHTML = L.length ? L.map(p => `<li><button class="crow b-res" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 38)}<span class="cq"><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span></b><span>${esc(nombreEq[p.teamId] || "")} · ${p.owner ? esc(p.ownerName || "") : "sin dueño"}</span></span><span class="cr"><b>${p.points ?? 0}</b><small>${merEur(p.value || 0)}</small></span></button></li>`).join("")
+    : `<li class="note" style="padding:12px">Ningún jugador coincide con «${esc(buscQ)}».</li>`;
+}
+let fichaPendiente = null;
+function abrirFicha(id) {
+  if (!LIGAJ || LIGAJ.cargando) { fichaPendiente = id; cargarLigaJ(); return; }
+  const p = LIGAJ.jug && LIGAJ.jug[String(id)];
+  if (!p) return;
+  const nombreEq = {}; (CAL && CAL.games || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
+  const ahora = Date.now() / 1000;
+  const prox = (CAL && CAL.games || []).filter(g => !capNum(g.gh) && g.status !== "played" && (g.home === p.teamId || g.away === p.teamId) && (g.ts || 0) > ahora - 3 * 3600).sort((a, b) => a.ts - b.ts)[0];
+  const ffE = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], ffK = ffE && Object.keys(ffE).sort()[0], ff = ffK ? ffE[ffK] : null;
+  const pts = (LIGAJ.pts || {})[String(p.id)] || {}, gws = Object.keys(pts).map(Number).sort((a, b) => a - b);
+  const maxP = Math.max(1, ...gws.map(g => pts[g] || 0));
+  const barras = gws.map(g => { const v = pts[g]; return `<span class="fb"><i style="height:${v == null ? 3 : Math.max(3, Math.abs(v) / maxP * 46)}px;background:${v == null ? "var(--line)" : v < 0 ? "var(--red)" : v >= 10 ? "var(--pos)" : "var(--acc)"};opacity:${v == null ? .6 : 1}"></i><small>${v == null ? "–" : v}</small><em>J${g}</em></span>`; }).join("");
+  const vh = Object.entries((LIGAJ.val || {})[String(p.id)] || {}).sort();
+  let spark = "";
+  if (vh.length >= 2) {
+    const vs = vh.map(x => x[1]), mn = Math.min(...vs), mx = Math.max(...vs), W = 300, H = 60;
+    const pt = vs.map((v, k) => `${(k / (vs.length - 1) * W).toFixed(1)},${(H - 4 - (mx > mn ? (v - mn) / (mx - mn) : .5) * (H - 8)).toFixed(1)}`).join(" ");
+    const d = vs[vs.length - 1] - vs[0];
+    spark = `<h3 class="sec">Valor desde el ${vh[0][0].slice(8, 10)}/${vh[0][0].slice(5, 7)}</h3><svg viewBox="0 0 ${W} ${H}" class="fsp" role="img" aria-label="Evolución del valor"><polyline points="${pt}" fill="none" stroke="${d >= 0 ? "var(--pos)" : "var(--red)"}" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      <p class="note" style="margin:2px 0 0">${merEur(vs[0])} → ${merEur(vs[vs.length - 1])} (<span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${eur(Math.abs(d))}</span>)</p>`;
+  }
+  const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
+  const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
+  let ov = $("#ovFicha");
+  if (!ov) { ov = document.createElement("div"); ov.id = "ovFicha"; ov.className = "ov"; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(p.name)}">
+    <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
+    <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
+      <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
+    <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
+    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : `${Math.round(ff.p * 100)} %`}</b> de ser titular según Futbol Fantasy` : ""}.</p>` : ""}
+    ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
+    ${spark}</div>`;
+  ov.hidden = false; document.body.classList.add("sin-scroll");
+}
+function cerrarOv() { ["#ovBusc", "#ovFicha"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
+document.addEventListener("click", e => {
+  const f = e.target.closest("[data-ficha]"); if (f) { const b = $("#ovBusc"); if (b) b.hidden = true; abrirFicha(f.dataset.ficha); return; }
+  if (e.target.closest("[data-cerrar]") || e.target.classList.contains("ov")) { cerrarOv(); return; }
+  if (e.target.closest("#btnBusc")) abrirBuscador();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarOv(); });
+
 const FORMACIONES = [[3, 4, 3], [3, 5, 2], [4, 3, 3], [4, 4, 2], [4, 5, 1], [5, 3, 2], [5, 4, 1]];
 function onceIdeal(gw) {
   const k = String(parseInt(String(gw).slice(1)));
@@ -1385,7 +1469,7 @@ function bloqueClausulas(ms) {
   const top = L.sort((a, b) => b.r - a.r).slice(0, 8);
   return `<section class="card"><div class="gh"><h2>Cláusulas más rentables</h2></div>
     <p class="note" style="margin:0 0 6px">Jugadores de las plantillas con más puntos esperados por cada millón de cláusula (sin lesionados ni sancionados).</p>
-    <ul class="clist">${top.map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+    <ul class="clist">${top.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
       <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
         <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
       <span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul>
@@ -1453,7 +1537,7 @@ function bloquePrevision(m) {
   const L = m.players.map(p => ({ p, g: capCrecModelo({ ...p, owner: 1 }) })).filter(x => x.g && !x.g.bajo);
   if (L.length < 3) return "";
   const tot = L.reduce((t, x) => t + x.p.value * x.g.g, 0);
-  const fila = x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${merEur(x.p.value)}</span></span>
+  const fila = x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${merEur(x.p.value)}</span></span>
     <span class="cr"><b class="${x.g.g >= 0 ? "up" : "dn"}">${x.g.g >= 0 ? "+" : "−"}${eur(Math.abs(x.p.value * x.g.g))}</b><small>${x.g.g >= 0 ? "+" : "−"}${nf1.format(Math.abs(x.g.g) * 100)} %</small></span></li>`;
   const ord = L.slice().sort((a, b) => b.g.g - a.g.g);
   const suben = ord.filter(x => x.g.g > 0).slice(0, 3), bajan = ord.filter(x => x.g.g < 0).slice(-3).reverse();
@@ -1484,7 +1568,7 @@ function bloqueVender(m) {
   }).filter(x => x.motivos.length).sort((a, b) => b.nota - a.nota).slice(0, 4);
   if (!L.length) return "";
   return `<section class="card"><div class="gh"><h2>Candidatos a vender</h2></div>
-    <ul class="clist">${L.map(x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b><span class="cv-m">${esc(x.motivos.join(" · "))}</span></span>
+    <ul class="clist">${L.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b><span class="cv-m">${esc(x.motivos.join(" · "))}</span></span>
       <span class="cr"><b>${merEur(x.p.value)}</b><small>vale hoy</small></span></li>`).join("")}</ul>
     <p class="note">Pistas, no órdenes: antes de vender mira cuántos titulares te quedan en su puesto.</p></section>`;
 }
@@ -2225,7 +2309,7 @@ function bloqueRacha(M) {
   const estado = p => libres.has(String(p.id)) ? `<span class="rc-e libre">Libre en el mercado</span>` : p.onMarket ? `<span class="rc-e venta">En venta · ${esc(p.ownerName || "")}</span>` : p.owner ? `<span class="rc-e">De ${esc(p.ownerName || "otro manager")}</span>` : `<span class="rc-e">Sin dueño</span>`;
   return `<section class="card"><div class="gh"><h2>En racha</h2></div>
     <p class="note" style="margin:0 0 6px">Los jugadores de toda la liga que más han puntuado en las 3 últimas jornadas.</p>
-    <ul class="clist">${L.map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+    <ul class="clist">${L.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
       <span class="cq"><b>${esc(x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
         <span><span class="rc-s">${x.s.map(v => `<i class="${capNum(v) ? (v >= 10 ? "a" : v >= 5 ? "m" : "b") : "n"}">${capNum(v) ? v : "–"}</i>`).join("")}</span>${estado(x.p)}</span></span>
       <span class="cr"><b>${x.t}</b><small>${merEur(x.p.value)}</small></span></li>`).join("")}</ul></section>`;
@@ -2247,7 +2331,7 @@ function bloqueParaTi(r) {
       const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
       return tit ? { x, tit, g: x.espProx - tit.esp } : null;
     }).filter(y => y && y.g >= 0.3).sort((a, b) => b.g - a.g).slice(0, 5);
-    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g }) => `<li class="crow">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
+    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
         <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}</span></span>
         <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}</small></span></li>`).join("")}</ul>`
       : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
@@ -2270,7 +2354,7 @@ function bloqueSubidas(M) {
   return `<section class="card"><div class="gh"><h2>Subidas y bajadas de hoy</h2></div>
     <p class="note" style="margin:0 0 8px">Cambio de valor desde ayer en toda la liga: ${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))} en total.</p>
     <div class="seg seg2">${seg}</div>
-    <ul class="clist">${ord.slice(0, 10).map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 36)}
+    <ul class="clist">${ord.slice(0, 10).map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 36)}
       <span class="cq"><b>${esc(x.p.name)}</b><span>${merEur(x.p.value)} · ${libres.has(String(x.p.id)) ? `<span class="rc-e libre">libre</span>` : x.p.owner ? esc(x.p.ownerName || "") : "sin dueño"}</span></span>
       <span class="cr"><b class="${x.d > 0 ? "up" : "dn"}">${x.d > 0 ? "+" : "−"}${eur(Math.abs(x.d))}</b><small>${x.d > 0 ? "+" : "−"}${nf1.format(Math.abs(x.r) * 100)} %</small></span></li>`).join("")}</ul></section>`;
 }
