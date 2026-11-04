@@ -249,6 +249,13 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .st-doubt{background:#ff9f1c}
 .st-otro{background:var(--mut)}
 .msg{text-align:center;color:var(--mut);padding:48px 16px}
+.msg:not(:has(code)):not(:has(br)){position:relative;overflow:hidden;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line);min-height:120px}
+.msg:not(:has(code)):not(:has(br))::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--txt) 8%,transparent) 50%,transparent 70%);transform:translateX(-100%);animation:esq 1.4s infinite}
+@keyframes esq{to{transform:translateX(100%)}}
+@keyframes ent{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#app:not([hidden]),#eq:not([hidden]),#cap:not([hidden]),#mer:not([hidden]){animation:ent .25s ease-out}
+.tab:active,.pills button:active,.pad button:active{transform:scale(.97)}
+.tab:focus-visible,.pills button:focus-visible{outline-offset:-2px}
 code{color:var(--accFg)}
 .mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mut);border-radius:12px;padding:10px 12px}
@@ -442,10 +449,6 @@ code{color:var(--accFg)}
 .pb{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
 .pb i{display:block;height:100%;border-radius:4px;min-width:2px}
 .pp{flex:none;min-width:52px;text-align:right;font-size:19px;font-weight:800}
-.posw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
-.mov{font-size:10px;font-weight:800;line-height:1}
-.rank .pts{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.rank .pts small{margin:0;font-size:10.5px}
 </style>
 </head>
 <body>
@@ -528,7 +531,7 @@ function cargarEquipos() {
 
 function pintarNav() {
   $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"], ["mer", (eqOk ? "💸" : "🔒") + " Mercado"]]
-    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
+    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" ${seccion === k ? 'aria-current="page"' : ""} aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
   // En móvil la barra se desplaza: dejar visible la pestaña activa
   const nav = $("#nav"), on = nav.querySelector(".tab.on");
   if (on) nav.scrollLeft = Math.max(0, on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2);
@@ -1256,24 +1259,6 @@ function bloqueRivalesEq(m) {
     <p class="note">Verde: partido fácil para su puesto; rojo: difícil. A defensas y porteros les afecta lo que marca el rival y a medios y delanteros lo que encaja. C: en casa · F: fuera.</p></section>`;
 }
 
-// Previsión del cambio de valor de mañana para cada jugador de la plantilla (modelo de la liga: valorDin)
-function bloquePrevision(m) {
-  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
-  if (!LIGA || !LIGA.valorDin) return "";
-  const L = m.players.map(p => ({ p, g: capCrecModelo({ ...p, owner: 1 }) })).filter(x => x.g && !x.g.bajo);
-  if (L.length < 3) return "";
-  const tot = L.reduce((t, x) => t + x.p.value * x.g.g, 0);
-  const fila = x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${merEur(x.p.value)}</span></span>
-    <span class="cr"><b class="${x.g.g >= 0 ? "up" : "dn"}">${x.g.g >= 0 ? "+" : "−"}${eur(Math.abs(x.p.value * x.g.g))}</b><small>${x.g.g >= 0 ? "+" : "−"}${nf1.format(Math.abs(x.g.g) * 100)} %</small></span></li>`;
-  const ord = L.slice().sort((a, b) => b.g.g - a.g.g);
-  const suben = ord.filter(x => x.g.g > 0).slice(0, 3), bajan = ord.filter(x => x.g.g < 0).slice(-3).reverse();
-  return `<section class="card"><div class="gh"><h2>Previsión de valor para mañana</h2></div>
-    <p style="margin:0 0 8px">Toda la plantilla: <b class="${tot >= 0 ? "up" : "dn"}">${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))}</b> previstos.</p>
-    ${suben.length ? `<h3 class="sec" style="margin-top:6px">Los que más subirían</h3><ul class="clist">${suben.map(fila).join("")}</ul>` : ""}
-    ${bajan.length ? `<h3 class="sec">Los que más bajarían</h3><ul class="clist">${bajan.map(fila).join("")}</ul>` : ""}
-    <p class="note">Estimación del modelo de la liga según su media, su última jornada, su valor y si está lesionado. Solo jugadores de 1 M o más: por debajo, el valor se mueve al azar. Explica en torno a ${Math.round((LIGA.valorDin.r2 || 0.2) * 100)} % de los cambios diarios: tómalo como pista, no como certeza.</p></section>`;
-}
-
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
@@ -1304,7 +1289,6 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
-    ${bloquePrevision(m)}
     ${bloqueRivalesEq(m)}`;
 }
 
@@ -2040,7 +2024,7 @@ function pintarMercado() {
 function cargarParametros() {
   fetch("parametros_capitan.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -2379,17 +2363,10 @@ function pintar() {
   const pills = ["General", ...jornadas()].map(j => `<button class="pill ${vista === j ? "on" : ""}" data-v="${esc(j)}">${j === "General" ? "Total" : esc(j)}</button>`).join("");
   const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
-  // cambio de puesto en la general respecto a la jornada anterior (solo en la vista Total ordenada por puntos)
-  const mov = {};
-  if (vista === "General" && orden.k === "points" && !orden.asc && jornadas().length > 1) {
-    const S = serieLiga(), n = S.js.length;
-    S.ms.forEach((o, x) => { mov[o.m.id] = S.rank[n - 2][x] - S.rank[n - 1][x]; });
-  }
-  const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
       <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
-        <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
+        <span class="pos">${i + 1}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}</span>
           <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
