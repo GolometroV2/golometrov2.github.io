@@ -26,6 +26,6 @@ jobs:
           print("longitud body",len(b))
           for kw in ['posible','alineaci','once','titular','duda','lesion','sanci','%']:
               print(kw,[m.start() for m in re.finditer(kw,b,re.I)][:8])
-          j=b.lower().find('alineaci')
-          print(b[max(0,j-500):j+7000])
+          for (x,y) in [(46300,49800),(532300,534000)]:
+              print("=======",x); print(b[x:y])
           PY
