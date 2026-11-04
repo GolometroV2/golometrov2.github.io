@@ -1,8 +1,8 @@
 {
   "leagueName": "Mi Liga Mister Fantasy",
   "season": "2026/2027",
-  "lastUpdated": "03/11/2026 05:47",
-  "updatedAt": "2026-11-03T04:47:37Z",
+  "lastUpdated": "04/11/2026 05:12",
+  "updatedAt": "2026-11-04T04:12:17Z",
   "managers": [
     {
       "id": "8663482",
@@ -15972,8 +15972,8 @@
     },
     "J11": {
       "10303392": {
-        "points": 99,
-        "totalPoints": 671,
+        "points": 100,
+        "totalPoints": 672,
         "position": 1,
         "playersPlayed": 11,
         "squadValue": 103804000,
@@ -16183,11 +16183,11 @@
             "name": "Yeremay Hernández",
             "teamId": 6,
             "pos": "DL",
-            "points": 5,
+            "points": 6,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 5,
+            "basePoints": 6,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
