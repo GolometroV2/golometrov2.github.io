@@ -1476,6 +1476,18 @@ function bloqueClausulas(ms) {
     <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
+// Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
+function bloqueEficiencia(ms) {
+  if (!D || !D.managers) return "";
+  const L = ms.map(m => { const d = D.managers.find(x => String(x.id) === String(m.id)); return d && m.squadValue ? { m, pts: total(d), v: m.squadValue, ci: D.managers.indexOf(d) } : null; }).filter(Boolean);
+  if (L.length < 3) return "";
+  L.forEach(x => x.r = x.pts / (x.v / 1e6));
+  const ord = L.slice().sort((a, b) => b.r - a.r), mx = ord[0].r;
+  return `<section class="card"><div class="gh"><h2>¿Quién saca más con menos?</h2></div>
+    <p class="note" style="margin:0 0 8px">Puntos de la temporada por cada millón que vale hoy su plantilla.</p>
+    <ul class="pron">${ord.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.r / mx * 100).toFixed(1)}%;background:${col(x.ci)}"></i></span><small>${x.pts} pts con ${eur(x.v)}</small></span><span class="pp" style="font-size:16px">${nf1c(x.r)}</span></li>`).join("")}</ul></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -1492,6 +1504,7 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
