@@ -57,6 +57,24 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .tab.on{background:var(--acc);color:var(--accTxt)}
 ul{list-style:none;margin:0;padding:0}
 .row{border-bottom:1px solid var(--line)}
+/* Clasificación: tarjetas con medalla y barra relativa al líder */
+.rank{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.rank .row{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh);overflow:hidden}
+.rank .row.lider{border-color:var(--acc)}
+.rank .rowbtn{padding:12px;min-height:var(--tap);border-radius:var(--r-l);transition:background .15s}
+.rank .rowbtn:hover{background:var(--panel2)}
+.rank .pos{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--panel2);font-size:13px;flex:none}
+.rank .row:nth-child(1) .pos{background:#e6b422;color:#1a1500}
+.rank .row:nth-child(2) .pos{background:#b9c2cb;color:#14181b}
+.rank .row:nth-child(3) .pos{background:#c98a57;color:#1f1206}
+.rank .row:nth-child(n+4) .pos{color:var(--mut)}
+.rank .info{gap:5px}
+.rbar{display:block;height:4px;border-radius:2px;background:var(--panel2);overflow:hidden}
+.rbar i{display:block;height:100%;background:var(--acc);border-radius:2px;transition:width .3s}
+.rank .det{margin:0 12px 12px;background:var(--bg);box-shadow:none}
+.ordlbl{margin:16px 0 0;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+.tabs.ord{margin:6px 0 4px;padding:3px;border-radius:var(--r-full)}
+.tabs.ord .tab{min-height:40px;border-radius:var(--r-full);padding:0 14px;font-size:13.5px}
 .rowbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 4px}
 .rowbtn:hover{background:var(--panel)}
 .pos{width:22px;text-align:center;font-weight:700;color:var(--mut)}
@@ -1623,12 +1641,13 @@ function pintar() {
   const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
   const filas = rank.map((m, i) => `
-    <li class="row">
+    <li class="row${i === 0 ? " lider" : ""}">
       <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
         <span class="pos">${i + 1}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}</span>
-          <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span></span>
+          <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
+          ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
       </button>
       ${abierto === m.id ? `<div class="det">${detalle(m)}</div>` : ""}
@@ -1636,9 +1655,10 @@ function pintar() {
 
   $("#app").innerHTML = `
     <div class="pills" role="group" aria-label="Jornada">${pills}</div>
-    <div class="tabs" role="group" aria-label="Ordenar por">${tabs}</div>
+    <p class="ordlbl">Ordenar por</p>
+    <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
-    <ul>${filas}</ul>
+    <ul class="rank">${filas}</ul>
     <section class="card" id="graf"></section>
     <section class="card" id="caps"></section>`;
   pintarGrafico();
