@@ -2039,32 +2039,6 @@ function bloqueRacha(M) {
       <span class="cr"><b>${x.t}</b><small>${merEur(x.p.value)}</small></span></li>`).join("")}</ul></section>`;
 }
 
-// Qué libres mejorarían el once de un manager en la próxima jornada (comparando con su titular más flojo del mismo puesto)
-let merMan = null;
-function bloqueParaTi(r) {
-  if (!E) { cargarEquipos(); return ""; }
-  if (!E.managers || !D || !CAL) return "";
-  if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
-  let rc;
-  try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
-  const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
-  const pills = E.managers.map(m => `<button class="pill ${merMan === m.id ? "on" : ""}" data-mm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
-  let cuerpo = `<p class="note">No hay datos suficientes de esta plantilla.</p>`;
-  if (o) {
-    const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
-      const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
-      return tit ? { x, tit, g: x.espProx - tit.esp } : null;
-    }).filter(y => y && y.g >= 0.3).sort((a, b) => b.g - a.g).slice(0, 5);
-    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g }) => `<li class="crow">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
-        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}</span></span>
-        <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}</small></span></li>`).join("")}</ul>`
-      : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
-  }
-  return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
-    <div class="pills" role="group" aria-label="Manager" style="margin-bottom:8px">${pills}</div>${cuerpo}
-    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado.</p></section>`;
-}
-
 function pintarMercado() {
   const cont = $("#mer");
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
@@ -2088,7 +2062,6 @@ function pintarMercado() {
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
     ${mejor ? heroMer(mejor, cierre) : ""}
-    ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
     ${bloqueRacha(MER_DATA)}
@@ -2517,12 +2490,11 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
-  if (d.mm !== undefined) { merMan = d.mm; pintarMercado(); return; }
   if (d.comp) { compartirCronica(t); return; }
   if (d.ir) { const s = document.getElementById(d.ir); if (s) window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 70, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
   if (d.gv !== undefined) { focoV = focoV === d.gv ? null : d.gv; pintarEquipos(); return; }
