@@ -7,7 +7,7 @@ Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`,
 
 ## Qué tienes que hacer en cada ejecución
 1. Lee `MEJORAS.md` (lo hecho y las ideas pendientes) y los datos de los JSON.
-2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioriza: errores y datos raros > precisión del modelo (capitán y mercado) > herramientas nuevas (por ejemplo comparadores, histórico de pujas, resumen de jornada) > diseño.
+2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioridad: errores graves de datos > **rediseño por fases (sección DISEÑO; mientras queden fases por hacer, es lo que toca)** > precisión del modelo (capitán y mercado) > herramientas nuevas (comparadores, histórico de pujas, resumen de jornada). Los arreglos pequeños (una fuente, una barra) no cuentan como fase: cada ejecución debe avanzar una fase entera del rediseño, con cambios visibles.
 3. Impleméntala en una rama nueva `agente/AAAA-MM-DD`, probándola de verdad (ver abajo).
 4. Anota en `MEJORAS.md` qué hiciste, por qué y qué ideas nuevas has visto. Mantén la lista de ideas pendientes ordenada.
 5. Abre una Pull Request con `gh pr create` explicando en 5 líneas qué cambia y cómo lo has probado. **Nunca subas directo a `main`.**

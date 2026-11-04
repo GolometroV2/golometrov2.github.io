@@ -12,6 +12,7 @@ permissions:
   contents: write
   pull-requests: write
   id-token: write
+  actions: write
 
 concurrency:
   group: agente
@@ -65,3 +66,15 @@ jobs:
           claude_args: |
             --max-turns 80
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh pr:*),Bash(python:*),Bash(python3:*),Bash(node:*),Bash(pip:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(cp:*)"
+
+      - name: Encadenar la siguiente ejecucion (modo intensivo)
+        if: steps.toca.outputs.seguir == 'si' && success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GitHub retrasa mucho el cron horario: al terminar, esta ejecucion lanza la siguiente.
+          # Solo durante el modo intensivo (hasta el 11/11/2026) y con una pausa de 10 minutos.
+          HOY=$(TZ=Europe/Madrid date +%F)
+          if [[ "$HOY" > "2026-11-11" ]]; then echo "Fin del modo intensivo."; exit 0; fi
+          sleep 600
+          gh workflow run agente.yml --repo "${{ github.repository }}" --ref main
