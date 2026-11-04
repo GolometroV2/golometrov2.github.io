@@ -1,6 +1,8 @@
 # Golómetro V2 · reglas para el agente
 
-Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`, sin librerías externas de datos) que lee los JSON que generan los scripts de Python y GitHub Actions. Idioma de la página y de los textos: **español de España**. Pestañas: Clasificación, Equipos (PIN), Capitán (PIN), Mercado (PIN).
+Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`, sin librerías externas de datos) que lee los JSON que generan los scripts de Python y GitHub Actions. Idioma de la página y de los textos: **español de España**. Pestañas: Clasificación, Equipos, Capitán y Mercado, todas abiertas (el dueño quitó el PIN el 04/11/2026: no lo vuelvas a poner).
+
+**Paleta: verde «Carbón y verde»** (la de la primera versión). El dueño no quiere amarillo como acento: no lo cambies.
 
 ## Datos de titularidad (prioridad absoluta del dueño)
 `alineaciones.json` (lo genera `alineaciones_ff.py` cada 2 horas desde futbolfantasy.com) da la probabilidad de ser titular de cada jugador en su próximo partido. El capitán y el mercado la usan (80 % Futbol Fantasy, 20 % modelo propio, función `capMezclaFF`). `alineaciones_historial.json` guarda la última probabilidad antes de cada partido: cuando haya varias jornadas, calibra con ella cuánto fiarse de Futbol Fantasy (comparando con quién jugó de verdad) y ajusta `FF_PESO` y `FF_SUB`. No hagas más peticiones a futbolfantasy.com ni cambies el ritmo del lector.
@@ -30,21 +32,21 @@ El diseño actual se considera poco profesional. Tienes libertad completa para r
 - Durante la primera mitad del modo intensivo, **prioriza el rediseño** sobre otras mejoras. Hazlo por fases, una por ejecución, y cada fase deja la web completa y funcionando: 1) sistema de diseño (variables CSS de color, tipografía, radios, sombras, espaciado, modo claro/oscuro automático), 2) cabecera, navegación y pestañas, 3) Clasificación, 4) Equipos, 5) Capitán, 6) Mercado, 7) microinteracciones, accesibilidad y rendimiento, 8) revisión final de coherencia.
 - Es mobile-first (la usan desde el móvil): revisa 360, 390 y 420 px, y también escritorio. Objetivos táctiles de al menos 44 px, contraste suficiente, `prefers-reduced-motion`, sin scroll horizontal de la página.
 - Tipografía: pila de fuentes del sistema o una fuente incluida en el propio repositorio. No cargues fuentes ni librerías desde internet.
-- Puedes reorganizar el HTML y el CSS cuanto quieras, **pero la lógica y los datos no cambian**: los cálculos, el PIN, las reglas del capitán y del mercado y la lectura de los JSON tienen que seguir dando exactamente los mismos resultados. Comprueba antes y después con capturas y comparando los números mostrados.
+- Puedes reorganizar el HTML y el CSS cuanto quieras, **pero la lógica y los datos no cambian**: los cálculos, las reglas del capitán y del mercado y la lectura de los JSON tienen que seguir dando exactamente los mismos resultados. Comprueba antes y después con capturas y comparando los números mostrados.
 - Pensado para uso real: lo más importante de cada pestaña a la vista sin tocar nada (el capitán recomendado, la puja ideal, la clasificación), detalles plegables.
 - Usa tu criterio de diseñador: jerarquía visual clara, pocas cosas por pantalla, mucho aire, un solo color de acento, estados (hover, activo, deshabilitado) cuidados.
 
 ## Prohibido
 - Tocar `previa.html` (lo genera un flujo automático con una copia de tu rama).
-- Tocar o leer `credenciales.env`, secretos, cookies, tokens o el hash del PIN. No los muestres en ningún texto, log ni PR.
-- Cambiar los flujos de `.github/workflows/` ni el modo de funcionamiento del PIN.
+- Tocar o leer `credenciales.env`, secretos, cookies o tokens. No los muestres en ningún texto, log ni PR.
+- Cambiar los flujos de `.github/workflows/`.
 - Borrar datos (`*.json`) ni cambiar su formato sin que la página siga leyéndolos igual.
 - Añadir librerías o servicios externos, ni hacer peticiones a Mister (no tienes credenciales).
 - Cambios de más de ~400 líneas en una sola ejecución.
 
 ## Cómo se prueba
 - Sintaxis del JS: extraer el `<script>` de `index.html` a un fichero temporal y `node --check`.
-- En navegador: servir la carpeta con `python -m http.server` y abrirla con Playwright (Chromium). Para ver las pestañas con PIN, teclea 9248 en el teclado de la página. Haz capturas en móvil (420 px) y revisa que no hay errores en la consola.
+- En navegador: servir la carpeta con `python -m http.server` y abrirla con Playwright (Chromium). Haz capturas en móvil (420 px) y revisa que no hay errores en la consola.
 - El modelo (`modelo_liga.py`, `autoajuste_capitan.py`) se valida con la validación cruzada que ya imprime; no aceptes un cambio que empeore el error.
 - Reglas que ya existen y no se rompen: los capitanes de una jornada ya empezada no cambian; no se recomiendan jugadores fichados después de empezar la jornada; en Mercado solo jugadores libres; el valor de jugadores por debajo de 1 M no se puede predecir.
 

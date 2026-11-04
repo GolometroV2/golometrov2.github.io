@@ -157,6 +157,27 @@ def detectar_movimientos(previo, managers, ahora):
     return nuevos
 
 
+def indice_fotos():
+    """fotos/indice.json: {idJugador: ruta de su foto más reciente}. La página lo usa para poner cara a los capitanes de
+    jornadas pasadas aunque ese jugador ya no esté en ninguna plantilla."""
+    carpeta = os.path.join(CARPETA_FOTOS, "jugadores")
+    if not os.path.isdir(carpeta):
+        return
+    ind = {}
+    for nombre in sorted(os.listdir(carpeta)):
+        if nombre.endswith(".png") and os.path.getsize(os.path.join(carpeta, nombre)) > 0:
+            ind[nombre.split("_")[0].split(".")[0]] = f"fotos/jugadores/{nombre}"
+    ruta = os.path.join(CARPETA_FOTOS, "indice.json")
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            if json.load(f) == ind:
+                return
+    except (OSError, ValueError):
+        pass
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(ind, f, ensure_ascii=False, separators=(",", ":"))
+
+
 def main():
     session = requests.Session()
     previo = cargar_previo()
@@ -193,6 +214,7 @@ def main():
         "transfers": transfers,
     }
 
+    indice_fotos()
     sin_hora = lambda d: {k: v for k, v in d.items() if k not in ("updated", "updatedAt")}
     if sin_hora(salida) == sin_hora(previo):
         print("Sin cambios: no se escribe equipos.json.")
