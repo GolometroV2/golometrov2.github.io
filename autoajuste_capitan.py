@@ -345,6 +345,98 @@ def evaluar_jornadas(modelo, P, obs):
     return salida
 
 
+# ---------- Riesgo del capitán: un solo algoritmo, calibrado con las jornadas pasadas ----------
+RIESGO_DEFECTO = {"k": 0.15, "l": 0.3}                 # premio a la subida posible / castigo a la bajada posible
+RIESGO_KS = [0.0, 0.1, 0.25, 0.4, 0.6]
+RIESGO_LS = [0.0, 0.1, 0.25, 0.4, 0.6, 0.9, 1.3]
+RIESGO_N0 = 400                                        # lineas necesarias para fiarse a medias de lo observado
+MODOS_ANTIGUOS = {"Arriesgado": (0.25, 0.1), "Equilibrado": (0.1, 0.4), "Seguro": (0.0, 0.9)}
+
+
+def multiplicador(valor):
+    return 2 if valor is None else 1.5 if valor > 10e6 else 2 if valor >= 5e6 else 3
+
+
+def lineas_riesgo(modelo, P, obs):
+    """Para cada once de cada manager en jornadas pasadas: candidatos con puntos esperados, riesgo y puntos reales."""
+    H = (cargar(os.path.join(CARPETA, "jugadores_historial.json"), {}) or {}).get("puntos", {})
+    por_pos = collections.defaultdict(list)
+    for o in modelo.jug:
+        if o["pts"] is not None:
+            por_pos[o["pos"]].append(o)
+    salida = []
+    for gw in sorted({o["gw"] for o in obs}):
+        if gw < 3:
+            continue
+        lineas = collections.defaultdict(list)
+        for o in obs:
+            if o["gw"] == gw and o["team"] and o["game"]:
+                lineas[o["uid"]].append(o)
+        base = {pos: [x["pts"] for x in filas if x["gw"] < gw] for pos, filas in por_pos.items()}
+        for uid, L in lineas.items():
+            if len(L) < 6:
+                continue
+            cands = []
+            for o in L:
+                b = base.get(o["pos"], [])
+                if len(b) < 20:
+                    continue
+                mu = modelo.prediccion(o, P)
+                hp = H.get(o["pid"], {})
+                vistas = [g for g in range(max(1, gw - 5), gw) if str(g) in hp]
+                jugo = [g for g in vistas if hp[str(g)] is not None]
+                pj = (len(jugo) + 3 * 0.75) / (len(vistas) + 3)           # probabilidad de jugar por sus últimas jornadas
+                mb = media(b)
+                ys = [mu + (x - mb) for x in b]
+                esp = pj * mu
+                w = pj / len(ys)
+                dist = [(0.0, 1 - pj)] + [(y, w) for y in ys]
+                sd_b = math.sqrt(sum(q * min(0, y - esp) ** 2 for y, q in dist))
+                sd_a = math.sqrt(sum(q * max(0, y - esp) ** 2 for y, q in dist))
+                real = o["pts"] if (o["played"] and o["pts"] is not None) else 0
+                cands.append({"esp": esp, "sa": sd_a, "sb": sd_b, "m": multiplicador(o.get("valor")), "real": real,
+                              "cap": o["captain"]})
+            if len(cands) >= 6:
+                salida.append((gw, uid, cands))
+    return salida
+
+
+def calibrar_riesgo(modelo, P, obs):
+    """Prueba muchas combinaciones (k, l) con lo que pasó de verdad y elige la mejor, encogida hacia el valor por defecto."""
+    L = lineas_riesgo(modelo, P, obs)
+    n = len(L)
+    if n < 15:
+        return None
+    extra = lambda c: (c["m"] - 1) * c["real"]
+    elegido = lambda cs, k, l: max(cs, key=lambda c: (c["m"] - 1) * (c["esp"] + k * c["sa"] - l * c["sb"]))
+    evalua = lambda k, l: [extra(elegido(cs, k, l)) for _, _, cs in L]
+    mat = [[media(evalua(k, l)) for l in RIESGO_LS] for k in RIESGO_KS]
+    # alisado 3x3: una celda suelta con suerte no decide por sí sola
+    def alisada(i, j):
+        v = [mat[a][b] for a in range(max(0, i - 1), min(len(RIESGO_KS), i + 2)) for b in range(max(0, j - 1), min(len(RIESGO_LS), j + 2))]
+        return media(v)
+    mejor = max(((alisada(i, j), i, j) for i in range(len(RIESGO_KS)) for j in range(len(RIESGO_LS))))
+    k_obs, l_obs = RIESGO_KS[mejor[1]], RIESGO_LS[mejor[2]]
+    lam = n / (n + RIESGO_N0)
+    k = round(RIESGO_DEFECTO["k"] + lam * (k_obs - RIESGO_DEFECTO["k"]), 3)
+    l = round(RIESGO_DEFECTO["l"] + lam * (l_obs - RIESGO_DEFECTO["l"]), 3)
+
+    def resumen(v):
+        m = media(v)
+        sd = desv(v) or 0
+        return {"media": round(m, 2), "error": round(sd / math.sqrt(len(v)), 2), "peor10": round(sorted(v)[len(v) // 10], 1)}
+    elegida = resumen(evalua(k, l))
+    modos = {nombre: resumen(evalua(*kl)) for nombre, kl in MODOS_ANTIGUOS.items()}
+    humano = [extra(next(c for c in cs if c["cap"])) for _, _, cs in L if any(c["cap"] for c in cs)]
+    azar = [media([extra(c) for c in cs]) for _, _, cs in L]
+    oraculo = [max(extra(c) for c in cs) for _, _, cs in L]
+    return {"k": k, "l": l, "kObservado": k_obs, "lObservado": l_obs, "peso": round(lam, 3), "lineas": n,
+            "jornadas": sorted({gw for gw, _, _ in L}), "elegida": elegida, "modosAntiguos": modos,
+            "humano": resumen(humano) if humano else None, "azar": resumen(azar), "oraculo": resumen(oraculo),
+            "tabla": {"k": RIESGO_KS, "l": RIESGO_LS, "media": [[round(x, 2) for x in f] for f in mat]}}
+
+
+
 def obs_liga(obs, C):
     """Actuaciones de TODOS los jugadores (jugadores_historial.json) además de las de vuestros onces: mucha más muestra."""
     J, H = cargar(os.path.join(CARPETA, "jugadores.json")), cargar(os.path.join(CARPETA, "jugadores_historial.json"))
@@ -437,6 +529,15 @@ def main():
     except Exception as e:     # nunca debe romper el autoajuste
         print(f"[!] Modelo de la liga no disponible: {e}")
 
+    riesgo = None
+    try:
+        riesgo = calibrar_riesgo(modelo, P, obs)
+        if riesgo:
+            print(f"Riesgo del capitán: k={riesgo['k']} l={riesgo['l']} (observado {riesgo['kObservado']}/{riesgo['lObservado']}, "
+                  f"peso {riesgo['peso']}) · {riesgo['lineas']} onces · media {riesgo['elegida']['media']} puntos extra")
+    except Exception as e:
+        print(f"[!] Calibración de riesgo no disponible: {e}")
+
     salida = {
         "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "muestra": {"actuaciones": total, "conEquipo": con_equipo, "jornadas": sorted({o["gw"] for o in obs})[-1] if obs else 0},
@@ -444,6 +545,7 @@ def main():
         "params": {k: v for k, v in P.items()},
         "metricas": metricas,
         "liga": liga,
+        "riesgo": riesgo,
         "patrones": patrones(obs, nombres, jug),
         "jornadas": evaluar_jornadas(modelo_lineas, P, obs) if filas else [],
     }
