@@ -284,7 +284,7 @@ code{color:var(--accFg)}
 .cara-i{font-weight:800;font-size:calc(var(--t) * .34);color:var(--mut)}
 .cara-e{position:absolute;right:-3px;bottom:-3px;width:calc(var(--t) * .38);height:calc(var(--t) * .38);object-fit:contain;background:var(--panel);border-radius:50%;padding:2px;box-shadow:0 0 0 1px var(--line)}
 /* --- Control segmentado de 3 --- */
-.seg3{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 12px;border-radius:var(--r-m);padding:3px}
+.seg3{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));margin:0 0 12px;border-radius:var(--r-m);padding:3px}
 .seg3 button{min-height:38px;border-radius:9px;font-size:12.5px;padding:0 4px}
 /* --- La carrera --- */
 #gvalor svg .ax,#graf svg .ax{fill:var(--mut);font-size:10px}
@@ -932,7 +932,7 @@ function pintarCapitanes() {
   if (!D.hayCap) { cont.innerHTML = ""; return; }
   cargarFotos();
   const todos = capitanesTemporada();
-  const seg = [["mejores", "Mejores"], ["peores", "Fallos"], ["managers", "Por manager"]]
+  const seg = [["mejores", "Mejores"], ["peores", "Fallos"], ["managers", "Por manager"], ["acierto", "Acierto"]]
     .map(([k, t]) => `<button data-cpv="${k}" class="${capVista === k ? "on" : ""}">${t}</button>`).join("");
   const formula = c => c.played ? `${c.basePoints ?? "–"} × ${c.multiplier || "–"}` : "no jugó";
   const fila = (x, k) => `<li class="crow" data-ficha="${esc(x.c.id)}">
@@ -940,7 +940,25 @@ function pintarCapitanes() {
       <span class="cq"><b>${esc(x.c.name)}</b><span>${avatar(x.m, x.i)}${esc(x.m.name)} · ${esc(x.j)}</span></span>
       <span class="cr"><b class="${x.c.points < 0 || !x.c.played ? "dn" : ""}">${x.c.points}</b><small>${formula(x.c)}</small></span></li>`;
   let cuerpo;
-  if (capVista === "managers") {
+  if (capVista === "acierto") {
+    // ¿Acertó con el brazalete? Extra conseguido frente al mejor extra posible con su once de esa jornada.
+    // El multiplicador de los demás se calcula con su valor actual (aproximación: el de aquella jornada podía ser otro).
+    if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); cuerpo = `<p class="note">Cargando valores de los jugadores…</p>`; }
+    else {
+      const js = jornadas();
+      const por = D.managers.map((m, i) => {
+        let n = 0, ac = 0, hecho = 0, posible = 0;
+        js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x || !x.captain) return;
+          const opciones = (x.players || []).filter(p => p.played).map(p => { const q = LIGAJ.jug[String(p.id)]; const mult = p.captain ? (x.captain.multiplier || 2) : capMult(q ? q.value : 6e6); return (mult - 1) * (p.basePoints ?? p.points ?? 0); });
+          if (!opciones.length) return;
+          const mejor = Math.max(0, ...opciones), real = x.captain.played ? (x.captain.bonus || 0) : 0;
+          n++; if (real >= mejor - 0.01) ac++; hecho += real; posible += mejor; });
+        return { m, i, n, ac, hecho, posible, r: posible > 0 ? hecho / posible : 0 };
+      }).filter(x => x.n).sort((a, b) => b.r - a.r);
+      cuerpo = `<ul class="pron">${por.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.r * 100).toFixed(1)}%;background:var(--acc)"></i></span><small>+${x.hecho} de +${Math.round(x.posible)} posibles · clavó el mejor ${x.ac} de ${x.n} veces</small></span><span class="pp" style="font-size:16px">${Math.round(x.r * 100)} %</span></li>`).join("")}</ul>
+        <p class="note">Qué parte de los puntos extra que podía haber sacado con el brazalete consiguió de verdad, eligiendo siempre bien dentro de su once de cada jornada. Los multiplicadores de los no capitanes salen de su valor actual, así que es una aproximación.</p>`;
+    }
+  } else if (capVista === "managers") {
     const js = jornadas();
     const por = D.managers.map((m, i) => {
       const mios = todos.filter(x => x.m.id === m.id);
@@ -983,7 +1001,7 @@ function cargarLigaJ() {
   if (LIGAJ) return;
   LIGAJ = { cargando: true };
   Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
-    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); } });
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); } });
 }
 /* ---------- Buscador y ficha de jugador ---------- */
 const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
