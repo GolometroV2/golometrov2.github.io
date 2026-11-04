@@ -1438,7 +1438,7 @@ function graficaValor(ms) {
   for (let q = 1; q < fin.length; q++) if (fin[q].y - fin[q - 1].y < 13) fin[q].y = fin[q - 1].y + 13;
   const yEt = {}; fin.forEach(f => yEt[f.x] = f.y);
   const lineas = orden.slice().reverse().map(x => {
-    const m = ms[x], c = col(m.i), pts = fechas.map((_, k) => val(x, k) == null ? null : [X(k), Y(val(x, k))]).filter(Boolean);
+    const m = ms[x], c = col(D && D.managers ? Math.max(0, D.managers.findIndex(d => String(d.id) === String(m.id))) : m.i), pts = fechas.map((_, k) => val(x, k) == null ? null : [X(k), Y(val(x, k))]).filter(Boolean);
     if (pts.length < 2) return "";
     const off = focoV && focoV !== m.id, on = focoV === m.id, nombre = m.name.length > 10 ? m.name.slice(0, 9).trim() + "…" : m.name;
     const v = val(x, n);
