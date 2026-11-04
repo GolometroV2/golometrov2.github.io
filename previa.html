@@ -986,6 +986,31 @@ function graficaValor(ms) {
     <p class="note">Millones de euros, día a día desde que hay seguimiento (${fechas[0].slice(8, 10)}/${fechas[0].slice(5, 7)}). Toca una línea para resaltarla.</p></section>`;
 }
 
+// Jugadores de otras plantillas con mejor relación entre lo que se espera que puntúen y lo que cuesta su cláusula
+function bloqueClausulas(ms) {
+  const L = [];
+  ms.forEach(m => (m.players || []).forEach(p => {
+    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = (typeof capPrior === "function" ? capPrior(p.pos, p.value) : null) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pj = (typeof capPJuega === "function" ? capPJuega(racha, p.value, p.pos) : null) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const esp = mu * pj;
+    if (esp < 3) return;
+    L.push({ m, p, esp, pj, r: esp / (p.clause / 1e6) });
+  }));
+  if (!L.length) return "";
+  const top = L.sort((a, b) => b.r - a.r).slice(0, 8);
+  return `<section class="card"><div class="gh"><h2>Cláusulas más rentables</h2></div>
+    <p class="note" style="margin:0 0 6px">Jugadores de las plantillas con más puntos esperados por cada millón de cláusula (sin lesionados ni sancionados).</p>
+    <ul class="clist">${top.map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+      <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
+        <span><b class="ct-n">${nf1.format(x.esp)} pts</b> por jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
+      <span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul>
+    <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -1000,6 +1025,7 @@ function resumenEq(ms, hp) {
   const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></li>`).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueClausulas(ms)}
     <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
