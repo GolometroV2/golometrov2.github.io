@@ -17,8 +17,9 @@ Ya no existen las tres pestañas «Seguro / Equilibrado / Arriesgado»: **no las
 
 ## MODO INTENSIVO (hasta el 11/11/2026)
 Se te ejecuta cada hora. Para no llenar el repositorio de ramas y no crear conflictos:
-- Trabaja siempre en la rama `agente/semana` (si no existe, crea desde `main`; si existe, `git fetch` y rebasa sobre `main`).
-- Cada ejecucion = una mejora pequena = un commit con mensaje claro. Sube con `git push --force-with-lease`.
+- Trabaja siempre en la rama `agente/semana`. Si no existe, créala desde `main`. Si existe: `git fetch origin` y `git checkout agente/semana && git pull --rebase origin agente/semana`; para traer cambios de `main`, usa `git merge origin/main` (nunca `rebase` sobre main).
+- **Claude también sube commits a esta rama a mano.** Nunca reescribas su historia: prohibido `git push --force`, `--force-with-lease`, `reset` o rebase de commits ya subidos. Sube con `git pull --rebase origin agente/semana && git push origin agente/semana`; si falla, repite el pull y vuelve a subir.
+- Cada ejecucion = una mejora pequena = un commit con mensaje claro.
 - Mantén UNA sola Pull Request abierta de `agente/semana` a `main` (compruebalo con `gh pr list --head agente/semana`; si no existe, creala; si existe, actualiza su descripcion con la lista de mejoras).
 - Si la PR ya fue aceptada y la rama quedo vieja, empieza una `agente/semana` nueva desde `main`.
 - Prioriza variedad: no repitas el mismo tipo de mejora dos veces seguidas y revisa `MEJORAS.md` antes de elegir. Si algo se rompe en una prueba, revierte tu cambio y apunta el motivo en `MEJORAS.md`.
