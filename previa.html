@@ -504,6 +504,9 @@ code{color:var(--accFg)}
 .yo-b{margin-left:6px;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mut)}
 .yo-b.on{background:var(--accBg);border-color:var(--acc);color:var(--accFg)}
 .tu{font-size:10.5px;font-weight:800;color:var(--accTxt);background:var(--acc);border-radius:6px;padding:1px 6px;vertical-align:2px}
+.refresh{display:inline-flex;align-items:center;gap:6px}
+.ra-i{display:inline-block;font-size:15px;line-height:1;transition:transform .6s}
+.refresh.girando .ra-i{transform:rotate(360deg)}
 </style>
 </head>
 <body>
@@ -513,7 +516,7 @@ code{color:var(--accFg)}
   <span class="acciones">
     <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
-    <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+    <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
 <main id="contenido">
@@ -580,7 +583,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -601,6 +604,7 @@ function ir(sec) {
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
   pintarAviso();
+  marcaFrescura();
   if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
   if (sec === "mer") { cargarMercado(); cargarCalendario(); cargarEquipos(); pintarMercado(); }
 }
@@ -610,7 +614,7 @@ function cargarDatos() {
   $("#app").innerHTML = `<div class="msg">Actualizando datos de la liga...</div>`;
   fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(cargar)
+    .then(j => { cargar(j); marcaFrescura(); })
     .catch(() => {
       $("#app").innerHTML = `<div class="msg">No se pudo actualizar el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que el proceso automático de GitHub ha finalizado correctamente.</div>`;
     });
@@ -643,6 +647,36 @@ function pintarAviso() {
     ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
     : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
 }
+
+// Botón «Actualizar»: vuelve a leer todos los datos que publica GitHub (clasificación, plantillas, calendario, onces,
+// mercado, parámetros) y muestra lo recientes que son. Además se recarga solo cada 5 minutos mientras la web está abierta
+// y al volver a ella desde otra app.
+let ultimaCarga = Date.now();
+function recargarTodo(manual) {
+  ultimaCarga = Date.now();
+  const b = $("#btnAct"); if (b && manual) { b.classList.add("girando"); setTimeout(() => b.classList.remove("girando"), 1200); }
+  if (D) fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { if (j && j.updatedAt !== D.updatedAt) { const v = vista, a = abierto, o = orden; cargar(j); vista = v; abierto = a; orden = o; if (seccion === "clas") pintar(); } marcaFrescura(); });
+  else cargarDatos();
+  cargarEquipos(); cargarCalendario();
+  if (seccion === "mer" || MER_DATA) cargarMercado();
+  marcaFrescura();
+}
+function haceCuanto(iso) {
+  const s = (Date.now() - Date.parse(iso)) / 1000;
+  if (!isFinite(s)) return "";
+  return s < 90 ? "ahora" : s < 3600 ? `hace ${Math.round(s / 60)} min` : s < 86400 ? `hace ${Math.round(s / 3600)} h` : `hace ${Math.round(s / 86400)} d`;
+}
+function marcaFrescura() {
+  const t = $("#btnActT"); if (!t) return;
+  const fuentes = [seccion === "clas" && D && D.updatedAt, seccion === "eq" && E && E.updatedAt, seccion === "cap" && (FFDATA && FFDATA.updatedAt || E && E.updatedAt),
+    seccion === "mer" && MER_DATA && MER_DATA.updatedAt].filter(Boolean);
+  const ultimo = fuentes.sort().slice(-1)[0];
+  t.textContent = ultimo ? haceCuanto(ultimo) : "Actualizar";
+  const b = $("#btnAct"); if (b) b.title = ultimo ? `Datos de ${fechaMadrid(ultimo)}. Pulsa para recargar.` : "Recargar los datos";
+}
+setInterval(() => { if (document.visibilityState === "visible" && Date.now() - ultimaCarga > 5 * 60 * 1000) recargarTodo(false); else marcaFrescura(); }, 60 * 1000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && Date.now() - ultimaCarga > 5 * 60 * 1000) recargarTodo(false); });
 
 // Carga automática inicial al abrir la página
 cargarDatos();
@@ -2066,7 +2100,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
