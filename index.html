@@ -489,6 +489,10 @@ code{color:var(--accFg)}
 .msel-n b{color:var(--txt)}
 .crow.yo{background:var(--accBg);border-radius:12px;padding-left:8px;padding-right:8px}
 .crow>.av{width:30px;height:30px;font-size:10px;margin-right:-16px;z-index:1;box-shadow:0 0 0 2px var(--panel)}
+.td td{min-width:30px;height:30px;color:var(--txt)}
+.td th .av{width:24px;height:24px;font-size:9px}
+.td-g{background:color-mix(in srgb,var(--pos) 35%,var(--panel2))}.td-p{background:color-mix(in srgb,var(--red) 30%,var(--panel2))}.td-e{background:var(--panel2)}
+.td-yo{background:none}.td-b{background:none!important;font-weight:800;padding-left:6px}
 </style>
 </head>
 <body>
@@ -1041,7 +1045,22 @@ function pintarDuelo() {
       <div class="du-mc"><small>Jornadas ganadas</small><b>${ga}<i>–</i>${gb}</b><small>${em ? `${em} ${em === 1 ? "empate" : "empates"} · ` : ""}${dif === 0 ? "empatados a puntos" : `${esc((dif > 0 ? A : B).m.name)} va ${Math.abs(dif)} por delante`}</small></div>
       <div class="du-m">${avatar(B.m, B.i)}<b style="color:${cb}">${cum[xb][n - 1]}</b></div></div>
     <div class="du-est">${est.map(filaEst).join("")}</div>
-    <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>`;
+    <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>
+    <details class="cdet"><summary>Tabla de duelos de toda la liga</summary>${tablaDuelos(S, orden)}</details>`;
+}
+// Cuántas jornadas le ha ganado cada manager (fila) a cada rival (columna) y su balance total
+function tablaDuelos(S, orden) {
+  const n = S.js.length;
+  const g = (a, b) => S.js.reduce((t, _, k) => t + (S.pts[a][k] > S.pts[b][k] ? 1 : 0), 0);
+  const bal = orden.map(a => { let w = 0, l = 0; orden.forEach(b => { if (a !== b) { w += g(a, b); l += g(b, a); } }); return { a, w, l }; }).sort((x, y) => (y.w - y.l) - (x.w - x.l));
+  const cols = bal.map(x => x.a);
+  const cab = cols.map(b => `<th>${avatar(S.ms[b].m, S.ms[b].i)}</th>`).join("");
+  const filas = bal.map(({ a, w, l }) => `<tr><th>${avatar(S.ms[a].m, S.ms[a].i)}</th>${cols.map(b => {
+      if (a === b) return `<td class="td-yo"></td>`;
+      const x = g(a, b), y = g(b, a);
+      return `<td class="${x > y ? "td-g" : x < y ? "td-p" : "td-e"}" title="${esc(S.ms[a].m.name)} ${x}–${y} ${esc(S.ms[b].m.name)}">${x}</td>`; }).join("")}<td class="td-b ${w >= l ? "up" : "dn"}">${w - l > 0 ? "+" : ""}${w - l}</td></tr>`).join("");
+  return `<div class="heat td"><table><thead><tr><th></th>${cab}<th>±</th></tr></thead><tbody>${filas}</tbody></table></div>
+    <p class="note">Cada casilla: jornadas que el de la fila le ha ganado al de la columna (verde si va ganando el duelo). ±: balance total de duelos ganados menos perdidos en ${n} jornadas.</p>`;
 }
 
 /* ---------- Pronóstico de la liga (simulación de las jornadas que faltan) ---------- */
