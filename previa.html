@@ -663,10 +663,16 @@ function detalle(m) {
     const ev = rep("⚽", x.goals || 0) + " " + rep("👟", suma(x, "assists")) + " " + rep("🟨", suma(x, "yellowCards")) + " " + rep("🟥", x.redCards || 0);
     return `<div class="bar"><span>${esc(j)}</span><i style="width:${Math.max(pts[i], 0) / max * 55}%"></i><b>${pts[i]}</b><span>${ev}</span></div>`;
   }).join("");
-  const gol = {};
-  js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => { if (p.goals) gol[p.name] = (gol[p.name] || 0) + p.goals; }));
-  const top = Object.entries(gol).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([n, g]) => `${esc(n)} ⚽${g}`).join(" · ");
-  return `<h3>Puntos por jornada</h3>${barras}<p class="top">${top ? "Goleadores: " + top : "Sin goles registrados."}</p>`;
+  // los jugadores que más puntos le han dado (puntos reales con los que contaron en su once, capitán incluido)
+  const aporte = {};
+  js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => {
+    const a = aporte[p.id] || (aporte[p.id] = { p, pts: 0, n: 0, g: 0, c: 0 });
+    a.pts += p.points || 0; a.g += p.goals || 0; if (p.played) a.n++; if (p.captain) a.c++; a.p = p;
+  }));
+  const clave = Object.values(aporte).sort((a, b) => b.pts - a.pts).slice(0, 5);
+  const totalM = pts.reduce((a, b) => a + b, 0) || 1;
+  const lista = clave.map(a => `<li class="crow">${cara(a.p.id, a.p.name, a.p.teamId, 36)}<span class="cq"><b>${esc(a.p.name)}</b><span>${a.n} ${a.n === 1 ? "jornada" : "jornadas"}${a.g ? ` · ⚽${a.g}` : ""}${a.c ? ` · capitán ${a.c} ${a.c === 1 ? "vez" : "veces"}` : ""}</span></span><span class="cr"><b>${a.pts}</b><small>${Math.round(a.pts / totalM * 100)} % de sus puntos</small></span></li>`).join("");
+  return `<h3>Puntos por jornada</h3>${barras}${lista ? `<h3 style="margin-top:14px">Los que más puntos le han dado</h3><ul class="clist">${lista}</ul>` : `<p class="top">Sin alineaciones registradas.</p>`}`;
 }
 
 /* ---------- Fotos y escudos de jugadores ---------- */
