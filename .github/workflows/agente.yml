@@ -1,10 +1,11 @@
 name: Agente de mejoras
 
-# Una vez a la semana (martes por la mañana) el agente revisa el proyecto, elige UNA mejora,
-# la prueba y abre una Pull Request. Tu solo tienes que mirarla y aceptarla (o cerrarla).
+# MODO INTENSIVO hasta el 11/11/2026: una ejecucion cada hora (se encolan, nunca van dos a la vez).
+# Despues vuelve solo al ritmo normal: una vez a la semana (martes).
+# Todo el trabajo va a UNA rama (agente/semana) y UNA Pull Request abierta; tu la aceptas cuando quieras.
 on:
   schedule:
-    - cron: '23 7 * * 2'
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,28 +22,46 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
+      - name: Comprobar si toca
+        id: toca
+        run: |
+          HOY=$(TZ=Europe/Madrid date +%F)
+          DIA=$(TZ=Europe/Madrid date +%u)
+          HORA=$(TZ=Europe/Madrid date +%H)
+          if [ "${{ github.event_name }}" = "schedule" ] && [[ "$HOY" > "2026-11-11" ]] && { [ "$DIA" != "2" ] || [ "$((10#$HORA))" -ne 8 ]; }; then
+            echo "Fuera del modo intensivo: solo martes a las 08 de Madrid."
+            echo "seguir=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "seguir=si" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.toca.outputs.seguir == 'si'
         with:
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
+        if: steps.toca.outputs.seguir == 'si'
         with:
           python-version: '3.11'
 
       - name: Preparar pruebas con navegador
+        if: steps.toca.outputs.seguir == 'si'
         run: |
           pip install requests beautifulsoup4 playwright
           python -m playwright install --with-deps chromium
 
       - name: Agente
+        if: steps.toca.outputs.seguir == 'si'
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
-            Sigue las reglas de CLAUDE.md. Ejecucion automatica sin supervision: elige una sola mejora
-            segun MEJORAS.md y los datos, implementala en una rama nueva, pruebala con Playwright,
-            actualiza MEJORAS.md y abre una Pull Request. Si no encuentras nada que merezca la pena,
-            no cambies nada y explica por que en un comentario del resumen.
+            Sigue las reglas de CLAUDE.md (seccion MODO INTENSIVO). Ejecucion automatica sin supervision:
+            trabaja en la rama agente/semana (crea o actualizala desde main y rebasala sobre main),
+            elige una sola mejora segun MEJORAS.md y los datos, pruebala con Playwright, haz commit,
+            sube la rama, actualiza MEJORAS.md y asegura que existe UNA Pull Request abierta de
+            agente/semana hacia main. Si no encuentras nada que merezca la pena, no cambies nada.
           claude_args: |
             --max-turns 80
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh pr:*),Bash(python:*),Bash(python3:*),Bash(node:*),Bash(pip:*),Bash(ls:*),Bash(cat:*),Bash(mkdir:*),Bash(cp:*)"
