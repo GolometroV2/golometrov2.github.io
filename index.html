@@ -204,7 +204,14 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .chip.ok{background:var(--posBg);color:var(--pos)}
 .chip.mal{background:var(--redBg);color:var(--red)}
 .chip.mid{background:var(--ptBg);color:var(--pt)}
-.jp{padding:7px 0;border-bottom:1px solid var(--line)}
+.jp{padding:10px 12px;border-bottom:1px solid var(--line)}
+.jpl{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.jpl .jp{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh)}
+.eqsel{margin:0 -16px 4px;padding:0 16px 4px;scroll-snap-type:x proximity}
+.eqsel .pill{scroll-snap-align:start;white-space:nowrap}
+.eqhead{margin-top:12px;border-radius:var(--r-l)}
+.eqhead .mini span{min-height:28px;display:inline-flex;align-items:center}
+.tendline{padding-top:6px;border-top:1px dashed var(--line);margin-top:8px}
 .jp-main{display:flex;align-items:center;gap:8px}
 .jp-side{display:flex;flex-direction:column;align-items:center;gap:3px;width:28px;flex:none}
 .shield{width:15px;height:15px;object-fit:contain}
@@ -227,7 +234,7 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .jp-right small{display:block;font-size:11px;color:var(--mut);margin-bottom:1px}
 .proj{font-size:11.5px;color:var(--mut);margin-left:8px;white-space:nowrap}.proj{letter-spacing:.2px}
 .senal{font-size:11.5px;color:var(--mut);margin-top:3px}
-.tendline{margin:3px 0 0 36px}
+
 .st{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;margin-left:6px;flex:none}
 .st-injury,.st-susp{background:#ff4d4f}
 .st-doubt{background:#ff9f1c}
@@ -844,16 +851,18 @@ function textoMov(t) {
 }
 
 function resumenEq(ms, hp) {
+  const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
     const d = m.squadValue - m.squadPrev;
     const ts = m.players.map(p => tendencia(hp(p.id), p).k);
     const sube = ts.filter(t => t.startsWith("sube")).length, baja = ts.filter(t => t.startsWith("baja")).length, frena = ts.filter(t => t === "sube_frena").length;
-    return `<li class="row"><button class="rowbtn" data-e="${esc(m.id)}"><span class="pos">${k + 1}</span>${avatar(m, m.i)}
-      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jugadores · ▲${sube} ▼${baja}${frena ? " · ⚠ " + frena + " frenando" : ""}</span></span>
+    return `<li class="row${k === 0 ? " lider" : ""}"><button class="rowbtn" data-e="${esc(m.id)}"><span class="pos">${k + 1}</span>${avatar(m, m.i)}
+      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jug. · <span class="up">▲${sube}</span> <span class="dn">▼${baja}</span>${frena ? " · ⚠ " + frena + " frenando" : ""}</span>
+        <span class="rbar" aria-hidden="true"><i style="width:${maxV > 0 ? Math.max(0, Math.min(100, m.squadValue / maxV * 100)).toFixed(1) : 0}%"></i></span></span>
       <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
   }).join("");
   const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></li>`).join("");
-  return `<ul style="margin-top:12px">${filas}</ul>
+  return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
@@ -880,12 +889,12 @@ function detalleEq(m, hp) {
     <div class="tendline"><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
-  return `<section class="card" style="margin-top:12px"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
+  return `<section class="card eqhead"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
       <div style="flex:1;min-width:0"><div class="nm">${esc(m.name)}</div><div class="sub">Valor de plantilla</div></div>
       <div class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(dM)}">${sig(dM)} hoy</em></div></div>
     <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div></section>
-    <div class="pills" role="group" aria-label="Ordenar" style="margin-top:12px">${sorts}</div>
-    <ul>${filas}</ul>
+    <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
+    <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>`;
 }
 
@@ -1875,7 +1884,9 @@ function pintarEquipos() {
     .map(([id, t]) => `<button class="pill ${eqSel === id ? "on" : ""}" data-e="${esc(id)}">${esc(t)}</button>`).join("");
   const sel = ms.find(x => x.id === eqSel);
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
-    <div class="pills wrap" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
+    <div class="pills eqsel" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
+  const on = cont.querySelector(".eqsel .pill.on");
+  if (on) { const bar = on.parentElement; bar.scrollLeft = on.offsetLeft - bar.clientWidth / 2 + on.offsetWidth / 2; }
 }
 
 /* ---------- Lista principal ---------- */
