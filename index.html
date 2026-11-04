@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f5f4" media="(prefers-color-scheme: light)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Golómetro">
 <title>MONEYBALL · Golómetro V2</title>
 <style>
 /* Paleta "Carbón y verde" (la de la primera versión del Golómetro, elegida por el dueño: nada de amarillo).
@@ -487,6 +494,19 @@ code{color:var(--accFg)}
 .msel-res{background:var(--panel2);color:var(--txt);font-size:20px!important;font-weight:800}
 .msel-n{margin:2px 0 12px;font-size:13px;color:var(--mut);text-align:center}
 .msel-n b{color:var(--txt)}
+.crow.yo{background:var(--accBg);border-radius:12px;padding-left:8px;padding-right:8px}
+.crow>.av{width:30px;height:30px;font-size:10px;margin-right:-16px;z-index:1;box-shadow:0 0 0 2px var(--panel)}
+.td td{min-width:30px;height:30px;color:var(--txt)}
+.td th .av{width:24px;height:24px;font-size:9px}
+.td-g{background:color-mix(in srgb,var(--pos) 35%,var(--panel2))}.td-p{background:color-mix(in srgb,var(--red) 30%,var(--panel2))}.td-e{background:var(--panel2)}
+.td-yo{background:none}.td-b{background:none!important;font-weight:800;padding-left:6px}
+.cv-m{white-space:normal!important;line-height:1.3}
+.yo-b{margin-left:6px;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mut)}
+.yo-b.on{background:var(--accBg);border-color:var(--acc);color:var(--accFg)}
+.tu{font-size:10.5px;font-weight:800;color:var(--accTxt);background:var(--acc);border-radius:6px;padding:1px 6px;vertical-align:2px}
+.refresh{display:inline-flex;align-items:center;gap:6px}
+.ra-i{display:inline-block;font-size:15px;line-height:1;transition:transform .6s}
+.refresh.girando .ra-i{transform:rotate(360deg)}
 </style>
 </head>
 <body>
@@ -496,7 +516,7 @@ code{color:var(--accFg)}
   <span class="acciones">
     <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
-    <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
+    <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
 <main id="contenido">
@@ -563,7 +583,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -584,6 +604,7 @@ function ir(sec) {
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
   pintarAviso();
+  marcaFrescura();
   if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
   if (sec === "mer") { cargarMercado(); cargarCalendario(); cargarEquipos(); pintarMercado(); }
 }
@@ -593,7 +614,7 @@ function cargarDatos() {
   $("#app").innerHTML = `<div class="msg">Actualizando datos de la liga...</div>`;
   fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(cargar)
+    .then(j => { cargar(j); marcaFrescura(); })
     .catch(() => {
       $("#app").innerHTML = `<div class="msg">No se pudo actualizar el archivo <code>mister_fantasy_data.json</code>.<br>Comprueba que el proceso automático de GitHub ha finalizado correctamente.</div>`;
     });
@@ -601,13 +622,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05";
+const NOVEDADES_V = "2026-11-05b";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>En la clasificación: crónica de cada jornada con su once ideal, la carrera por el título, quién ganará la liga, duelos cara a cara, capitanes con foto y premios. En Capitán: tu once recomendado. En Mercado: quién mejora tu once. En Equipos: evolución del valor, cláusulas rentables y próximos rivales.</span>
+    <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 function pintarAviso() {
@@ -626,6 +647,36 @@ function pintarAviso() {
     ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
     : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
 }
+
+// Botón «Actualizar»: vuelve a leer todos los datos que publica GitHub (clasificación, plantillas, calendario, onces,
+// mercado, parámetros) y muestra lo recientes que son. Además se recarga solo cada 5 minutos mientras la web está abierta
+// y al volver a ella desde otra app.
+let ultimaCarga = Date.now();
+function recargarTodo(manual) {
+  ultimaCarga = Date.now();
+  const b = $("#btnAct"); if (b && manual) { b.classList.add("girando"); setTimeout(() => b.classList.remove("girando"), 1200); }
+  if (D) fetch("mister_fantasy_data.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { if (j && j.updatedAt !== D.updatedAt) { const v = vista, a = abierto, o = orden; cargar(j); vista = v; abierto = a; orden = o; if (seccion === "clas") pintar(); } marcaFrescura(); });
+  else cargarDatos();
+  cargarEquipos(); cargarCalendario();
+  if (seccion === "mer" || MER_DATA) cargarMercado();
+  marcaFrescura();
+}
+function haceCuanto(iso) {
+  const s = (Date.now() - Date.parse(iso)) / 1000;
+  if (!isFinite(s)) return "";
+  return s < 90 ? "ahora" : s < 3600 ? `hace ${Math.round(s / 60)} min` : s < 86400 ? `hace ${Math.round(s / 3600)} h` : `hace ${Math.round(s / 86400)} d`;
+}
+function marcaFrescura() {
+  const t = $("#btnActT"); if (!t) return;
+  const fuentes = [seccion === "clas" && D && D.updatedAt, seccion === "eq" && E && E.updatedAt, seccion === "cap" && (FFDATA && FFDATA.updatedAt || E && E.updatedAt),
+    seccion === "mer" && MER_DATA && MER_DATA.updatedAt].filter(Boolean);
+  const ultimo = fuentes.sort().slice(-1)[0];
+  t.textContent = ultimo ? haceCuanto(ultimo) : "Actualizar";
+  const b = $("#btnAct"); if (b) b.title = ultimo ? `Datos de ${fechaMadrid(ultimo)}. Pulsa para recargar.` : "Recargar los datos";
+}
+setInterval(() => { if (document.visibilityState === "visible" && Date.now() - ultimaCarga > 5 * 60 * 1000) recargarTodo(false); else marcaFrescura(); }, 60 * 1000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && Date.now() - ultimaCarga > 5 * 60 * 1000) recargarTodo(false); });
 
 // Carga automática inicial al abrir la página
 cargarDatos();
@@ -1009,7 +1060,10 @@ function pintarDuelo() {
   const S = serieLiga(), { js, ms, pts, cum } = S, n = js.length;
   if (ms.length < 2 || !n) { cont.innerHTML = ""; return; }
   const orden = ms.map((_, x) => x).sort((a, b) => cum[b][n - 1] - cum[a][n - 1]);
-  if (!duelo || !ms.some(o => o.m.id === duelo[0]) || !ms.some(o => o.m.id === duelo[1]) || duelo[0] === duelo[1]) duelo = [ms[orden[0]].m.id, ms[orden[1]].m.id];
+  if (!duelo || !ms.some(o => o.m.id === duelo[0]) || !ms.some(o => o.m.id === duelo[1]) || duelo[0] === duelo[1]) {
+    const yo = YO && ms.some(o => o.m.id === YO) ? YO : null;
+    duelo = yo ? [yo, ms[orden[0]].m.id === yo ? ms[orden[1]].m.id : ms[orden[orden.findIndex(x => ms[x].m.id === yo) - 1]].m.id] : [ms[orden[0]].m.id, ms[orden[1]].m.id];
+  }
   const xa = ms.findIndex(o => o.m.id === duelo[0]), xb = ms.findIndex(o => o.m.id === duelo[1]);
   const A = ms[xa], B = ms[xb], ca = col(A.i), cb = col(B.i);
   const sel = (lado, x) => `<select data-dsel="${lado}" aria-label="Manager ${lado ? "B" : "A"}">${orden.map(y => `<option value="${esc(ms[y].m.id)}" ${y === x ? "selected" : ""}>${esc(ms[y].m.name)}</option>`).join("")}</select>`;
@@ -1039,7 +1093,22 @@ function pintarDuelo() {
       <div class="du-mc"><small>Jornadas ganadas</small><b>${ga}<i>–</i>${gb}</b><small>${em ? `${em} ${em === 1 ? "empate" : "empates"} · ` : ""}${dif === 0 ? "empatados a puntos" : `${esc((dif > 0 ? A : B).m.name)} va ${Math.abs(dif)} por delante`}</small></div>
       <div class="du-m">${avatar(B.m, B.i)}<b style="color:${cb}">${cum[xb][n - 1]}</b></div></div>
     <div class="du-est">${est.map(filaEst).join("")}</div>
-    <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>`;
+    <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>
+    <details class="cdet"><summary>Tabla de duelos de toda la liga</summary>${tablaDuelos(S, orden)}</details>`;
+}
+// Cuántas jornadas le ha ganado cada manager (fila) a cada rival (columna) y su balance total
+function tablaDuelos(S, orden) {
+  const n = S.js.length;
+  const g = (a, b) => S.js.reduce((t, _, k) => t + (S.pts[a][k] > S.pts[b][k] ? 1 : 0), 0);
+  const bal = orden.map(a => { let w = 0, l = 0; orden.forEach(b => { if (a !== b) { w += g(a, b); l += g(b, a); } }); return { a, w, l }; }).sort((x, y) => (y.w - y.l) - (x.w - x.l));
+  const cols = bal.map(x => x.a);
+  const cab = cols.map(b => `<th>${avatar(S.ms[b].m, S.ms[b].i)}</th>`).join("");
+  const filas = bal.map(({ a, w, l }) => `<tr><th>${avatar(S.ms[a].m, S.ms[a].i)}</th>${cols.map(b => {
+      if (a === b) return `<td class="td-yo"></td>`;
+      const x = g(a, b), y = g(b, a);
+      return `<td class="${x > y ? "td-g" : x < y ? "td-p" : "td-e"}" title="${esc(S.ms[a].m.name)} ${x}–${y} ${esc(S.ms[b].m.name)}">${x}</td>`; }).join("")}<td class="td-b ${w >= l ? "up" : "dn"}">${w - l > 0 ? "+" : ""}${w - l}</td></tr>`).join("");
+  return `<div class="heat td"><table><thead><tr><th></th>${cab}<th>±</th></tr></thead><tbody>${filas}</tbody></table></div>
+    <p class="note">Cada casilla: jornadas que el de la fila le ha ganado al de la columna (verde si va ganando el duelo). ±: balance total de duelos ganados menos perdidos en ${n} jornadas.</p>`;
 }
 
 /* ---------- Pronóstico de la liga (simulación de las jornadas que faltan) ---------- */
@@ -1294,7 +1363,7 @@ function resumenEq(ms, hp) {
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
     ${bloqueClausulas(ms)}
-    <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
+    <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
 // Próximos rivales de cada jugador de la plantilla, con la dificultad según lo que marca y encaja cada rival
@@ -1349,6 +1418,31 @@ function bloquePrevision(m) {
     <p class="note">Estimación del modelo de la liga según su media, su última jornada, su valor y si está lesionado. Solo jugadores de 1 M o más: por debajo, el valor se mueve al azar. Explica en torno a ${Math.round((LIGA.valorDin.r2 || 0.2) * 100)} % de los cambios diarios: tómalo como pista, no como certeza.</p></section>`;
 }
 
+// Candidatos a vender: jugadores que aportan poco para lo que valen, que se espera que bajen o que están lesionados
+function bloqueVender(m) {
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  const L = m.players.map(p => {
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pj = p.status === "injury" ? 0.05 : p.status === "susp" ? 0 : (capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6));
+    const esp = mu * pj, g = (capCrecModelo({ ...p, owner: 1 }) || {}).g || 0;
+    const rel = esp / Math.max(prior * 0.8, 0.5);           // lo que rinde frente a lo que se espera de un jugador de su valor y puesto
+    const motivos = [];
+    if (p.status === "injury") motivos.push("lesionado");
+    if (pj < 0.45 && p.status !== "injury") motivos.push(`juega poco (${pc(pj)})`);
+    if (g <= -0.01 && p.value >= 1e6) motivos.push(`se espera que baje un ${nf1.format(-g * 100)} % al día`);
+    if (p.value >= 2e6 && rel < 0.7 && pj >= 0.45) motivos.push(`rinde menos de lo que se espera por su valor (${nf1.format(esp)} pts por jornada)`);
+    return { p, esp, g, motivos, nota: motivos.length * 2 + (p.status === "injury" ? 2 : 0) - rel };
+  }).filter(x => x.motivos.length).sort((a, b) => b.nota - a.nota).slice(0, 4);
+  if (!L.length) return "";
+  return `<section class="card"><div class="gh"><h2>Candidatos a vender</h2></div>
+    <ul class="clist">${L.map(x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b><span class="cv-m">${esc(x.motivos.join(" · "))}</span></span>
+      <span class="cr"><b>${merEur(x.p.value)}</b><small>vale hoy</small></span></li>`).join("")}</ul>
+    <p class="note">Pistas, no órdenes: antes de vender mira cuántos titulares te quedan en su puesto.</p></section>`;
+}
+
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
@@ -1379,6 +1473,7 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
+    ${bloqueVender(m)}
     ${bloquePrevision(m)}
     ${bloqueRivalesEq(m)}`;
 }
@@ -2005,7 +2100,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
@@ -2087,7 +2182,7 @@ let merMan = null;
 function bloqueParaTi(r) {
   if (!E) { cargarEquipos(); return ""; }
   if (!E.managers || !D || !CAL) return "";
-  if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
+  if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = YO && E.managers.some(m => m.id === YO) ? YO : capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
   let rc;
   try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
   const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
@@ -2127,7 +2222,7 @@ function pintarMercado() {
   const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
   const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
   cont.innerHTML = `
-    <section class="card"><h2 style="margin:0 0 2px;font-size:16px">💸 Mercado · jugadores libres</h2>
+    <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
     ${mejor ? heroMer(mejor, cierre) : ""}
@@ -2198,15 +2293,15 @@ function panelAprendizaje() {
   return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">🧠 Aprendizaje del recomendador</summary>
     <p class="note">Actualizado ${esc(PAR.updatedAt ? fechaMadrid(PAR.updatedAt) : "—")} (hora de Madrid) · ${PAR.muestra ? PAR.muestra.actuaciones : 0} actuaciones analizadas, ${PAR.muestra ? PAR.muestra.conEquipo : 0} con equipo conocido.</p>
     ${PAR.aviso ? `<p class="note">${esc(PAR.aviso)}</p>` : ""}
-    ${m.rmseCompleto ? `<h3 style="margin:12px 0 4px;font-size:14px">¿Acierta? (puntos de cada jugador, usando solo datos anteriores a cada jornada)</h3>
+    ${m.rmseCompleto ? `<h3 class="sec">¿Acierta? (puntos de cada jugador, usando solo datos anteriores a cada jornada)</h3>
     <p class="note">Error medio (menos es mejor): media de la posición <b>${nf2.format(m.rmsePosicion)}</b> → con la forma del jugador <b>${nf2.format(m.rmseForma)}</b> → con rival y contexto <b>${nf2.format(m.rmseCompleto)}</b>${mejora != null ? ` (${pc(mejora)} menos que solo la forma)` : ""}.
     Correlación con los puntos reales: ${nf2.format(m.corrForma)} → ${nf2.format(m.corrCompleto)} (${m.filas} actuaciones).${f ? ` Probado en jornadas que no había visto: ${nf2.format(f.rmseDefecto)} con los parámetros por defecto y ${nf2.format(f.rmseAjustado)} tras autoajustarse.` : ""}
     El fútbol tiene mucho azar: una correlación de 0,4 sigue siendo modesta.</p>` : ""}
-    <h3 style="margin:12px 0 4px;font-size:14px">Patrones de vuestra liga</h3>
+    <h3 class="sec">Patrones de vuestra liga</h3>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th>Pos.</th><th>Media</th><th>Desv.</th><th>≥ 9 pts</th><th>≤ 1 pt</th><th>Equipo gana / empata / pierde</th><th>Casa / fuera</th></tr></thead><tbody>${filaPos}</tbody></table></div>
     ${riv ? `<ul class="note" style="padding-left:18px">${riv}</ul><p class="note">Con pocos partidos por rival (cifra entre paréntesis) estos porcentajes son orientativos.</p>` : ""}
     ${(pat.minutos || {}).menos60 ? `<p class="note">Quien juega menos de 60 minutos hace de media ${nf1.format(pat.minutos.menos60.media)} pts (${pat.minutos.menos60.n} casos) frente a ${nf1.format(pat.minutos.mas60.media)} pts si juega 60 o más (${pat.minutos.mas60.n}).</p>` : ""}
-    ${jor ? `<h3 style="margin:12px 0 4px;font-size:14px">Jornada a jornada</h3><div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Error del modelo</th><th>Puntos base del capitán: modelo vs humano</th></tr></thead><tbody>${jor}</tbody></table></div>
+    ${jor ? `<h3 class="sec">Jornada a jornada</h3><div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Error del modelo</th><th>Puntos base del capitán: modelo vs humano</th></tr></thead><tbody>${jor}</tbody></table></div>
     <p class="note">El modelo se reconstruye cada jornada con los datos anteriores. En "capitán" solo cuentan alineaciones con al menos 6 jugadores de equipo conocido; no incluye el multiplicador, que depende del valor de cada jugador.</p>` : ""}
     <p class="note" style="word-break:break-word">Parámetros en uso: ${esc(params)}</p></details>`;
 }
@@ -2428,13 +2523,38 @@ function bloqueRivales(r, candidatos) {
 
 // Selector de manager: todas las caras a la vista en una fila (sin deslizar) y el nombre completo del elegido debajo
 const nombreCorto = n => { const t = String(n || "").replace(/[^\p{L}\p{N}\s.]/gu, "").trim().split(/\s+/)[0] || "?"; return t.length > 8 ? t.slice(0, 7) + "…" : t; };
+// «Este soy yo»: el manager de quien usa este navegador (solo se guarda aquí); Capitán y Mercado lo eligen por defecto
+let YO = null;
+try { YO = localStorage.getItem("yo"); } catch (e) {}
 function selectorM(sel, attr, extra, etiqueta, dato) {
   const ms = ((E && E.managers) || []).map((m, i) => ({ m, i }));
   const items = [...(extra ? [extra] : []), ...ms.map(({ m, i }) => ({ id: m.id, html: avatar(m, i), corto: nombreCorto(m.name), largo: m.name, dato: dato ? dato(m) : "" }))];
   const elegido = items.find(x => x.id === sel);
   return `<div class="msel" role="group" aria-label="${esc(etiqueta || "Manager")}" style="--n:${items.length}">${items.map(x =>
     `<button class="msel-b ${x.id === sel ? "on" : ""}" ${attr}="${esc(x.id)}" aria-pressed="${x.id === sel}" title="${esc(x.largo)}">${x.html}<span class="msel-t">${esc(x.corto)}</span></button>`).join("")}</div>
-    ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}</p>` : ""}`;
+    ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}${elegido.id !== "resumen" ? ` <button class="yo-b ${YO === elegido.id ? "on" : ""}" data-yo="${esc(elegido.id)}" aria-pressed="${YO === elegido.id}">${YO === elegido.id ? "★ Eres tú" : "☆ Soy yo"}</button>` : ""}</p>` : ""}`;
+}
+
+// El capitán que el algoritmo recomendaría a cada manager de la liga (para saber qué harán los rivales)
+let CAPLIGA = null;
+function htmlCapLiga(cg, gw) {
+  const clave = gw + ":" + (E.updatedAt || "") + ":" + (FFDATA ? FFDATA.updatedAt : "") + ":" + CAP.RIESGO.k + CAP.RIESGO.l;
+  if (!CAPLIGA || CAPLIGA.clave !== clave) {
+    const filas = E.managers.map((m, i) => {
+      let rr; try { rr = recomendarCapitanes({ cal: cg.cal, D: cg.D, E: cg.E, managerId: m.id, gw }); } catch (e) { return null; }
+      const c = rr && !rr.error ? (rr.candidatos || []).find(x => x.score > -Infinity) : null;
+      return c ? { m, i, c } : null;
+    }).filter(Boolean);
+    CAPLIGA = { clave, filas };
+  }
+  const f = CAPLIGA.filas;
+  if (!f.length) return "";
+  const cuenta = {}; f.forEach(x => { cuenta[x.c.p.id] = (cuenta[x.c.p.id] || 0) + 1; });
+  return `<details class="card cdet-card"><summary class="sumh">Capitanes previstos de la liga</summary>
+    <p class="note" style="margin:6px 0 8px">El capitán que el algoritmo le recomendaría a cada manager con su plantilla actual. Si el tuyo es distinto al de tus rivales directos, puede marcar la diferencia.</p>
+    <ul class="clist">${f.map(x => `<li class="crow ${x.m.id === capMan ? "yo" : ""}">${avatar(x.m, x.i)}${cara(x.c.p.id, x.c.p.name, x.c.p.teamId, 36)}
+      <span class="cq"><b>${esc(x.c.p.short || x.c.p.name)}</b><span>${esc(x.m.name)} · ×${coma(x.c.m)} · juega ${pc(x.c.pj)}${cuenta[x.c.p.id] > 1 ? ` · lo pondrían ${cuenta[x.c.p.id]}` : ""}</span></span>
+      <span class="cr"><b class="up">+${nf1.format(x.c.extra)}</b><small>extra esperado</small></span></li>`).join("")}</ul></details>`;
 }
 
 function pintarCapitan() {
@@ -2446,7 +2566,7 @@ function pintarCapitan() {
   }
   if (!E) { cont.innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
-  if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
+  if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = YO && E.managers.some(m => m.id === YO) ? YO : E.managers[0] && E.managers[0].id;
   const pills = selectorM(capMan, "data-cm", null, "Manager", m => m.squadValue ? eur(m.squadValue) : "");
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
@@ -2462,6 +2582,7 @@ function pintarCapitan() {
     const top = util.slice(0, 3), resto = util.slice(3);
     cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
       ${htmlOnceRec(r)}
+      ${htmlCapLiga(cg, gwVer)}
       ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
@@ -2530,7 +2651,7 @@ function pintar() {
       <button class="rowbtn" data-m="${esc(m.id)}" aria-expanded="${abierto === m.id}">
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
-        <span class="info"><span class="nm">${esc(m.name)}</span>
+        <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
           <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
@@ -2568,11 +2689,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); return; }
   if (d.nov) { try { localStorage.setItem("novedades", NOVEDADES_V); } catch (err) {} const n = t.closest(".nov"); if (n) n.remove(); return; }
   if (d.mm !== undefined) { merMan = d.mm; pintarMercado(); return; }
   if (d.comp) { compartirCronica(t); return; }
