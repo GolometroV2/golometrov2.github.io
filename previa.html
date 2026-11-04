@@ -1252,6 +1252,24 @@ function bloqueRivalesEq(m) {
     <p class="note">Verde: partido fácil para su puesto; rojo: difícil. A defensas y porteros les afecta lo que marca el rival y a medios y delanteros lo que encaja. C: en casa · F: fuera.</p></section>`;
 }
 
+// Previsión del cambio de valor de mañana para cada jugador de la plantilla (modelo de la liga: valorDin)
+function bloquePrevision(m) {
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  if (!LIGA || !LIGA.valorDin) return "";
+  const L = m.players.map(p => ({ p, g: capCrecModelo({ ...p, owner: 1 }) })).filter(x => x.g && !x.g.bajo);
+  if (L.length < 3) return "";
+  const tot = L.reduce((t, x) => t + x.p.value * x.g.g, 0);
+  const fila = x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${merEur(x.p.value)}</span></span>
+    <span class="cr"><b class="${x.g.g >= 0 ? "up" : "dn"}">${x.g.g >= 0 ? "+" : "−"}${eur(Math.abs(x.p.value * x.g.g))}</b><small>${x.g.g >= 0 ? "+" : "−"}${nf1.format(Math.abs(x.g.g) * 100)} %</small></span></li>`;
+  const ord = L.slice().sort((a, b) => b.g.g - a.g.g);
+  const suben = ord.filter(x => x.g.g > 0).slice(0, 3), bajan = ord.filter(x => x.g.g < 0).slice(-3).reverse();
+  return `<section class="card"><div class="gh"><h2>Previsión de valor para mañana</h2></div>
+    <p style="margin:0 0 8px">Toda la plantilla: <b class="${tot >= 0 ? "up" : "dn"}">${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))}</b> previstos.</p>
+    ${suben.length ? `<h3 class="sec" style="margin-top:6px">Los que más subirían</h3><ul class="clist">${suben.map(fila).join("")}</ul>` : ""}
+    ${bajan.length ? `<h3 class="sec">Los que más bajarían</h3><ul class="clist">${bajan.map(fila).join("")}</ul>` : ""}
+    <p class="note">Estimación del modelo de la liga según su media, su última jornada, su valor y si está lesionado. Solo jugadores de 1 M o más: por debajo, el valor se mueve al azar. Explica en torno a ${Math.round((LIGA.valorDin.r2 || 0.2) * 100)} % de los cambios diarios: tómalo como pista, no como certeza.</p></section>`;
+}
+
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
@@ -1282,6 +1300,7 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
+    ${bloquePrevision(m)}
     ${bloqueRivalesEq(m)}`;
 }
 
@@ -2017,7 +2036,7 @@ function pintarMercado() {
 function cargarParametros() {
   fetch("parametros_capitan.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { PAR = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => {});
 }
 
