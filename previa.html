@@ -456,6 +456,8 @@ code{color:var(--accFg)}
 .indice{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:16px -16px 0;padding:0 16px}
 .indice::-webkit-scrollbar{display:none}
 .indice button{flex:none;min-height:40px;padding:0 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap}
+.btn-comp{width:100%;min-height:44px;margin-top:10px;border-radius:12px;background:var(--panel2);font-weight:700;font-size:13.5px}
+.btn-comp:active{background:var(--acc);color:var(--accTxt)}
 </style>
 </head>
 <body>
@@ -925,12 +927,28 @@ function pintarCronica() {
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
     tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`)
   ].join("");
+  // texto listo para pegar en el grupo de WhatsApp de la liga
+  const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
+  CRON_TXT = [`📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}`, "",
+    `🥇 Ganador: ${gan.m.name} (${gan.p} pts)`,
+    caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
+    mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
+    sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
+    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`, "", "Clasificación:",
+    ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
+    <button class="btn-comp" data-comp="1">📋 Copiar resumen para el grupo</button>
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
 }
-let onceAbierto = false;
+let onceAbierto = false, CRON_TXT = "";
+function compartirCronica(btn) {
+  const listo = t => { btn.textContent = t; setTimeout(() => { btn.textContent = "📋 Copiar resumen para el grupo"; }, 2200); };
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) { navigator.share({ text: CRON_TXT }).catch(() => {}); return; }
+  if (navigator.clipboard) navigator.clipboard.writeText(CRON_TXT).then(() => listo("✔ Copiado: pégalo en el grupo"), () => listo("No se pudo copiar"));
+  else listo("Tu navegador no deja copiar");
+}
 document.addEventListener("toggle", e => {
   if (!e.target.matches || !e.target.matches("details[data-oi]")) return;
   if (e.target.open === onceAbierto) return;
@@ -2439,11 +2457,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.comp) { compartirCronica(t); return; }
   if (d.ir) { const s = document.getElementById(d.ir); if (s) window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 70, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
   if (d.gv !== undefined) { focoV = focoV === d.gv ? null : d.gv; pintarEquipos(); return; }
   if (d.vm) { modoV = d.vm; pintarEquipos(); return; }
