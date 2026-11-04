@@ -396,6 +396,15 @@ code{color:var(--accFg)}
 .mh .ch-kpi b{font-size:19px}
 .seg2{display:grid;grid-template-columns:1fr 1fr;margin:0 0 12px;border-radius:12px;padding:3px}
 .seg2 button{min-height:38px;border-radius:9px;font-size:12.5px}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pr{position:relative;display:flex;flex-direction:column;gap:4px;background:var(--panel2);border-radius:14px;padding:12px 10px 11px;min-width:0}
+.pr-i{position:absolute;top:9px;right:9px;font-size:20px}
+.pr small{font-size:11.5px;font-weight:700;color:var(--accFg);padding-right:26px}
+.pr-q{display:flex;align-items:center;gap:7px;min-width:0}
+.pr-q .av{width:28px;height:28px;font-size:10px}
+.pr-q b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-t{font-size:11.5px;color:var(--mut);line-height:1.3}
+@media (max-width:340px){.pr-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -843,6 +852,43 @@ function pintarDuelo() {
       <div class="du-m">${avatar(B.m, B.i)}<b style="color:${cb}">${cum[xb][n - 1]}</b></div></div>
     <div class="du-est">${est.map(filaEst).join("")}</div>
     <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>`;
+}
+
+/* ---------- Premios de la temporada ---------- */
+function pintarPremios() {
+  const cont = $("#premios");
+  if (!cont) return;
+  const js = jornadas();
+  if (js.length < 2) { cont.innerHTML = ""; return; }
+  const S = serieLiga();
+  const st = D.managers.map((m, i) => {
+    const s = { m, i, pts: S.pts[i], goals: 0, conc: 0, tarj: 0, extra: 0, victorias: 0, partidos: 0 };
+    js.forEach((j, k) => {
+      const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+      s.goals += x.goals || 0; s.conc += x.goalsConceded || 0; s.extra += (x.captain || {}).bonus || 0;
+      s.tarj += (x.redCards || 0) * 2 + (x.players || []).reduce((t, p) => t + (p.yellowCards || 0), 0);
+      (x.players || []).forEach(p => { if (p.played) s.partidos++; });
+      if (S.pts[i][k] === Math.max(...D.managers.map((_, y) => S.pts[y][k]))) s.victorias++;
+    });
+    const med = S.pts[i].reduce((a, b) => a + b, 0) / js.length;
+    s.media = med; s.desv = Math.sqrt(S.pts[i].reduce((t, v) => t + (v - med) ** 2, 0) / js.length);
+    s.record = Math.max(...S.pts[i]); s.recordJ = js[S.pts[i].indexOf(s.record)];
+    return s;
+  });
+  const mejor = (f, menor) => st.slice().sort((a, b) => menor ? f(a) - f(b) : f(b) - f(a))[0];
+  const p = [
+    ["🏅", "Rey de las jornadas", mejor(s => s.victorias), s => `${s.victorias} jornadas ganadas`],
+    ["🚀", "Récord de una jornada", mejor(s => s.record), s => `${s.record} puntos en la ${s.recordJ}`],
+    ["⚽", "Pichichi", mejor(s => s.goals), s => `${s.goals} goles de sus jugadores`],
+    ["🧱", "El muro", mejor(s => s.conc / js.length, true), s => `${nf1c(s.conc / js.length)} goles encajados por jornada`],
+    ["📏", "Don regular", mejor(s => s.desv, true), s => `sus jornadas varían solo ±${nf1c(s.desv)} puntos`],
+    ["🎖️", "Rey del brazalete", mejor(s => s.extra), s => `+${s.extra} puntos extra de capitán`],
+    ["🟨", "El tarjetero", mejor(s => s.tarj), s => `${s.tarj} tarjetas (la roja cuenta doble)`],
+    ["🎢", "Montaña rusa", mejor(s => s.desv), s => `sus jornadas varían ±${nf1c(s.desv)} puntos`]
+  ];
+  cont.innerHTML = `<div class="gh"><h2>Premios de la temporada</h2></div>
+    <div class="pr-grid">${p.map(([ico, t, s, txt]) => `<div class="pr"><span class="pr-i">${ico}</span><small>${t}</small><span class="pr-q">${avatar(s.m, s.i)}<b>${esc(s.m.name)}</b></span><span class="pr-t">${txt(s)}</span></div>`).join("")}</div>
+    <p class="note">Tras ${js.length} jornadas. Se recalculan solos cada jornada.</p>`;
 }
 
 /* ---------- Equipos: seguimiento de plantillas ---------- */
@@ -2137,11 +2183,13 @@ function pintar() {
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="duelo"></section>
-    <section class="card" id="caps"></section>`;
+    <section class="card" id="caps"></section>
+    <section class="card" id="premios"></section>`;
   pintarCronica();
   pintarGrafico();
   pintarDuelo();
   pintarCapitanes();
+  pintarPremios();
 }
 document.addEventListener("change", e => {
   const s = e.target.closest("[data-dsel]");
