@@ -463,6 +463,10 @@ code{color:var(--accFg)}
 .cdet-card>summary.sumh::after{content:"▾";color:var(--mut);transition:transform .2s}
 .cdet-card[open]>summary.sumh::after{transform:rotate(180deg)}
 .cq>span>b,.cq>span>.av{flex:none;overflow:visible}
+.mv2{display:flex;align-items:center;gap:10px}
+.mv-x{flex:1;min-width:0}
+.mv-et{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:0 6px;margin-right:4px}
+.mv-c{background:var(--posBg);color:var(--pos)}.mv-v{background:var(--redBg);color:var(--red)}.mv-t{background:var(--accBg);color:var(--accFg)}
 </style>
 </head>
 <body>
@@ -1248,7 +1252,9 @@ function resumenEq(ms, hp) {
         <span class="rbar" aria-hidden="true"><i style="width:${maxV > 0 ? Math.max(0, Math.min(100, m.squadValue / maxV * 100)).toFixed(1) : 0}%"></i></span></span>
       <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
   }).join("");
-  const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></li>`).join("");
+  const tipo = t => !t.from ? ["mv-c", "Fichaje"] : !t.to ? ["mv-v", "Venta"] : ["mv-t", "Traspaso"];
+  const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
+    return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
     ${bloqueClausulas(ms)}
