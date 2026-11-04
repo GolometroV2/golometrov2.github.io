@@ -494,6 +494,8 @@ code{color:var(--accFg)}
 .td-g{background:color-mix(in srgb,var(--pos) 35%,var(--panel2))}.td-p{background:color-mix(in srgb,var(--red) 30%,var(--panel2))}.td-e{background:var(--panel2)}
 .td-yo{background:none}.td-b{background:none!important;font-weight:800;padding-left:6px}
 .cv-m{white-space:normal!important;line-height:1.3}
+.yo-b{margin-left:6px;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mut)}
+.yo-b.on{background:var(--accBg);border-color:var(--acc);color:var(--accFg)}
 </style>
 </head>
 <body>
@@ -2135,7 +2137,7 @@ let merMan = null;
 function bloqueParaTi(r) {
   if (!E) { cargarEquipos(); return ""; }
   if (!E.managers || !D || !CAL) return "";
-  if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
+  if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = YO && E.managers.some(m => m.id === YO) ? YO : capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
   let rc;
   try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
   const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
@@ -2476,13 +2478,16 @@ function bloqueRivales(r, candidatos) {
 
 // Selector de manager: todas las caras a la vista en una fila (sin deslizar) y el nombre completo del elegido debajo
 const nombreCorto = n => { const t = String(n || "").replace(/[^\p{L}\p{N}\s.]/gu, "").trim().split(/\s+/)[0] || "?"; return t.length > 8 ? t.slice(0, 7) + "…" : t; };
+// «Este soy yo»: el manager de quien usa este navegador (solo se guarda aquí); Capitán y Mercado lo eligen por defecto
+let YO = null;
+try { YO = localStorage.getItem("yo"); } catch (e) {}
 function selectorM(sel, attr, extra, etiqueta, dato) {
   const ms = ((E && E.managers) || []).map((m, i) => ({ m, i }));
   const items = [...(extra ? [extra] : []), ...ms.map(({ m, i }) => ({ id: m.id, html: avatar(m, i), corto: nombreCorto(m.name), largo: m.name, dato: dato ? dato(m) : "" }))];
   const elegido = items.find(x => x.id === sel);
   return `<div class="msel" role="group" aria-label="${esc(etiqueta || "Manager")}" style="--n:${items.length}">${items.map(x =>
     `<button class="msel-b ${x.id === sel ? "on" : ""}" ${attr}="${esc(x.id)}" aria-pressed="${x.id === sel}" title="${esc(x.largo)}">${x.html}<span class="msel-t">${esc(x.corto)}</span></button>`).join("")}</div>
-    ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}</p>` : ""}`;
+    ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}${elegido.id !== "resumen" ? ` <button class="yo-b ${YO === elegido.id ? "on" : ""}" data-yo="${esc(elegido.id)}" aria-pressed="${YO === elegido.id}">${YO === elegido.id ? "★ Eres tú" : "☆ Soy yo"}</button>` : ""}</p>` : ""}`;
 }
 
 // El capitán que el algoritmo recomendaría a cada manager de la liga (para saber qué harán los rivales)
@@ -2516,7 +2521,7 @@ function pintarCapitan() {
   }
   if (!E) { cont.innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
-  if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
+  if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = YO && E.managers.some(m => m.id === YO) ? YO : E.managers[0] && E.managers[0].id;
   const pills = selectorM(capMan, "data-cm", null, "Manager", m => m.squadValue ? eur(m.squadValue) : "");
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
@@ -2639,11 +2644,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); return; }
   if (d.nov) { try { localStorage.setItem("novedades", NOVEDADES_V); } catch (err) {} const n = t.closest(".nov"); if (n) n.remove(); return; }
   if (d.mm !== undefined) { merMan = d.mm; pintarMercado(); return; }
   if (d.comp) { compartirCronica(t); return; }
