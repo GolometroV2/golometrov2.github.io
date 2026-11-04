@@ -20,13 +20,12 @@ jobs:
           python3 - <<"PY"
           import re
           h=open('/tmp/p.html',encoding='utf-8',errors='replace').read()
-          print("longitud",len(h))
-          print("enlaces /partidos/:",sorted(set(re.findall(r'href="([^"]*?/partidos/[^"]+)"',h)))[:20])
-          print("scripts con json:",[m[:120] for m in re.findall(r'<script[^>]*>(.{0,200})',h,re.S)][:8])
-          for k in ['titular','duda','probab','porcentaje','data-','%']:
-              print(k,h.lower().count(k))
-          i=h.find('class="player')
-          print("trozo jugador:",h[i-300:i+900] if i>0 else "no hay class=player")
-          print("---- cuerpo (texto de 3000 a 6000) ----")
-          print(re.sub(r'\s+',' ',h)[3000:6000])
+          h=re.sub(r'<script.*?</script>|<style.*?</style>|<svg.*?</svg>|<!--.*?-->','',h,flags=re.S)
+          i=h.find('<body')
+          b=re.sub(r'\s+',' ',h[i:])
+          print("longitud body",len(b))
+          for kw in ['posible','alineaci','once','titular','duda','lesion','sanci','%']:
+              print(kw,[m.start() for m in re.finditer(kw,b,re.I)][:8])
+          j=b.lower().find('alineaci')
+          print(b[max(0,j-500):j+7000])
           PY
