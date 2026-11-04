@@ -487,6 +487,8 @@ code{color:var(--accFg)}
 .msel-res{background:var(--panel2);color:var(--txt);font-size:20px!important;font-weight:800}
 .msel-n{margin:2px 0 12px;font-size:13px;color:var(--mut);text-align:center}
 .msel-n b{color:var(--txt)}
+.crow.yo{background:var(--accBg);border-radius:12px;padding-left:8px;padding-right:8px}
+.crow>.av{width:30px;height:30px;font-size:10px;margin-right:-16px;z-index:1;box-shadow:0 0 0 2px var(--panel)}
 </style>
 </head>
 <body>
@@ -2437,6 +2439,28 @@ function selectorM(sel, attr, extra, etiqueta, dato) {
     ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}</p>` : ""}`;
 }
 
+// El capitán que el algoritmo recomendaría a cada manager de la liga (para saber qué harán los rivales)
+let CAPLIGA = null;
+function htmlCapLiga(cg, gw) {
+  const clave = gw + ":" + (E.updatedAt || "") + ":" + (FFDATA ? FFDATA.updatedAt : "") + ":" + CAP.RIESGO.k + CAP.RIESGO.l;
+  if (!CAPLIGA || CAPLIGA.clave !== clave) {
+    const filas = E.managers.map((m, i) => {
+      let rr; try { rr = recomendarCapitanes({ cal: cg.cal, D: cg.D, E: cg.E, managerId: m.id, gw }); } catch (e) { return null; }
+      const c = rr && !rr.error ? (rr.candidatos || []).find(x => x.score > -Infinity) : null;
+      return c ? { m, i, c } : null;
+    }).filter(Boolean);
+    CAPLIGA = { clave, filas };
+  }
+  const f = CAPLIGA.filas;
+  if (!f.length) return "";
+  const cuenta = {}; f.forEach(x => { cuenta[x.c.p.id] = (cuenta[x.c.p.id] || 0) + 1; });
+  return `<details class="card cdet-card"><summary class="sumh">Capitanes previstos de la liga</summary>
+    <p class="note" style="margin:6px 0 8px">El capitán que el algoritmo le recomendaría a cada manager con su plantilla actual. Si el tuyo es distinto al de tus rivales directos, puede marcar la diferencia.</p>
+    <ul class="clist">${f.map(x => `<li class="crow ${x.m.id === capMan ? "yo" : ""}">${avatar(x.m, x.i)}${cara(x.c.p.id, x.c.p.name, x.c.p.teamId, 36)}
+      <span class="cq"><b>${esc(x.c.p.short || x.c.p.name)}</b><span>${esc(x.m.name)} · ×${coma(x.c.m)} · juega ${pc(x.c.pj)}${cuenta[x.c.p.id] > 1 ? ` · lo pondrían ${cuenta[x.c.p.id]}` : ""}</span></span>
+      <span class="cr"><b class="up">+${nf1.format(x.c.extra)}</b><small>extra esperado</small></span></li>`).join("")}</ul></details>`;
+}
+
 function pintarCapitan() {
   const cont = $("#cap");
   if (!eqOk) {
@@ -2462,6 +2486,7 @@ function pintarCapitan() {
     const top = util.slice(0, 3), resto = util.slice(3);
     cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
       ${htmlOnceRec(r)}
+      ${htmlCapLiga(cg, gwVer)}
       ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
