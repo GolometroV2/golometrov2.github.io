@@ -3,10 +3,10 @@
 El agente lee este archivo al empezar y lo actualiza al terminar.
 
 ## En curso (lo está haciendo Claude a mano: NO lo toques, elige otra cosa)
-- Herramientas nuevas en Clasificación, Capitán, Mercado y Equipos (Claude las va añadiendo).
-- **Para el agente:** las fases 5 y 6 ya están hechas a mano. Tu siguiente trabajo es la **fase 7** (microinteracciones, accesibilidad, rendimiento: foco visible, contraste AA en claro y oscuro, estados de carga con esqueletos, etiquetas aria en gráficas) y después la **fase 8** (revisión de coherencia visual entre todas las tarjetas nuevas: radios, tamaños de título, espaciados).
+- Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (a mano por Claude, ideas de Comuniate, Analítica Fantasy y similares): subidas y bajadas de valor de hoy, calendario de los 20 equipos por facilidad, buscador de jugadores en la cabecera (lupa) y ficha de jugador (valor, puntos, media, cláusula, próximo partido con su % de titular, puntos por jornada y evolución del valor); tocar un jugador en las listas abre su ficha.
 - 2026-11-05 (decisión del dueño): sin PIN en ninguna pestaña, vuelta a la paleta verde de la primera versión y lanzamiento de esta versión en `index.html` (PR #3 aceptada).
 - 2026-11-04 (a mano por Claude): tarjeta destacada del capitán (fase 5), oportunidad del día en Mercado (fase 6), Duelo cara a cara, Evolución del valor de las plantillas, Cláusulas más rentables, Próximos rivales por jugador con dificultad, Premios de la temporada y aviso de cuándo empieza la próxima jornada. Después: once ideal de la jornada, pronóstico «¿Quién ganará la liga?», jugadores en racha, previsión de valor para mañana, flechas de puesto, índice de secciones, copiar resumen para WhatsApp, once recomendado en Capitán, «¿Quién mejora tu once?» en Mercado, movimientos con foto, jugadores que más puntos dieron a cada manager y aviso de novedades.
 - (el agente irá añadiendo aquí cada mejora con su fecha)
@@ -26,14 +26,16 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - 2026-11-04 (rediseño fase 7/8, parte 2): revisado el contraste del texto atenuado (≥ 5:1 en oscuro y claro, AA correcto); el foco visible ya existía. Añadidas etiquetas accesibles a la barra de puntuación del Mercado, a las barras de las últimas 5 jornadas, a los puntos del PIN y a la tabla de calor por jornada (las dos gráficas grandes ya las tenían). Solo atributos aria; lógica intacta. Probado a 360 px: sin desborde ni errores de consola. Fase 7 completa. Siguiente: fase 8 (coherencia de radios, títulos y espaciados entre tarjetas).
 - 2026-11-04 (rediseño fase 8/8, coherencia): todos los radios de tarjetas, selectores y botones usan ahora `--r-m` (12 px) o `--r-l` (16 px) en vez de valores sueltos (12/14/16/18 px). Lógica intacta. Probado a 390 px: sin errores de consola ni scroll horizontal. Idea: unificar también los tamaños de título de tarjeta.
 - 2026-11-04 (coherencia de títulos): los títulos de «Últimos movimientos» y «Mercado · jugadores libres» usan ahora la cabecera estándar `.gh`, y los tres subtítulos del panel de análisis del Capitán usan `h3.sec` (antes estilos en línea de 14/16 px). Solo HTML; lógica intacta. Probado a 390 px (Equipos y Mercado): sin errores de consola ni scroll horizontal. Con esto se cierra la idea de unificar títulos. Siguiente: ideas pendientes (historial de pujas, comparador).
+- 2026-11-04 (herramienta nueva): **Comparador de jugadores** en Clasificación (índice «🆚 Jugadores»): dos casillas con buscador de nombre sobre los 537 jugadores de `jugadores.json`; compara puntos, media, media de las últimas 5, valor y puntos por millón, con valores, cláusulas, propietario y últimas 5 jornadas. Solo lectura de datos existentes. Probado a 360 px: sin errores ni desborde. Idea: añadir el comparador también en Mercado con puntos esperados y próximo rival.
+- 2026-11-04 (agente, revisión 360 px): la cabecera desbordaba 1 px en Clasificación y Mercado a 360 px (logo + lupa + Actualizar). Hueco y relleno algo menores por debajo de 380 px. Probado a 360 y 390 px en las 4 pestañas: sin desborde ni errores de consola. Cierra la idea pendiente 1.
 
 ## Ideas del dueño (máxima prioridad, léelas siempre)
 - Capitán con un solo algoritmo de riesgo (sin pestañas de modo): ya implementado en main; el rediseño de Capitán debe partir de esa lista única. Ver CLAUDE.md.
 - Rehacer el diseño completo de forma profesional, moderna y actual (ver sección DISEÑO de CLAUDE.md). Fases: 1 sistema de diseño, 2 cabecera y navegación, 3 Clasificación, 4 Equipos, 5 Capitán, 6 Mercado, 7 microinteracciones y accesibilidad, 8 revisión final.
 
 ## Ideas pendientes (de más a menos valor)
-1. Revisar que cada pestaña se ve bien en móvil pequeño (360 px) y corregir lo que se corte.
+1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. Historial de pujas ideales frente al precio real de cierre (cuando haya datos suficientes) para calibrar la puja.
 3. Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
-4. Comparador de dos jugadores (puntos esperados, valor, partido).
+4. Comparador de jugadores: hecho en Clasificación; falta versión con puntos esperados y partido.
 5. Gráfico de la evolución del valor de plantilla de cada manager.

@@ -401,6 +401,37 @@ def lineas_riesgo(modelo, P, obs):
     return salida
 
 
+# ---------- Calibración de Futbol Fantasy: ¿cuántas veces juega de verdad quien FF da con un X % de titular? ----------
+FF_TRAMOS = [0.0, 0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.9, 1.01]
+FF_MIN = 150          # actuaciones necesarias para publicar la calibración
+
+
+def calibrar_ff():
+    A = cargar(os.path.join(CARPETA, "alineaciones_historial.json"), {}) or {}
+    H = (cargar(os.path.join(CARPETA, "jugadores_historial.json"), {}) or {})
+    pts, ult = H.get("puntos", {}), H.get("ultimaJornada") or 0
+    filas = []
+    for gw, jug in A.items():
+        if not str(gw).isdigit() or int(gw) > int(ult):
+            continue                      # jornada aún no terminada
+        for pid, v in jug.items():
+            if pid in pts and str(gw) in pts[pid]:
+                filas.append((float(v[0]), 1 if pts[pid][str(gw)] is not None else 0, int(v[1])))
+    if len(filas) < FF_MIN:
+        return {"n": len(filas), "tramos": None, "aviso": f"Hacen falta {FF_MIN} actuaciones con probabilidad de Futbol Fantasy y jornada terminada (hay {len(filas)})."}
+    tramos = []
+    for a, b in zip(FF_TRAMOS[:-1], FF_TRAMOS[1:]):
+        x = [f for f in filas if a <= f[0] < b and not f[2]]
+        if x:
+            # encogido hacia la propia probabilidad de FF con 10 casos virtuales (tramos con pocos datos no mandan)
+            p_ff = sum(f[0] for f in x) / len(x)
+            jugo = (sum(f[1] for f in x) + 10 * p_ff) / (len(x) + 10)
+            tramos.append({"desde": a, "hasta": min(b, 1.0), "pFF": round(p_ff, 3), "juega": round(jugo, 3), "n": len(x)})
+    brier_ff = sum((f[0] - f[1]) ** 2 for f in filas) / len(filas)
+    return {"n": len(filas), "tramos": tramos, "brierFF": round(brier_ff, 4)}
+
+
+
 def calibrar_riesgo(modelo, P, obs):
     """Prueba muchas combinaciones (k, l) con lo que pasó de verdad y elige la mejor, encogida hacia el valor por defecto."""
     L = lineas_riesgo(modelo, P, obs)
@@ -538,6 +569,13 @@ def main():
     except Exception as e:
         print(f"[!] Calibración de riesgo no disponible: {e}")
 
+    try:
+        ff = calibrar_ff()
+        print(f"Calibración de Futbol Fantasy: {ff.get('n')} actuaciones" + ("" if ff.get("tramos") else " (aún no se publica)"))
+    except Exception as e:
+        ff = None
+        print(f"[!] Calibración de Futbol Fantasy no disponible: {e}")
+
     salida = {
         "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "muestra": {"actuaciones": total, "conEquipo": con_equipo, "jornadas": sorted({o["gw"] for o in obs})[-1] if obs else 0},
@@ -546,6 +584,7 @@ def main():
         "metricas": metricas,
         "liga": liga,
         "riesgo": riesgo,
+        "futbolFantasy": ff,
         "patrones": patrones(obs, nombres, jug),
         "jornadas": evaluar_jornadas(modelo_lineas, P, obs) if filas else [],
     }
