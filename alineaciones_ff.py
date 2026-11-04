@@ -133,6 +133,10 @@ def puntuar(j, nombre_norm):
     st = [t for t in slug.split() if len(t) > 2]
     if st and all(any(x == t or (len(t) > 3 and (x.startswith(t) or t.startswith(x))) for x in mt) for t in st):
         s = max(s, 0.95)
+    # nombre corto de Mister (p. ej. «Pedri», «Koke», «Isco») contenido en el de FF
+    mt3 = [x for x in mt if len(x) > 2]
+    if mt3 and len(mt3) <= 2 and all(x in slug.split() for x in mt3):
+        s = max(s, 0.9)
     # solo el apellido (ultima palabra) coincide
     if mt and slug.split() and slug.split()[-1] == mt[-1]:
         s = max(s, 0.8)

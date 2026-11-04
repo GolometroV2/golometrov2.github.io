@@ -717,6 +717,20 @@ function capAplicarParametros(par) {
 }
 const POS_LISTA = ["PT", "DF", "MC", "DL"];
 // Modelo de la liga entera (lo recalcula cada día modelo_liga.py y llega en parametros_capitan.json -> liga)
+// Alineaciones probables de Futbol Fantasy (alineaciones_ff.py -> alineaciones.json): probabilidad de ser titular por jugador y jornada
+let FFDATA = null;
+const FF_PESO = 0.8;     // peso de Futbol Fantasy frente al modelo propio al estimar si juega
+const FF_SUB = 0.3;      // si no es titular, probabilidad de que aun así entre desde el banquillo
+function capFF(id, gw) { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(id)]; return (e && e[String(gw)]) || null; }
+// {pj, suplente, texto}: mezcla lo que dice Futbol Fantasy con la probabilidad calculada por el modelo propio
+function capMezclaFF(ff, pjModelo, estado) {
+  if (!ff || estado === "susp") return null;
+  const pff = ff.conf ? ff.p : Math.min(0.98, ff.p + (1 - ff.p) * FF_SUB);
+  let pj = ff.conf ? pff : FF_PESO * pff + (1 - FF_PESO) * pjModelo;
+  if (estado === "injury" && ff.p < 0.5) pj = Math.min(pj, 0.5 * pjModelo + 0.5 * pff);
+  const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular en el once de Futbol Fantasy" : "En el banquillo según Futbol Fantasy") : `Futbol Fantasy: ${Math.round(ff.p * 100)} % de ser titular`;
+  return { pj: Math.max(0, Math.min(0.99, pj)), suplente: ff.p < 0.5 && ff.once === "suplente", texto: txt };
+}
 let LIGA = null;
 function capAplicarLiga(l) { LIGA = l && l.juega && l.juega.pesos ? l : null; }
 function capCaract(streak, valor, pos) {
@@ -983,8 +997,10 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
       else if (en11) { pj = Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa); fuente = "En el once probable"; }
       else { pj = CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa; fuente = "No está en el once probable"; suplente = true; }
     } else { pj = pmod != null ? pmod : 0.1 + 0.8 * tasa; fuente = "Sin once probable aún (según sus últimas jornadas y su valor)"; }
-    if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
-    const rota = !confirmado && tasa < 0.8 && estado !== "injury" && estado !== "susp";
+    const ffm = confirmado && eq ? null : capMezclaFF(capFF(p.id, g.gw), pj, estado);
+    if (ffm) { pj = ffm.pj; suplente = ffm.suplente; fuente = ffm.texto; }
+    else if (estado === "doubt") { pj *= 0.5; fuente += " · en duda"; }
+    const rota = !ffm && !confirmado && tasa < 0.8 && estado !== "injury" && estado !== "susp";
 
     // resultado: distribución de puntos del jugador.
     //   Se parte de la distribución real de su posición en vuestra liga (el delantero tiene cola alta por los goles,
@@ -1015,7 +1031,7 @@ function recomendarCapitanes({ cal, D, E, managerId, riesgo = 1, gw: gwElegida =
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, modoNombre: ["Arriesgado", "Equilibrado", "Seguro"][Math.max(0, Math.min(2, riesgo))], esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
+      mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, ffP: ffm ? capFF(p.id, g.gw).p : null, ffConf: ffm ? capFF(p.id, g.gw).conf : false, modoNombre: ["Arriesgado", "Equilibrado", "Seguro"][Math.max(0, Math.min(2, riesgo))], esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
@@ -1165,7 +1181,9 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
       pj = en11 ? Math.min(0.97, CAP.P_XI_BASE + CAP.P_XI_REGULAR * tasa) : CAP.P_FUERA_BASE + CAP.P_FUERA_REGULAR * tasa;
       fuente = en11 ? "En el once probable" : "No está en el once probable";
     } else { pj = pmod != null ? pmod : 0.1 + 0.8 * tasa; fuente = nPart ? `Juega ${jugadas.length} de las últimas ${racha.length || 5} jornadas` : "Sin partidos jugados todavía"; }
-    if (duda) { pj *= 0.5; fuente += " · en duda"; }
+    const ffm = capMezclaFF(c1 ? capFF(j.id, c1.g.gw) : null, pj, lesion ? "injury" : sancion ? "susp" : null);
+    if (ffm) { pj = ffm.pj; fuente = ffm.texto; }
+    else if (duda) { pj *= 0.5; fuente += " · en duda"; }
 
     const espProx = pj * mu * fProx;        // próxima jornada
     const espGen = pj * mu * fMed;          // visión de las próximas jornadas
@@ -1346,8 +1364,14 @@ function panelAprendizaje() {
     <p class="note" style="word-break:break-word">Parámetros en uso: ${esc(params)}</p></details>`;
 }
 
+function cargarAlineaciones() {
+  fetch("alineaciones.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); } });
+}
 function cargarCalendario() {
   cargarParametros();
+  cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
@@ -1435,6 +1459,7 @@ function clavesCandidato(c, r) {
     let txt;
     if (c.confirmado) txt = `<p>El once de su partido ya está confirmado, así que no hay incertidumbre: ${c.pj > 0.5 ? "es titular" : "no está en el once"}.</p>`;
     else if (c.pj <= 0.05) txt = `<p>${esc(c.fuente)}: prácticamente no puede jugar.</p>`;
+    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dice Futbol Fantasy y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo. Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     else txt = `<p>El once todavía no está confirmado. Su probabilidad de jugar parte de <b>${pc(CAP.P_XI_BASE)} + ${pc(CAP.P_XI_REGULAR)} × su titularidad</b> si está en el once probable de Mister, y es mucho menor si no está.
       Su titularidad estimada es del <b>${pc(c.tasa)}</b> (mezcla de las últimas 5 jornadas y de toda la temporada), lo que da <b>${pc(c.pj)}</b>.${c.suplente ? ` Al no estar en el once probable, si juega sería suplente y se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     cl.push(claveHtml("🟢", "Disponibilidad", esc(c.fuente) + (c.rota ? ` · rota (titular en ~${pc(c.tasa)})` : ""), c.confirmado ? (c.pj > 0.5 ? "Titular" : "Fuera") : pc(c.pj), tono, txt));

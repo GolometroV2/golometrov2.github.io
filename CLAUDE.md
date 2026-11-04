@@ -2,6 +2,9 @@
 
 Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`, sin librerías externas de datos) que lee los JSON que generan los scripts de Python y GitHub Actions. Idioma de la página y de los textos: **español de España**. Pestañas: Clasificación, Equipos (PIN), Capitán (PIN), Mercado (PIN).
 
+## Datos de titularidad (prioridad absoluta del dueño)
+`alineaciones.json` (lo genera `alineaciones_ff.py` cada 2 horas desde futbolfantasy.com) da la probabilidad de ser titular de cada jugador en su próximo partido. El capitán y el mercado la usan (80 % Futbol Fantasy, 20 % modelo propio, función `capMezclaFF`). `alineaciones_historial.json` guarda la última probabilidad antes de cada partido: cuando haya varias jornadas, calibra con ella cuánto fiarse de Futbol Fantasy (comparando con quién jugó de verdad) y ajusta `FF_PESO` y `FF_SUB`. No hagas más peticiones a futbolfantasy.com ni cambies el ritmo del lector.
+
 ## Qué tienes que hacer en cada ejecución
 1. Lee `MEJORAS.md` (lo hecho y las ideas pendientes) y los datos de los JSON.
 2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioriza: errores y datos raros > precisión del modelo (capitán y mercado) > herramientas nuevas (por ejemplo comparadores, histórico de pujas, resumen de jornada) > diseño.
