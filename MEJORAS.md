@@ -32,7 +32,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Rehacer el diseño completo de forma profesional, moderna y actual (ver sección DISEÑO de CLAUDE.md). Fases: 1 sistema de diseño, 2 cabecera y navegación, 3 Clasificación, 4 Equipos, 5 Capitán, 6 Mercado, 7 microinteracciones y accesibilidad, 8 revisión final.
 
 ## Ideas pendientes (de más a menos valor)
-1. Revisar que cada pestaña se ve bien en móvil pequeño (360 px) y corregir lo que se corte.
+1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. Historial de pujas ideales frente al precio real de cierre (cuando haya datos suficientes) para calibrar la puja.
 3. Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
 4. Comparador de dos jugadores (puntos esperados, valor, partido).
