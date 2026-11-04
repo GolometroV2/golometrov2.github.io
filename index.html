@@ -195,6 +195,15 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .cp{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
 .cp.top{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;list-style:none}
 .jplist{list-style:none;padding:0;margin:0}
+.cp.hero{border-color:var(--accFg);background:linear-gradient(180deg,var(--accBg),var(--panel) 70%);padding:14px}
+.hero-et{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accFg);margin:0 0 8px}
+.cp.hero .jp-right b{font-size:22px}
+.cdet{margin-top:8px}
+.cdet>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--accFg);list-style:none}
+.cdet>summary::-webkit-details-marker{display:none}
+.cdet>summary::after{content:"▾";margin-left:6px;transition:transform .2s}
+.cdet[open]>summary::after{transform:rotate(180deg)}
+.capsel{margin-bottom:6px}
 .medal{width:26px;text-align:center;font-size:20px;flex:none}
 .jp-pos2{margin-left:6px;border-radius:5px;padding:0 5px;font-size:10px;font-weight:800;color:#111315}
 .cp .tendline{margin:8px 0 0;text-align:left}
@@ -1787,9 +1796,10 @@ function tarjetaCap(c, i, grande, r) {
   const est = ESTADO(c.p.status);
   const aviso = c.real != null ? `<div class="alerta" style="background:var(--blueBg);color:var(--blue)">Ya ha jugado: ${c.real} pts${c.m > 1 ? ` · como capitán ×${coma(c.m)} = ${nf1.format(c.real * c.m)}` : ""}</div>`
     : c.pj < 0.7 && !c.confirmado ? `<div class="alerta">Puede no jugar (${pc(c.pj)})</div>` : "";
-  return `<li class="cp ${grande ? "top" : ""}"><div class="cph">
+  const etiqueta = i === 0 ? `<div class="hero-et">Capitán recomendado</div>` : "";
+  return `<li class="cp ${grande ? "top" : ""} ${i === 0 ? "hero" : ""}">${etiqueta}<div class="cph">
       <div class="medal">${medalla}</div>
-      <div class="jp-photo" style="width:${grande ? 52 : 42}px;height:${grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
+      <div class="jp-photo" style="width:${i === 0 ? 64 : grande ? 52 : 42}px;height:${i === 0 ? 74 : grande ? 60 : 48}px">${img(c.p.photo, "")}</div>
       <div class="jp-info">
         <div class="jp-name"><span>${esc(c.p.short || c.p.name)}</span><span class="jp-pos2" style="background:var(--${esc(String(c.pos).toLowerCase())})">${esc(c.pos)}</span>${est ? `<span class="st st-${est[0]}" title="${esc(est[2])}">${est[1]}</span>` : ""}</div>
         <div class="jp-val">${img(c.rivalEscudo, "shield")} vs ${esc(c.rivalNombre || "?")} · ${c.casa ? "en casa" : "fuera"}</div>
@@ -1797,7 +1807,7 @@ function tarjetaCap(c, i, grande, r) {
       </div>
       <div class="jp-right"><b class="up">+${nf1.format(c.extra)}</b><small>puntos extra</small><small>${nf1.format(c.esp)} pts × (×${coma(c.m)} − 1)</small></div>
     </div>${aviso}
-    <div class="claves">${clavesCandidato(c, r)}</div></li>`;
+    <details class="cdet"><summary>Ver por qué</summary><div class="claves">${clavesCandidato(c, r)}</div></details></li>`;
 }
 
 // Resumen de cada rival de la jornada y cómo puntúa contra él cada posición
@@ -1825,7 +1835,7 @@ function pintarCapitan() {
   if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
-  const pills = E.managers.map((m, i) => `<button class="mbtn ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}" title="${esc(m.name)}">${avatar(m, i)}<span class="mn">${esc(m.name)}</span><span class="ms">${m.squadValue ? eur(m.squadValue) : ""}</span></button>`).join("");
+  const pills = E.managers.map(m => `<button class="pill ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
   const cg = capCongelar({ cal: CAL, D, E, gw: gwVer });
@@ -1857,7 +1867,7 @@ function pintarCapitan() {
   const congel = r.congelada ? `<p class="aviso" style="margin:0 0 10px;background:var(--blueBg);color:var(--blue)">🔒 La jornada ya ha empezado: la recomendación se mantiene como estaba antes del primer partido. Los resultados que van saliendo no la cambian.</p>` : "";
   const futura = r.gw && r.gw !== actual ? `<p class="aviso" style="margin:0 0 10px">Estás viendo una jornada futura: los onces aún no se conocen y la forma de los jugadores puede cambiar con los partidos que quedan.</p>` : "";
   cont.innerHTML = `${selJ}${futura}${congel}<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
-    <div class="mgrid" role="group" aria-label="Manager">${pills}</div>
+    <div class="pills eqsel capsel" role="group" aria-label="Manager">${pills}</div>
     <div style="margin-top:12px">${cuerpo}</div>`;
 }
 
