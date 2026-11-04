@@ -292,6 +292,9 @@ function cargarEquipos() {
 function pintarNav() {
   $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"], ["mer", (eqOk ? "💸" : "🔒") + " Mercado"]]
     .map(([k, t]) => `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}">${t}</button>`).join("");
+  // En móvil la barra se desplaza: dejar visible la pestaña activa
+  const nav = $("#nav"), on = nav.querySelector(".tab.on");
+  if (on) nav.scrollLeft = Math.max(0, on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2);
 }
 
 function ir(sec) {
