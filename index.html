@@ -389,6 +389,11 @@ code{color:var(--accFg)}
 .du-p{position:relative;height:12px;background:var(--panel2);border-radius:6px}
 .du-p::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--mut)}
 .du-p i{position:absolute;top:0;bottom:0;border-radius:6px}
+.mh{margin-top:14px;background:linear-gradient(165deg,var(--accBg),var(--panel) 55%);border:1px solid var(--acc);border-radius:18px;padding:16px}
+.mh.prio-imperdible{border-color:var(--red);background:linear-gradient(165deg,var(--redBg),var(--panel) 55%)}
+.mh .ch-q b{font-size:20px}
+.mh-puja{color:var(--accFg)}
+.mh .ch-kpi b{font-size:19px}
 </style>
 </head>
 <body>
@@ -1625,6 +1630,29 @@ const merPuja = v => v.toLocaleString("es-ES") + " €";
 const merEur = v => v >= 1e6 ? nf.format(Math.round(v / 1e4) / 100) + " M" : nf.format(Math.round(v / 1e3)) + " k";
 const merFecha = ts => enMadrid(new Date(ts * 1000).toISOString(), { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
+// Oportunidad del día: el libre con mejor puntuación entre los que merece la pena fichar
+function fraseMer(r) {
+  const f = [];
+  if (r.pct != null && r.pct >= 0.75) f.push(`entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]}`);
+  f.push(`${nf1.format(r.espGen)} pts por jornada`);
+  if (r.pj < 0.7) f.push(`juega solo un ${pc(r.pj)} de las veces`);
+  if (Math.abs(r.apre) >= 0.01) f.push(`se espera que ${r.apre > 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % antes de jugar`);
+  const et = ["normal", "evitar"].includes(r.prio) ? "Nada urgente" : r.etiqueta.replace(/^./, m => m.toUpperCase());
+  return et + ": " + (f.length > 1 ? f.slice(0, -1).join(", ") + " y " + f[f.length - 1] : f[0]) + ".";
+}
+function heroMer(r, cierre) {
+  const j = r.j, c = r.rival, sobre = Math.round((r.puja / r.V - 1) * 100);
+  const quedan = cierre ? Math.max(0, cierre - Date.now() / 1000) : 0, hh = Math.floor(quedan / 3600), mm = Math.floor(quedan % 3600 / 60);
+  return `<section class="mh prio-${r.prio}">
+    <div class="ch-top">${`<span class="cara" style="--t:84px"><span class="cara-i">${esc(iniciales(j.name))}</span>${j.photo ? `<img src="${esc(j.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<img class="cara-e" src="${esc(merUrlEscudo(j.teamId))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>`}
+      <div class="ch-q"><small>${["normal", "evitar"].includes(r.prio) ? "Lo mejor de hoy, sin prisa" : "La oportunidad del día"}${cierre ? ` · se resuelve en ${hh} h ${mm} min` : ""}</small>
+        <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
+        <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
+    <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
+    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.</p>
+  </section>`;
+}
+
 function merTarjeta(r) {
   const j = r.j, c = r.rival;
   const est = (j.status || []).includes("injury") ? ["injury", "✚", "Lesionado"] : (j.status || []).includes("doubt") ? ["doubt", "?", "En duda"] : null;
@@ -1661,17 +1689,20 @@ function pintarMercado() {
   if (r.error) { cont.innerHTML = `<div class="msg">${esc(r.error)}</div>`; return; }
   const cierre = Math.min(...MER_DATA.libres.map(x => x.ends).filter(Boolean));
   const viejo = Date.now() / 1000 - Date.parse(MER_DATA.updatedAt) / 1000 > 30 * 3600;
+  const mejor = r.lista.filter(x => !["normal", "evitar"].includes(x.prio)).sort((a, b) => b.score - a.score)[0]
+    || r.lista.filter(x => x.prio === "normal").sort((a, b) => b.score - a.score)[0];
   const grupos = MER_GRUPOS.map(([k, t]) => {
-    const l = r.lista.filter(x => x.prio === k);
+    const l = r.lista.filter(x => x.prio === k && x !== mejor);
     return l.length ? `<h3 class="sec">${t}</h3><ul class="mlist">${l.map(merTarjeta).join("")}</ul>` : "";
   }).join("");
-  const resto = r.lista.filter(x => x.prio === "normal" || x.prio === "evitar");
+  const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
   const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
   cont.innerHTML = `
     <section class="card"><h2 style="margin:0 0 2px;font-size:16px">💸 Mercado · jugadores libres</h2>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
-    ${hay ? grupos : `<div class="msg">Hoy no hay ningún libre que merezca la pena.</div>`}
+    ${mejor ? heroMer(mejor, cierre) : ""}
+    ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
     <p class="note">La puja ideal es una guía: sube con la prioridad, con lo que se espera que crezca su valor hasta que pueda puntuar y baja (en porcentaje) cuanto más caro es el jugador.</p>`;
 }
