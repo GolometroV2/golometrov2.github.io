@@ -26,6 +26,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - 2026-11-04 (rediseño fase 7/8, parte 2): revisado el contraste del texto atenuado (≥ 5:1 en oscuro y claro, AA correcto); el foco visible ya existía. Añadidas etiquetas accesibles a la barra de puntuación del Mercado, a las barras de las últimas 5 jornadas, a los puntos del PIN y a la tabla de calor por jornada (las dos gráficas grandes ya las tenían). Solo atributos aria; lógica intacta. Probado a 360 px: sin desborde ni errores de consola. Fase 7 completa. Siguiente: fase 8 (coherencia de radios, títulos y espaciados entre tarjetas).
 - 2026-11-04 (rediseño fase 8/8, coherencia): todos los radios de tarjetas, selectores y botones usan ahora `--r-m` (12 px) o `--r-l` (16 px) en vez de valores sueltos (12/14/16/18 px). Lógica intacta. Probado a 390 px: sin errores de consola ni scroll horizontal. Idea: unificar también los tamaños de título de tarjeta.
 - 2026-11-04 (coherencia de títulos): los títulos de «Últimos movimientos» y «Mercado · jugadores libres» usan ahora la cabecera estándar `.gh`, y los tres subtítulos del panel de análisis del Capitán usan `h3.sec` (antes estilos en línea de 14/16 px). Solo HTML; lógica intacta. Probado a 390 px (Equipos y Mercado): sin errores de consola ni scroll horizontal. Con esto se cierra la idea de unificar títulos. Siguiente: ideas pendientes (historial de pujas, comparador).
+- 2026-11-04 (herramienta nueva): **Comparador de jugadores** en Clasificación (índice «🆚 Jugadores»): dos casillas con buscador de nombre sobre los 537 jugadores de `jugadores.json`; compara puntos, media, media de las últimas 5, valor y puntos por millón, con valores, cláusulas, propietario y últimas 5 jornadas. Solo lectura de datos existentes. Probado a 360 px: sin errores ni desborde. Idea: añadir el comparador también en Mercado con puntos esperados y próximo rival.
 
 ## Ideas del dueño (máxima prioridad, léelas siempre)
 - Capitán con un solo algoritmo de riesgo (sin pestañas de modo): ya implementado en main; el rediseño de Capitán debe partir de esa lista única. Ver CLAUDE.md.
@@ -35,5 +36,5 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. Historial de pujas ideales frente al precio real de cierre (cuando haya datos suficientes) para calibrar la puja.
 3. Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
-4. Comparador de dos jugadores (puntos esperados, valor, partido).
+4. Comparador de jugadores: hecho en Clasificación; falta versión con puntos esperados y partido.
 5. Gráfico de la evolución del valor de plantilla de cada manager.
