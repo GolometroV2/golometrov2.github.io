@@ -415,6 +415,12 @@ code{color:var(--accFg)}
 .rv1{background:color-mix(in srgb,var(--pos) 45%,var(--panel2))}.rv2{background:color-mix(in srgb,var(--pos) 22%,var(--panel2))}
 .rv3{background:var(--panel2)}.rv4{background:color-mix(in srgb,var(--red) 22%,var(--panel2))}.rv5{background:color-mix(in srgb,var(--red) 45%,var(--panel2))}
 .rv0{color:var(--mut)}
+.av-j{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:10px 12px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.av-r{flex:none;min-width:74px;text-align:center;font-weight:800;font-size:14px;padding:8px 6px;border-radius:10px;background:var(--acc);color:var(--accTxt)}
+.av-j>span:last-child{display:flex;flex-direction:column;min-width:0}
+.av-j b{font-size:14px}.av-j small{font-size:12px;color:var(--mut)}
+.av-j.vivo .av-r{background:var(--red);color:#fff;animation:latido 2s ease-in-out infinite}
+@keyframes latido{50%{opacity:.6}}
 </style>
 </head>
 <body>
@@ -428,6 +434,7 @@ code{color:var(--accFg)}
 </div></header>
 <main>
   <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
+  <div id="aviso" aria-live="polite"></div>
   <nav class="tabs" id="nav" aria-label="Secciones"></nav>
   <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
   <div id="eq" hidden></div>
@@ -510,6 +517,7 @@ function ir(sec) {
   $("#mer").hidden = sec !== "mer";
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
+  pintarAviso();
   if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
   if (sec === "mer") { cargarMercado(); cargarCalendario(); cargarEquipos(); pintarMercado(); }
 }
@@ -525,8 +533,27 @@ function cargarDatos() {
     });
 }
 
+// Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
+function pintarAviso() {
+  const cont = $("#aviso");
+  if (!cont) return;
+  if (!CAL || !CAL.games || seccion !== "clas") { cont.innerHTML = ""; return; }
+  const ahora = Date.now() / 1000;
+  const pend = CAL.games.filter(g => !capNum(g.gh) && g.status !== "played" && g.ts);
+  const gws = [...new Set(pend.map(g => g.gw))].filter(gw => pend.filter(g => g.gw === gw).length >= 5).sort((a, b) => a - b);
+  if (!gws.length) { cont.innerHTML = ""; return; }
+  const gw = gws[0], todos = CAL.games.filter(g => g.gw === gw), ini = Math.min(...todos.map(g => g.ts || 9e12));
+  const quedan = pend.filter(g => g.gw === gw).length;
+  const falta = ini - ahora, d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
+  const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  cont.innerHTML = falta > 0
+    ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
+    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`;
+}
+
 // Carga automática inicial al abrir la página
 cargarDatos();
+cargarCalendario();
 pintarNav();
 
 // ===== TEMPORAL: carga manual del JSON para pruebas (borrar este bloque y el <label id="tmp-carga">) =====
@@ -1946,7 +1973,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
