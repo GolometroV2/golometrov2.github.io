@@ -421,6 +421,13 @@ code{color:var(--accFg)}
 .av-j b{font-size:14px}.av-j small{font-size:12px;color:var(--mut)}
 .av-j.vivo .av-r{background:var(--red);color:#fff;animation:latido 2s ease-in-out infinite}
 @keyframes latido{50%{opacity:.6}}
+.oi{background:repeating-linear-gradient(180deg,#1f6b3d 0 52px,#1c6338 52px 104px);border-radius:14px;padding:12px 4px;display:flex;flex-direction:column;gap:12px}
+.oi-l{display:flex;justify-content:space-around;gap:2px}
+.oi-p{display:flex;flex-direction:column;align-items:center;min-width:0;width:20%;position:relative}
+.oi-p .cara{box-shadow:0 0 0 2px #fff}
+.oi-n{max-width:100%;font-size:11px;font-weight:700;margin-top:4px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0009}
+.oi-pt{position:absolute;top:-4px;left:calc(50% + 12px);min-width:20px;height:18px;padding:0 4px;border-radius:9px;background:var(--acc);color:var(--accTxt);font-size:11px;font-weight:800;display:grid;place-items:center}
+.oi-p small{font-size:9.5px;color:#e6f2ea;opacity:.85;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -808,6 +815,51 @@ function pintarCapitanes() {
 }
 const nf1c = v => new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 }).format(v);
 
+/* ---------- Once ideal de la jornada (con todos los jugadores de la liga) ---------- */
+let LIGAJ = null;
+function cargarLigaJ() {
+  if (LIGAJ) return;
+  LIGAJ = { cargando: true };
+  Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {} }; if (seccion === "clas" && D) pintarCronica(); });
+}
+const FORMACIONES = [[3, 4, 3], [3, 5, 2], [4, 3, 3], [4, 4, 2], [4, 5, 1], [5, 3, 2], [5, 4, 1]];
+function onceIdeal(gw) {
+  const k = String(parseInt(String(gw).slice(1)));
+  const md = D.matchdays[gw] || {}, enOnce = {};
+  Object.entries(md).forEach(([uid, x]) => (x.players || []).forEach(p => { (enOnce[p.id] = enOnce[p.id] || []).push(uid); }));
+  let cands = [];
+  if (LIGAJ && LIGAJ.jug && Object.values(LIGAJ.pts).some(v => v[k] != null)) {
+    cands = Object.entries(LIGAJ.pts).filter(([, v]) => capNum(v[k])).map(([id, v]) => { const p = LIGAJ.jug[id] || {}; return { id, name: p.name, pos: p.pos, teamId: p.teamId, pts: v[k], owner: p.ownerName || null }; }).filter(c => c.pos);
+  } else {     // antes de que existiera el historial de toda la liga: solo los jugadores de vuestros onces
+    const v = {}; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played) v[p.id] = { id: String(p.id), name: p.name, pos: p.pos, teamId: p.teamId, pts: p.basePoints ?? p.points }; }));
+    cands = Object.values(v);
+  }
+  if (cands.length < 11) return null;
+  const por = pos => cands.filter(c => c.pos === pos).sort((a, b) => b.pts - a.pts);
+  const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  let mejor = null;
+  FORMACIONES.forEach(([d, m, f]) => {
+    if (!L.PT.length || L.DF.length < d || L.MC.length < m || L.DL.length < f) return;
+    const x = { form: `${d}-${m}-${f}`, PT: L.PT.slice(0, 1), DF: L.DF.slice(0, d), MC: L.MC.slice(0, m), DL: L.DL.slice(0, f) };
+    x.total = ["PT", "DF", "MC", "DL"].reduce((t, p) => t + x[p].reduce((s, c) => s + c.pts, 0), 0);
+    if (!mejor || x.total > mejor.total) mejor = x;
+  });
+  if (mejor) mejor.enOnce = enOnce;
+  return mejor;
+}
+function htmlOnceIdeal(gw) {
+  if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return `<p class="note">Cargando jugadores de la liga…</p>`; }
+  const o = onceIdeal(gw);
+  if (!o) return `<p class="note">No hay datos suficientes de esta jornada.</p>`;
+  const nombreM = uid => (D.managers.find(m => String(m.id) === String(uid)) || {}).name;
+  const jugador = c => { const de = (o.enOnce[c.id] || []).map(nombreM).filter(Boolean);
+    return `<div class="oi-p">${cara(c.id, c.name, c.teamId, 40)}<b class="oi-n">${esc(apellido(c.name))}</b><span class="oi-pt">${c.pts}</span><small>${de.length ? (de.length > 1 ? `en ${de.length} onces` : esc(de[0])) : c.owner ? `ahora de ${esc(c.owner)}` : "nadie lo alineó"}</small></div>`; };
+  const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
+  const alineados = ["PT", "DF", "MC", "DL"].reduce((t, p) => t + o[p].filter(c => (o.enOnce[c.id] || []).length).length, 0);
+  return `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> entre los 11 · ${alineados} de ellos estaban en algún once de la liga.</p><div class="oi">${filas}</div>`;
+}
+
 /* ---------- Crónica de la jornada ---------- */
 let cronJ = null;
 function pintarCronica() {
@@ -847,8 +899,16 @@ function pintarCronica() {
   ].join("");
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
-    <div class="ct-grid">${tiles}</div>`;
+    <div class="ct-grid">${tiles}</div>
+    <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
 }
+let onceAbierto = false;
+document.addEventListener("toggle", e => {
+  if (!e.target.matches || !e.target.matches("details[data-oi]")) return;
+  if (e.target.open === onceAbierto) return;
+  onceAbierto = e.target.open;
+  if (onceAbierto) pintarCronica();
+}, true);
 
 /* ---------- Duelo cara a cara ---------- */
 let duelo = null;
