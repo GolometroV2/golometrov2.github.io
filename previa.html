@@ -477,6 +477,16 @@ code{color:var(--accFg)}
 .esq i{display:block;height:64px;border-radius:var(--r-m);background:linear-gradient(90deg,var(--panel) 25%,var(--line) 50%,var(--panel) 75%);background-size:200% 100%;animation:esq 1.3s linear infinite}
 .esq i:nth-child(2){height:48px}.esq i:nth-child(3){height:80px}
 @keyframes esq{to{background-position:-200% 0}}
+.msel{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;margin:0 0 2px}
+.msel-b{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:var(--tap);padding:6px 0 4px;border-radius:12px;min-width:0}
+.msel-b .av{width:min(40px,calc((min(100vw,680px) - 32px) / var(--n) - 8px));height:auto;aspect-ratio:1;font-size:13px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s,opacity .15s;opacity:.55}
+.msel-t{font-size:11px;font-weight:600;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msel-b:hover .av{opacity:.85}
+.msel-b.on .av{opacity:1;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--acc);transform:scale(1.06)}
+.msel-b.on .msel-t{color:var(--txt);font-weight:800}
+.msel-res{background:var(--panel2);color:var(--txt);font-size:20px!important;font-weight:800}
+.msel-n{margin:2px 0 12px;font-size:13px;color:var(--mut);text-align:center}
+.msel-n b{color:var(--txt)}
 </style>
 </head>
 <body>
@@ -2082,7 +2092,7 @@ function bloqueParaTi(r) {
   let rc;
   try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
   const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
-  const pills = E.managers.map(m => `<button class="pill ${merMan === m.id ? "on" : ""}" data-mm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
+  const pills = selectorM(merMan, "data-mm", null, "Manager");
   let cuerpo = `<p class="note">No hay datos suficientes de esta plantilla.</p>`;
   if (o) {
     const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
@@ -2095,7 +2105,7 @@ function bloqueParaTi(r) {
       : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
   }
   return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
-    <div class="pills" role="group" aria-label="Manager" style="margin-bottom:8px">${pills}</div>${cuerpo}
+    ${pills}${cuerpo}
     <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado.</p></section>`;
 }
 
@@ -2417,6 +2427,17 @@ function bloqueRivales(r, candidatos) {
   return items.length ? `<h3 class="sec">🛡️ Rivales de tus jugadores</h3><div class="claves">${items.join("")}</div>` : "";
 }
 
+// Selector de manager: todas las caras a la vista en una fila (sin deslizar) y el nombre completo del elegido debajo
+const nombreCorto = n => { const t = String(n || "").replace(/[^\p{L}\p{N}\s.]/gu, "").trim().split(/\s+/)[0] || "?"; return t.length > 8 ? t.slice(0, 7) + "…" : t; };
+function selectorM(sel, attr, extra, etiqueta, dato) {
+  const ms = ((E && E.managers) || []).map((m, i) => ({ m, i }));
+  const items = [...(extra ? [extra] : []), ...ms.map(({ m, i }) => ({ id: m.id, html: avatar(m, i), corto: nombreCorto(m.name), largo: m.name, dato: dato ? dato(m) : "" }))];
+  const elegido = items.find(x => x.id === sel);
+  return `<div class="msel" role="group" aria-label="${esc(etiqueta || "Manager")}" style="--n:${items.length}">${items.map(x =>
+    `<button class="msel-b ${x.id === sel ? "on" : ""}" ${attr}="${esc(x.id)}" aria-pressed="${x.id === sel}" title="${esc(x.largo)}">${x.html}<span class="msel-t">${esc(x.corto)}</span></button>`).join("")}</div>
+    ${elegido ? `<p class="msel-n"><b>${esc(elegido.largo)}</b>${elegido.dato ? ` · ${elegido.dato}` : ""}</p>` : ""}`;
+}
+
 function pintarCapitan() {
   const cont = $("#cap");
   if (!eqOk) {
@@ -2427,7 +2448,7 @@ function pintarCapitan() {
   if (!E) { cont.innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
-  const pills = E.managers.map(m => `<button class="pill ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
+  const pills = selectorM(capMan, "data-cm", null, "Manager", m => m.squadValue ? eur(m.squadValue) : "");
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   const gwVer = capGw ?? capJornadaObjetivo(CAL).gw;
   const cg = capCongelar({ cal: CAL, D, E, gw: gwVer });
@@ -2461,7 +2482,7 @@ function pintarCapitan() {
   const congel = r.congelada ? `<p class="aviso" style="margin:0 0 10px;background:var(--blueBg);color:var(--blue)">🔒 La jornada ya ha empezado: la recomendación se mantiene como estaba antes del primer partido. Los resultados que van saliendo no la cambian.</p>` : "";
   const futura = r.gw && r.gw !== actual ? `<p class="aviso" style="margin:0 0 10px">Estás viendo una jornada futura: los onces aún no se conocen y la forma de los jugadores puede cambiar con los partidos que quedan.</p>` : "";
   cont.innerHTML = `${selJ}${futura}${congel}<p class="note" style="margin:0 0 10px">Jornada ${r.gw || "–"} · onces confirmados en ${r.confirmados || 0} de ${r.partidos || 0} partidos · calendario actualizado ${esc((CAL.updatedAt ? fechaMadrid(CAL.updatedAt) : CAL.updated) || "—")} (hora de Madrid). El capitán debe estar en tu once inicial.</p>
-    <div class="pills eqsel capsel" role="group" aria-label="Manager">${pills}</div>
+    ${pills}
     <div style="margin-top:12px">${cuerpo}</div>`;
 }
 
@@ -2484,13 +2505,10 @@ function pintarEquipos() {
   if (!E) { cont.innerHTML = `<div class="msg">Todavía no hay datos de equipos.<br>Se generan con <code>seguimiento_equipos.py</code>.</div>`; return; }
   const hp = id => (E.history || {})[id] || [];
   const ms = E.managers.map((m, i) => ({ ...m, i }));
-  const pills = [["resumen", "Resumen"], ...ms.map(m => [m.id, m.name])]
-    .map(([id, t]) => `<button class="pill ${eqSel === id ? "on" : ""}" data-e="${esc(id)}">${esc(t)}</button>`).join("");
+  const pills = selectorM(eqSel, "data-e", { id: "resumen", html: `<span class="av msel-res" aria-hidden="true">≡</span>`, corto: "Todos", largo: "Resumen de la liga", dato: "" }, "Equipo", m => m.squadValue ? eur(m.squadValue) : "");
   const sel = ms.find(x => x.id === eqSel);
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
-    <div class="pills eqsel" role="group" aria-label="Equipo">${pills}</div>${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
-  const on = cont.querySelector(".eqsel .pill.on");
-  if (on) { const bar = on.parentElement; bar.scrollLeft = on.offsetLeft - bar.clientWidth / 2 + on.offsetWidth / 2; }
+    ${pills}${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
 }
 
 /* ---------- Lista principal ---------- */
