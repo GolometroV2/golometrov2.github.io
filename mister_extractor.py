@@ -684,7 +684,7 @@ def main():
         print(f"   {fg['name'][:30]:<30} suma={suma:>4} | total={fg['points']:>4} | {estado}")
 
     resultado = {
-        "leagueName": "Mi Liga Mister Fantasy",
+        "leagueName": "MONEYBALL",
         "season": "2026/2027",
         "lastUpdated": hora_madrid().strftime("%d/%m/%Y %H:%M"),
         "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
