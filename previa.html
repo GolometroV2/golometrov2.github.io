@@ -405,6 +405,16 @@ code{color:var(--accFg)}
 .pr-q b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr-t{font-size:11.5px;color:var(--mut);line-height:1.3}
 @media (max-width:340px){.pr-grid{grid-template-columns:1fr}}
+.rvt{overflow-x:auto}
+.rvt table{border-collapse:separate;border-spacing:3px;width:100%;font-size:12.5px}
+.rvt th{text-align:left;font-weight:600;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+.rvt thead th{color:var(--mut);font-size:11px;text-align:center}
+.rvt td{height:34px;min-width:52px;border-radius:8px;text-align:center;white-space:nowrap}
+.rvt td .shield{width:18px;height:18px;vertical-align:middle}
+.rvt td span{font-size:10.5px;font-weight:700;margin-left:4px;vertical-align:middle}
+.rv1{background:color-mix(in srgb,var(--pos) 45%,var(--panel2))}.rv2{background:color-mix(in srgb,var(--pos) 22%,var(--panel2))}
+.rv3{background:var(--panel2)}.rv4{background:color-mix(in srgb,var(--red) 22%,var(--panel2))}.rv5{background:color-mix(in srgb,var(--red) 45%,var(--panel2))}
+.rv0{color:var(--mut)}
 </style>
 </head>
 <body>
@@ -499,7 +509,7 @@ function ir(sec) {
   $("#cap").hidden = sec !== "cap";
   $("#mer").hidden = sec !== "mer";
   pintarNav();
-  if (sec === "eq") pintarEquipos();
+  if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
   if (sec === "cap") { cargarEquipos(); cargarCalendario(); pintarCapitan(); }
   if (sec === "mer") { cargarMercado(); cargarCalendario(); cargarEquipos(); pintarMercado(); }
 }
@@ -1075,6 +1085,40 @@ function resumenEq(ms, hp) {
     <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
+// Próximos rivales de cada jugador de la plantilla, con la dificultad según lo que marca y encaja cada rival
+function bloqueRivalesEq(m) {
+  if (!CAL || !CAL.games) return "";
+  const ahora = Date.now() / 1000;
+  const pend = CAL.games.filter(g => g.status !== "played" && !capNum(g.gh) && (g.ts || 0) > ahora - 3 * 3600);
+  const gws = [...new Set(pend.map(g => g.gw))].filter(gw => pend.filter(g => g.gw === gw).length >= 5).sort((a, b) => a - b).slice(0, 3);   // sin partidos aplazados sueltos
+  if (!gws.length) return "";
+  const jug = CAL.games.filter(g => capNum(g.gh) && capNum(g.ga));
+  const eq = {};
+  jug.forEach(g => { [[g.home, g.gh, g.ga], [g.away, g.ga, g.gh]].forEach(([t, f, c]) => { const e = eq[t] || (eq[t] = { f: 0, c: 0, n: 0 }); e.f += f; e.c += c; e.n++; }); });
+  const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
+  const nombre = {}; CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
+  // dificultad 1 (fácil) a 5 (difícil): defensas y porteros miran cuánto marca el rival; medios y delanteros, cuánto encaja
+  const dif = (rival, pos, casa) => {
+    const e = eq[rival]; if (!e || !e.n) return 3;
+    const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg;
+    const w = { PT: 1, DF: 0.8, MC: 0.35, DL: 0.1 }[pos] ?? 0.5;
+    const x = w * (f - 1) - (1 - w) * (c - 1) + (casa ? -0.06 : 0.06);
+    return Math.max(1, Math.min(5, Math.round(3 + x * 5)));
+  };
+  const filas = m.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos) || b.value - a.value).map(p => {
+    const celdas = gws.map(gw => {
+      const g = pend.find(x => x.gw === gw && (x.home === p.teamId || x.away === p.teamId));
+      if (!g) return `<td class="rv0">—</td>`;
+      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = dif(r, p.pos, casa);
+      return `<td class="rv${d}" title="${esc(nombre[r] || "")} ${casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(r), "shield")}<span>${casa ? "C" : "F"}</span></td>`;
+    }).join("");
+    return `<tr><th><span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span> ${esc(p.short || p.name)}</th>${celdas}</tr>`;
+  }).join("");
+  return `<section class="card"><div class="gh"><h2>Próximos rivales</h2></div>
+    <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
+    <p class="note">Verde: partido fácil para su puesto; rojo: difícil. A defensas y porteros les afecta lo que marca el rival y a medios y delanteros lo que encaja. C: en casa · F: fuera.</p></section>`;
+}
+
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
@@ -1104,7 +1148,8 @@ function detalleEq(m, hp) {
     <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div></section>
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
-    <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>`;
+    <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
+    ${bloqueRivalesEq(m)}`;
 }
 
 async function sha256(t) {
@@ -1901,7 +1946,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { CAL = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
