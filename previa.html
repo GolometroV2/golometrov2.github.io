@@ -1733,9 +1733,19 @@ const FF_PESO = 0.8;     // peso de Futbol Fantasy frente al modelo propio al es
 const FF_SUB = 0.3;      // si no es titular, probabilidad de que aun así entre desde el banquillo
 function capFF(id, gw) { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(id)]; return (e && e[String(gw)]) || null; }
 // {pj, suplente, texto}: mezcla lo que dice Futbol Fantasy con la probabilidad calculada por el modelo propio
+// Calibración aprendida (autoajuste_capitan.py -> parametros_capitan.json -> futbolFantasy): cuántas veces juega de verdad
+// quien Futbol Fantasy da con un X % de titular. Interpolación lineal entre tramos; null si aún no hay datos suficientes.
+function capFFCalib(p) {
+  const t = PAR && PAR.futbolFantasy && PAR.futbolFantasy.tramos;
+  if (!t || t.length < 3) return null;
+  if (p <= t[0].pFF) return t[0].juega;
+  for (let i = 1; i < t.length; i++) if (p <= t[i].pFF) { const a = t[i - 1], b = t[i], w = (p - a.pFF) / Math.max(b.pFF - a.pFF, 1e-6); return a.juega + w * (b.juega - a.juega); }
+  return t[t.length - 1].juega;
+}
 function capMezclaFF(ff, pjModelo, estado) {
   if (!ff || estado === "susp") return null;
-  const pff = ff.conf ? ff.p : Math.min(0.98, ff.p + (1 - ff.p) * FF_SUB);
+  const cal = capFFCalib(ff.p);
+  const pff = ff.conf ? ff.p : cal != null ? cal : Math.min(0.98, ff.p + (1 - ff.p) * FF_SUB);
   let pj = ff.conf ? pff : FF_PESO * pff + (1 - FF_PESO) * pjModelo;
   if (estado === "injury" && ff.p < 0.5) pj = Math.min(pj, 0.5 * pjModelo + 0.5 * pff);
   const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular en el once de Futbol Fantasy" : "En el banquillo según Futbol Fantasy") : `Futbol Fantasy: ${Math.round(ff.p * 100)} % de ser titular`;
@@ -2597,7 +2607,7 @@ function clavesCandidato(c, r) {
     let txt;
     if (c.confirmado) txt = `<p>El once de su partido ya está confirmado, así que no hay incertidumbre: ${c.pj > 0.5 ? "es titular" : "no está en el once"}.</p>`;
     else if (c.pj <= 0.05) txt = `<p>${esc(c.fuente)}: prácticamente no puede jugar.</p>`;
-    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dice Futbol Fantasy y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo. Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
+    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dice Futbol Fantasy y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. ${capFFCalib(c.ffP) != null ? `En las jornadas pasadas, de los jugadores a los que Futbol Fantasy daba un ${Math.round(c.ffP * 100)} %, jugó (de titular o saliendo del banquillo) un ${Math.round(capFFCalib(c.ffP) * 100)} %.` : `Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo.`} Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     else txt = `<p>El once todavía no está confirmado. Su probabilidad de jugar parte de <b>${pc(CAP.P_XI_BASE)} + ${pc(CAP.P_XI_REGULAR)} × su titularidad</b> si está en el once probable de Mister, y es mucho menor si no está.
       Su titularidad estimada es del <b>${pc(c.tasa)}</b> (mezcla de las últimas 5 jornadas y de toda la temporada), lo que da <b>${pc(c.pj)}</b>.${c.suplente ? ` Al no estar en el once probable, si juega sería suplente y se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     cl.push(claveHtml("🟢", "Disponibilidad", esc(c.fuente) + (c.rota ? ` · rota (titular en ~${pc(c.tasa)})` : ""), c.confirmado ? (c.pj > 0.5 ? "Titular" : "Fuera") : pc(c.pj), tono, txt));
