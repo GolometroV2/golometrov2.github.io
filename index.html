@@ -467,6 +467,9 @@ code{color:var(--accFg)}
 .mv-x{flex:1;min-width:0}
 .mv-et{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:0 6px;margin-right:4px}
 .mv-c{background:var(--posBg);color:var(--pos)}.mv-v{background:var(--redBg);color:var(--red)}.mv-t{background:var(--accBg);color:var(--accFg)}
+.nov{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:var(--accBg);border:1px solid var(--acc)}
+.nov b{font-size:14px}.nov span{font-size:12.5px;line-height:1.45}
+.nov button{align-self:flex-end;min-height:36px;padding:0 14px;border-radius:999px;background:var(--acc);color:var(--accTxt);font-weight:700;font-size:13px}
 </style>
 </head>
 <body>
@@ -580,10 +583,20 @@ function cargarDatos() {
 }
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
+// Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
+const NOVEDADES_V = "2026-11-05";
+function htmlNovedades() {
+  let visto = false;
+  try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
+  if (visto) return "";
+  return `<div class="nov"><b>Novedades en el Golómetro</b>
+    <span>En la clasificación: crónica de cada jornada con su once ideal, la carrera por el título, quién ganará la liga, duelos cara a cara, capitanes con foto y premios. En Capitán: tu once recomendado. En Mercado: quién mejora tu once. En Equipos: evolución del valor, cláusulas rentables y próximos rivales.</span>
+    <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
+}
 function pintarAviso() {
   const cont = $("#aviso");
   if (!cont) return;
-  if (!CAL || !CAL.games || seccion !== "clas") { cont.innerHTML = ""; return; }
+  if (!CAL || !CAL.games || seccion !== "clas") { cont.innerHTML = seccion === "clas" ? htmlNovedades() : ""; return; }
   const ahora = Date.now() / 1000;
   const pend = CAL.games.filter(g => !capNum(g.gh) && g.status !== "played" && g.ts);
   const gws = [...new Set(pend.map(g => g.gw))].filter(gw => pend.filter(g => g.gw === gw).length >= 5).sort((a, b) => a - b);
@@ -592,9 +605,9 @@ function pintarAviso() {
   const quedan = pend.filter(g => g.gw === gw).length;
   const falta = ini - ahora, d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
   const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
-  cont.innerHTML = falta > 0
+  cont.innerHTML = htmlNovedades() + (falta > 0
     ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
-    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`;
+    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
 }
 
 // Carga automática inicial al abrir la página
@@ -2530,11 +2543,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.nov) { try { localStorage.setItem("novedades", NOVEDADES_V); } catch (err) {} const n = t.closest(".nov"); if (n) n.remove(); return; }
   if (d.mm !== undefined) { merMan = d.mm; pintarMercado(); return; }
   if (d.comp) { compartirCronica(t); return; }
   if (d.ir) { const s = document.getElementById(d.ir); if (s) window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 70, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
