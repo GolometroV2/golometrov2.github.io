@@ -471,9 +471,16 @@ code{color:var(--accFg)}
 .nov{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:var(--accBg);border:1px solid var(--acc)}
 .nov b{font-size:14px}.nov span{font-size:12.5px;line-height:1.45}
 .nov button{align-self:flex-end;min-height:36px;padding:0 14px;border-radius:999px;background:var(--acc);color:var(--accTxt);font-weight:700;font-size:13px}
+.skip{position:absolute;left:8px;top:-60px;z-index:100;background:var(--acc);color:var(--accTxt);padding:12px 16px;border-radius:var(--r-m);font-weight:700}
+.skip:focus{top:8px}
+.esq{display:grid;gap:10px;padding:8px 0}
+.esq i{display:block;height:64px;border-radius:var(--r-m);background:linear-gradient(90deg,var(--panel) 25%,var(--line) 50%,var(--panel) 75%);background-size:200% 100%;animation:esq 1.3s linear infinite}
+.esq i:nth-child(2){height:48px}.esq i:nth-child(3){height:80px}
+@keyframes esq{to{background-position:-200% 0}}
 </style>
 </head>
 <body>
+<a class="skip" href="#app">Saltar al contenido</a>
 <header class="nav"><div>
   <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5l3.8 2.8-1.5 4.4H9.7l-1.5-4.4z"/><path d="M12 7.5V3M15.8 10.3l4.2-1.4M14.3 14.7l2.6 3.6M9.7 14.7l-2.6 3.6M8.2 10.3L4 8.9"/></svg><span>Golómetro <span>V2</span></span></div>
   <span class="acciones">
@@ -482,11 +489,11 @@ code{color:var(--accFg)}
     <button class="refresh" onclick="cargarDatos()">🔄 Actualizar</button>
   </span>
 </div></header>
-<main>
+<main id="contenido">
   <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
   <div id="aviso" aria-live="polite"></div>
   <nav class="tabs" id="nav" aria-label="Secciones"></nav>
-  <div id="app"><div class="msg">Cargando datos de la liga...</div></div>
+  <div id="app" aria-busy="true"><div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div></div>
   <div id="eq" hidden></div>
   <div id="cap" hidden></div>
   <div id="mer" hidden></div>
@@ -1399,9 +1406,9 @@ async function teclaPin(k) {
   eqOk = true; pin = "";
   try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
   pintarNav();
-  $("#eq").innerHTML = `<div class="msg">Cargando equipos...</div>`;
-  $("#cap").innerHTML = `<div class="msg">Cargando plantillas...</div>`;
-  $("#mer").innerHTML = `<div class="msg">Cargando mercado...</div>`;
+  $("#eq").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
+  $("#cap").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
+  $("#mer").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
   cargarEquipos(); cargarCalendario(); if (seccion === "mer") cargarMercado();
 }
 
@@ -2095,7 +2102,7 @@ function bloqueParaTi(r) {
 function pintarMercado() {
   const cont = $("#mer");
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
-  if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="msg">Cargando mercado...</div>`; return; }
+  if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   const r = recomendarMercado({ M: MER_DATA, cal: CAL, D, E });
@@ -2417,7 +2424,7 @@ function pintarCapitan() {
     pin = ""; pintarPin();
     return;
   }
-  if (!E) { cont.innerHTML = `<div class="msg">Cargando plantillas...</div>`; cargarEquipos(); return; }
+  if (!E) { cont.innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; cargarEquipos(); return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = E.managers[0] && E.managers[0].id;
   const pills = E.managers.map(m => `<button class="pill ${capMan === m.id ? "on" : ""}" data-cm="${esc(m.id)}">${esc(m.name)}</button>`).join("");
@@ -2575,6 +2582,13 @@ document.addEventListener("click", e => {
   else if (d.m) { abierto = abierto === d.m ? null : d.m; }
   pintar();
 });
+// Accesibilidad: las pastillas activas se anuncian como «pulsadas»
+(() => {
+  const marcar = () => document.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", b.classList.contains("on") ? "true" : "false"));
+  let t = 0;
+  new MutationObserver(() => { cancelAnimationFrame(t); t = requestAnimationFrame(marcar); }).observe(document.body, { childList: true, subtree: true });
+  marcar();
+})();
 </script>
 </body>
 </html>
