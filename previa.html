@@ -493,6 +493,7 @@ code{color:var(--accFg)}
 .td th .av{width:24px;height:24px;font-size:9px}
 .td-g{background:color-mix(in srgb,var(--pos) 35%,var(--panel2))}.td-p{background:color-mix(in srgb,var(--red) 30%,var(--panel2))}.td-e{background:var(--panel2)}
 .td-yo{background:none}.td-b{background:none!important;font-weight:800;padding-left:6px}
+.cv-m{white-space:normal!important;line-height:1.3}
 </style>
 </head>
 <body>
@@ -1370,6 +1371,31 @@ function bloquePrevision(m) {
     <p class="note">Estimación del modelo de la liga según su media, su última jornada, su valor y si está lesionado. Solo jugadores de 1 M o más: por debajo, el valor se mueve al azar. Explica en torno a ${Math.round((LIGA.valorDin.r2 || 0.2) * 100)} % de los cambios diarios: tómalo como pista, no como certeza.</p></section>`;
 }
 
+// Candidatos a vender: jugadores que aportan poco para lo que valen, que se espera que bajen o que están lesionados
+function bloqueVender(m) {
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  const L = m.players.map(p => {
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pj = p.status === "injury" ? 0.05 : p.status === "susp" ? 0 : (capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6));
+    const esp = mu * pj, g = (capCrecModelo({ ...p, owner: 1 }) || {}).g || 0;
+    const rel = esp / Math.max(prior * 0.8, 0.5);           // lo que rinde frente a lo que se espera de un jugador de su valor y puesto
+    const motivos = [];
+    if (p.status === "injury") motivos.push("lesionado");
+    if (pj < 0.45 && p.status !== "injury") motivos.push(`juega poco (${pc(pj)})`);
+    if (g <= -0.01 && p.value >= 1e6) motivos.push(`se espera que baje un ${nf1.format(-g * 100)} % al día`);
+    if (p.value >= 2e6 && rel < 0.7 && pj >= 0.45) motivos.push(`rinde menos de lo que se espera por su valor (${nf1.format(esp)} pts por jornada)`);
+    return { p, esp, g, motivos, nota: motivos.length * 2 + (p.status === "injury" ? 2 : 0) - rel };
+  }).filter(x => x.motivos.length).sort((a, b) => b.nota - a.nota).slice(0, 4);
+  if (!L.length) return "";
+  return `<section class="card"><div class="gh"><h2>Candidatos a vender</h2></div>
+    <ul class="clist">${L.map(x => `<li class="crow">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b><span class="cv-m">${esc(x.motivos.join(" · "))}</span></span>
+      <span class="cr"><b>${merEur(x.p.value)}</b><small>vale hoy</small></span></li>`).join("")}</ul>
+    <p class="note">Pistas, no órdenes: antes de vender mira cuántos titulares te quedan en su puesto.</p></section>`;
+}
+
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
@@ -1400,6 +1426,7 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
+    ${bloqueVender(m)}
     ${bloquePrevision(m)}
     ${bloqueRivalesEq(m)}`;
 }
