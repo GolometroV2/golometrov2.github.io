@@ -1294,7 +1294,7 @@ function resumenEq(ms, hp) {
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
     ${bloqueClausulas(ms)}
-    <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
+    <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
 // Próximos rivales de cada jugador de la plantilla, con la dificultad según lo que marca y encaja cada rival
@@ -2127,7 +2127,7 @@ function pintarMercado() {
   const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
   const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
   cont.innerHTML = `
-    <section class="card"><h2 style="margin:0 0 2px;font-size:16px">💸 Mercado · jugadores libres</h2>
+    <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
     ${mejor ? heroMer(mejor, cierre) : ""}
@@ -2198,15 +2198,15 @@ function panelAprendizaje() {
   return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">🧠 Aprendizaje del recomendador</summary>
     <p class="note">Actualizado ${esc(PAR.updatedAt ? fechaMadrid(PAR.updatedAt) : "—")} (hora de Madrid) · ${PAR.muestra ? PAR.muestra.actuaciones : 0} actuaciones analizadas, ${PAR.muestra ? PAR.muestra.conEquipo : 0} con equipo conocido.</p>
     ${PAR.aviso ? `<p class="note">${esc(PAR.aviso)}</p>` : ""}
-    ${m.rmseCompleto ? `<h3 style="margin:12px 0 4px;font-size:14px">¿Acierta? (puntos de cada jugador, usando solo datos anteriores a cada jornada)</h3>
+    ${m.rmseCompleto ? `<h3 class="sec">¿Acierta? (puntos de cada jugador, usando solo datos anteriores a cada jornada)</h3>
     <p class="note">Error medio (menos es mejor): media de la posición <b>${nf2.format(m.rmsePosicion)}</b> → con la forma del jugador <b>${nf2.format(m.rmseForma)}</b> → con rival y contexto <b>${nf2.format(m.rmseCompleto)}</b>${mejora != null ? ` (${pc(mejora)} menos que solo la forma)` : ""}.
     Correlación con los puntos reales: ${nf2.format(m.corrForma)} → ${nf2.format(m.corrCompleto)} (${m.filas} actuaciones).${f ? ` Probado en jornadas que no había visto: ${nf2.format(f.rmseDefecto)} con los parámetros por defecto y ${nf2.format(f.rmseAjustado)} tras autoajustarse.` : ""}
     El fútbol tiene mucho azar: una correlación de 0,4 sigue siendo modesta.</p>` : ""}
-    <h3 style="margin:12px 0 4px;font-size:14px">Patrones de vuestra liga</h3>
+    <h3 class="sec">Patrones de vuestra liga</h3>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th>Pos.</th><th>Media</th><th>Desv.</th><th>≥ 9 pts</th><th>≤ 1 pt</th><th>Equipo gana / empata / pierde</th><th>Casa / fuera</th></tr></thead><tbody>${filaPos}</tbody></table></div>
     ${riv ? `<ul class="note" style="padding-left:18px">${riv}</ul><p class="note">Con pocos partidos por rival (cifra entre paréntesis) estos porcentajes son orientativos.</p>` : ""}
     ${(pat.minutos || {}).menos60 ? `<p class="note">Quien juega menos de 60 minutos hace de media ${nf1.format(pat.minutos.menos60.media)} pts (${pat.minutos.menos60.n} casos) frente a ${nf1.format(pat.minutos.mas60.media)} pts si juega 60 o más (${pat.minutos.mas60.n}).</p>` : ""}
-    ${jor ? `<h3 style="margin:12px 0 4px;font-size:14px">Jornada a jornada</h3><div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Error del modelo</th><th>Puntos base del capitán: modelo vs humano</th></tr></thead><tbody>${jor}</tbody></table></div>
+    ${jor ? `<h3 class="sec">Jornada a jornada</h3><div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Error del modelo</th><th>Puntos base del capitán: modelo vs humano</th></tr></thead><tbody>${jor}</tbody></table></div>
     <p class="note">El modelo se reconstruye cada jornada con los datos anteriores. En "capitán" solo cuentan alineaciones con al menos 6 jugadores de equipo conocido; no incluye el multiplicador, que depende del valor de cada jugador.</p>` : ""}
     <p class="note" style="word-break:break-word">Parámetros en uso: ${esc(params)}</p></details>`;
 }
