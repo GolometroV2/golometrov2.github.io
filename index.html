@@ -1232,7 +1232,7 @@ function bloqueClausulas(ms) {
     <p class="note" style="margin:0 0 6px">Jugadores de las plantillas con más puntos esperados por cada millón de cláusula (sin lesionados ni sancionados).</p>
     <ul class="clist">${top.map((x, k) => `<li class="crow"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
       <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-        <span><b class="ct-n">${nf1.format(x.esp)} pts</b> por jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
+        <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
       <span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul>
     <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
