@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MONEYBALL · Golómetro V2</title>
 <style>
-/* Paleta "Noche de estadio": azul de foco apagado, tarjeta amarilla como único acento (botón, pestaña activa, puestos de honor).
-   El verde (--pos) y el rojo (--red) quedan solo para lo que sube o baja. Texto de acento sobre fondo claro: usa --accFg, no --acc. */
+/* Paleta "Carbón y verde" (la de la primera versión del Golómetro, elegida por el dueño: nada de amarillo).
+   --acc es el verde de acento; --pos es el verde de lo que sube y --red lo que baja. Texto de acento: --accFg. */
 :root{color-scheme:dark light;
---bg:#0b1020;--panel:#131a2d;--panel2:#1c2540;--line:#27314f;--txt:#edf1fa;--mut:#8f9cb8;--acc:#ffd23f;--accTxt:#171200;--accFg:#ffd23f;
---pos:#38d68a;--posBg:#38d68a24;
+--bg:#111315;--panel:#1a1d21;--panel2:#23272d;--line:#2f353c;--txt:#f4f6f5;--mut:#9aa3ad;--acc:#2fd46e;--accTxt:#05210f;--accFg:#2fd46e;
+--pos:#2fd46e;--posBg:#2fd46e26;
 --pt:#ffc94a;--df:#4cc3ff;--mc:#a3e635;--dl:#ff6b7a;--red:#ff6b6b;--blue:#4aa8ff;
---accBg:#ffd23f22;--redBg:#ff6b6b26;--ptBg:#ffc94a26;--blueBg:#4aa8ff1f;--dfBg:#4cc3ff26;--tipBg:#0b1020ee;--ink:#0b1020;
+--accBg:#2fd46e26;--redBg:#ff6b6b26;--ptBg:#ffc94a26;--blueBg:#4aa8ff1f;--dfBg:#4cc3ff26;--tipBg:#111315ee;--ink:#111315;
 /* Forma y espaciado: tarjetas con borde fino (sin sombra), esquinas de 14 px, pastillas redondas */
 --r-s:6px;--r-m:12px;--r-l:16px;--r-full:999px;
 --sh:none;
 --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--tap:44px;--navh:64px}
 @media (prefers-color-scheme:light){:root{
---bg:#f3f5fa;--panel:#ffffff;--panel2:#e9edf5;--line:#d6dceb;--txt:#121829;--mut:#55617d;--acc:#f5c400;--accTxt:#171200;--accFg:#8a6400;
---pos:#0c8f55;--posBg:#0c8f551f;
+--bg:#f3f5f4;--panel:#ffffff;--panel2:#e8ecea;--line:#d5dbd8;--txt:#14181b;--mut:#566069;--acc:#0f9d4a;--accTxt:#ffffff;--accFg:#0b7d3b;
+--pos:#0f9d4a;--posBg:#0f9d4a1f;
 --pt:#a86b00;--df:#0a6fa8;--mc:#4d7a0a;--dl:#c0344a;--red:#c62f2f;--blue:#1569c7;
---accBg:#f5c40033;--redBg:#c62f2f1a;--ptBg:#a86b0022;--blueBg:#1569c71a;--dfBg:#0a6fa81f;--tipBg:#ffffffee;--ink:#0b1020}}
+--accBg:#0f9d4a1f;--redBg:#c62f2f1a;--ptBg:#a86b0022;--blueBg:#1569c71a;--dfBg:#0a6fa81f;--tipBg:#ffffffee;--ink:#111315}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -526,9 +526,8 @@ const METRICAS = [["points", "Puntos", "Pts"], ["sinCap", "Sin capitán", "Pts"]
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
 let visibles = new Set(), modoG = "acum", G = null;
 let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
-let eqOk = false;
+let eqOk = true;   // sin PIN: el dueño decidió abrir Equipos, Capitán y Mercado a todos
 let CAL = null, PAR = null, capMan = null, capTodos = false, capGw = null;
-try { eqOk = CLAVE_HASH !== "" && sessionStorage.getItem("eqOk") === CLAVE_HASH; } catch (err) {}
 
 const $ = s => document.querySelector(s);
 // Fechas siempre en hora de España (Madrid), da igual en qué zona se ejecute el script
@@ -569,7 +568,7 @@ function cargarEquipos() {
 }
 
 function pintarNav() {
-  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", (eqOk ? "💰" : "🔒") + " Equipos"], ["cap", "🎯 Capitán"], ["mer", (eqOk ? "💸" : "🔒") + " Mercado"]]
+  $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", "💰 Equipos"], ["cap", "🎯 Capitán"], ["mer", "💸 Mercado"]]
     .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" ${seccion === k ? 'aria-current="page"' : ""} aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
   // En móvil la barra se desplaza: dejar visible la pestaña activa
   const nav = $("#nav"), on = nav.querySelector(".tab.on");
