@@ -22,6 +22,8 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 
 - 2026-11-04 (rediseño fase 7/8, parte 1): esqueletos de carga animados (respetan `prefers-reduced-motion`) en lugar del texto «Cargando…», enlace «Saltar al contenido» visible al enfocar con teclado, `aria-pressed` automático en las pastillas de selección. Solo HTML/CSS/accesibilidad; la lógica no cambia. Probado a 360 px: sin errores ni scroll horizontal. Falta de la fase 7: contraste AA revisado y etiquetas aria en más gráficas; luego fase 8.
 
+- 2026-11-04 (rediseño fase 7/8, parte 2): revisado el contraste del texto atenuado (≥ 5:1 en oscuro y claro, AA correcto); el foco visible ya existía. Añadidas etiquetas accesibles a la barra de puntuación del Mercado, a las barras de las últimas 5 jornadas, a los puntos del PIN y a la tabla de calor por jornada (las dos gráficas grandes ya las tenían). Solo atributos aria; lógica intacta. Probado a 360 px: sin desborde ni errores de consola. Fase 7 completa. Siguiente: fase 8 (coherencia de radios, títulos y espaciados entre tarjetas).
+
 ## Ideas del dueño (máxima prioridad, léelas siempre)
 - Capitán con un solo algoritmo de riesgo (sin pestañas de modo): ya implementado en main; el rediseño de Capitán debe partir de esa lista única. Ver CLAUDE.md.
 - Rehacer el diseño completo de forma profesional, moderna y actual (ver sección DISEÑO de CLAUDE.md). Fases: 1 sistema de diseño, 2 cabecera y navegación, 3 Clasificación, 4 Equipos, 5 Capitán, 6 Mercado, 7 microinteracciones y accesibilidad, 8 revisión final.
