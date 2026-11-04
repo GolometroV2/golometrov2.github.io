@@ -190,7 +190,7 @@ ul{list-style:none;margin:0;padding:0}
 .datos{list-style:none;padding:0;margin:8px 0}.datos li{padding:5px 0;border-bottom:1px solid var(--line)}
 .res{display:inline-block;min-width:34px;text-align:center;border-radius:6px;padding:1px 6px;margin:0 3px 3px 0;font-weight:700;font-size:12px;background:var(--panel);color:var(--mut)}
 .res.g{background:var(--posBg);color:var(--pos)}.res.p{background:var(--redBg);color:var(--red)}.res.e{background:var(--ptBg);color:var(--pt)}
-h3.sec{margin:22px 0 4px;font-size:16px}
+h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);font-weight:800}
 .rv .shield{margin-left:10px}.rv summary{padding:10px 10px}
 .cp{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
 .cp.top{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;list-style:none}
@@ -258,17 +258,18 @@ h3.sec{margin:22px 0 4px;font-size:16px}
 .tab:focus-visible,.pills button:focus-visible{outline-offset:-2px}
 code{color:var(--accFg)}
 .mlist{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
-.mc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mut);border-radius:12px;padding:10px 12px}
-.mc.prio-imperdible{border-color:#ff6b6b;border-left-color:#ff4d4f;background:linear-gradient(90deg,#ff4d4f1f,var(--panel) 60%)}
-.mc.prio-top{border-left-color:#ffc94a}.mc.prio-bueno{border-left-color:var(--pos)}.mc.prio-favorable{border-left-color:#4aa8ff}.mc.prio-inversion{border-left-color:#b388ff}.mc.prio-evitar{opacity:.6;border-left-color:#ff4d4f}
-.mrow{display:flex;align-items:center;gap:10px}
-.mbar{position:relative;height:14px;border-radius:7px;background:var(--panel2);margin-top:5px;overflow:hidden}
-.mbar i{display:block;height:100%;background:linear-gradient(90deg,#4aa8ff,var(--pos));border-radius:7px}
-.mbar span{position:absolute;right:6px;top:0;font-size:10.5px;font-weight:800;line-height:14px}
-.mpuja{text-align:right;flex:none;line-height:1.15}.mpuja small{display:block;font-size:11px;color:var(--mut)}
+.mc{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-l,14px);padding:12px 14px;position:relative;--pc:var(--mut)}
+.mc::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--pc)}
+.mc.prio-imperdible{--pc:var(--red);border-color:var(--red);background:linear-gradient(90deg,var(--redBg),var(--panel) 60%)}
+.mc.prio-top{--pc:var(--acc)}.mc.prio-bueno{--pc:var(--pos)}.mc.prio-favorable{--pc:var(--blue)}.mc.prio-inversion{--pc:var(--dl)}.mc.prio-evitar{opacity:.6;--pc:var(--red)}
+.mrow{display:flex;align-items:center;gap:12px}
+.mbar{position:relative;height:6px;border-radius:3px;background:var(--panel2);margin-top:8px}
+.mbar i{display:block;height:100%;background:var(--pc);border-radius:3px}
+.mbar span{position:absolute;right:0;top:-15px;font-size:10.5px;font-weight:800;line-height:12px;color:var(--mut)}
+.mpuja{text-align:right;flex:none;line-height:1.15;background:var(--panel2);border-radius:var(--r-m,10px);padding:8px 10px}.mpuja small{display:block;font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
 .mpuja b{display:block;font-size:15px;color:var(--accFg);white-space:nowrap}.mpuja span{font-size:11.5px;color:var(--mut)}
-.prio-imperdible .mpuja b{color:#ff6b6b}
-.mdet{margin-top:6px}.mdet summary{cursor:pointer;font-size:12.5px;color:var(--mut);font-weight:600}
+.prio-imperdible .mpuja b{color:var(--red)}
+.mdet{margin-top:4px}.mdet summary{cursor:pointer;font-size:12.5px;color:var(--mut);font-weight:600;min-height:44px;display:flex;align-items:center}
 .btn-ghost{background:var(--panel2);color:var(--txt);border:0;border-radius:999px;padding:8px 16px;font-weight:600;cursor:pointer}
 /* --- Fotos de jugadores --- */
 .cara{position:relative;flex:none;width:var(--t);height:var(--t);border-radius:50%;background:var(--panel2);display:grid;place-items:center;overflow:visible}
