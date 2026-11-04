@@ -272,15 +272,15 @@ code{color:var(--accFg)}
 .seg3{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 12px;border-radius:12px;padding:3px}
 .seg3 button{min-height:38px;border-radius:9px;font-size:12.5px;padding:0 4px}
 /* --- La carrera --- */
-#graf svg .ax{fill:var(--mut);font-size:10px}
+#gvalor svg .ax,#graf svg .ax{fill:var(--mut);font-size:10px}
 #graf svg .ax-top{fill:var(--accFg);font-weight:800}
-#graf svg .gl{stroke:var(--line)}
+#gvalor svg .gl,#graf svg .gl{stroke:var(--line)}
 #graf svg .guia{stroke:var(--mut);stroke-dasharray:3 3;visibility:hidden}
-#graf svg .ln{cursor:pointer;transition:opacity .2s}
-#graf svg .ln.off{opacity:.13}
+#gvalor svg .ln,#graf svg .ln{cursor:pointer;transition:opacity .2s}
+#gvalor svg .ln.off,#graf svg .ln.off{opacity:.13}
 #graf svg .ini{fill:#fff;font-size:7.5px;font-weight:800;pointer-events:none}
-#graf svg .et{fill:var(--txt);font-size:10.5px;font-weight:600}
-#graf svg .et2{fill:var(--mut);font-weight:500}
+#gvalor svg .et,#graf svg .et{fill:var(--txt);font-size:10.5px;font-weight:600}
+#gvalor svg .et2,#graf svg .et2{fill:var(--mut);font-weight:500}
 .leyenda{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .lg{display:inline-flex;align-items:center;gap:6px;min-height:32px;border-radius:999px;padding:0 11px 0 9px;background:var(--panel2);font-size:12.5px;font-weight:600;color:var(--txt);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lg i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
@@ -394,6 +394,8 @@ code{color:var(--accFg)}
 .mh .ch-q b{font-size:20px}
 .mh-puja{color:var(--accFg)}
 .mh .ch-kpi b{font-size:19px}
+.seg2{display:grid;grid-template-columns:1fr 1fr;margin:0 0 12px;border-radius:12px;padding:3px}
+.seg2 button{min-height:38px;border-radius:9px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -948,6 +950,42 @@ function textoMov(t) {
   return `<b>${esc(nombreM(t.to))}</b> compra a ${j}${v} a <b>${esc(nombreM(t.from))}</b>`;
 }
 
+// Evolución del valor de cada plantilla (equipos.json -> squadHistory: [fecha, valor, valor anterior] por día)
+let focoV = null, modoV = "valor";
+function graficaValor(ms) {
+  const sh = E.squadHistory || {};
+  const fechas = [...new Set(ms.flatMap(m => (sh[m.id] || []).map(x => x[0])))].sort();
+  if (fechas.length < 2) return "";
+  const serie = ms.map(m => { const h = Object.fromEntries((sh[m.id] || []).map(x => [x[0], x[1]])); let ult = null; return fechas.map(f => (ult = h[f] ?? ult)); });
+  const base = serie.map(s => s.find(v => v != null) || 0);
+  const val = (x, k) => serie[x][k] == null ? null : modoV === "valor" ? serie[x][k] / 1e6 : (serie[x][k] - base[x]) / 1e6;
+  const todos = ms.flatMap((_, x) => fechas.map((_, k) => val(x, k))).filter(v => v != null);
+  const W = 360, L = 30, R = 122, T = 12, B = 22, H = 230;
+  let mn = Math.min(...todos), mx = Math.max(...todos);
+  const paso = pasoBonito((mx - mn) / 4 || 1); mn = Math.floor(mn / paso) * paso; mx = Math.ceil(mx / paso) * paso; if (mx === mn) mx = mn + paso;
+  const X = k => L + k * (W - L - R) / (fechas.length - 1), Y = v => T + (mx - v) / (mx - mn) * (H - T - B);
+  let ejes = "";
+  for (let v = mn; v <= mx + 1e-9; v += paso) ejes += `<line x1="${L}" x2="${W - R + 4}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${L - 4}" y="${Y(v) + 4}" text-anchor="end" class="ax">${nf1c(v)}</text>`;
+  fechas.forEach((f, k) => { if (k === 0 || k === fechas.length - 1 || k % Math.ceil(fechas.length / 5) === 0) ejes += `<text x="${X(k)}" y="${H - 5}" text-anchor="middle" class="ax">${f.slice(8, 10)}/${f.slice(5, 7)}</text>`; });
+  const n = fechas.length - 1;
+  const orden = ms.map((_, x) => x).sort((a, b) => (val(b, n) ?? -1e9) - (val(a, n) ?? -1e9));
+  const fin = orden.map(x => ({ x, y: Y(val(x, n) ?? mn) })).sort((a, b) => a.y - b.y);
+  for (let q = 1; q < fin.length; q++) if (fin[q].y - fin[q - 1].y < 13) fin[q].y = fin[q - 1].y + 13;
+  const yEt = {}; fin.forEach(f => yEt[f.x] = f.y);
+  const lineas = orden.slice().reverse().map(x => {
+    const m = ms[x], c = col(m.i), pts = fechas.map((_, k) => val(x, k) == null ? null : [X(k), Y(val(x, k))]).filter(Boolean);
+    if (pts.length < 2) return "";
+    const off = focoV && focoV !== m.id, on = focoV === m.id, nombre = m.name.length > 10 ? m.name.slice(0, 9).trim() + "…" : m.name;
+    const v = val(x, n);
+    return `<g class="ln${off ? " off" : ""}" data-gv="${esc(m.id)}"><path d="${curva(pts)}" fill="none" stroke="transparent" stroke-width="14"/><path d="${curva(pts)}" fill="none" stroke="${c}" stroke-width="${on ? 4.5 : 2.6}" stroke-linecap="round"/>
+      <circle cx="${pts[pts.length - 1][0]}" cy="${pts[pts.length - 1][1]}" r="4" fill="${c}"/><text x="${X(n) + 9}" y="${yEt[x] + 4}" class="et">${esc(nombre)} <tspan class="et2">${modoV === "valor" ? nf1c(v) + " M" : (v >= 0 ? "+" : "−") + nf1c(Math.abs(v)) + " M"}</tspan></text></g>`;
+  }).join("");
+  const seg = [["valor", "Valor"], ["cambio", "Cambio desde el inicio"]].map(([k, t]) => `<button data-vm="${k}" class="${modoV === k ? "on" : ""}">${t}</button>`).join("");
+  return `<section class="card" id="gvalor"><div class="gh"><h2>Evolución del valor</h2></div><div class="seg seg2">${seg}</div>
+    <div class="gwrap"><svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block" role="img" aria-label="Valor de cada plantilla día a día">${ejes}${lineas}</svg></div>
+    <p class="note">Millones de euros, día a día desde que hay seguimiento (${fechas[0].slice(8, 10)}/${fechas[0].slice(5, 7)}). Toca una línea para resaltarla.</p></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -961,6 +999,7 @@ function resumenEq(ms, hp) {
   }).join("");
   const mv = (E.transfers || []).slice(0, 10).map(t => `<li class="mv">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></li>`).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
+    ${graficaValor(ms)}
     <section class="card"><h2 style="margin:0 0 4px;font-size:16px">Últimos movimientos</h2>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
@@ -2088,11 +2127,13 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.gv !== undefined) { focoV = focoV === d.gv ? null : d.gv; pintarEquipos(); return; }
+  if (d.vm) { modoV = d.vm; pintarEquipos(); return; }
   if (d.es) { eqOrden = d.es; pintarEquipos(); return; }
   if (d.cm !== undefined) { capMan = d.cm; pintarCapitan(); return; }
   if (d.cg !== undefined) { capGw = +d.cg; pintarCapitan(); return; }
