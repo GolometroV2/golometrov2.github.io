@@ -520,7 +520,7 @@ code{color:var(--accFg)}
   </span>
 </div></header>
 <main id="contenido">
-  <div class="head"><h1 id="titulo">Mi liga</h1><p id="sub"></p></div>
+  <div class="head"><h1 id="titulo" style="margin-bottom:14px">Mi liga</h1></div>
   <div id="aviso" aria-live="polite"></div>
   <nav class="tabs" id="nav" aria-label="Secciones"></nav>
   <div id="app" aria-busy="true"><div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div></div>
@@ -575,7 +575,6 @@ function cargar(obj) {
   visibles = new Set(D.managers.map(m => m.id));
   D.hayCap = jornadas().some(j => Object.values(D.matchdays[j] || {}).some(x => x && x.captain));
   $("#titulo").textContent = !obj.leagueName || obj.leagueName === "Mi Liga Mister Fantasy" ? "MONEYBALL" : obj.leagueName;
-  $("#sub").textContent = [obj.season, (obj.updatedAt || obj.lastUpdated) && "actualizado " + (obj.updatedAt ? fechaMadrid(obj.updatedAt) : obj.lastUpdated)].filter(Boolean).join(" · ");
   pintar();
 }
 
