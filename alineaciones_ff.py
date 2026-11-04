@@ -36,7 +36,7 @@ ALIAS_EQUIPOS = {              # nombre de FF -> palabras que identifican al equ
     "athletic": "athletic", "real-sociedad": "real sociedad", "deportivo": "deportivo", "osasuna": "osasuna",
     "elche": "elche", "valencia": "valencia", "barcelona": "barcelona", "alaves": "alaves", "getafe": "getafe",
     "sevilla": "sevilla", "levante": "levante", "atletico": "atletico", "rayo": "rayo", "celta": "celta",
-    "betis": "betis", "malaga": "malaga", "racing": "racing", "real-madrid": "real madrid",
+    "betis": "betis", "rayo-vallecano": "rayo", "malaga": "malaga", "racing": "racing", "real-madrid": "real madrid",
     "villarreal": "villarreal", "espanyol": "espanyol",
 }
 
@@ -193,7 +193,7 @@ def main():
         print("No se pudo leer la lista de partidos de Futbol Fantasy.")
         sys.exit(1)
     slugs = set(re.findall(r'/laliga/equipos/([a-z0-9-]+)', lista))
-    slugs = {x for x in slugs if x in ALIAS_EQUIPOS or x}
+    slugs |= set(ALIAS_EQUIPOS)          # en las URLs de partidos algunos equipos van abreviados (p. ej. «rayo» y no «rayo-vallecano»)
     partidos = {}
     for pid, resto in re.findall(r'/partidos/(\d+)-([a-z0-9-]+)"', lista):
         par = partir_slug(resto, slugs)
@@ -206,7 +206,7 @@ def main():
     for pid, (a, b) in partidos.items():
         ha, hb = equipo_de_ff(a, eq), equipo_de_ff(b, eq)
         if ha is None or hb is None:
-            print(f"  sin equipo: {a} / {b}")
+            print(f"  AVISO sin equipo en Mister: {a} / {b}")
             continue
         g = next((g for g in sorted(pend, key=lambda x: x.get("ts") or 0) if g["home"] == ha and g["away"] == hb), None)
         if g:
