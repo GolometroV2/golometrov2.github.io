@@ -28,6 +28,7 @@ El diseño actual se considera poco profesional. Tienes libertad completa para r
 - Usa tu criterio de diseñador: jerarquía visual clara, pocas cosas por pantalla, mucho aire, un solo color de acento, estados (hover, activo, deshabilitado) cuidados.
 
 ## Prohibido
+- Tocar `previa.html` (lo genera un flujo automático con una copia de tu rama).
 - Tocar o leer `credenciales.env`, secretos, cookies, tokens o el hash del PIN. No los muestres en ningún texto, log ni PR.
 - Cambiar los flujos de `.github/workflows/` ni el modo de funcionamiento del PIN.
 - Borrar datos (`*.json`) ni cambiar su formato sin que la página siga leyéndolos igual.

@@ -1,0 +1,50 @@
+name: Previa de la web
+
+# Cada vez que el agente sube cambios a su rama, publica una copia de la pagina en /previa.html
+# para poder verla en el movil ANTES de aceptar la Pull Request. La web real (index.html) no cambia.
+on:
+  push:
+    branches:
+      - 'agente/**'
+  workflow_dispatch:
+    inputs:
+      rama:
+        description: 'Rama a previsualizar'
+        default: 'agente/semana'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: previa
+  cancel-in-progress: false
+
+jobs:
+  previa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.rama || github.ref_name }}
+          path: rama
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Publicar la previa
+        run: |
+          cp rama/index.html main/previa.html
+          if [ -d rama/assets ]; then rm -rf main/assets && cp -r rama/assets main/assets; fi
+          cd main
+          git config user.name "Bot Mister"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A previa.html assets 2>/dev/null || git add previa.html
+          if ! git diff --staged --quiet; then
+            git commit -m "Previa de la web (${{ github.ref_name }})"
+            for i in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              sleep 5
+            done
+          fi
