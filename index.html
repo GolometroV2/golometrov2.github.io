@@ -547,6 +547,16 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .fm{font-style:normal;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--panel2);color:var(--mut);margin:0!important}
 .fm-a{background:var(--pos);color:var(--accTxt)}.fm-b{background:var(--red);color:#fff}
 .forma em{font-style:normal;margin-left:6px;font-size:11.5px;color:var(--mut)}
+.hor{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hor li{display:flex;gap:10px;padding:8px;border-radius:12px;background:var(--panel2)}
+.hor li.ya{opacity:.5}
+.hor-t{flex:none;width:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--mut);text-transform:capitalize}
+.hor-t b{font-size:15px;color:var(--txt)}
+.hor-p{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.hor-p small{font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hor-p .shield{width:14px;height:14px}
+.hor-p>span{display:flex;flex-wrap:wrap;gap:6px}
+.hor-j{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;background:var(--panel);border-radius:999px;padding:2px 9px 2px 2px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2847,6 +2857,22 @@ function htmlCapLiga(cg, gw) {
       <span class="cr"><b class="up">+${nf1.format(x.c.extra)}</b><small>extra esperado</small></span></li>`).join("")}</ul></details>`;
 }
 
+// Horario de la jornada: cuándo juega cada jugador de la plantilla, partido a partido
+function htmlHorario(r) {
+  const cs = (r.candidatos || []).filter(c => c.g && c.g.ts);
+  if (!cs.length) return "";
+  const porP = {};
+  cs.forEach(c => { (porP[c.g.id] = porP[c.g.id] || { g: c.g, js: [] }).js.push(c); });
+  const L = Object.values(porP).sort((a, b) => a.g.ts - b.g.ts);
+  const ahora = Date.now() / 1000;
+  return `<details class="card cdet-card"><summary class="sumh">Cuándo juegan tus jugadores</summary>
+    <ul class="hor">${L.map(x => { const ya = x.g.ts < ahora;
+      return `<li class="${ya ? "ya" : ""}"><span class="hor-t">${esc(enMadrid(x.g.ts * 1000, { weekday: "short", day: "numeric" }))}<b>${esc(enMadrid(x.g.ts * 1000, { hour: "2-digit", minute: "2-digit" }))}</b></span>
+        <span class="hor-p"><small>${img(merUrlEscudo(x.g.home), "shield")} ${esc(x.g.homeName || "")} – ${esc(x.g.awayName || "")} ${img(merUrlEscudo(x.g.away), "shield")}</small>
+        <span>${x.js.map(c => `<span class="hor-j" data-ficha="${esc(c.p.id)}">${cara(c.p.id, c.p.name, null, 26)}${esc(c.p.short || c.p.name)}</span>`).join("")}</span></span></li>`; }).join("")}</ul>
+    <p class="note">Ordenado por hora (de Madrid). Los partidos ya empezados aparecen apagados.</p></details>`;
+}
+
 function pintarCapitan() {
   const cont = $("#cap");
   if (!eqOk) {
@@ -2873,6 +2899,7 @@ function pintarCapitan() {
     cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
       ${htmlOnceRec(r)}
       ${htmlCapLiga(cg, gwVer)}
+      ${htmlHorario(r)}
       ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
