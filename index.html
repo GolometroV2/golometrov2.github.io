@@ -667,7 +667,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -1212,6 +1212,33 @@ function gwPrevia() {
   const primero = Math.min(...g.map(x => x.ts || Infinity)), leido = Date.parse(D.updatedAt || "") / 1000;
   return isFinite(primero) && leido >= primero + 300 ? ult : null;
 }
+// Probabilidad de ganar una jornada con los onces reales, con los datos de antes del primer partido (como la pestaña
+// Capitán): no cambia mientras avanza la jornada. Solo vale para la última jornada con datos (la congelación usa la
+// última racha de cada jugador). Devuelve los puntos esperados de cada jugador (espDe) y el resultado por manager.
+let PROBJ = { k: "", v: null };
+function probJornada(n) {
+  const md = (D.matchdays || {})["J" + n] || {};
+  const k = [n, D.updatedAt, E && E.updatedAt, CAL && CAL.updatedAt, FFDATA ? FFDATA.updatedAt || 1 : 0, PAR ? 1 : 0].join("|");
+  if (PROBJ.k === k) return PROBJ.v;
+  const espDe = {}, res = {};
+  if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
+  const cg = capCongelar({ cal: CAL, D, E, gw: n });
+  // si la jornada ya terminó, se trata como abierta para que el motor la tome como objetivo
+  const cal3 = { ...cg.cal, gameweeks: (cg.cal.gameweeks || []).map(g => g.gw === n ? { ...g, status: "playing" } : g) };
+  const ms = (D.managers || []).filter(m => md[m.id] && (md[m.id].players || []).length);
+  ms.forEach(m => { try { const r = recomendarCapitanes({ cal: cal3, D: cg.D, E: cg.E, managerId: m.id, gw: n }); (r.candidatos || []).forEach(c => { if (!espDe[c.p.id]) espDe[c.p.id] = c; }); } catch (e) {} });
+  if (ms.length >= 2) {
+    const S0 = serieLiga(), k0 = S0.js.indexOf("J" + n) - 1, antes = {};
+    if (k0 >= 0) S0.ms.forEach((o, x) => { antes[o.m.id] = S0.cum[x][k0]; });
+    const sim = simularJornada(ms.map(m => { const x = md[m.id], cap = x.captain;
+      // alineados que ya no están en ninguna plantilla (vendidos después): un jugador típico de su posición
+      const gen = p => ({ pj: 0.85, ys: CAP.MUESTRA_DEF[p.pos] || CAP.MUESTRA_DEF.MC });
+      return { antes: antes[m.id] || 0, js: (x.players || []).map(p => ({ c: espDe[p.id] || gen(p), mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
+    ms.forEach((m, i) => { res[m.id] = sim[i]; });
+  }
+  PROBJ = { k, v: { espDe, res } };
+  return PROBJ.v;
+}
 // wa.me pasa por una redirección que estropea los emojis (salen como «�»): en el móvil abrimos la app directamente
 const ES_MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const waHref = t => (ES_MOVIL ? "whatsapp://send?text=" : "https://api.whatsapp.com/send?text=") + encodeURIComponent(t);
@@ -1242,11 +1269,7 @@ function pintarPrevia() {
   const partidoDe = t => juegos.find(g => g.home === t || g.away === t);
   const hora = g => g && g.ts ? enMadrid(g.ts * 1000, { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
   // puntos esperados de cada jugador alineado (motor del capitán) para el favorito de la jornada
-  const espDe = {};
-  // con los datos de antes del primer partido (como la pestaña Capitán), para que no cambie mientras avanza la jornada
-  if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
-  const cg = capCongelar({ cal: CAL, D, E, gw: n });
-  filas.forEach(f => { try { const r = recomendarCapitanes({ cal: cg.cal, D: cg.D, E: cg.E, managerId: f.m.id, gw: n }); (r.candidatos || []).forEach(c => { if (!espDe[c.p.id]) espDe[c.p.id] = c; }); } catch (e) {} });
+  const PJ = probJornada(n), espDe = PJ.espDe;
   const conteo = {}, caps = {};
   filas.forEach(f => {
     (f.x.players || []).forEach(p => { (conteo[p.id] = conteo[p.id] || { p, de: [] }).de.push(f.m.name); });
@@ -1265,14 +1288,7 @@ function pintarPrevia() {
   const porPartido = juegos.map(g => ({ g, n: filas.reduce((t, f) => t + (f.x.players || []).filter(p => p.teamId === g.home || p.teamId === g.away).length, 0) })).sort((a, b) => b.n - a.n)[0];
   // probabilidad de ganar la jornada con los onces reales, tal y como estaba al empezar: no cambia aunque avance la jornada
   // (es la que se manda al grupo con la previa; lo que pasa después ya lo cuenta la clasificación en directo)
-  if (filas.some(f => f.esp > 0)) {
-    const S0 = serieLiga(), k0 = S0.js.indexOf(gw) - 1;
-    const antes = {}; if (k0 >= 0) S0.ms.forEach((o, x) => { antes[o.m.id] = S0.cum[x][k0]; });
-    const sim = simularJornada(filas.map(f => { const cap = f.x.captain;
-      return { antes: antes[f.m.id] || 0,
-        js: (f.x.players || []).filter(p => espDe[p.id]).map(p => ({ c: espDe[p.id], mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
-    filas.forEach((f, k) => { f.pGana = sim[k].pGana; f.pLider = sim[k].pLider; f.media = sim[k].media; });
-  }
+  if (filas.some(f => f.esp > 0)) filas.forEach(f => { const r = PJ.res[f.m.id]; if (r) { f.pGana = r.pGana; f.pLider = r.pLider; f.media = r.media; } });
   const favorito = filas.slice().sort((a, b) => (b.pGana || 0) - (a.pGana || 0) || b.esp - a.esp);
   const hayEsp = favorito[0] && favorito[0].esp > 0;
   const titulo = $("#titulo").textContent;
@@ -1476,6 +1492,12 @@ function pintarCronica() {
   const bqL = BQ ? filas.filter(f => BQ[f.m.id]).map(f => ({ f, b: BQ[f.m.id] })) : [];
   const bqTop = bqL.filter(x => x.b.perdidos > 0).sort((a, b) => b.b.perdidos - a.b.perdidos)[0];
   const bqPerf = bqL.filter(x => x.b.perdidos === 0).map(x => x.f);
+  // ¿Acertó la previa? Solo para la última jornada (la probabilidad se calcula con lo que se sabía antes de empezar)
+  let prev = null;
+  if (cronJ === js[js.length - 1] && E && E.managers && CAL && CAL.games) { try {
+    const PJ = probJornada(+cronJ.slice(1)), fav = filas.filter(f => PJ.res[f.m.id]).sort((a, b) => PJ.res[b.m.id].pGana - PJ.res[a.m.id].pGana)[0];
+    if (fav && PJ.res[gan.m.id]) prev = { fav, pf: PJ.res[fav.m.id].pGana, pg: PJ.res[gan.m.id].pGana };
+  } catch (e) {} }
   const tile = (ico, tit, main, sub, extra = "") => `<div class="ct-t">${extra || `<span class="ct-ico">${ico}</span>`}<span class="ct-x"><small>${tit}</small><b>${main}</b><span>${sub}</span></span></div>`;
   const nav = `<div class="ct-nav"><button data-cj="-1" ${k === 0 ? "disabled" : ""} aria-label="Jornada anterior">‹</button><span>Jornada ${esc(cronJ.slice(1))}</span><button data-cj="1" ${k === js.length - 1 ? "disabled" : ""} aria-label="Jornada siguiente">›</button></div>`;
   const tiles = [
@@ -1485,6 +1507,7 @@ function pintarCronica() {
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
     tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
+    prev ? tile("🔮", prev.fav === gan ? "La previa acertó" : "La previa falló", prev.fav === gan ? esc(gan.m.name) : `Favorito: ${esc(prev.fav.m.name)}`, prev.fav === gan ? `Era el favorito, con un ${pctQ(prev.pf)} de ganar` : `Tenía un ${pctQ(prev.pf)}; ${esc(gan.m.name)} ganó con un ${pctQ(prev.pg)}`) : "",
     bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
     bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
   ].join("");
@@ -1498,6 +1521,7 @@ function pintarCronica() {
     gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
     `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
+    prev ? (prev.fav === gan ? `🔮 La previa acertó: ${gan.m.name} era el favorito (${pctQ(prev.pf)})` : `🔮 La previa daba favorito a ${prev.fav.m.name} (${pctQ(prev.pf)}); ${gan.m.name} ganó con un ${pctQ(prev.pg)}`) : "",
     bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
     bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
@@ -3327,7 +3351,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
