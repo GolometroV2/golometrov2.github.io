@@ -1848,6 +1848,7 @@ function crecDiario(p) {
   let g = r.length ? r.reduce((a, b) => a + b, 0) / r.length : null;
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
   const gm = LIGA && LIGA.valorDin ? capCrecModelo({ ...p, owner: 1 }) : null;
+  if (gm && gm.conAyer) return capClamp(gm.g, [-0.05, 0.05]);      // el modelo ya incluye la inercia de los últimos días
   if (gm && !gm.bajo) g = g == null ? gm.g : 0.5 * g + 0.5 * gm.g;
   return capClamp(g ?? 0, [-0.05, 0.05]);
 }
@@ -1869,7 +1870,8 @@ function clausulasRentables(ms) {
     const esp = mu * pj;
     if (esp < 4 || esp < 0.9 * prior) return;                       // requisito indispensable: rentable en puntos
     const g = crecDiario(p), sobre = p.clause / p.value - 1;
-    const v7 = p.value * Math.pow(1 + g, CLAUS_DIAS), sobreEf = p.clause / v7 - 1;
+    const gmC = LIGA && LIGA.valorDin ? capCrecModelo({ ...p, owner: 1 }) : null;
+    const v7 = p.value * (1 + (gmC && gmC.conAyer ? crecAcum({ g, gm: gmC.g0, phi: gmC.phi }, CLAUS_DIAS) : Math.pow(1 + g, CLAUS_DIAS) - 1)), sobreEf = p.clause / v7 - 1;
     const dias = g > 0.001 && sobre > 0 ? Math.log(p.clause / p.value) / Math.log(1 + g) : null;
     L.push({ m, p, esp, pj, ff, prior, g, sobre, sobreEf, dias, r: esp / (p.clause / 1e6) });
   }));
@@ -2612,10 +2614,24 @@ function capCrecModelo(jj) {
   if (!vd.pesos) return null;
   const s = (jj.streak || []).slice(-5), jug = s.filter(capNum), ult = s.length && capNum(s[s.length - 1]) ? s[s.length - 1] : null;
   const x = [1, jj.avg || 0, ult || 0, ult != null ? 1 : 0, Math.log10(Math.max(jj.value, 1e5)) - 6, jj.status === "injury" ? 1 : 0, jj.owner ? 1 : 0, jug.length ? jug.reduce((a, b) => a + b, 0) / jug.length : 0];
-  const g = x.reduce((t, v, i) => t + vd.pesos[i] * (i ? (v - vd.medias[i]) / (vd.desv[i] || 1) : 1), 0);
-  return { g: capClamp(g, [-0.1, 0.1]), bajo: false };
+  // modelo nuevo: también el cambio de ayer a hoy (el valor tiene mucha inercia). g0 = el mismo jugador sin esa inercia
+  const conAyer = vd.pesos.length > x.length && (vd.nombres || [])[x.length] === "cambio_ayer";
+  const ayer = capNum(jj.prev) && jj.prev > 0 ? capClamp(jj.value / jj.prev - 1, [-0.1, 0.1]) : 0;
+  const calc = xs => xs.reduce((t, v, i) => t + vd.pesos[i] * (i ? (v - vd.medias[i]) / (vd.desv[i] || 1) : 1), 0);
+  if (!conAyer) return { g: capClamp(calc(x), [-0.1, 0.1]), bajo: false };
+  return { g: capClamp(calc([...x, ayer]), [-0.1, 0.1]), g0: capClamp(calc([...x, 0]), [-0.1, 0.1]), bajo: false, conAyer: true, phi: vd.phi || 0.95 };
 }
 
+// Cambio acumulado en H días. Con el modelo de inercia, el ritmo de hoy se va acercando al típico del jugador
+// (g0) un poco cada día: g_k = g0 + phi^(k-1)·(g − g0). Sin él, el mismo ritmo todos los días.
+function crecAcum(cr, H) {
+  if (!cr || !capNum(cr.g) || !(H > 0)) return 0;
+  if (!cr.phi) return Math.pow(1 + cr.g, H) - 1;
+  const g0 = capNum(cr.gm) ? cr.gm : 0;
+  let v = 1;
+  for (let k = 1; k - 1 < H; k++) v *= Math.pow(1 + g0 + Math.pow(cr.phi, k - 1) * (cr.g - g0), Math.min(1, H - (k - 1)));
+  return v - 1;
+}
 function merCrecimiento(id, hist, flecha, jj) {
   const dias = Object.keys(hist || {}).sort();
   const serie = dias.filter(d => hist[d][id]).map(d => ({ t: Date.parse(d + "T12:00:00Z") / 864e5, v: hist[d][id] }));
@@ -2627,6 +2643,7 @@ function merCrecimiento(id, hist, flecha, jj) {
   // cambio real de ayer a hoy (lista de jugadores de Mister)
   const ayer = jj && capNum(jj.value) && capNum(jj.prev) && jj.prev > 0 ? jj.value / jj.prev - 1 : null;
   const gm = capCrecModelo(jj);
+  if (gm && gm.conAyer) return { g: capClamp(gm.g, [-MER.CREC_MAX, MER.CREC_MAX]), n: tasas.length, fuente: "modelo", gm: gm.g0, phi: gm.phi, ayer };
   if (gm) {
     // el modelo da el ritmo típico de un jugador como este; lo observado solo corrige una parte (la inercia diaria)
     const obs = [...tasas, ...(ayer != null ? [ayer] : [])].slice(-3);
@@ -2765,7 +2782,7 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     let bonusTop = 0;
     if (interesa && pct != null) bonusTop = (pct >= 0.97 ? 0.14 : pct >= 0.93 ? 0.10 : pct >= 0.85 ? 0.06 : pct >= 0.75 ? 0.03 : 0) * (pj >= 0.85 ? 1 : pj);
     const base = MER.SOBRE[prio] ?? 0;
-    const apre = cr.g >= 0 ? Math.pow(1 + cr.g, horizonte) - 1 : -(1 - Math.pow(1 + cr.g, horizonte));   // subida (o bajada) esperada hasta el primer partido
+    const apre = crecAcum(cr, horizonte);   // subida (o bajada) esperada hasta el primer partido
     const fiab = cr.fuente === "flecha" ? 0.5 : 1;
     const recup = capClamp(apre * MER.RECUP * fiab, [-0.12, MER.RECUP_MAX]);
     let s = (base + bonusTop) * tf;
@@ -2927,7 +2944,7 @@ function merTarjeta(r) {
     <p>Se espera que haga <b>${nf1.format(r.espGen)} pts</b> por jornada (<b>${nf1.format(r.espProx)}</b> en el próximo partido). Su base es ${nf1.format(r.mu)} pts, mezcla de su forma${r.avg != null ? ` y su media (${nf1.format(r.avg)})` : ""}, acercada al nivel que se espera por su valor y su posición (${nf1.format(r.mu0)} pts), porque lleva ${r.nPart} partidos.</p>
     <p><b>Disponibilidad ${pc(r.pj)}:</b> ${esc(r.fuente)}.</p>
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
-    <p><b>Valor:</b> ${r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
+    <p><b>Valor:</b> ${r.cr.fuente === "modelo" && r.cr.phi ? `mañana se espera que cambie ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %${r.cr.ayer != null ? ` (ayer ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %)` : ""}: en Mister el valor tiene mucha inercia, lo que cambia un día se repite casi igual al siguiente y se va frenando poco a poco hacia lo típico de un jugador como él (${r.cr.gm >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día)` : r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
     ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> habrías superado a la mayoría de los que ganaron jugadores de su precio: te lo llevas un <b>${pc(r.pl.p)}</b>${r.sFF > 0 && r.s <= r.sFF + 1e-9 ? ` (aquí manda la puja máxima rentable de Futbol Fantasy, +${nf1.format(r.sFF * 100)} %: pagar hasta ahí no hace perder dinero)` : ""}${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
   return `<li class="mc prio-${r.prio}">

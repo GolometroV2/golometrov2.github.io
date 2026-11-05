@@ -213,7 +213,7 @@ def ajustar(H, J, D=None):
 # ---------------------------------------------------------------------------------------------
 # Cómo cambia el valor de un jugador cada día
 # ---------------------------------------------------------------------------------------------
-V_NOMBRES = ["const", "media", "pts_ultima", "jugo_ultima", "log_valor", "lesion", "con_dueno", "pts_medios_5"]
+V_NOMBRES = ["const", "media", "pts_ultima", "jugo_ultima", "log_valor", "lesion", "con_dueno", "pts_medios_5", "cambio_ayer"]
 V_CORTE = 1_000_000      # por debajo de 1 M el valor se mueve al azar (±12 % al día) y no se puede predecir
 V_CLIP = 0.10
 
@@ -239,27 +239,45 @@ def ridge(X, y, lam=10.0):
 
 
 def valor_dinamica(J, H):
-    """Cambio diario del valor (%) en función de la media, la última jornada, el valor, si está lesionado y si tiene dueño."""
+    """Cambio diario del valor (%) en función de la media, la última jornada, el valor, si está lesionado, si tiene dueño
+    y, sobre todo, de cuánto cambió el día anterior: en Mister el valor tiene mucha inercia (medido el 05/11: el cambio de
+    hoy se parece un 95 % al de ayer y la inercia se va perdiendo un 6 % por día)."""
+    from datetime import date
     jug = (J or {}).get("jugadores", [])
-    filas = []
-    for p in jug:
-        if p.get("prev") and p.get("value"):
-            filas.append((car_valor(p), max(-V_CLIP, min(V_CLIP, p["value"] / p["prev"] - 1)), p["value"]))
-    # días anteriores guardados en el historial (cada par de días consecutivos aporta un cambio más)
-    hv = (H or {}).get("valor", {})
     por_id = {p["id"]: p for p in jug}
+    hv = (H or {}).get("valor", {})
+    filas, pares = [], {k: [] for k in range(1, 5)}
     for pid, serie in hv.items():
+        p = por_id.get(pid)
+        if not p:
+            continue
         ds = sorted(serie)
+        cambios = {}
         for a, b in zip(ds[:-1], ds[1:]):
-            p = por_id.get(pid)
-            if p and serie[a] and (p["prev"] is None or True):
-                try:
-                    from datetime import date
-                    dt = (date.fromisoformat(b) - date.fromisoformat(a)).days
-                except ValueError:
-                    continue
-                if 1 <= dt <= 3 and not (p.get("prev") and b == max(ds)):     # el último par ya está en prev
-                    filas.append((car_valor(p), max(-V_CLIP, min(V_CLIP, (serie[b] / serie[a]) ** (1 / dt) - 1)), serie[b]))
+            try:
+                dt = (date.fromisoformat(b) - date.fromisoformat(a)).days
+            except ValueError:
+                continue
+            if dt == 1 and serie[a]:
+                cambios[b] = max(-V_CLIP, min(V_CLIP, serie[b] / serie[a] - 1))
+        for b, y in cambios.items():
+            ayer = (date.fromisoformat(b) - __import__("datetime").timedelta(days=1)).isoformat()
+            if ayer in cambios:
+                filas.append((car_valor(p) + [cambios[ayer]], y, serie[b]))
+            if serie[b] >= V_CORTE:     # inercia a varios días (para prever hasta el partido)
+                for k in pares:
+                    d2 = (date.fromisoformat(b) + __import__("datetime").timedelta(days=k)).isoformat()
+                    if d2 in cambios:
+                        pares[k].append((y, cambios[d2]))
+    # pendiente del cambio k días después frente al de hoy -> factor de inercia por día (phi)
+    pend = {}
+    for k, v in pares.items():
+        if len(v) >= 50:
+            mx, my = media([a for a, _ in v]), media([b for _, b in v])
+            den = sum((a - mx) ** 2 for a, _ in v)
+            if den > 0:
+                pend[k] = sum((a - mx) * (b - my) for a, b in v) / den
+    phis = [pend[k] ** (1 / k) for k in pend if pend[k] > 0]
     alto = [f for f in filas if f[2] >= V_CORTE]
     bajo = [f for f in filas if f[2] < V_CORTE]
     out = {"n": len(filas), "corte": V_CORTE, "bajo": round(media([f[1] for f in bajo]), 4) if bajo else 0.0}
@@ -290,6 +308,9 @@ def valor_dinamica(J, H):
     out["medias"] = [round(a, 5) for a in mu]
     out["desv"] = [round(a, 5) for a in sd]
     out["nAlto"] = len(alto)
+    if phis:
+        out["phi"] = round(max(0.5, min(0.99, media(phis))), 3)
+        out["inercia"] = {str(k): round(v, 3) for k, v in pend.items()}
     return out
 
 
