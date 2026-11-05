@@ -591,6 +591,153 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .comp-b{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-top:10px}
 .comp-b .btn-comp{margin-top:0}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border-radius:12px;background:#25d366;color:#06210f;font-weight:800;font-size:13.5px;text-decoration:none}
+/* ==========================================================================
+   TEMA «NOCHE DE PARTIDO» (noviembre 2026)
+   Idea: un estadio de noche visto en la tele. Fondo carbón con un toque de césped, las líneas del campo como
+   único adorno, números de marcador con la fuente Saira (incluida en /fuentes, licencia OFL) y el verde de
+   siempre como único acento, con brillo solo en lo que está activo o en directo. Sin amarillo.
+   Va al final para pisar el estilo anterior sin tocar la lógica.
+   ========================================================================== */
+@font-face{font-family:"Saira";src:url("fuentes/saira.woff") format("woff");font-weight:100 900;font-stretch:50% 125%;font-display:swap}
+:root{
+  --f-disp:"Saira",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --bg:#08100c;--panel:#0f1814;--panel2:#16211c;--line:#21302a;--txt:#eaf4ee;--mut:#8fa298;
+  --acc:#2fd46e;--accFg:#3ee07c;--accTxt:#03200e;--pos:#3ee07c;--posBg:#2fd46e24;--accBg:#2fd46e1f;
+  --cal:#d9ede1;                                    /* blanco de las líneas del campo */
+  --brillo:0 0 0 1px #2fd46e66,0 0 22px -4px #2fd46e8c;
+  --borde-luz:inset 0 1px 0 #ffffff0d;
+  --r-l:18px;--r-m:12px;--r-s:8px;
+  --tipBg:#0b1410f2;--ink:#08100c}
+@media (prefers-color-scheme:light){:root{
+  --bg:#eef3f0;--panel:#ffffff;--panel2:#e6eeea;--line:#d2ddd7;--txt:#0f1a15;--mut:#52625a;
+  --acc:#0f9d4a;--accFg:#0b7d3b;--accTxt:#fff;--pos:#0f9d4a;--posBg:#0f9d4a1c;--accBg:#0f9d4a17;--cal:#0f9d4a;
+  --brillo:0 0 0 1px #0f9d4a59,0 6px 18px -8px #0f9d4a80;--borde-luz:inset 0 1px 0 #ffffff;--tipBg:#fffffff2;--ink:#0f1a15}}
+
+body{background:
+  radial-gradient(120% 60% at 15% -10%,#2fd46e14,transparent 60%),
+  radial-gradient(90% 50% at 100% 0%,#2fd46e0c,transparent 55%),
+  var(--bg);background-attachment:scroll}
+@media (prefers-color-scheme:light){body{background:radial-gradient(120% 50% at 10% -10%,#0f9d4a14,transparent 60%),var(--bg)}}
+
+/* ---- tipografía de marcador ---- */
+.logo,.head h1,.gh h2,h3.sec,.ordlbl,#nav .tab,.tabs .tab,.pill,.jsel-n,.jsel-t,
+.pts b,.ch-kpi b,.ct-n,.pp,.cr b,.cp .rec b,.mpuja b,.jp-pts,.jp-right b,.pdp,.du-mc b,.pr-t,.pl-tr b,.tuj-x b,.ch-q b,.ct-x b,.cdet-card>summary.sumh{font-family:var(--f-disp)}
+.pts b,.ch-kpi b,.ct-n,.pp,.cr b,.cp .rec b,.mpuja b,.jp-pts,.jp-right b,.pdp,.du-mc b,.pl-tr b{font-stretch:82%;font-variant-numeric:tabular-nums;letter-spacing:0}
+
+/* ---- cabecera ---- */
+.nav{background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4)}
+.logo{font-stretch:118%;font-weight:700;letter-spacing:.2px;font-size:18px}
+.logo svg{filter:drop-shadow(0 0 6px #2fd46e88)}
+.logo span span{font-stretch:90%;color:var(--accFg);font-weight:600}
+.refresh{font-family:var(--f-disp);font-weight:600;letter-spacing:.2px}
+.busc{border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 70%,transparent)}
+
+/* ---- la gran pieza: el nombre de la liga sobre las líneas del campo ---- */
+.head{position:relative;margin:4px -16px 6px;padding:22px 16px 6px;overflow:hidden;isolation:isolate}
+.head::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150' fill='none' stroke='%232fd46e' stroke-opacity='.22' stroke-width='1.2'%3E%3Cpath d='M0 75h400'/%3E%3Ccircle cx='300' cy='75' r='46'/%3E%3Ccircle cx='300' cy='75' r='2.5' fill='%232fd46e' fill-opacity='.5'/%3E%3Cpath d='M300 0v150'/%3E%3Cpath d='M0 20h60v110H0M0 50h22v50H0'/%3E%3C/svg%3E") right center/auto 100% no-repeat;
+  -webkit-mask:linear-gradient(90deg,transparent 0,#000 45%);mask:linear-gradient(90deg,transparent 0,#000 45%)}
+.head h1{font-size:clamp(30px,9vw,44px);font-weight:800;font-stretch:122%;letter-spacing:.5px;line-height:1;margin:0 0 6px!important;
+  background:linear-gradient(180deg,var(--txt) 55%,color-mix(in srgb,var(--txt) 55%,var(--accFg)));-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 28px #2fd46e26}
+.head::after{content:"";display:block;width:56px;height:3px;margin:2px 0 10px;border-radius:2px;background:var(--acc);box-shadow:0 0 12px #2fd46eaa}
+@media (prefers-color-scheme:light){.head h1{text-shadow:none}.head::after{box-shadow:none}}
+
+/* ---- tarjetas: un poco de luz arriba, sin sombras grises ---- */
+.card,.det,.rank .row,.mc,.ch,.mh,.tuj{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,#fff 3%) 0,var(--panel) 120px);box-shadow:var(--borde-luz);border-color:var(--line)}
+@media (prefers-color-scheme:light){.card,.det,.rank .row,.mc,.ch,.mh,.tuj{background:var(--panel);box-shadow:0 1px 0 #ffffff inset,0 1px 2px #0f1a150d}}
+.card{border-radius:var(--r-l)}
+.gh h2{font-size:18px;font-weight:700;font-stretch:104%;letter-spacing:.1px;display:flex;align-items:center;gap:10px}
+.gh h2::before{content:"";flex:none;width:4px;height:16px;border-radius:2px;background:var(--acc);box-shadow:0 0 10px #2fd46e99}
+@media (prefers-color-scheme:light){.gh h2::before{box-shadow:none}}
+h3.sec,.ordlbl{text-transform:none!important;letter-spacing:.1px!important;font-size:13.5px!important;font-weight:600!important;color:var(--mut)!important;font-stretch:100%}
+.note{line-height:1.45}
+
+/* ---- clasificación: filas de marcador ---- */
+.rank{gap:6px}
+.rank .row{border-radius:14px}
+.rank .row.lider{border-color:color-mix(in srgb,var(--acc) 70%,transparent);box-shadow:var(--brillo),var(--borde-luz)}
+.pts b{background:color-mix(in srgb,var(--bg) 70%,var(--panel2));border:1px solid var(--line);box-shadow:inset 0 0 12px #000a;font-size:24px;font-weight:700;border-radius:9px;padding:1px 9px;min-width:3.4ch}
+@media (prefers-color-scheme:light){.pts b{box-shadow:inset 0 -2px 0 var(--line);background:var(--panel2)}}
+.rank .row.lider .pts b{color:var(--accFg);text-shadow:0 0 14px #2fd46e88;border-color:#2fd46e55}
+.rbar{height:3px;background:color-mix(in srgb,var(--line) 70%,transparent)}
+.rbar i{background:linear-gradient(90deg,#1b8f4a,var(--acc));box-shadow:0 0 8px #2fd46e88;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+/* ---- pestañas, pastillas y selectores ---- */
+.tabs{background:color-mix(in srgb,var(--panel) 80%,transparent);border-color:var(--line)}
+.pill{border:1px solid transparent}
+.pill:not(.on){background:color-mix(in srgb,var(--panel2) 85%,transparent);border-color:var(--line)}
+.indice button{font-family:var(--f-disp);font-weight:600}
+
+/* ---- barra de navegación inferior ---- */
+#nav{background:color-mix(in srgb,var(--bg) 78%,transparent)!important;border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent)!important;-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
+#nav .tab{font-weight:600;font-stretch:96%;letter-spacing:.1px;color:var(--mut)}
+#nav .tab.on{color:var(--txt);box-shadow:none}
+#nav .tab.on .ti{filter:drop-shadow(0 0 8px #2fd46ecc)}
+#nav .tab.on::before{left:30%;right:30%;height:2px;top:-7px;background:var(--acc);box-shadow:0 0 12px 1px #2fd46ecc}
+
+/* ---- botones de acción ---- */
+.btn-comp,.btn-ghost{border:1px solid var(--line)}
+
+/* ---- tarjetas principales (capitán y mercado): borde de luz verde ---- */
+.ch,.mh{border:1px solid color-mix(in srgb,var(--acc) 45%,var(--line));box-shadow:var(--borde-luz);position:relative;overflow:hidden}
+.ch::after,.mh::after{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,#2fd46ecc,transparent);pointer-events:none}
+.ch-kpi,.ct-t,.pl-tr>div,.tuj-f,.q-duelo,.ch-gana{border:1px solid color-mix(in srgb,var(--line) 80%,transparent);background:color-mix(in srgb,var(--panel2) 85%,transparent)}
+.ch-kpi b{font-size:24px;font-weight:700}
+
+/* ---- cuenta atrás como un marcador de estadio ---- */
+.av-j{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,#fff 3%),var(--panel));box-shadow:var(--borde-luz)}
+.av-r{font-family:var(--f-disp);font-stretch:78%;font-weight:700;font-size:19px;letter-spacing:.5px;min-width:96px;padding:8px 10px;border-radius:10px;
+  background:#050a07;color:var(--accFg);border:1px solid #2fd46e40;text-shadow:0 0 10px #2fd46ecc;box-shadow:inset 0 0 14px #000}
+@media (prefers-color-scheme:light){.av-r{background:#0f1a15;color:#5cf096;text-shadow:0 0 8px #2fd46e99}}
+.av-j.vivo .av-r{background:#1a0606;color:#ff8080;border-color:#ff6b6b55;text-shadow:0 0 10px #ff6b6bcc}
+/* ---- directo ---- */
+.vivo-d{box-shadow:0 0 0 0 #2fd46e99;animation:latido2 1.8s ease-out infinite}
+@keyframes latido2{0%{box-shadow:0 0 0 0 #2fd46e99}70%{box-shadow:0 0 0 8px #2fd46e00}100%{box-shadow:0 0 0 0 #2fd46e00}}
+
+/* ---- modo marcador ---- */
+body.tv-on{overflow:hidden}
+.tv{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 70% at 50% -20%,#14402a,transparent 60%),#040806;color:#eaf4ee;color-scheme:dark;display:flex}
+.tv[hidden]{display:none}
+.tv::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' fill='none' stroke='%232fd46e' stroke-opacity='.10' stroke-width='2'%3E%3Crect x='20' y='20' width='960' height='560' rx='4'/%3E%3Cpath d='M500 20v560'/%3E%3Ccircle cx='500' cy='300' r='90'/%3E%3Cpath d='M20 160h150v280H20M980 160H830v280h150M20 230h55v140H20M980 230h-55v140h55'/%3E%3C/svg%3E") center/cover no-repeat}
+.tv-in{position:relative;display:flex;flex-direction:column;width:100%;max-width:1200px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) clamp(14px,3vw,40px) max(12px,env(safe-area-inset-bottom));min-height:0}
+.tv-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid #2fd46e33}
+.tv-lg{font-family:var(--f-disp);font-stretch:120%;font-weight:800;font-size:clamp(20px,3.4vw,40px);letter-spacing:.5px;text-shadow:0 0 22px #2fd46e55}
+.tv-st{font-family:var(--f-disp);font-size:clamp(13px,1.8vw,20px);font-weight:600;color:#a9bcb1;display:inline-flex;align-items:center;gap:8px}
+.tv-st b{color:#5cf096;text-shadow:0 0 10px #2fd46e99;font-stretch:85%}
+.tv-vivo{color:#ff9a9a}.tv-vivo i{width:10px;height:10px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 0 #ff4d4daa;animation:tvlat 1.6s ease-out infinite}
+@keyframes tvlat{0%{box-shadow:0 0 0 0 #ff4d4daa}80%{box-shadow:0 0 0 10px #ff4d4d00}100%{box-shadow:0 0 0 0 #ff4d4d00}}
+.tv-hr{margin-left:auto;font-family:var(--f-disp);font-stretch:80%;font-weight:700;font-size:clamp(18px,2.6vw,32px);color:#5cf096;text-shadow:0 0 12px #2fd46eaa;background:#020503;border:1px solid #2fd46e33;border-radius:10px;padding:2px 12px;box-shadow:inset 0 0 12px #000}
+.tv-x{width:44px;height:44px;border-radius:50%;border:1px solid #2fd46e44;color:#cfe3d7;font-size:18px;display:grid;place-items:center}
+.tv-x:hover{background:#2fd46e22}
+.tv-c{flex:1;min-height:0;overflow:auto;padding:10px 0}
+.tv-sub{margin:4px 0 12px;color:#93a69b;font-size:clamp(13px,1.6vw,18px)}
+.tv-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(6px,1vh,12px)}
+.tv-l li{display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);padding:clamp(8px,1.4vh,16px) clamp(10px,1.6vw,22px);border-radius:14px;background:linear-gradient(90deg,#0f1a15ee,#0a120ecc);border:1px solid #21302a;box-shadow:inset 0 1px 0 #ffffff0a}
+.tv-l li:first-child{border-color:#2fd46e88;box-shadow:0 0 0 1px #2fd46e55,0 0 30px -8px #2fd46e99,inset 0 1px 0 #ffffff12}
+.tv-p{font-family:var(--f-disp);font-stretch:80%;font-weight:700;font-size:clamp(18px,2.6vw,34px);width:1.4em;text-align:center;color:#7f948a}
+.tv-l li:first-child .tv-p{color:#5cf096}
+.tv-l .av{width:clamp(40px,5.5vw,72px);height:clamp(40px,5.5vw,72px)}
+.tv-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.tv-n b{font-size:clamp(16px,2.4vw,30px);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-n small{font-size:clamp(12px,1.5vw,18px);color:#93a69b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-b{display:block;height:4px;border-radius:2px;background:#ffffff10;position:relative;overflow:hidden}
+.tv-b::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--c);box-shadow:0 0 10px var(--c)}
+.tv-v{font-family:var(--f-disp);font-stretch:78%;font-weight:700;font-size:clamp(28px,5vw,64px);line-height:1;min-width:2.6ch;text-align:right;color:#f2fbf5}
+.tv-l li:first-child .tv-v{color:#5cf096;text-shadow:0 0 18px #2fd46ebb}
+.tv-tk{overflow:hidden;border-top:1px solid #2fd46e33;padding-top:10px;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.tv-tk>div{display:flex;gap:28px;width:max-content;animation:tvtk 60s linear infinite}
+.tv-tk span{font-family:var(--f-disp);font-weight:600;font-size:clamp(13px,1.7vw,20px);color:#cfe3d7;white-space:nowrap}
+.tv-tk span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#2fd46e;margin-right:10px;vertical-align:middle;box-shadow:0 0 6px #2fd46e}
+@keyframes tvtk{to{transform:translateX(-50%)}}
+@media (max-width:699px){.tv-g{display:none}}
+@media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.6vw,64px);height:clamp(40px,4.6vw,64px)}}
+@media (prefers-reduced-motion:reduce){.tv-tk>div{animation:none;flex-wrap:wrap;width:auto}}
+/* ---- detalles ---- */
+::selection{background:#2fd46e55}
+:focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
+input[type=range]{accent-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -600,10 +747,12 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
   <span class="acciones">
     <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
+    <button class="busc" id="btnTV" aria-label="Modo marcador: la jornada a pantalla completa" title="Modo marcador"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4M8 11h2M14 9v4"/></svg></button>
     <button class="busc" id="btnBusc" aria-label="Buscar jugador"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
     <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
+<div id="tv" class="tv" role="dialog" aria-modal="true" aria-label="Modo marcador" hidden></div>
 <main id="contenido">
   <div class="head"><h1 id="titulo" style="margin-bottom:14px">Mi liga</h1></div>
   <div id="aviso" aria-live="polite"></div>
@@ -3753,6 +3902,73 @@ function pintarEquipos() {
 }
 
 /* ---------- Lista principal ---------- */
+/* ---------- Modo marcador: la jornada a pantalla completa, para dejarla puesta en la tele o en la mesa ---------- */
+// Se refresca sola cada minuto (los datos) y cada 20 s (el reloj y la cuenta atrás). Mantiene la pantalla encendida
+// si el navegador lo permite. Antes de la jornada enseña la Predicción; durante, el marcador en directo; al acabar, el final.
+let TV = { abierto: false, t1: null, t2: null, lock: null };
+function abrirTV() {
+  const tv = $("#tv"); if (!tv) return;
+  TV.abierto = true; tv.hidden = false; document.body.classList.add("tv-on");
+  pintarTV();
+  try { if (tv.requestFullscreen && matchMedia("(pointer:coarse)").matches) tv.requestFullscreen().catch(() => {}); } catch (e) {}
+  try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(l => { TV.lock = l; }).catch(() => {}); } catch (e) {}
+  clearInterval(TV.t1); clearInterval(TV.t2);
+  TV.t1 = setInterval(() => { recargarTodo(false); }, 60000);
+  TV.t2 = setInterval(pintarTV, 20000);
+  setTimeout(() => { const b = tv.querySelector(".tv-x"); if (b) b.focus(); }, 50);
+}
+function cerrarTV() {
+  const tv = $("#tv"); if (!tv) return;
+  TV.abierto = false; tv.hidden = true; document.body.classList.remove("tv-on");
+  clearInterval(TV.t1); clearInterval(TV.t2);
+  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
+  try { if (TV.lock) TV.lock.release(); } catch (e) {} TV.lock = null;
+  const b = $("#btnTV"); if (b) b.focus();
+}
+function pintarTV() {
+  const tv = $("#tv"); if (!tv || !TV.abierto || !D) return;
+  const js = jornadas(), j = js[js.length - 1], n = j ? +j.slice(1) : null, md = (j && D.matchdays[j]) || {};
+  const ahora = Date.now() / 1000, hora = enMadrid(Date.now(), { hour: "2-digit", minute: "2-digit" });
+  const Q = datosQuiniela();
+  const vivo = j ? proyeccionVivo(j) : null;
+  const titulo = esc($("#titulo").textContent || "Mi liga");
+  let estado = "", cuerpo = "", ticker = [];
+  if (Q && !vivo) {
+    // antes de la jornada: cuenta atrás y Predicción
+    const falta = Math.max(0, Q.primero - ahora), d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
+    estado = `<span class="tv-st">Jornada ${Q.gw} · empieza en <b>${d ? `${d} d ${hh} h` : `${hh} h ${String(mm).padStart(2, "0")} min`}</b></span>`;
+    const mx = Math.max(...Q.filas.map(f => f.pGana), 0.01);
+    cuerpo = `<p class="tv-sub">Quién tiene más opciones de ganar la jornada si cada uno pone su mejor once</p>
+      <ol class="tv-l" style="--fil:${Math.ceil(Q.filas.length / 2)}">${Q.filas.map((f, k) => `<li style="--c:${col(f.i)};--w:${(f.pGana / mx * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(f.m, f.i)}<span class="tv-n"><b>${esc(f.m.name)}</b><small>≈ ${Math.round(f.media)} pts · capitán ${esc(apellido(f.o.cap.p.short || f.o.cap.p.name))}</small><i class="tv-b"></i></span><span class="tv-v">${pctQ(f.pGana)}</span></li>`).join("")}</ol>`;
+    ticker = Q.filas.map(f => `${f.m.name}: líder tras la jornada ${pctQ(f.pLider)}`);
+  } else if (j) {
+    // durante o después de la jornada: puntos de la jornada, cuántos faltan y cómo acabaría cada uno
+    const S = serieLiga(), kj = S.js.indexOf(j);
+    const L = D.managers.map((m, i) => { const x = md[m.id] || {}, v = (vivo || {})[m.id] || { n: 0, esp: 0 };
+      const k = S.ms.findIndex(o => o.m.id === m.id);
+      return { m, i, pts: x.points || 0, cap: x.captain, v, gen: k >= 0 && kj >= 0 ? S.cum[k][kj] : total(m) }; })
+      .sort((a, b) => b.pts - a.pts || b.gen - a.gen);
+    const termin = !vivo;
+    estado = termin ? `<span class="tv-st">Jornada ${n} · <b>final</b></span>` : `<span class="tv-st tv-vivo"><i aria-hidden="true"></i>En directo · jornada ${n}</span>`;
+    const genOrd = L.slice().sort((a, b) => b.gen - a.gen);
+    cuerpo = `<p class="tv-sub">${termin ? "Puntos de la jornada" : "Puntos de la jornada y cómo acabaría cada uno con los partidos que faltan"}</p>
+      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><small>${x.cap ? `© ${esc(apellido(x.cap.name))} ${x.cap.points ?? ""}` : ""}${!termin && x.v.n ? ` · ⏳ ${x.v.n}<span class="tv-g"> por jugar</span> · ≈ ${Math.round(x.pts + x.v.esp)}` : ""}<span class="tv-g"> · ${genOrd.indexOf(x) + 1}.º en la general (${x.gen})</span></small><i class="tv-b"></i></span><span class="tv-v">${x.pts}</span></li>`).join("")}</ol>`;
+    const jug = []; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played !== false && capNum(p.points)) jug.push(p); }));
+    const vistos = new Set();
+    ticker = jug.sort((a, b) => b.points - a.points).filter(p => !vistos.has(p.id) && vistos.add(p.id)).slice(0, 14).map(p => `${p.name} ${p.points}${p.captain ? " ©" : ""}`);
+  } else { tv.innerHTML = ""; return; }
+  const tick = ticker.length ? `<div class="tv-tk" aria-hidden="true"><div>${[...ticker, ...ticker].map(t => `<span>${esc(t)}</span>`).join("")}</div></div>` : "";
+  tv.innerHTML = `<div class="tv-in">
+    <header class="tv-h"><span class="tv-lg">${titulo}</span>${estado}<span class="tv-hr">${esc(hora)}</span><button class="tv-x" data-tvx="1" aria-label="Salir del modo marcador">✕</button></header>
+    <div class="tv-c">${cuerpo}</div>${tick}</div>`;
+}
+document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("#btnTV")) { abrirTV(); return; }
+  if (e.target.closest && e.target.closest("[data-tvx]")) cerrarTV();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && TV.abierto) cerrarTV(); });
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && TV.abierto && matchMedia("(pointer:coarse)").matches) cerrarTV(); });
+
 function pintar() {
   const meta = METRICAS.find(x => x[0] === orden.k);
   const rank = estadisticas();
@@ -3825,6 +4041,7 @@ function pintar() {
   pintarPrevia();
   pintarQuiniela();
   pintarTuJornada();
+  if (TV.abierto) pintarTV();
   pintarCronica();
   pintarGrafico();
   pintarPronostico();
