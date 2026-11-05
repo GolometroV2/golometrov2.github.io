@@ -416,6 +416,8 @@ code{color:var(--accFg)}
 .mh.prio-imperdible{border-color:var(--red);background:linear-gradient(165deg,var(--redBg),var(--panel) 55%)}
 .mh .ch-q b{font-size:20px}
 .mh-puja{color:var(--accFg)}
+.pl-tr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pl-tr>div{background:var(--panel2);border-radius:var(--r-m,10px);padding:8px;display:flex;flex-direction:column;gap:2px;min-width:0}.pl-tr small{font-size:11px;color:var(--mut)}.pl-tr b{font-size:18px;color:var(--accFg)}.pl-tr span{font-size:10.5px;color:var(--mut);line-height:1.25}
+.ch-gana{margin:8px 0 0;font-size:13px;padding:8px 10px;border-radius:var(--r-m,10px);background:var(--panel2)}.ch-gana b{color:var(--accFg)}
 .mh .ch-kpi b{font-size:19px}
 .seg2{display:grid;grid-template-columns:1fr 1fr;margin:0 0 12px;border-radius:var(--r-m);padding:3px}
 .seg2 button{min-height:38px;border-radius:9px;font-size:12.5px}
@@ -697,13 +699,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05c";
+const NOVEDADES_V = "2026-11-05d";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: la <b>Quiniela</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
+    <span>Nuevo: la <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Quiniela</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -929,7 +931,7 @@ function pintarGrafico() {
       return `<tr class="${foco && foco !== o.m.id ? "off" : ""}"><th>${avatar(o.m, o.i)}</th><td class="tot">${cum[x][n - 1]}</td>${celdas}</tr>`;
     }).join("");
     cuerpo = `<div class="heat"><table aria-label="Puntos de cada manager por jornada"><thead><tr><th></th><th class="tot">Total</th>${js.map(j => `<th>${esc(j)}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
-      <p class="note">Cuanto más amarilla la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
+      <p class="note">Cuanto más verde la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
   } else {
     const W = 360, L = 26, R = 116, T = 14, B = 22;
     const H = modoG === "pos" ? T + (N - 1) * 26 + B + 6 : 250;
@@ -2773,14 +2775,91 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     s *= fComp;
     s = capClamp(s + (recup > 0 ? recup : Math.max(recup, -s * 0.6)), [prio === "evitar" ? 0 : 0.01, prio === "normal" ? 0.08 : 0.5]);
     const redondea = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };   // evita empatar en cifras redondas
+    // Con datos de la liga (pujas.json): la puja es la que gana con la probabilidad que pide su prioridad frente a lo que
+    // de verdad se paga aquí por jugadores de su precio; nunca menos de lo que se espera que suba antes de jugar.
+    const pl = prio === "evitar" ? null : pujaLiga(V, prio, tasaC, recup > 0 ? recup : 0);
+    const sAnt = s;   // la regla de antes (se usa si aún no hay compras suficientes con precio)
+    if (pl) s = pl.s;
     const puja = prio === "evitar" ? V : redondea(V * (1 + s));
-    const techo = prio === "evitar" ? V : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
+    const techo = prio === "evitar" ? V : pl ? Math.max(puja, redondea(V * (1 + pl.sSeguro))) : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
     return { j, pos, V, mu, mu0, forma, avg, nPart, tasa, pj, fuente, rival: c1, ctx, fProx, fMed, espProx, espGen, cr, diasJornada, horizonte,
-             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, puja, techo };
+             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, sAnt, puja, techo, pl };
   });
   const orden = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
   lista.sort((a, b) => orden[a.prio] - orden[b.prio] || b.score - a.score);
   return { gw: obj.gw, lista, nombres, modelo };
+}
+// ---------- Pujas de la liga: cuánto se paga de verdad (pujas.json) ----------
+// Mister pone la cláusula en 1,5 veces lo pagado, así que el precio de cada compra se sabe (precio = cláusula / 1,5).
+// Con las compras del mercado se ve con cuánto por encima del valor se ganó cada jugador. La probabilidad de llevarte
+// a un jugador pujando un s % por encima de su valor es:  P = (1 − q) + q · F(s)
+//   q = probabilidad de que alguien más puje por él (más alta cuanto mejor es el jugador),
+//   F(s) = parte de las compras de la liga de jugadores de precio parecido que se cerraron por debajo de s.
+const PUJA = {
+  OBJETIVO: { imperdible: 0.95, top: 0.9, bueno: 0.85, favorable: 0.8, inversion: 0.8, normal: 0.75 },   // probabilidad de llevártelo que se busca
+  RIVAL: { imperdible: 3, top: 2.6, bueno: 2, favorable: 1.6, inversion: 1.6, normal: 1 },                   // interés de los demás frente a un libre cualquiera
+  MAX: { imperdible: 1.3, top: 0.9, bueno: 0.5, favorable: 0.35, inversion: 0.3, normal: 0.12 },             // sobrepuja máxima que compensa
+  MAX_EUR: { imperdible: 4e6, top: 2.5e6, bueno: 1.5e6, favorable: 1e6, inversion: 0.8e6, normal: 0.3e6 },  // y en euros por encima del valor
+  SEGURO: 0.97, ANCHO: 0.5, SUAVE: 0.05, MIN_OBS: 8
+};
+let PUJAS = null, PUJAS_OBS = null;
+function cargarPujas() {
+  if (PUJAS) return; PUJAS = { compras: [] };
+  fetch("pujas.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); });
+}
+// compras del mercado con precio conocido: valor del día en que salió y sobrepuja con la que se ganó
+function obsPujas() {
+  if (!PUJAS_OBS) PUJAS_OBS = ((PUJAS || {}).compras || []).filter(c => c.tipo === "mercado" && c.precio && c.listado && c.precio >= c.listado * 0.98)
+    .map(c => ({ ...c, V: c.listado, s: c.precio / c.listado - 1 }));
+  return PUJAS_OBS;
+}
+// función de distribución normal (aproximación de Abramowitz y Stegun)
+function capPhi(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2);
+  const q = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - q : q; }
+function pGanarPuja(V, s, q, obs) {
+  let w = 0, ok = 0;
+  // cada compra cuenta más cuanto más se parece su precio; su sobrepuja se suaviza un poco (nadie puja exactamente igual)
+  obs.forEach(o => { const d = Math.log(V / o.V) / PUJA.ANCHO, wi = Math.exp(-d * d / 2); w += wi; ok += wi * capPhi((Math.log(1 + s) - Math.log(1 + o.s)) / PUJA.SUAVE); });
+  return w > 0 ? (1 - q) + q * ok / w : null;
+}
+function pujaLiga(V, prio, tasaC, sMin) {
+  const obs = obsPujas();
+  if (obs.length < PUJA.MIN_OBS) return null;
+  const q = capClamp((tasaC ?? 0.3) * (PUJA.RIVAL[prio] || 1), [0.15, 0.95]), max = Math.max(0.02, Math.min(PUJA.MAX[prio] ?? 0.12, (PUJA.MAX_EUR[prio] ?? 3e5) / V));
+  const P = x => pGanarPuja(V, x, q, obs);
+  let s = null, sSeguro = null;
+  for (let x = 0.005; x <= 1.6 + 1e-9; x += 0.005) {
+    const p = P(x);
+    if (s == null && p >= (PUJA.OBJETIVO[prio] ?? 0.5)) s = x;
+    if (sSeguro == null && p >= PUJA.SEGURO) { sSeguro = x; break; }
+  }
+  s = Math.max(sMin, Math.min(s ?? max, max));
+  sSeguro = Math.max(s, Math.min(sSeguro ?? 1.6, max * 1.4));        // «para asegurarlo», sin pasar de lo que compensa
+  if (P(sSeguro) - P(s) < 0.04) sSeguro = s;       // si pagar más apenas sube la probabilidad, no se propone
+  return { s, sSeguro, p: P(s), pSeguro: P(sSeguro), q, n: obs.length, tope: s >= max - 1e-9 && P(s) < (PUJA.OBJETIVO[prio] ?? 0.5) };
+}
+// Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
+function bloquePujasLiga() {
+  const O = obsPujas();
+  if (O.length < 5 || !E) return "";
+  const med = a => { const b = a.slice().sort((x, y) => x - y); return b.length ? (b.length % 2 ? b[(b.length - 1) / 2] : (b[b.length / 2 - 1] + b[b.length / 2]) / 2) : 0; };
+  const pcS = x => (x >= 0 ? "+" : "−") + (Math.abs(x) >= 0.1 ? Math.round(Math.abs(x) * 100) : nf1.format(Math.abs(x) * 100)) + " %";
+  const tramos = [["Menos de 3 M", 0, 3e6], ["De 3 a 8 M", 3e6, 8e6], ["Más de 8 M", 8e6, Infinity]].map(([t, a, b]) => {
+    const L = O.filter(o => o.V >= a && o.V < b); return { t, n: L.length, med: med(L.map(o => o.s)), alta: L.filter(o => o.s >= 0.1).length, max: Math.max(0, ...L.map(o => o.s)) }; }).filter(x => x.n);
+  const nom = id => (E.managers.find(m => String(m.id) === String(id)) || {}).name || "?";
+  const porM = E.managers.map((m, i) => { const L = O.filter(o => String(o.to) === String(m.id)); return { m, i, n: L.length, med: med(L.map(o => o.s)), max: Math.max(0, ...L.map(o => o.s)), gasto: L.reduce((t, o) => t + o.precio - o.V, 0) }; })
+    .filter(x => x.n).sort((a, b) => b.med - a.med);
+  const mxM = Math.max(0.01, ...porM.map(x => x.med));
+  const ult = O.slice().sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts)).slice(0, 12);
+  const barato = tramos.find(x => x.t === "Menos de 3 M");
+  return `<section class="card"><div class="gh"><h2>Cómo se puja en esta liga</h2></div>
+    <p class="note" style="margin:0 0 10px">Lo que se ha pagado de verdad en ${O.length} compras del mercado (el precio sale de la cláusula, que Mister pone en 1,5 veces lo pagado), frente al valor del jugador ese día.</p>
+    <div class="pl-tr">${tramos.map(x => `<div><small>${x.t}</small><b>${pcS(x.med)}</b><span>mediana · ${x.n} compras${x.alta ? ` · ${x.alta} por encima de +10 %` : ""}</span></div>`).join("")}</div>
+    ${barato && barato.alta ? `<p class="note">Por los baratos se paga mucho más en porcentaje: hasta ${pcS(barato.max)}. Analítica Fantasy recomienda pujar entre un +2 % y un +6 % (lo que se espera que suba hasta el partido), lo que aquí no basta para ganar a nadie que de verdad lo quiera.</p>` : ""}
+    <p class="ordlbl" style="margin-top:12px">Cómo puja cada manager (sobrepuja mediana)</p>
+    <ul class="pron">${porM.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.max(0, x.med) / mxM * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · máx. ${pcS(x.max)} · ${eur(x.gasto)} por encima del valor</small></span><span class="pp" style="font-size:15px">${pcS(x.med)}</span></li>`).join("")}</ul>
+    <details class="cdet"><summary>Últimas compras y lo que se pagó</summary><ul class="clist" style="margin-top:6px">${ult.map(o => `<li class="crow" data-ficha="${esc(o.playerId)}">${cara(o.playerId, o.name, null, 34)}<span class="cq"><b>${esc(o.name)}</b><span>${esc(nom(o.to))} · valía ${merEur(o.V)}</span></span><span class="cr"><b class="${o.s >= 0.1 ? "dn" : ""}">${merEur(o.precio)}</b><small>${pcS(o.s)}</small></span></li>`).join("")}</ul></details></section>`;
 }
 // ===== FIN MERCADO-ENGINE =====
 
@@ -2820,7 +2899,8 @@ function heroMer(r, cierre) {
         <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
-    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
+    ${r.pl ? `<p class="ch-gana">Con esta puja te lo llevas <b>${pc(r.pl.p)}</b> de las veces${r.pl.tope ? " (no compensa pagar más)" : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}: <b>${merPuja(r.techo)}</b>.` : ""}</p>` : ""}
+    <p class="ch-por">${esc(fraseMer(r))}${r.pl ? "" : ` No pases de <b>${merPuja(r.techo)}</b>.`}${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
 
@@ -2836,7 +2916,7 @@ function merTarjeta(r) {
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
-    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
+    ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> habrías superado a la mayoría de los que ganaron jugadores de su precio: te lo llevas un <b>${pc(r.pl.p)}</b>${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
       <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
@@ -2845,7 +2925,7 @@ function merTarjeta(r) {
         <div class="jp-val">${img(merUrlEscudo(j.teamId), "shield")} <b>${merEur(r.V)}</b> <span class="note">${rivalTxt}</span></div>
         <div class="mbar" role="img" aria-label="Puntuación ${r.score} sobre 100" title="Puntuación ${r.score}/100"><i style="width:${Math.max(4, r.score)}%"></i><span>${r.score}</span></div>
       </div>
-      <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}</span></div>
+      <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}${r.pl && r.prio !== "evitar" ? ` · ${pc(r.pl.p)}` : ""}</span></div>
     </div>
     <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}</div></details></li>`;
 }
@@ -2999,6 +3079,7 @@ function pintarMercado() {
   if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
+  cargarPujas(); cargarMerHist();
   const r = recomendarMercado({ M: MER_DATA, cal: CAL, D, E });
   if (r.error) { cont.innerHTML = `<div class="msg">${esc(r.error)}</div>`; return; }
   const cierre = Math.min(...MER_DATA.libres.map(x => x.ends).filter(Boolean));
@@ -3023,7 +3104,8 @@ function pintarMercado() {
     ${bloqueSubidas(MER_DATA)}
     ${bloqueCalendario()}
     ${bloqueRacha(MER_DATA)}
-    <p class="note">La puja ideal es una guía: sube con la prioridad, con lo que se espera que crezca su valor hasta que pueda puntuar y baja (en porcentaje) cuanto más caro es el jugador.</p>`;
+    ${bloquePujasLiga()}
+    <p class="note">La puja ideal sale de lo que de verdad se paga en esta liga por jugadores de precio parecido (el precio de cada compra se deduce de su cláusula, que es 1,5 veces lo pagado). El % junto a la puja es la probabilidad de llevártelo. Cuanto mejor es el jugador, más alta la probabilidad que se busca.</p>`;
 }
 
 // ---------- Pestaña Capitán ----------
@@ -3273,7 +3355,7 @@ function htmlOnceRec(r) {
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
-    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número amarillo: puntos esperados de cada uno.</p>
+    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
     <div class="oi">${filas}</div>
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
 }
