@@ -1617,10 +1617,40 @@ function textoCrec(x) {
   if (x.g <= -0.002) return `−${nf1.format(-x.g * 100)} %/día · se aleja de su cláusula`;
   return "valor estable";
 }
+// Chollos: las cláusulas más baratas por cada punto esperado (sobre todo jugadores de poco precio)
+function clausulasBaratas(ms) {
+  const L = [];
+  ms.forEach(m => (m.players || []).forEach(p => {
+    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pj = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const esp = mu * pj;
+    if (esp < 3) return;
+    L.push({ m, p, esp, pj, g: crecDiario(p), sobre: p.clause / p.value - 1, r: esp / (p.clause / 1e6) });
+  }));
+  return L.sort((a, b) => b.r - a.r);
+}
+let clVista = "todos";
 function bloqueClausulas(ms) {
+  const seg = [["baratos", "Chollos baratos"], ["todos", "Todos los precios"]].map(([k, t]) => `<button data-clv="${k}" class="${clVista === k ? "on" : ""}">${t}</button>`).join("");
+  if (clVista === "baratos") {
+    const L = clausulasBaratas(ms).slice(0, 10);
+    if (!L.length) return "";
+    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+      <p class="note" style="margin:0 0 6px">Las cláusulas que menos cuestan por cada punto que se espera del jugador (3 o más por jornada). Suelen ser jugadores baratos que rinden por encima de su precio.</p>
+      <ul class="clist">${L.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+        <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
+          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
+          <span class="cl2-g">${nf1c(x.r)} pts por millón de cláusula</span></span>
+        <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
+      <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+  }
   const top = clausulasRentables(ms).slice(0, 10);
   if (!top.length) return "";
-  return `<section class="card"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div>
+  return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
     <p class="note" style="margin:0 0 6px">Solo jugadores rentables en puntos (4 o más por jornada y al menos lo que se espera de su precio). Entre ellos suben los que dan más puntos por millón, tienen la cláusula más cerca de su valor y más suben cada día.</p>
     <ul class="clist">${top.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
       <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span>${x.sobreEf <= 0.1 ? ` <span class="chollo">chollo</span>` : ""}</b>
@@ -3135,11 +3165,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
   if (d.sub) { subVista = d.sub; pintarMercado(); return; }
   if (d.jsel) { jselAbierto = !jselAbierto; pintar(); return; }
   if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); return; }
