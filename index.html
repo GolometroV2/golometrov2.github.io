@@ -758,6 +758,20 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 #nav,.nav{view-transition-name:none}
 .btn-wa:active,.btn-comp:active,.refresh:active,.tuj-f:active,.pill:active,.indice button:active{transform:scale(.97)}
 .btn-wa,.btn-comp,.refresh,.tuj-f,.pill,.indice button{transition:transform .12s ease,background-color .15s,color .15s}
+/* ---- perfil de cada manager (radar) ---- */
+.rd-sel{display:flex;gap:2px;justify-content:space-between;max-width:360px;margin:0 auto}
+.rd-sel button{width:40px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;opacity:.55;transition:opacity .15s,border-color .15s}
+.rd-sel button.on{opacity:1;border-color:var(--acc);box-shadow:0 0 12px #2fd46e66}
+.rd-sel .av{width:34px;height:34px}
+.rd-w{max-width:340px;margin:6px auto 0}
+.rd{width:100%;height:auto;overflow:visible}
+.rd-an{fill:none;stroke:var(--line);stroke-width:1}
+.rd-c{fill:none;stroke:var(--mut);stroke-width:1.5;stroke-dasharray:4 4;opacity:.7}
+.rd-p{fill-opacity:.22;stroke-width:2.2;filter:drop-shadow(0 0 6px currentColor)}
+.rd-t{fill:var(--mut);font:600 13.5px var(--f-disp)}
+.rd-ley{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin:4px 0 0}
+.rd-ley span{display:inline-flex;align-items:center;gap:6px}.rd-ley i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.rd-ic{border-top:2px dashed var(--mut);height:0!important;background:none!important}
 /* ---- detalles ---- */
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
@@ -2268,6 +2282,55 @@ function bloqueClausulas(ms) {
     <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
+// Perfil de cada manager: un radar con seis cosas que se miden igual para todos (el mejor de la liga en cada una = borde)
+let radarSel = null;
+function datosRadar(ms) {
+  const js = jornadas(), u3 = js.slice(-3), H = (E && E.history) || {};
+  const hoy = Date.now(), hace7 = new Date(hoy - 7 * 864e5).toISOString().slice(0, 10);
+  const L = ms.map(m => {
+    const dm = (D.managers || []).find(x => String(x.id) === String(m.id)), pj = js.map(j => ((D.matchdays[j] || {})[m.id] || {}).points).filter(capNum);
+    const media = pj.length ? pj.reduce((a, b) => a + b, 0) / pj.length : 0, sd = pj.length > 1 ? Math.sqrt(pj.reduce((t, v) => t + (v - media) ** 2, 0) / pj.length) : 0;
+    const forma = u3.map(j => ((D.matchdays[j] || {})[m.id] || {}).points || 0).reduce((a, b) => a + b, 0);
+    const caps = js.reduce((t, j) => { const c = ((D.matchdays[j] || {})[m.id] || {}).captain; return t + (c && capNum(c.bonus) ? c.bonus : 0); }, 0);
+    let reval = 0; m.players.forEach(p => { const h = H[p.id] || []; const a = h.filter(x => x[0] <= hace7).pop() || h[0]; if (a && capNum(a[1]) && capNum(p.value)) reval += p.value - a[1]; });
+    return { m, media, sd, v: { pts: dm ? total(dm) : 0, forma, caps, reg: media ? media / (sd + 8) : 0, valor: m.squadValue || 0, reval } };
+  });
+  const ejes = [["pts", "Puntos"], ["forma", "Forma"], ["caps", "Capitanes"], ["reg", "Regularidad"], ["valor", "Plantilla"], ["reval", "Revalorización"]];
+  ejes.forEach(([k]) => { const v = L.map(x => x.v[k]), mn = Math.min(...v), mx = Math.max(...v);
+    L.forEach(x => { x.n = x.n || {}; x.n[k] = mx > mn ? 0.18 + 0.82 * (x.v[k] - mn) / (mx - mn) : 0.6; }); });
+  return { L, ejes };
+}
+function svgRadar(R, sel, comp) {
+  const W = 300, C = W / 2, Rr = 104, n = R.ejes.length, ang = k => -Math.PI / 2 + k * 2 * Math.PI / n;
+  const pt = (k, r) => [C + Math.cos(ang(k)) * r, C + Math.sin(ang(k)) * r];
+  const poly = x => R.ejes.map(([key], k) => pt(k, Rr * x.n[key]).map(v => v.toFixed(1)).join(",")).join(" ");
+  const anillos = [0.25, 0.5, 0.75, 1].map(f => `<polygon points="${R.ejes.map((e, k) => pt(k, Rr * f).join(",")).join(" ")}" class="rd-an"/>`).join("");
+  const radios = R.ejes.map((e, k) => `<line x1="${C}" y1="${C}" x2="${pt(k, Rr)[0]}" y2="${pt(k, Rr)[1]}" class="rd-an"/>`).join("");
+  const etq = R.ejes.map(([key, t], k) => { const [x, y] = pt(k, Rr + 22), an = Math.abs(x - C) < 4 ? "middle" : x > C ? "start" : "end";
+    return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${an}" class="rd-t">${t}</text>`; }).join("");
+  const c = col(sel.m.i);
+  return `<svg viewBox="-62 -6 424 312" class="rd" role="img" aria-label="Perfil de ${esc(sel.m.name)}">${anillos}${radios}
+    ${comp ? `<polygon points="${poly(comp)}" class="rd-c"/>` : ""}
+    <polygon points="${poly(sel)}" style="fill:${c};stroke:${c}" class="rd-p"/>
+    ${R.ejes.map(([key], k) => { const [x, y] = pt(k, Rr * sel.n[key]); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" style="fill:${c}"/>`; }).join("")}${etq}</svg>`;
+}
+function bloqueRadar(ms) {
+  if (!D || !D.matchdays || ms.length < 3) return "";
+  const R = datosRadar(ms);
+  if (!radarSel || !R.L.some(x => String(x.m.id) === String(radarSel))) radarSel = YO && R.L.some(x => String(x.m.id) === String(YO)) ? YO : R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[0].m.id;
+  const sel = R.L.find(x => String(x.m.id) === String(radarSel));
+  const lider = R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[0], comp = lider === sel ? R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[1] : lider;
+  const mejor = R.ejes.filter(([k]) => sel.n[k] >= 0.999).map(e => e[1].toLowerCase()), peor = R.ejes.slice().sort((a, b) => sel.n[a[0]] - sel.n[b[0]])[0];
+  const fmt = { pts: v => `${v} pts`, forma: v => `${v} pts en 3 jornadas`, caps: v => `+${v} pts de capitán`, reg: () => `${Math.round(sel.media)} pts por jornada, ± ${Math.round(sel.sd)}`, valor: v => eur(v), reval: v => sig(v) };
+  return `<section class="card"><div class="gh"><h2>Perfil de cada manager</h2></div>
+    <div class="rd-sel">${R.L.map(x => `<button data-radar="${esc(x.m.id)}" class="${x === sel ? "on" : ""}" aria-label="${esc(x.m.name)}" aria-pressed="${x === sel}">${avatar(x.m, x.m.i)}</button>`).join("")}</div>
+    <div class="rd-w">${svgRadar(R, sel, comp)}</div>
+    <p class="rd-ley"><span><i style="background:${col(sel.m.i)}"></i>${esc(sel.m.name)}</span><span><i class="rd-ic"></i>${esc(comp.m.name)}</span></p>
+    <p class="note">${mejor.length ? `El mejor de la liga en ${mejor.join(" y ")}. ` : ""}Su punto flojo: ${peor[1].toLowerCase()} (${fmt[peor[0]](sel.v[peor[0]])}).</p>
+    <details class="cdet"><summary>Qué mide cada eje</summary><p class="note">Puntos: total de la temporada. Forma: puntos de las 3 últimas jornadas. Capitanes: puntos extra que han dado sus capitanes. Regularidad: media por jornada frente a lo que varía (más alto = más fiable). Plantilla: valor de hoy. Revalorización: cuánto han subido sus jugadores actuales en 7 días. En cada eje, el borde es el mejor de la liga y el centro, el peor.</p></details></section>`;
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-radar]"); if (b) { radarSel = b.dataset.radar; if (seccion === "eq") pintarEquipos(); } });
+
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
@@ -2359,6 +2422,7 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueRadar(ms)}
     ${bloqueValor7(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
