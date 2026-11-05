@@ -1328,10 +1328,35 @@ function copiarTexto(btn, txt, base) {
 
 /* ---------- Tu jornada: lo que te toca hacer antes de que empiece (capitán, opciones, alertas, valor y mercado) ---------- */
 let merPedidoTuj = false;
+const filaTuj = (ico, tit, txt, sec) => `<li><button class="tuj-f" ${sec ? `data-s="${sec}"` : ""}><span class="tuj-i">${ico}</span><span class="tuj-x"><small>${tit}</small><b>${txt}</b></span>${sec ? `<span class="tuj-a" aria-hidden="true">›</span>` : ""}</button></li>`;
+// Con la jornada a medias: cómo vas, cuántos te faltan, cómo acabarías y qué te daba la previa
+function pintarTuJornadaVivo(cont) {
+  const j = jornadas().slice(-1)[0]; if (!j) return false;
+  const v = proyeccionVivo(j); if (!v) return false;
+  const md = D.matchdays[j] || {}, n = +j.slice(1);
+  const L = D.managers.map((m, i) => ({ m, i, pts: (md[m.id] || {}).points || 0, v: v[m.id] || { n: 0, esp: 0 } })).filter(x => md[x.m.id]);
+  if (L.length < 2) return false;
+  cont.hidden = false;
+  const yo = YO && L.find(x => String(x.m.id) === String(YO));
+  if (!yo) {
+    cont.innerHTML = `<div class="gh"><h2>Tu jornada ${n}</h2></div><p class="note" style="margin:0 0 10px">¿Cuál es tu equipo? Toca tu escudo y aquí verás cómo vas en la jornada.</p>
+      <div class="tuj-yo">${L.map(x => `<button data-yo="${esc(x.m.id)}" aria-label="${esc(x.m.name)}" title="${esc(x.m.name)}">${avatar(x.m, x.i)}</button>`).join("")}</div>`;
+    return true;
+  }
+  const ahora = L.slice().sort((a, b) => b.pts - a.pts), fin = L.slice().sort((a, b) => (b.pts + b.v.esp) - (a.pts + a.v.esp));
+  const filas = [filaTuj("⏱️", `Jornada ${n} en juego`, `Llevas ${yo.pts} pts · ${ahora.indexOf(yo) + 1}.º de la jornada`, null)];
+  if (yo.v.n) filas.push(filaTuj("⏳", `Te ${yo.v.n === 1 ? "falta 1 jugador" : `faltan ${yo.v.n} jugadores`} por jugar`, `Acabarías con ≈ ${Math.round(yo.pts + yo.v.esp)} pts · ${fin.indexOf(yo) + 1}.º previsto`, null));
+  else filas.push(filaTuj("✅", "Ya han jugado todos tus alineados", `Te quedas en ${yo.pts} pts`, null));
+  try { const PJ = probJornada(n), r = PJ.res[yo.m.id]; if (r) filas.push(filaTuj("🔮", "Lo que te daba la previa", `${pctQ(r.pGana)} de ganar la jornada`, null)); } catch (e) {}
+  cont.innerHTML = `<div class="gh"><h2>Tu jornada ${n}</h2><button class="tuj-cambia" data-yo="${esc(yo.m.id)}" aria-label="Dejar de ser ${esc(yo.m.name)}">${avatar(yo.m, yo.i)}</button></div>
+    <ul class="tuj-l">${filas.join("")}</ul>`;
+  return true;
+}
 function pintarTuJornada() {
   const cont = $("#tuj");
   if (!cont) return;
   const Q = datosQuiniela();
+  if (!Q && E && E.managers && pintarTuJornadaVivo(cont)) return;
   if (!Q || !E || !E.managers) { cont.hidden = true; cont.innerHTML = ""; return; }
   cont.hidden = false;
   const yo = YO && Q.orden.find(f => String(f.m.id) === String(YO));
