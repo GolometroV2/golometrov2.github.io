@@ -98,6 +98,7 @@ ul{list-style:none;margin:0;padding:0}
 .sub{color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub i{font-style:normal;margin-right:8px}
 .sub .z{opacity:.4}
+.vivo-p{color:var(--pos);font-weight:600}.vivo-p b{font-weight:800}
 .pts{text-align:right;line-height:1.1}
 .pts b{display:inline-block;min-width:3.1ch;text-align:center;font-size:22px;font-weight:800;background:var(--panel2);border-radius:8px;padding:2px 8px;box-shadow:inset 0 -2px 0 var(--line)}
 .pts small{font-size:12px;color:var(--mut);margin-left:3px}
@@ -652,7 +653,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -701,6 +702,30 @@ function htmlNovedades() {
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+// Proyección de una jornada empezada: por manager, alineados cuyo partido aún no ha empezado y sus puntos esperados
+// (capitán incluido). null si la jornada no está a medias.
+let PROY = { k: "", v: null };
+// la clasificación se pinta antes de tener calendario y plantillas: si hay jornada a medias, se repinta al llegar
+function repintarSiVivo() { if (seccion === "clas" && D && CAL && E && jornadas().length && proyeccionVivo(jornadas().slice(-1)[0])) pintar(); }
+function proyeccionVivo(j) {
+  if (!CAL || !CAL.games || !E) return null;
+  const n = +j.slice(1), g = CAL.games.filter(x => x.gw === n), t = Date.now() / 1000;
+  const pend = new Set(); g.filter(x => x.ts && x.ts > t && x.status !== "played").forEach(x => { pend.add(x.home); pend.add(x.away); });
+  if (!pend.size || !g.some(x => x.ts && x.ts <= t)) return null;
+  const k = j + "|" + [...pend].sort().join(",") + "|" + (D.updatedAt || "");
+  if (PROY.k === k) return PROY.v;
+  const md = D.matchdays[j] || {}, v = {};
+  D.managers.forEach(m => {
+    const x = md[m.id]; if (!x || !x.players) return;
+    const faltan = x.players.filter(p => pend.has(p.teamId));
+    let esp = 0;
+    if (faltan.length) { try { const r = recomendarCapitanes({ cal: CAL, D, E, managerId: m.id, gw: n }), e = {}; (r.candidatos || []).forEach(c => { e[c.p.id] = c.esp; });
+      faltan.forEach(p => { const pe = e[p.id] || 0; esp += pe * (p.captain ? Math.max(1, (x.captain && x.captain.multiplier) || 1) : 1); }); } catch (err) {} }
+    v[m.id] = { n: faltan.length, esp };
+  });
+  PROY = { k, v };
+  return v;
+}
 function jornadaEnVivo() {
   if (!CAL || !CAL.games) return null;
   const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
@@ -847,6 +872,8 @@ function fotoDe(id) {
   id = String(id);
   if (E) for (const m of E.managers || []) { const p = (m.players || []).find(q => String(q.id) === id); if (p && p.photo) return p.photo; }
   if (FOTOS && FOTOS[id]) return FOTOS[id];
+  const lib = MER_DATA && (MER_DATA.libres || []).find(q => String(q.id) === id);     // libres del mercado: su foto con versión
+  if (lib && lib.photo) return lib.photo;
   return `https://cdn-mister.mundodeportivo.com/file/cdn-common/players/${id}.png`;
 }
 const iniciales = n => String(n || "?").split(/\s+/).filter(Boolean).slice(-2).map(x => x[0]).join("").toUpperCase();
@@ -1210,7 +1237,11 @@ function pintarPrevia() {
   const favorito = filas.slice().sort((a, b) => b.esp - a.esp);
   const hayEsp = favorito[0] && favorito[0].esp > 0;
   const titulo = $("#titulo").textContent;
-  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, "", "🎖️ Capitanes:",
+  // cómo llega la general: clasificación acumulada hasta la jornada anterior
+  const S = serieLiga(), kp = S.js.indexOf("J" + n) - 1;
+  const llega = kp >= 0 ? S.ms.map((o, x) => ({ o, t: S.cum[x][kp] })).sort((a, b) => b.t - a.t) : [];
+  const lider = llega.length > 1 ? `🏁 Llega líder ${llega[0].o.m.name} (${llega[0].t}), ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} por delante de ${llega[1].o.m.name}` : "";
+  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, lider, "", "🎖️ Capitanes:",
     ...filas.map(f => { const c = f.x.captain; if (!c) return `• ${f.m.name}: sin capitán`; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
       return `• ${f.m.name}: ${c.name} ×${coma(c.multiplier || 1)}${r ? ` (${r}, ${hora(g)})` : ""}`; }), "",
     dudas.length ? `⚠️ Alineados en duda: ${dudas.slice(0, 6).map(d => `${d.p.name} (${d.f.m.name}, ${d.les ? "lesionado" : Math.round(d.t * 100) + " % titular"})`).join(", ")}` : "✅ Nadie ha alineado a jugadores en duda",
@@ -1221,7 +1252,7 @@ function pintarPrevia() {
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
   cont.innerHTML = `<div class="gh"><h2>Previa de la jornada ${n}</h2></div>
-    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.</p>
+    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja.` : ""}</p>
     <h3 class="sec">Capitanes</h3><ul class="clist">${filas.map(filaCap).join("")}</ul>
     <div class="ct-grid" style="margin-top:10px">
       ${primero && enPrimero.length ? `<div class="ct-t"><span class="ct-ico">🚀</span><span class="ct-x"><small>Abre la jornada</small><b>${esc(nombre[primero.home] || "")}–${esc(nombre[primero.away] || "")}</b><span>${esc(enPrimero.slice(0, 2).map(x => `${x.f.m.name} ${x.n}`).join(" · "))}</span></span></div>` : ""}
@@ -1280,7 +1311,9 @@ function pintarCronica() {
   CRON_TXT = [`📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}`, "",
     `🥇 Ganador: ${gan.m.name} (${gan.p} pts)`,
     caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
+    caps.length > 2 ? `🙈 Peor capitán: ${caps[caps.length - 1].d.captain.name} ${caps[caps.length - 1].d.captain.points} pts (${caps[caps.length - 1].m.name})` : "",
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
+    gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
     `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`, "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
@@ -2911,7 +2944,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) pintarPrevia(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) pintarPrevia(); repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
@@ -3277,6 +3310,8 @@ function pintar() {
       const pos = 1 + S.ms.filter((_, y) => S.pts[y][k] > S.pts[x][k]).length;
       return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
   }
+  // jornada a medias: cuántos alineados de cada uno faltan por jugar y cómo acabaría según el motor del capitán
+  const vivo = enJ ? proyeccionVivo(vista) : vista === "General" && ultima ? proyeccionVivo(ultima) : null;
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
@@ -3284,6 +3319,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
+          ${vivo && vivo[m.id] && vivo[m.id].n ? `<span class="sub vivo-p">⏳ ${vivo[m.id].n} por jugar · ≈ <b>${Math.round(m.points + vivo[m.id].esp)}</b></span>` : ""}
           ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
@@ -3296,6 +3332,7 @@ function pintar() {
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
+    ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar y con cuántos puntos acabaría (≈, estimación del Golómetro).</p>` : ""}
     <ul class="rank">${filas}</ul>
     <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
@@ -3370,6 +3407,8 @@ document.addEventListener("click", e => {
   new MutationObserver(() => { cancelAnimationFrame(t); t = requestAnimationFrame(marcar); }).observe(document.body, { childList: true, subtree: true });
   marcar();
 })();
+// fotos guardadas en el móvil y la última versión disponible sin conexión (sw.js)
+if ("serviceWorker" in navigator && location.protocol !== "file:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
 </body>
 </html>
