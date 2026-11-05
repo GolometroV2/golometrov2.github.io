@@ -98,6 +98,7 @@ ul{list-style:none;margin:0;padding:0}
 .sub{color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub i{font-style:normal;margin-right:8px}
 .sub .z{opacity:.4}
+.vivo-p{color:var(--pos);font-weight:600}.vivo-p b{font-weight:800}
 .pts{text-align:right;line-height:1.1}
 .pts b{display:inline-block;min-width:3.1ch;text-align:center;font-size:22px;font-weight:800;background:var(--panel2);border-radius:8px;padding:2px 8px;box-shadow:inset 0 -2px 0 var(--line)}
 .pts small{font-size:12px;color:var(--mut);margin-left:3px}
@@ -701,6 +702,28 @@ function htmlNovedades() {
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+// Proyección de una jornada empezada: por manager, alineados cuyo partido aún no ha empezado y sus puntos esperados
+// (capitán incluido). null si la jornada no está a medias.
+let PROY = { k: "", v: null };
+function proyeccionVivo(j) {
+  if (!CAL || !CAL.games || !E) return null;
+  const n = +j.slice(1), g = CAL.games.filter(x => x.gw === n), t = Date.now() / 1000;
+  const pend = new Set(); g.filter(x => x.ts && x.ts > t && x.status !== "played").forEach(x => { pend.add(x.home); pend.add(x.away); });
+  if (!pend.size || !g.some(x => x.ts && x.ts <= t)) return null;
+  const k = j + "|" + [...pend].sort().join(",") + "|" + (D.updatedAt || "");
+  if (PROY.k === k) return PROY.v;
+  const md = D.matchdays[j] || {}, v = {};
+  D.managers.forEach(m => {
+    const x = md[m.id]; if (!x || !x.players) return;
+    const faltan = x.players.filter(p => pend.has(p.teamId));
+    let esp = 0;
+    if (faltan.length) { try { const r = recomendarCapitanes({ cal: CAL, D, E, managerId: m.id, gw: n }), e = {}; (r.candidatos || []).forEach(c => { e[c.p.id] = c.esp; });
+      faltan.forEach(p => { const pe = e[p.id] || 0; esp += pe * (p.captain ? Math.max(1, (x.captain && x.captain.multiplier) || 1) : 1); }); } catch (err) {} }
+    v[m.id] = { n: faltan.length, esp };
+  });
+  PROY = { k, v };
+  return v;
+}
 function jornadaEnVivo() {
   if (!CAL || !CAL.games) return null;
   const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
@@ -3283,6 +3306,8 @@ function pintar() {
       const pos = 1 + S.ms.filter((_, y) => S.pts[y][k] > S.pts[x][k]).length;
       return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
   }
+  // jornada a medias: cuántos alineados de cada uno faltan por jugar y cómo acabaría según el motor del capitán
+  const vivo = enJ ? proyeccionVivo(vista) : null;
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
@@ -3290,6 +3315,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
+          ${vivo && vivo[m.id] && vivo[m.id].n ? `<span class="sub vivo-p">⏳ ${vivo[m.id].n} por jugar · ≈ <b>${Math.round(m.points + vivo[m.id].esp)}</b></span>` : ""}
           ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
@@ -3302,6 +3328,7 @@ function pintar() {
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
+    ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar y con cuántos puntos acabaría (≈, estimación del Golómetro).</p>` : ""}
     <ul class="rank">${filas}</ul>
     <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>

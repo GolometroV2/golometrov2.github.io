@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (a mano por Claude): jornada a medias en Clasificación (vista de la jornada): «⏳ N por jugar · ≈ puntos finales» de cada manager, con los puntos esperados de los alineados cuyo partido aún no ha empezado (capitán incluido).
 - 2026-11-05 (a mano por Claude, fase 7 rendimiento): `sw.js` (service worker). Fotos, escudos y avatares se guardan en el móvil y salen al instante; página y JSON siempre de internet (red primero) y la última copia solo sin conexión. Probado: recarga en 0,2 s y la clasificación se ve sin conexión. Previa con el líder que llega y crónica con peor capitán y más goles.
 - 2026-11-05 (a mano por Claude): en Equipos, cada jugador muestra su % de titular en el próximo partido (Futbol Fantasy + Analítica Fantasy, verde/ámbar/rojo) y la cabecera avisa de cuántos están por debajo del 50 %.
 - 2026-11-05 (a mano por Claude): vista «Forma» en Clasificación (clasificación de las últimas 3 jornadas, con todas las métricas y el detalle de cada manager) y novedades actualizadas.
