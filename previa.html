@@ -929,7 +929,7 @@ function pintarGrafico() {
       return `<tr class="${foco && foco !== o.m.id ? "off" : ""}"><th>${avatar(o.m, o.i)}</th><td class="tot">${cum[x][n - 1]}</td>${celdas}</tr>`;
     }).join("");
     cuerpo = `<div class="heat"><table aria-label="Puntos de cada manager por jornada"><thead><tr><th></th><th class="tot">Total</th>${js.map(j => `<th>${esc(j)}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
-      <p class="note">Cuanto más verde la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
+      <p class="note">Cuanto más amarilla la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
   } else {
     const W = 360, L = 26, R = 116, T = 14, B = 22;
     const H = modoG === "pos" ? T + (N - 1) * 26 + B + 6 : 250;
@@ -3273,7 +3273,7 @@ function htmlOnceRec(r) {
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
-    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
+    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número amarillo: puntos esperados de cada uno.</p>
     <div class="oi">${filas}</div>
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
 }

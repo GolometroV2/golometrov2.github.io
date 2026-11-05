@@ -98,6 +98,7 @@ ul{list-style:none;margin:0;padding:0}
 .sub{color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub i{font-style:normal;margin-right:8px}
 .sub .z{opacity:.4}
+.vivo-p{color:var(--pos);font-weight:600}.vivo-p b{font-weight:800}
 .pts{text-align:right;line-height:1.1}
 .pts b{display:inline-block;min-width:3.1ch;text-align:center;font-size:22px;font-weight:800;background:var(--panel2);border-radius:8px;padding:2px 8px;box-shadow:inset 0 -2px 0 var(--line)}
 .pts small{font-size:12px;color:var(--mut);margin-left:3px}
@@ -206,6 +207,10 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .hero-et{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accFg);margin:0 0 8px}
 .cp.hero .jp-right b{font-size:22px}
 .cdet{margin-top:8px}
+.cq>span.pq-g{display:block;white-space:normal;font-size:11.5px;color:var(--mut);margin-top:2px}.pq-g b{color:var(--accFg)}
+.hueco{margin:8px 0 10px;padding:10px 12px;border-radius:var(--r-m,10px);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);display:flex;flex-direction:column;gap:4px;font-size:13px}.hueco>b{color:var(--red)}.hueco>span{color:var(--txt)}
+.q-lid{display:flex;flex-wrap:wrap;gap:8px}.q-chip{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel2);font-size:13px}
+.q-chip .av{width:28px;height:28px;font-size:10px;flex:none}.q-chip b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.q-chip em{font-style:normal;font-weight:800;color:var(--accFg);flex:none}
 .cdet>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--accFg);list-style:none}
 .cdet>summary::-webkit-details-marker{display:none}
 .cdet>summary::after{content:"▾";margin-left:6px;transition:transform .2s}
@@ -228,6 +233,8 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .eqhead{margin-top:12px;border-radius:var(--r-l)}
 .eqhead .mini span{min-height:28px;display:inline-flex;align-items:center}
 .tendline{padding-top:6px;border-top:1px dashed var(--line);margin-top:8px}
+.titc{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-right:8px;white-space:nowrap}
+.titc-ok{background:var(--posBg);color:var(--pos)}.titc-duda{background:color-mix(in srgb,var(--pt) 18%,transparent);color:var(--pt)}.titc-no{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
 .jp-main{display:flex;align-items:center;gap:8px}
 .jp-side{display:flex;flex-direction:column;align-items:center;gap:3px;width:28px;flex:none}
 .shield{width:15px;height:15px;object-fit:contain}
@@ -379,6 +386,7 @@ code{color:var(--accFg)}
 .ch-leg span:nth-child(2){text-align:center}
 .ch-leg span:last-child{text-align:right}
 .du-sel{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}
+.du-sw{min-width:44px;min-height:44px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--panel2);color:var(--acc);font:inherit;font-weight:700;cursor:pointer}
 .du-sel span{color:var(--mut);font-weight:700;font-size:13px}
 .du-sel .cp-in,.du-sel select{width:100%;min-height:44px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-weight:600;font-size:13.5px;padding:0 10px}
 .du-head{display:grid;grid-template-columns:1fr 1.4fr 1fr;align-items:center;gap:8px;margin-bottom:14px}
@@ -507,15 +515,15 @@ code{color:var(--accFg)}
 .refresh{display:inline-flex;align-items:center;gap:6px}
 .ra-i{display:inline-block;font-size:15px;line-height:1;transition:transform .6s}
 .refresh.girando .ra-i{transform:rotate(360deg)}
-.jsel{display:grid;grid-template-columns:auto 1fr;gap:8px}
-.jsel-t{min-height:var(--tap);padding:0 18px;border-radius:var(--r-full);background:var(--panel2);font-weight:700;color:var(--mut)}
+.jsel{display:flex;gap:8px}.jsel-j{flex:1;min-width:0}.jsel-t{flex:none}
+.jsel-t{min-height:var(--tap);padding:0 16px;border-radius:var(--r-full);background:var(--panel2);font-weight:700;color:var(--mut)}
 .jsel-t.on{background:var(--acc);color:var(--accTxt)}
 .jsel-j{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;border-radius:var(--r-full);background:var(--panel2);overflow:hidden}
 .jsel-j.on{box-shadow:inset 0 0 0 2px var(--acc)}
 .jsel-j button{min-height:var(--tap);font-weight:700;font-size:15px;color:var(--txt)}
 .jsel-j button:disabled{opacity:.3;cursor:default}
 .jsel-j>button:first-child,.jsel-j>button:last-child{font-size:22px;line-height:1}
-.jsel-n{font-size:14px!important}.jsel-n span{color:var(--mut);font-size:11px}
+.jsel-n{font-size:14px!important;white-space:nowrap}.jsel-n span{color:var(--mut);font-size:11px}
 .jsel-j:not(.on) .jsel-n{color:var(--mut)}
 .jsel-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:8px;padding:8px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
 .jsel-g button{min-height:40px;border-radius:10px;background:var(--panel2);font-weight:700}
@@ -650,7 +658,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) pintarQuiniela(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -689,16 +697,40 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05b";
+const NOVEDADES_V = "2026-11-05c";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
+    <span>Nuevo: la <b>Quiniela</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+// Proyección de una jornada empezada: por manager, alineados cuyo partido aún no ha empezado y sus puntos esperados
+// (capitán incluido). null si la jornada no está a medias.
+let PROY = { k: "", v: null };
+// la clasificación se pinta antes de tener calendario y plantillas: si hay jornada a medias, se repinta al llegar
+function repintarSiVivo() { if (seccion === "clas" && D && CAL && E && jornadas().length && proyeccionVivo(jornadas().slice(-1)[0])) pintar(); }
+function proyeccionVivo(j) {
+  if (!CAL || !CAL.games || !E) return null;
+  const n = +j.slice(1), g = CAL.games.filter(x => x.gw === n), t = Date.now() / 1000;
+  const pend = new Set(); g.filter(x => x.ts && x.ts > t && x.status !== "played").forEach(x => { pend.add(x.home); pend.add(x.away); });
+  if (!pend.size || !g.some(x => x.ts && x.ts <= t)) return null;
+  const k = j + "|" + [...pend].sort().join(",") + "|" + (D.updatedAt || "");
+  if (PROY.k === k) return PROY.v;
+  const md = D.matchdays[j] || {}, v = {};
+  D.managers.forEach(m => {
+    const x = md[m.id]; if (!x || !x.players) return;
+    const faltan = x.players.filter(p => pend.has(p.teamId));
+    let esp = 0;
+    if (faltan.length) { try { const r = recomendarCapitanes({ cal: CAL, D, E, managerId: m.id, gw: n }), e = {}; (r.candidatos || []).forEach(c => { e[c.p.id] = c.esp; });
+      faltan.forEach(p => { const pe = e[p.id] || 0; esp += pe * (p.captain ? Math.max(1, (x.captain && x.captain.multiplier) || 1) : 1); }); } catch (err) {} }
+    v[m.id] = { n: faltan.length, esp };
+  });
+  PROY = { k, v };
+  return v;
+}
 function jornadaEnVivo() {
   if (!CAL || !CAL.games) return null;
   const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
@@ -768,8 +800,11 @@ addEventListener("dragover", e => e.preventDefault());
 addEventListener("drop", e => { e.preventDefault(); leerArchivo(e.dataTransfer.files[0]); });
 // ===== FIN TEMPORAL =====
 
+// jornadas que suma la vista elegida: todas («Total»), las 3 últimas («Forma») o una sola
+const jsVista = () => vista === "General" ? jornadas() : vista === "Ult3" ? jornadas().slice(-3) : [vista];
+const rangoUlt3 = () => { const j = jornadas().slice(-3); return j.length ? (j.length > 1 ? `jornadas ${j[0].slice(1)} a ${j[j.length - 1].slice(1)}` : `jornada ${j[0].slice(1)}`) : ""; };
 function estadisticas() {
-  const js = vista === "General" ? jornadas() : [vista];
+  const js = jsVista();
   return D.managers.map((m, idx) => {
     const s = { ...m, idx, points: 0, cap: 0, sinCap: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0 };
     js.forEach(j => {
@@ -800,7 +835,7 @@ function jugador(p) {
 }
 
 function detalle(m) {
-  if (vista !== "General") {
+  if (vista !== "General" && vista !== "Ult3") {
     const x = (D.matchdays[vista] || {})[m.id];
     if (!x || !(x.players || []).length) return `<p class="top">No hay alineación guardada para esta jornada.</p>`;
     const lineas = ["DL", "MC", "DF", "PT"].map(pos => {
@@ -842,6 +877,8 @@ function fotoDe(id) {
   id = String(id);
   if (E) for (const m of E.managers || []) { const p = (m.players || []).find(q => String(q.id) === id); if (p && p.photo) return p.photo; }
   if (FOTOS && FOTOS[id]) return FOTOS[id];
+  const lib = MER_DATA && (MER_DATA.libres || []).find(q => String(q.id) === id);     // libres del mercado: su foto con versión
+  if (lib && lib.photo) return lib.photo;
   return `https://cdn-mister.mundodeportivo.com/file/cdn-common/players/${id}.png`;
 }
 const iniciales = n => String(n || "?").split(/\s+/).filter(Boolean).slice(-2).map(x => x[0]).join("").toUpperCase();
@@ -892,7 +929,7 @@ function pintarGrafico() {
       return `<tr class="${foco && foco !== o.m.id ? "off" : ""}"><th>${avatar(o.m, o.i)}</th><td class="tot">${cum[x][n - 1]}</td>${celdas}</tr>`;
     }).join("");
     cuerpo = `<div class="heat"><table aria-label="Puntos de cada manager por jornada"><thead><tr><th></th><th class="tot">Total</th>${js.map(j => `<th>${esc(j)}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>
-      <p class="note">Cuanto más amarilla la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
+      <p class="note">Cuanto más verde la casilla, mejor jornada respecto al resto; con recuadro, el mejor de cada jornada. Desliza a los lados para ver todas.</p>`;
   } else {
     const W = 360, L = 26, R = 116, T = 14, B = 22;
     const H = modoG === "pos" ? T + (N - 1) * 26 + B + 6 : 250;
@@ -1038,7 +1075,7 @@ function cargarLigaJ() {
   if (LIGAJ) return;
   LIGAJ = { cargando: true };
   Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
-    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
 }
 /* ---------- Buscador y ficha de jugador ---------- */
 const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -1176,8 +1213,9 @@ function pintarPrevia() {
   const gw = gwPrevia();
   const md = gw ? D.matchdays[gw] || {} : {};
   const filas = D.managers.map((m, i) => ({ m, i, x: md[m.id] })).filter(f => f.x && (f.x.players || []).length);
-  if (!gw || filas.length < 2) { cont.hidden = true; cont.innerHTML = ""; return; }
-  cont.hidden = false;
+  const ir = $("#irPrevia");
+  if (!gw || filas.length < 2) { cont.hidden = true; cont.innerHTML = ""; if (ir) ir.hidden = true; return; }
+  cont.hidden = false; if (ir) ir.hidden = false;
   const n = +gw.slice(1), juegos = CAL.games.filter(g => g.gw === n);
   const nombre = {}; CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
   const partidoDe = t => juegos.find(g => g.home === t || g.away === t);
@@ -1201,35 +1239,132 @@ function pintarPrevia() {
   const primero = juegos.filter(g => g.ts).sort((a, b) => a.ts - b.ts)[0];
   const enPrimero = primero ? filas.map(f => ({ f, n: (f.x.players || []).filter(p => p.teamId === primero.home || p.teamId === primero.away).length })).filter(x => x.n).sort((a, b) => b.n - a.n) : [];
   const porPartido = juegos.map(g => ({ g, n: filas.reduce((t, f) => t + (f.x.players || []).filter(p => p.teamId === g.home || p.teamId === g.away).length, 0) })).sort((a, b) => b.n - a.n)[0];
-  const favorito = filas.slice().sort((a, b) => b.esp - a.esp);
+  // probabilidad de ganar la jornada con los onces reales: lo ya jugado cuenta tal cual, el resto se simula
+  if (filas.some(f => f.esp > 0)) {
+    const S0 = serieLiga(), k0 = S0.js.indexOf(gw) - 1;
+    const antes = {}; if (k0 >= 0) S0.ms.forEach((o, x) => { antes[o.m.id] = S0.cum[x][k0]; });
+    const sim = simularJornada(filas.map(f => { const cap = f.x.captain;
+      return { antes: antes[f.m.id] || 0, fijos: (f.x.players || []).filter(p => p.played).reduce((t, p) => t + (p.points || 0), 0),
+        js: (f.x.players || []).filter(p => !p.played && espDe[p.id]).map(p => ({ c: espDe[p.id], mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
+    filas.forEach((f, k) => { f.pGana = sim[k].pGana; f.pLider = sim[k].pLider; f.media = sim[k].media; });
+  }
+  const favorito = filas.slice().sort((a, b) => (b.pGana || 0) - (a.pGana || 0) || b.esp - a.esp);
   const hayEsp = favorito[0] && favorito[0].esp > 0;
   const titulo = $("#titulo").textContent;
-  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, "", "🎖️ Capitanes:",
+  // cómo llega la general: clasificación acumulada hasta la jornada anterior
+  const S = serieLiga(), kp = S.js.indexOf("J" + n) - 1;
+  const llega = kp >= 0 ? S.ms.map((o, x) => ({ o, t: S.cum[x][kp] })).sort((a, b) => b.t - a.t) : [];
+  const lider = llega.length > 1 ? `🏁 Llega líder ${llega[0].o.m.name} (${llega[0].t}), ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} por delante de ${llega[1].o.m.name}` : "";
+  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, lider, "", "🎖️ Capitanes:",
     ...filas.map(f => { const c = f.x.captain; if (!c) return `• ${f.m.name}: sin capitán`; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
       return `• ${f.m.name}: ${c.name} ×${coma(c.multiplier || 1)}${r ? ` (${r}, ${hora(g)})` : ""}`; }), "",
     dudas.length ? `⚠️ Alineados en duda: ${dudas.slice(0, 6).map(d => `${d.p.name} (${d.f.m.name}, ${d.les ? "lesionado" : Math.round(d.t * 100) + " % titular"})`).join(", ")}` : "✅ Nadie ha alineado a jugadores en duda",
+    ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
-    hayEsp ? `🔮 Favorito según el Golómetro: ${favorito[0].m.name} (${Math.round(favorito[0].esp)} pts esperados)` : "",
+    hayEsp ? `🔮 Probabilidad de ganar la jornada: ${favorito.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pGana || 0)}`).join(", ")}` : "",
     "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
   cont.innerHTML = `<div class="gh"><h2>Previa de la jornada ${n}</h2></div>
-    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.</p>
+    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja.` : ""}</p>
     <h3 class="sec">Capitanes</h3><ul class="clist">${filas.map(filaCap).join("")}</ul>
     <div class="ct-grid" style="margin-top:10px">
       ${primero && enPrimero.length ? `<div class="ct-t"><span class="ct-ico">🚀</span><span class="ct-x"><small>Abre la jornada</small><b>${esc(nombre[primero.home] || "")}–${esc(nombre[primero.away] || "")}</b><span>${esc(enPrimero.slice(0, 2).map(x => `${x.f.m.name} ${x.n}`).join(" · "))}</span></span></div>` : ""}
       ${porPartido && porPartido.n ? `<div class="ct-t"><span class="ct-ico">⚔️</span><span class="ct-x"><small>Partido clave</small><b>${esc(nombre[porPartido.g.home] || "")}–${esc(nombre[porPartido.g.away] || "")}</b><span>${porPartido.n} alineados · ${esc(hora(porPartido.g))}</span></span></div>` : ""}
     </div>
+    ${filas.filter(f => f.x.players.length < 11).map(f => `<p class="hueco" style="flex-direction:row;align-items:center;gap:10px">${avatar(f.m, f.i)}<span><b style="color:var(--red)">${esc(f.m.name)}</b> juega con ${f.x.players.length}: le ${11 - f.x.players.length === 1 ? "falta un jugador" : `faltan ${11 - f.x.players.length} jugadores`} en el once.</span></p>`).join("")}
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
-    ${hayEsp ? `<h3 class="sec">Pronóstico de la jornada</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.esp / favorito[0].esp * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${esc(f.x.formation || "")} · capitán ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${Math.round(f.esp)}</span></li>`).join("")}</ul>
-      <p class="note">Puntos esperados de cada once con su capitán, según el motor del Golómetro.</p>` : ""}
+    ${hayEsp ? `<h3 class="sec">¿Quién gana la jornada?</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${((f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>≈ ${Math.round(f.media ?? f.esp)} pts · ${esc(f.x.formation || "")} · © ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana || 0)}</span></li>`).join("")}</ul>
+      <p class="note">Probabilidad de ganar la jornada con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro.</p>` : ""}
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
 }
 function copiarTexto(btn, txt, base) {
   const listo = t => { btn.textContent = t; setTimeout(() => { btn.textContent = base; }, 2200); };
   if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => listo("✔ Copiado"), () => listo("No se pudo copiar"));
   else listo("Tu navegador no deja copiar");
+}
+
+/* ---------- Quiniela de la jornada: quién la gana y quién acaba líder (simulación de cada once) ---------- */
+// Cada jugador juega con su probabilidad (pj) y, si juega, saca un resultado al azar de su distribución de puntos
+// (la misma del motor del capitán: su media, su regularidad y el rival). El capitán multiplica. Los que ya han jugado
+// cuentan lo que sacaron. Se repite 4.000 veces con una semilla fija, así cada visita da los mismos porcentajes.
+function simularJornada(eqs, N = 4000) {
+  // un generador por manager y dos números por jugador siempre: cambiar un jugador de un once no altera los sorteos de los demás
+  const gen = i => { let s = 20261106 + i * 7919; return () => (s = s * 16807 % 2147483647) / 2147483647; }, rnds = eqs.map((e, i) => gen(i));
+  const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N));
+  for (let k = 0; k < N; k++) {
+    const t = eqs.map((e, i) => {
+      let a = e.fijos || 0;
+      const rnd = rnds[i];
+      e.js.forEach(({ c, mult }) => { const u = rnd(), v = rnd(); if (c.ys && c.ys.length && u < c.pj) a += Math.round(c.ys[Math.floor(v * c.ys.length)]) * mult; });
+      tot[i][k] = a; return a;
+    });
+    const reparte = (v, cuenta) => { const mx = Math.max(...v), w = v.filter(x => x === mx).length; v.forEach((x, i) => { if (x === mx) cuenta[i] += 1 / w; }); };
+    reparte(t, gana);
+    reparte(t.map((x, i) => x + (eqs[i].antes || 0)), lider);
+  }
+  return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
+    return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)] }; });
+}
+const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
+const pctQ = p => p < 0.005 ? "<1 %" : p > 0.995 ? ">99 %" : Math.round(p * 100) + " %";
+// Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
+function onceQuiniela(cands) {
+  const o = onceRecomendado(cands); if (o) return Object.assign(o, { faltan: 0 });
+  const v = cands.filter(c => c.score > -Infinity && c.esp > 0);
+  const por = pos => v.filter(c => c.pos === pos).sort((a, b) => b.esp - a.esp);
+  const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  let mejor = null;
+  FORMACIONES.forEach(([d, m, f]) => {
+    const x = { form: `${d}-${m}-${f}`, PT: L.PT.slice(0, 1), DF: L.DF.slice(0, d), MC: L.MC.slice(0, m), DL: L.DL.slice(0, f) };
+    const todos = [...x.PT, ...x.DF, ...x.MC, ...x.DL]; if (!todos.length) return;
+    x.cap = todos.slice().sort((a, b) => b.score - a.score)[0];
+    x.total = todos.reduce((t, c) => t + c.esp, 0) + x.cap.extra; x.faltan = 11 - todos.length;
+    if (!mejor || x.total > mejor.total) mejor = x;
+  });
+  return mejor;
+}
+// Antes de que empiece la jornada: cada manager con su mejor once posible (el «once recomendado» de su plantilla de hoy)
+let QUIN = null, QUIN_TXT = "";
+function datosQuiniela() {
+  if (!CAL || !E || !E.managers || !D || gwPrevia()) return null;
+  const obj = capJornadaObjetivo(CAL, null); if (!obj) return null;
+  const primero = Math.min(...obj.games.map(g => g.ts || Infinity));
+  if (jornadas().includes("J" + obj.gw) && Date.now() / 1000 > primero) return null;   // ya empezada: lo cuenta la previa
+  const clave = [obj.gw, CAL.updatedAt, E.updatedAt, D.updatedAt, FFDATA ? FFDATA.updatedAt || FFDATA.updated : ""].join("|");
+  if (QUIN && QUIN.clave === clave) return QUIN.r;
+  const filas = D.managers.map((m, i) => { try {
+    const o = onceQuiniela(recomendarCapitanes({ cal: CAL, D, E, managerId: m.id }).candidatos || []);
+    return o ? { m, i, o } : null; } catch (e) { return null; } }).filter(Boolean);
+  let r = null;
+  if (filas.length >= 3) {
+    const sim = simularJornada(filas.map(f => ({ antes: total(f.m), js: [...f.o.PT, ...f.o.DF, ...f.o.MC, ...f.o.DL].map(c => ({ c, mult: c === f.o.cap ? c.m : 1 })) })));
+    filas.forEach((f, k) => Object.assign(f, sim[k]));
+    r = { gw: obj.gw, orden: filas.slice(), filas: filas.sort((a, b) => b.pGana - a.pGana), primero };   // «orden»: el de la simulación
+  }
+  QUIN = { clave, r }; return r;
+}
+function pintarQuiniela() {
+  const cont = $("#quin"), ir = $("#irQuin");
+  if (!cont) return;
+  const r = datosQuiniela();
+  if (!r) { cont.hidden = true; cont.innerHTML = ""; if (ir) ir.hidden = true; return; }
+  cont.hidden = false; if (ir) ir.hidden = false;
+  const F = r.filas, mx = Math.max(...F.map(f => f.pGana), 0.01);
+  const lid = F.slice().sort((a, b) => b.pLider - a.pLider).filter(f => f.pLider >= 0.005);
+  const cuando = isFinite(r.primero) ? enMadrid(r.primero * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }) : "";
+  const capN = f => apellido(f.o.cap.p.short || f.o.cap.p.name);
+  QUIN_TXT = [`🎲 ${$("#titulo").textContent} · Quiniela de la jornada ${r.gw}`, "Probabilidad de ganar la jornada si cada uno alinea su mejor once:",
+    ...F.map(f => `• ${f.m.name}: ${pctQ(f.pGana)} (≈ ${Math.round(f.media)} pts, capitán ${capN(f)}${f.o.faltan ? `, ⚠️ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan} jugadores`} para el once` : ""})`), "",
+    lid.length ? `👑 Líder tras la jornada: ${lid.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pLider)}`).join(", ")}` : "",
+    cuando ? `⏰ Empieza el ${cuando}` : ""].filter(Boolean).join("\n");
+  cont.innerHTML = `<div class="gh"><h2>Quiniela de la jornada ${r.gw}</h2></div>
+    <p class="note" style="margin:0 0 10px">Si cada uno alinea su mejor once (el que el Golómetro recomienda con su plantilla de hoy), esto es lo probable que gane la jornada.${cuando ? ` Empieza el ${esc(cuando)}.` : ""}</p>
+    <ul class="pron">${F.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.pGana / mx * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${f.o.faltan ? `<span class="dn">⚠ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan}`} para el once</span> · ` : ""}≈ ${Math.round(f.media)} pts (entre ${Math.round(f.p10)} y ${Math.round(f.p90)}) · © ${esc(capN(f))}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana)}</span></li>`).join("")}</ul>
+    ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Cada jugador del once juega con su probabilidad de jugar (Futbol Fantasy, Analítica Fantasy y el modelo propio) y, si juega, saca unos puntos al azar según su media, su regularidad y el rival, igual que en la pestaña Capitán. El capitán multiplica. Se juega la jornada 4.000 veces y se cuenta cuántas gana cada uno. «Entre» es lo que saca 8 de cada 10 veces. Si alguien deja a un lesionado o no pone el mejor once, sus opciones bajan.</p></details>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button></div>`;
 }
 
 /* ---------- Crónica de la jornada ---------- */
@@ -1259,6 +1394,12 @@ function pintarCronica() {
     filas.forEach(f => { const dlt = S.rank[k - 1][f.x] - S.rank[k][f.x]; if (dlt > 0 && (!sube || dlt > sube.dlt)) sube = { f, dlt }; if (dlt < 0 && (!baja || dlt < baja.dlt)) baja = { f, dlt }; });
   }
   const gol = filas.slice().sort((a, b) => (b.d.goals || 0) - (a.d.goals || 0))[0];
+  // banquillo: quién se dejó más puntos fuera y quién clavó la alineación (necesita plantillas y puntos de todos los jugadores)
+  if (!LIGAJ) cargarLigaJ();
+  const BQ = banquilloJornada(cronJ);
+  const bqL = BQ ? filas.filter(f => BQ[f.m.id]).map(f => ({ f, b: BQ[f.m.id] })) : [];
+  const bqTop = bqL.filter(x => x.b.perdidos > 0).sort((a, b) => b.b.perdidos - a.b.perdidos)[0];
+  const bqPerf = bqL.filter(x => x.b.perdidos === 0).map(x => x.f);
   const tile = (ico, tit, main, sub, extra = "") => `<div class="ct-t">${extra || `<span class="ct-ico">${ico}</span>`}<span class="ct-x"><small>${tit}</small><b>${main}</b><span>${sub}</span></span></div>`;
   const nav = `<div class="ct-nav"><button data-cj="-1" ${k === 0 ? "disabled" : ""} aria-label="Jornada anterior">‹</button><span>Jornada ${esc(cronJ.slice(1))}</span><button data-cj="1" ${k === js.length - 1 ? "disabled" : ""} aria-label="Jornada siguiente">›</button></div>`;
   const tiles = [
@@ -1267,22 +1408,56 @@ function pintarCronica() {
     sube ? tile("📈", "La remontada", esc(sube.f.m.name), `Sube ${sube.dlt} ${sube.dlt === 1 ? "puesto" : "puestos"}: ahora ${S.rank[k][sube.f.x]}.º`) : "",
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
-    tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`)
+    tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
+    bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
+    bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
   ].join("");
   // texto listo para pegar en el grupo de WhatsApp de la liga
   const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
   CRON_TXT = [`📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}`, "",
     `🥇 Ganador: ${gan.m.name} (${gan.p} pts)`,
     caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
+    caps.length > 2 ? `🙈 Peor capitán: ${caps[caps.length - 1].d.captain.name} ${caps[caps.length - 1].d.captain.points} pts (${caps[caps.length - 1].m.name})` : "",
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
+    gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
-    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`, "", "Clasificación:",
+    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
+    bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
+    bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
+    ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
+}
+// Puntos que cada manager dejó en el banquillo: su plantilla al empezar la jornada (la de hoy deshaciendo los movimientos
+// posteriores) frente al mejor once posible a toro pasado, sin contar el capitán. null si los movimientos guardados no llegan tan atrás.
+function banquilloJornada(j) {
+  if (!E || !E.transfers || !E.managers || !CAL || !LIGAJ || LIGAJ.cargando) return null;
+  const g = (CAL.gameweeks || []).find(x => "J" + x.gw === j); if (!g || !g.first) return null;
+  const ini = Date.parse(g.first.replace(" ", "T") + "+01:00");
+  const T = E.transfers.filter(t => t.ts).sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts));
+  if (!T.length || Date.parse(T[T.length - 1].ts) > ini) return null;
+  const sq = {}; E.managers.forEach(m => { sq[m.id] = {}; m.players.forEach(p => { sq[m.id][p.id] = p.pos; }); });
+  for (const t of T) { if (Date.parse(t.ts) <= ini) break;
+    if (t.to && sq[t.to]) delete sq[t.to][t.playerId];
+    if (t.from && sq[t.from]) sq[t.from][t.playerId] = (LIGAJ.jug[String(t.playerId)] || {}).pos; }
+  const md = D.matchdays[j] || {}, n = j.slice(1), bp = p => p.basePoints ?? p.points ?? 0, out = {};
+  D.managers.forEach(m => {
+    const x = md[m.id]; if (!x || !(x.players || []).length || !sq[m.id]) return;
+    const lin = {}; x.players.forEach(p => { lin[p.id] = p; });
+    const todos = {}; Object.entries(sq[m.id]).forEach(([id, pos]) => { todos[id] = { pos, pts: lin[id] ? bp(lin[id]) : +((LIGAJ.pts[id] || {})[n]) || 0 }; });
+    x.players.forEach(p => { if (!todos[p.id]) todos[p.id] = { pos: p.pos, pts: bp(p) }; });
+    const por = pos => Object.values(todos).filter(v => v.pos === pos).map(v => v.pts).sort((a, b) => b - a);
+    const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") }, suma = (v, k) => v.slice(0, k).reduce((t, y) => t + y, 0);
+    const max = Math.max(...FORMACIONES.map(([d, mm, f]) => suma(L.PT, 1) + suma(L.DF, d) + suma(L.MC, mm) + suma(L.DL, f)));
+    const real = x.players.reduce((t, p) => t + bp(p), 0);
+    const banco = Object.entries(todos).filter(([id]) => !lin[id]).map(([id, v]) => ({ id, ...v, name: (LIGAJ.jug[id] || {}).name || "?" })).sort((a, b) => b.pts - a.pts);
+    out[m.id] = { real, max, perdidos: Math.max(0, max - real), banco };
+  });
+  return Object.keys(out).length >= 2 ? out : null;
 }
 let onceAbierto = false, CRON_TXT = "";
 function compartirCronica(btn) { copiarTexto(btn, CRON_TXT, "📋 Copiar"); }
@@ -1350,14 +1525,25 @@ function pintarComparador() {
   const A = LIGAJ.jug[comp[0]], B = LIGAJ.jug[comp[1]], ca = "var(--acc)", cb = "var(--mut)";
   const ult = p => (p.streak || []).filter(v => typeof v === "number");
   const media5 = p => { const u = ult(p); return u.length ? u.reduce((t, v) => t + v, 0) / u.length : 0; };
+  // puntos esperados en el próximo partido: misma fórmula que «Cláusulas que merecen la pena»
+  const espJ = p => {
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+    return +(mu * pjConTitular(p, p.status === "injury" ? 0 : pjM).pj).toFixed(1);
+  };
+  let esp = [];
+  try { esp = [["Puntos esperados", espJ(A), espJ(B)]]; } catch (e) {}
   const est = [
     ["Puntos", A.points, B.points], ["Media", A.avg, B.avg], ["Media últimas 5", +media5(A).toFixed(1), +media5(B).toFixed(1)],
     ["Valor (M)", +(A.value / 1e6).toFixed(2), +(B.value / 1e6).toFixed(2)],
     ["Puntos por M", +(A.points / (A.value / 1e6)).toFixed(1), +(B.points / (B.value / 1e6)).toFixed(1)]
-  ].map(([t, a, b]) => { a = a || 0; b = b || 0; const mx = Math.max(Math.abs(a), Math.abs(b), 1);
+  ].concat(esp).map(([t, a, b]) => { a = a || 0; b = b || 0; const mx = Math.max(Math.abs(a), Math.abs(b), 1);
     return `<div class="du-e"><span class="du-v ${a > b ? "gana" : ""}">${nf1c(a)}</span><span class="du-b izq"><i style="width:${Math.abs(a) / mx * 100}%;background:${ca}"></i></span><span class="du-t">${t}</span><span class="du-b"><i style="width:${Math.abs(b) / mx * 100}%;background:${cb}"></i></span><span class="du-v ${b > a ? "gana" : ""}">${nf1c(b)}</span></div>`; }).join("");
   const sel = lado => { const p = lado ? B : A; return `<input class="cp-in" list="cp-lista" data-csel="${lado}" value="${esc(p.name)}" aria-label="Jugador ${lado ? "B" : "A"}" autocomplete="off" onfocus="this.select()">`; };
-  const cab = p => `<div class="du-m">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
+  const cab = p => `<div class="du-m" data-ficha="${esc(p.id)}" role="button" tabindex="0" title="Ver ficha" style="cursor:pointer">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
   const rac = p => (p.streak || []).map(v => `<span>${v === "-" || v == null ? "–" : v}</span>`).join(" ");
   // próximo partido y probabilidad de ser titular (Futbol Fantasy), igual que en la ficha
   const nomEq = {}; (CAL && CAL.games || []).forEach(g => { nomEq[g.home] = g.homeName; nomEq[g.away] = g.awayName; });
@@ -1371,13 +1557,13 @@ function pintarComparador() {
   };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
-    <div class="du-sel">${sel(0)}<span>vs</span>${sel(1)}</div>
+    <div class="du-sel">${sel(0)}<button type="button" class="du-sw" data-cswap aria-label="Intercambiar jugadores" title="Intercambiar">⇄</button>${sel(1)}</div>
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
     <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
     <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
-    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones.</p>`;
+    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones. «Puntos esperados» = lo que se espera que sume en su próximo partido (su nivel por su probabilidad de jugar).</p>`;
 }
 // Cuántas jornadas le ha ganado cada manager (fila) a cada rival (columna) y su balance total
 function tablaDuelos(S, orden) {
@@ -1430,7 +1616,7 @@ function pintarPronostico() {
 function pintarOrigen() {
   const cont = $("#origen");
   if (!cont) return;
-  const js = vista === "General" ? jornadas() : [vista];
+  const js = jsVista();
   const POSC = { PT: "var(--pt)", DF: "var(--df)", MC: "var(--mc)", DL: "var(--dl)" };
   const filas = D.managers.map((m, i) => {
     const s = { PT: 0, DF: 0, MC: 0, DL: 0, CAP: 0 };
@@ -1443,7 +1629,7 @@ function pintarOrigen() {
   const mx = Math.max(1, ...filas.map(f => f.tot));
   const seg = (v, c, t) => v > 0 ? `<i style="width:${(v / mx * 100).toFixed(2)}%;background:${c}" title="${t}: ${v}"></i>` : "";
   cont.innerHTML = `<div class="gh"><h2>¿De dónde salen los puntos?</h2></div>
-    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
+    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : vista === "Ult3" ? "Últimas 3 jornadas" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
     <div class="og-ley">${[["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<span><i style="background:${POSC[k]}"></i>${t}</span>`).join("")}<span><i class="og-cap"></i>Capitán</span></div>
     <ul class="og">${filas.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="og-b">${seg(f.s.PT, POSC.PT, "Porteros")}${seg(f.s.DF, POSC.DF, "Defensas")}${seg(f.s.MC, POSC.MC, "Medios")}${seg(f.s.DL, POSC.DL, "Delanteros")}${seg(f.s.CAP, "repeating-linear-gradient(45deg,var(--acc) 0 4px,transparent 4px 7px)", "Capitán")}</span>
       <small>PT ${f.s.PT} · DF ${f.s.DF} · MC ${f.s.MC} · DL ${f.s.DL} · capitán +${f.s.CAP}</small></span><span class="pp" style="font-size:16px">${f.tot}</span></li>`).join("")}</ul>`;
@@ -1762,6 +1948,52 @@ function bloqueEficiencia(ms) {
     <ul class="pron">${ord.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.r / mx * 100).toFixed(1)}%;background:${col(x.ci)}"></i></span><small>${x.pts} pts con ${eur(x.v)}</small></span><span class="pp" style="font-size:16px">${nf1c(x.r)}</span></li>`).join("")}</ul></section>`;
 }
 
+// Mayores fichajes y actividad de cada manager, a partir de los últimos movimientos guardados (equipos.json -> transfers)
+function bloqueFichajes(ms) {
+  const T = (E.transfers || []).filter(t => t.value && t.to);
+  if (T.length < 3) return "";
+  const top = T.slice().sort((a, b) => b.value - a.value).slice(0, 5);
+  const act = ms.map((m, i) => {
+    const c = T.filter(t => String(t.to) === String(m.id)), v = (E.transfers || []).filter(t => t.value && t.from && String(t.from) === String(m.id));
+    return { m, i, n: c.length, gasto: c.reduce((s, t) => s + t.value, 0), ing: v.reduce((s, t) => s + t.value, 0) };
+  }).filter(x => x.n).sort((a, b) => b.gasto - a.gasto);
+  const mx = Math.max(1, ...act.map(x => x.gasto));
+  return `<section class="card"><div class="gh"><h2>Mayores fichajes</h2></div>
+    <ul>${top.map(t => `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>
+    <p class="ordlbl" style="margin-top:12px">Quién ha gastado más</p>
+    <ul class="pron">${act.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.gasto / mx * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"}${x.ing ? " · vende por " + eur(x.ing) : ""}</small></span><span class="pp" style="font-size:15px">${eur(x.gasto)}</span></li>`).join("")}</ul>
+    <p class="note">Solo cuenta los últimos ${(E.transfers || []).length} movimientos guardados.</p></section>`;
+}
+
+// ¿Quién ficha mejor? Compras guardadas cuyo jugador sigue en el equipo del comprador: cuánto vale hoy frente a lo
+// que valía el día del fichaje y cuántos puntos ha dado desde entonces (equipos.json -> transfers + jugadores_historial.json)
+function bloqueOjo(ms) {
+  if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return ""; }
+  const ini = {}; ((CAL && CAL.gameweeks) || []).forEach(g => { if (g.first) ini[g.gw] = Date.parse(g.first.replace(" ", "T") + "+01:00"); });
+  const vistos = new Set(), compras = [];
+  (E.transfers || []).filter(t => t.to && t.value && t.ts).forEach(t => {
+    const k = t.playerId + "|" + t.to; if (vistos.has(k)) return; vistos.add(k);      // la lista va de más nuevo a más viejo: vale la última compra
+    const m = ms.find(x => String(x.id) === String(t.to)), p = m && m.players.find(q => String(q.id) === String(t.playerId));
+    if (!p) return;
+    const desde = Date.parse(t.ts), pj = LIGAJ.pts[String(p.id)] || {};
+    const jor = Object.keys(pj).filter(g => ini[g] && ini[g] > desde);
+    compras.push({ m, p, t, gan: p.value - t.value, pts: jor.reduce((s, g) => s + (+pj[g] || 0), 0), nj: jor.length, cl: !!t.from });
+  });
+  if (compras.length < 4) return "";
+  const mejores = compras.slice().sort((a, b) => b.gan - a.gan).slice(0, 5), peores = compras.filter(x => x.gan < 0).sort((a, b) => a.gan - b.gan).slice(0, 3);
+  const bal = ms.map(m => { const c = compras.filter(x => x.m === m); return { m, n: c.length, gan: c.reduce((s, x) => s + x.gan, 0), pts: c.reduce((s, x) => s + x.pts, 0) }; })
+    .filter(x => x.n).sort((a, b) => b.gan - a.gan);
+  const mx = Math.max(1, ...bal.map(x => Math.abs(x.gan)));
+  const fila = x => `<li class="crow" data-ficha="${esc(x.p.id)}">${avatar(x.m, x.m.i)}${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.name)}</b><span>${x.cl ? "Cláusula" : "Fichaje"} ${esc(enMadrid(x.t.ts, { day: "2-digit", month: "2-digit" }))} · ${eur(x.t.value)}</span></span><span class="cr"><b class="${cl(x.gan)}">${sig(x.gan)}</b><small>${x.nj ? `${x.pts} pts desde` : "sin jugar aún"}</small></span></li>`;
+  return `<section class="card"><div class="gh"><h2>¿Quién ficha mejor?</h2></div>
+    <p class="note" style="margin:0 0 8px">Cuánto valor ha ganado o perdido cada compra reciente desde que se fichó (al lado, lo que valía ese día) y los puntos que ha dado desde entonces.</p>
+    <p class="ordlbl">Mejores compras</p><ul class="clist">${mejores.map(fila).join("")}</ul>
+    ${peores.length ? `<p class="ordlbl" style="margin-top:12px">Compras que han perdido valor</p><ul class="clist">${peores.map(fila).join("")}</ul>` : ""}
+    <p class="ordlbl" style="margin-top:12px">Balance por manager</p>
+    <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.gan) / mx * 100).toFixed(1)}%;background:${x.gan >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · ${x.pts} pts desde el fichaje</small></span><span class="pp ${cl(x.gan)}" style="font-size:15px">${sig(x.gan)}</span></li>`).join("")}</ul>
+    <p class="note">Solo las compras de los últimos ${(E.transfers || []).length} movimientos guardados cuyo jugador sigue en el equipo.</p></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -1780,6 +2012,8 @@ function resumenEq(ms, hp) {
     ${graficaValor(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
+    ${bloqueFichajes(ms)}
+    ${bloqueOjo(ms)}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
@@ -1863,6 +2097,12 @@ function bloqueVender(m) {
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
+  // titularidad en su próximo partido (mezcla de Futbol Fantasy y Analítica Fantasy, alineaciones.json)
+  const titDe = p => { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort((a, b) => a - b)[0]; return k ? { gw: k, ff: e[k] } : null; };
+  const chipTit = p => { const x = titDe(p); if (!x) return "";
+    const v = x.ff.p, nv = v >= 0.7 ? "ok" : v >= 0.4 ? "duda" : "no";
+    return `<span class="titc titc-${nv}" title="${esc(textoTit(x.ff))}">J${esc(x.gw)} · ${x.ff.conf ? (v >= 0.5 ? "titular ✔" : "suplente") : Math.round(v * 100) + " % titular"}</span>`; };
+  const enDuda = m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
   const ord = { delta: (a, b) => b.t.d - a.t.d, valor: (a, b) => b.p.value - a.p.value,
     alerta: (a, b) => RANGO[a.t.k] - RANGO[b.t.k] || b.p.value - a.p.value }[eqOrden];
   const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
@@ -1880,13 +2120,13 @@ function detalleEq(m, hp) {
       </div>
       <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
     </div>
-    <div class="tendline"><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
+    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
   return `<section class="card eqhead"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
       <div style="flex:1;min-width:0"><div class="nm">${esc(m.name)}</div><div class="sub">Valor de plantilla</div></div>
       <div class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(dM)}">${sig(dM)} hoy</em></div></div>
-    <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div></section>
+    <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div>${enDuda ? `<p class="note" style="margin:8px 0 0">⚠ ${enDuda} ${enDuda === 1 ? "jugador tiene" : "jugadores tienen"} menos de un 50 % de ser titular en su próximo partido (Futbol Fantasy y Analítica Fantasy).</p>` : ""}</section>
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
@@ -1934,6 +2174,7 @@ async function teclaPin(k) {
   cargarEquipos(); cargarCalendario(); if (seccion === "mer") cargarMercado();
 }
 
+document.addEventListener("click", e => { if (e.target.closest("[data-cswap]") && comp) { comp.reverse(); pintarComparador(); } });
 document.addEventListener("change", e => {
   const i = e.target.closest("[data-csel]");
   if (!i || !LIGAJ || !comp) return;
@@ -2334,7 +2575,7 @@ function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado,
-      mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, ffP: ffm ? capFF(p.id, g.gw).p : null, ffConf: ffm ? capFF(p.id, g.gw).conf : false, esp, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
+      mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, ffP: ffm ? capFF(p.id, g.gw).p : null, ffConf: ffm ? capFF(p.id, g.gw).conf : false, esp, ys, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
   });
@@ -2548,7 +2789,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
@@ -2633,22 +2874,39 @@ function bloqueParaTi(r) {
   if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = YO && E.managers.some(m => m.id === YO) ? YO : capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
   let rc;
   try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
-  const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
+  const o = rc && !rc.error ? onceQuiniela(rc.candidatos || []) : null;
   const pills = selectorM(merMan, "data-mm", null, "Manager");
+  // huecos del once (plantilla que no da para 11): un libre de ese puesto suma entero
+  const nec = o ? (([d, m, f]) => ({ PT: 1, DF: d, MC: m, DL: f }))(o.form.split("-").map(Number)) : {};
   let cuerpo = `<p class="note">No hay datos suficientes de esta plantilla.</p>`;
   if (o) {
     const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
+      if ((o[x.pos] || []).length < (nec[x.pos] || 0)) return { x, tit: null, g: x.espProx };
       const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
       return tit ? { x, tit, g: x.espProx - tit.esp } : null;
     }).filter(y => y && y.g >= 0.3).sort((a, b) => b.g - a.g).slice(0, 5);
-    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
-        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}</span></span>
+    // cuánto cambian sus opciones de ganar la jornada (misma simulación que la Quiniela)
+    const Q = datosQuiniela(), yo = Q && Q.gw === r.gw ? Q.orden.find(f => String(f.m.id) === String(merMan)) : null;
+    if (yo && ganan.length) {
+      const eqs = Q.orden.map(f => ({ antes: total(f.m), js: [...f.o.PT, ...f.o.DF, ...f.o.MC, ...f.o.DL].map(c => ({ c, mult: c === f.o.cap ? c.m : 1 })) }));
+      const k = Q.orden.indexOf(yo);
+      ganan.forEach(y => {
+        const pj = Math.max(0.01, y.x.pj || 0), mu = y.x.espProx / pj;
+        const forma = y.tit && y.tit.ys && y.tit.ys.length ? y.tit.ys : (CAP.MUESTRA_DEF[y.x.pos] || [mu]);
+        const m0 = forma.reduce((t, v) => t + v, 0) / forma.length;
+        const nuevo = { pj, ys: forma.map(v => v - m0 + mu) };
+        const js = y.tit ? eqs[k].js.map(e => e.c.p.id === y.tit.p.id ? { c: nuevo, mult: e.mult > 1 ? 1 : e.mult } : e) : eqs[k].js.concat([{ c: nuevo, mult: 1 }]);
+        y.pAntes = yo.pGana; y.pDesp = simularJornada(eqs.map((e, i) => i === k ? { ...e, js } : e))[k].pGana;
+      });
+    }
+    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g, pAntes, pDesp }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
+        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>${tit ? `por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}` : `cubre el hueco de tu once · ${nf1.format(x.espProx)} pts`}</span>${pDesp != null ? `<span class="pq-g">Ganar la J${r.gw}: ${pctF(pAntes)} → <b>${pctF(pDesp)}</b></span>` : ""}</span>
         <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}</small></span></li>`).join("")}</ul>`
       : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
   }
   return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
     ${pills}${cuerpo}
-    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado.</p></section>`;
+    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado. «Ganar la J»: sus opciones de ganar la jornada con y sin el fichaje, con la simulación de la Quiniela.</p></section>`;
 }
 
 // Subidas y bajadas de valor de hoy en toda la liga (jugadores.json: valor de hoy frente al de ayer)
@@ -2844,19 +3102,20 @@ function panelAprendizaje() {
 function cargarAlineaciones() {
   fetch("alineaciones.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : null).catch(() => null)
-    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); } });
+    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "clas" && D) pintarQuiniela(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); } });
 }
 function cargarCalendario() {
   cargarParametros();
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) pintarPrevia(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
 const signoPct = v => (v >= 0 ? "+" : "−") + Math.round(Math.abs(v) * 100) + " %";
 const POSN = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
+const POSN1 = { PT: "portero", DF: "defensa", MC: "centrocampista", DL: "delantero" };
 
 const num = v => v == null ? "–" : nf1.format(v);
 const coma = v => String(v).replace(".", ",");
@@ -2990,14 +3249,31 @@ function onceRecomendado(cands) {
   });
   return mejor;
 }
+// Si la plantilla no da para un once completo: qué posiciones faltan y los mejores libres del mercado que las cubren
+let merPedidoCap = false;
+function htmlHueco(o) {
+  const [d, m, f] = o.form.split("-").map(Number), nec = { PT: 1, DF: d, MC: m, DL: f };
+  const faltan = Object.keys(nec).map(p => [p, nec[p] - o[p].length]).filter(x => x[1] > 0);
+  if (!faltan.length) return "";
+  const txt = faltan.map(([p, n]) => `${n} ${n === 1 ? POSN1[p] : POSN[p]}`).join(" y ");
+  let sug = "";
+  if (!MER_DATA && !merError && !merPedidoCap) { merPedidoCap = true; cargarMercado(); }
+  if (MER_DATA) { try {
+    const L = (recomendarMercado({ M: MER_DATA, cal: CAL, D, E }).lista || []).filter(x => faltan.some(([p]) => p === x.pos) && x.prio !== "evitar")
+      .sort((a, b) => b.espGen - a.espGen).slice(0, 3);
+    if (L.length) sug = `<p class="ordlbl" style="margin-top:10px">Libres en el mercado que lo cubren</p><ul class="clist">${L.map(x => `<li class="crow">${cara(x.j.id, x.j.name, x.j.teamId, 34)}<span class="cq"><b>${esc(x.j.name)}</b><span>${x.pos} · puja ideal ${merEur(x.puja)}</span></span><span class="cr"><b>${nf1.format(x.espGen)}</b><small>pts/jornada</small></span></li>`).join("")}</ul>`;
+  } catch (e) {} }
+  return `<div class="hueco"><b>⚠ Tu plantilla no da para un once completo</b><span>Te ${faltan.reduce((t, x) => t + x[1], 0) === 1 ? "falta" : "faltan"} ${txt}: si no fichas, jugarás con ${11 - faltan.reduce((t, x) => t + x[1], 0)}. Este es el mejor once que puedes poner hoy.</span>${sug}</div>`;
+}
 function htmlOnceRec(r) {
-  const o = onceRecomendado(r.candidatos || []);
+  const o = onceQuiniela(r.candidatos || []);
   if (!o) return "";
   const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : ""}</small></div>`;
   const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
-    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número amarillo: puntos esperados de cada uno.</p>
+    ${o.faltan ? htmlHueco(o) : ""}
+    <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
     <div class="oi">${filas}</div>
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
 }
@@ -3192,12 +3468,14 @@ function pintar() {
   const js_ = jornadas(), kv = js_.indexOf(vista), enJ = kv >= 0, ultima = js_[js_.length - 1];
   const ant = enJ ? js_[kv - 1] : null, sig_ = enJ ? js_[kv + 1] : null;
   const pills = `<div class="jsel">
-      <button class="jsel-t ${!enJ ? "on" : ""}" data-v="General" aria-pressed="${!enJ}">Total</button>
+      <button class="jsel-t ${vista === "General" ? "on" : ""}" data-v="General" aria-pressed="${vista === "General"}">Total</button>
+      ${js_.length > 3 ? `<button class="jsel-t ${vista === "Ult3" ? "on" : ""}" data-v="Ult3" aria-pressed="${vista === "Ult3"}" title="Puntos de las últimas 3 jornadas">Forma</button>` : ""}
       <div class="jsel-j ${enJ ? "on" : ""}">
         <button data-v="${esc(ant || (enJ ? js_[0] : ultima))}" ${enJ && !ant ? "disabled" : ""} aria-label="Jornada anterior">‹</button>
-        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
+        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
         <button data-v="${esc(sig_ || ultima)}" ${enJ && !sig_ ? "disabled" : ""} aria-label="Jornada siguiente">›</button>
       </div></div>
+    ${vista === "Ult3" ? `<p class="note" style="margin:8px 0 0">Clasificación de las últimas 3 jornadas (${esc(rangoUlt3())}): quién llega mejor.</p>` : ""}
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
   const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
@@ -3215,6 +3493,8 @@ function pintar() {
       const pos = 1 + S.ms.filter((_, y) => S.pts[y][k] > S.pts[x][k]).length;
       return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
   }
+  // jornada a medias: cuántos alineados de cada uno faltan por jugar y cómo acabaría según el motor del capitán
+  const vivo = enJ ? proyeccionVivo(vista) : vista === "General" && ultima ? proyeccionVivo(ultima) : null;
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
@@ -3222,6 +3502,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
+          ${vivo && vivo[m.id] && vivo[m.id].n ? `<span class="sub vivo-p">⏳ ${vivo[m.id].n} por jugar · ≈ <b>${Math.round(m.points + vivo[m.id].esp)}</b></span>` : ""}
           ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
@@ -3234,9 +3515,11 @@ function pintar() {
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
+    ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar y con cuántos puntos acabaría (≈, estimación del Golómetro).</p>` : ""}
     <ul class="rank">${filas}</ul>
-    <nav class="indice" aria-label="Más de la liga">${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Quiniela</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
+    <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="pron"></section>
@@ -3246,6 +3529,7 @@ function pintar() {
     <section class="card" id="origen"></section>
     <section class="card" id="premios"></section>`;
   pintarPrevia();
+  pintarQuiniela();
   pintarCronica();
   pintarGrafico();
   pintarPronostico();
@@ -3265,7 +3549,7 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-compp],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
@@ -3277,6 +3561,7 @@ document.addEventListener("click", e => {
   if (d.nov) { try { localStorage.setItem("novedades", NOVEDADES_V); } catch (err) {} const n = t.closest(".nov"); if (n) n.remove(); return; }
   if (d.mm !== undefined) { merMan = d.mm; pintarMercado(); return; }
   if (d.compp) { copiarTexto(t, PREVIA_TXT, "📋 Copiar"); return; }
+  if (d.compq) { copiarTexto(t, QUIN_TXT, "📋 Copiar"); return; }
   if (d.comp) { compartirCronica(t); return; }
   if (d.ir) { const s = document.getElementById(d.ir); if (s) window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 70, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
   if (d.gv !== undefined) { focoV = focoV === d.gv ? null : d.gv; pintarEquipos(); return; }
@@ -3295,7 +3580,7 @@ document.addEventListener("click", e => {
     return;
   }
   if (d.cpv) { capVista = d.cpv; pintarCapitanes(); return; }
-  if (d.cj) { const js = jornadas(), k = js.indexOf(cronJ) + (+d.cj); if (js[k]) { cronJ = js[k]; if (vista !== "General") { vista = cronJ; abierto = null; pintar(); } else pintarCronica(); } return; }
+  if (d.cj) { const js = jornadas(), k = js.indexOf(cronJ) + (+d.cj); if (js[k]) { cronJ = js[k]; if (js.includes(vista)) { vista = cronJ; abierto = null; pintar(); } else pintarCronica(); } return; }
   if (d.v) { vista = d.v; abierto = null; jselAbierto = false; }
   else if (d.o) { orden = orden.k === d.o ? { k: d.o, asc: !orden.asc } : { k: d.o, asc: false }; }
   else if (d.m) { abierto = abierto === d.m ? null : d.m; }
@@ -3308,6 +3593,8 @@ document.addEventListener("click", e => {
   new MutationObserver(() => { cancelAnimationFrame(t); t = requestAnimationFrame(marcar); }).observe(document.body, { childList: true, subtree: true });
   marcar();
 })();
+// fotos guardadas en el móvil y la última versión disponible sin conexión (sw.js)
+if ("serviceWorker" in navigator && location.protocol !== "file:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
 </body>
 </html>
