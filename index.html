@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f3f5f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08100c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef3f0" media="(prefers-color-scheme: light)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icono-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Golómetro">
 <title>MONEYBALL · Golómetro V2</title>
+<link rel="preload" href="fuentes/saira.woff" as="font" type="font/woff" crossorigin>
 <style>
 /* Paleta "Carbón y verde" (la de la primera versión del Golómetro, elegida por el dueño: nada de amarillo).
    --acc es el verde de acento; --pos es el verde de lo que sube y --red lo que baja. Texto de acento: --accFg. */
@@ -591,6 +592,226 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .comp-b{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-top:10px}
 .comp-b .btn-comp{margin-top:0}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border-radius:12px;background:#25d366;color:#06210f;font-weight:800;font-size:13.5px;text-decoration:none}
+/* ==========================================================================
+   TEMA «NOCHE DE PARTIDO» (noviembre 2026)
+   Idea: un estadio de noche visto en la tele. Fondo carbón con un toque de césped, las líneas del campo como
+   único adorno, números de marcador con la fuente Saira (incluida en /fuentes, licencia OFL) y el verde de
+   siempre como único acento, con brillo solo en lo que está activo o en directo. Sin amarillo.
+   Va al final para pisar el estilo anterior sin tocar la lógica.
+   ========================================================================== */
+@font-face{font-family:"Saira";src:url("fuentes/saira.woff") format("woff");font-weight:100 900;font-stretch:50% 125%;font-display:swap}
+:root{
+  --f-disp:"Saira",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --bg:#08100c;--panel:#0f1814;--panel2:#16211c;--line:#21302a;--txt:#eaf4ee;--mut:#8fa298;
+  --acc:#2fd46e;--accFg:#3ee07c;--accTxt:#03200e;--pos:#3ee07c;--posBg:#2fd46e24;--accBg:#2fd46e1f;
+  --cal:#d9ede1;                                    /* blanco de las líneas del campo */
+  --brillo:0 0 0 1px #2fd46e66,0 0 22px -4px #2fd46e8c;
+  --borde-luz:inset 0 1px 0 #ffffff0d;
+  --r-l:18px;--r-m:12px;--r-s:8px;
+  --tipBg:#0b1410f2;--ink:#08100c}
+@media (prefers-color-scheme:light){:root{
+  --bg:#eef3f0;--panel:#ffffff;--panel2:#e6eeea;--line:#d2ddd7;--txt:#0f1a15;--mut:#52625a;
+  --acc:#0f9d4a;--accFg:#0b7d3b;--accTxt:#fff;--pos:#0f9d4a;--posBg:#0f9d4a1c;--accBg:#0f9d4a17;--cal:#0f9d4a;
+  --brillo:0 0 0 1px #0f9d4a59,0 6px 18px -8px #0f9d4a80;--borde-luz:inset 0 1px 0 #ffffff;--tipBg:#fffffff2;--ink:#0f1a15}}
+
+body{background:
+  radial-gradient(120% 60% at 15% -10%,#2fd46e14,transparent 60%),
+  radial-gradient(90% 50% at 100% 0%,#2fd46e0c,transparent 55%),
+  var(--bg);background-attachment:scroll}
+@media (prefers-color-scheme:light){body{background:radial-gradient(120% 50% at 10% -10%,#0f9d4a14,transparent 60%),var(--bg)}}
+
+/* ---- tipografía de marcador ---- */
+.logo,.head h1,.gh h2,h3.sec,.ordlbl,#nav .tab,.tabs .tab,.pill,.jsel-n,.jsel-t,
+.pts b,.ch-kpi b,.ct-n,.pp,.cr b,.cp .rec b,.mpuja b,.jp-pts,.jp-right b,.pdp,.du-mc b,.pr-t,.pl-tr b,.tuj-x b,.ch-q b,.ct-x b,.cdet-card>summary.sumh{font-family:var(--f-disp)}
+.pts b,.ch-kpi b,.ct-n,.pp,.cr b,.cp .rec b,.mpuja b,.jp-pts,.jp-right b,.pdp,.du-mc b,.pl-tr b{font-stretch:82%;font-variant-numeric:tabular-nums;letter-spacing:0}
+
+/* ---- cabecera ---- */
+.nav{background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4)}
+.logo{font-stretch:106%;font-weight:700;letter-spacing:.1px;font-size:18px}
+.logo svg{filter:drop-shadow(0 0 6px #2fd46e88)}
+.logo span span{font-stretch:90%;color:var(--accFg);font-weight:600}
+.refresh{font-family:var(--f-disp);font-weight:600;letter-spacing:.2px}
+.busc{border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 70%,transparent)}
+
+/* ---- la gran pieza: el nombre de la liga sobre las líneas del campo ---- */
+.head{position:relative;margin:4px -16px 6px;padding:22px 16px 6px;overflow:hidden;isolation:isolate}
+.head::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150' fill='none' stroke='%232fd46e' stroke-opacity='.22' stroke-width='1.2'%3E%3Cpath d='M0 75h400'/%3E%3Ccircle cx='300' cy='75' r='46'/%3E%3Ccircle cx='300' cy='75' r='2.5' fill='%232fd46e' fill-opacity='.5'/%3E%3Cpath d='M300 0v150'/%3E%3Cpath d='M0 20h60v110H0M0 50h22v50H0'/%3E%3C/svg%3E") right center/auto 100% no-repeat;
+  -webkit-mask:linear-gradient(90deg,transparent 0,#000 45%);mask:linear-gradient(90deg,transparent 0,#000 45%)}
+.head h1{font-size:clamp(30px,9vw,44px);font-weight:800;font-stretch:122%;letter-spacing:.5px;line-height:1;margin:0 0 6px!important;
+  background:linear-gradient(180deg,var(--txt) 55%,color-mix(in srgb,var(--txt) 55%,var(--accFg)));-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 28px #2fd46e26}
+.head::after{content:"";display:block;width:56px;height:3px;margin:2px 0 10px;border-radius:2px;background:var(--acc);box-shadow:0 0 12px #2fd46eaa}
+@media (prefers-color-scheme:light){.head h1{text-shadow:none}.head::after{box-shadow:none}}
+
+/* ---- tarjetas: un poco de luz arriba, sin sombras grises ---- */
+.card,.det,.rank .row,.mc,.ch,.mh,.tuj{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,#fff 3%) 0,var(--panel) 120px);box-shadow:var(--borde-luz);border-color:var(--line)}
+@media (prefers-color-scheme:light){.card,.det,.rank .row,.mc,.ch,.mh,.tuj{background:var(--panel);box-shadow:0 1px 0 #ffffff inset,0 1px 2px #0f1a150d}}
+.card{border-radius:var(--r-l)}
+.gh h2{font-size:18px;font-weight:700;font-stretch:104%;letter-spacing:.1px;display:flex;align-items:center;gap:10px}
+.gh h2::before{content:"";flex:none;width:4px;height:16px;border-radius:2px;background:var(--acc);box-shadow:0 0 10px #2fd46e99}
+@media (prefers-color-scheme:light){.gh h2::before{box-shadow:none}}
+h3.sec,.ordlbl{text-transform:none!important;letter-spacing:.1px!important;font-size:13.5px!important;font-weight:600!important;color:var(--mut)!important;font-stretch:100%}
+.note{line-height:1.45}
+
+/* ---- clasificación: filas de marcador ---- */
+.rank{gap:6px}
+.rank .row{border-radius:14px}
+.rank .row.lider{border-color:color-mix(in srgb,var(--acc) 70%,transparent);box-shadow:var(--brillo),var(--borde-luz)}
+.pts b{background:color-mix(in srgb,var(--bg) 70%,var(--panel2));border:1px solid var(--line);box-shadow:inset 0 0 12px #000a;font-size:24px;font-weight:700;border-radius:9px;padding:1px 9px;min-width:3.4ch}
+@media (prefers-color-scheme:light){.pts b{box-shadow:inset 0 -2px 0 var(--line);background:var(--panel2)}}
+.rank .row.lider .pts b{color:var(--accFg);text-shadow:0 0 14px #2fd46e88;border-color:#2fd46e55}
+.rbar{height:3px;background:color-mix(in srgb,var(--line) 70%,transparent)}
+.rbar i{background:linear-gradient(90deg,#1b8f4a,var(--acc));box-shadow:0 0 8px #2fd46e88;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+/* ---- pestañas, pastillas y selectores ---- */
+.tabs{background:color-mix(in srgb,var(--panel) 80%,transparent);border-color:var(--line)}
+.pill{border:1px solid transparent}
+.pill:not(.on){background:color-mix(in srgb,var(--panel2) 85%,transparent);border-color:var(--line)}
+.indice button{font-family:var(--f-disp);font-weight:600}
+
+/* ---- barra de navegación inferior ---- */
+#nav{background:color-mix(in srgb,var(--bg) 78%,transparent)!important;border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent)!important;-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
+#nav .tab{font-weight:600;font-stretch:96%;letter-spacing:.1px;color:var(--mut)}
+#nav .tab.on{color:var(--txt);box-shadow:none}
+#nav .tab.on .ti{filter:drop-shadow(0 0 8px #2fd46ecc)}
+#nav .tab.on::before{left:30%;right:30%;height:2px;top:-7px;background:var(--acc);box-shadow:0 0 12px 1px #2fd46ecc}
+
+/* ---- botones de acción ---- */
+.btn-comp,.btn-ghost{border:1px solid var(--line)}
+
+/* ---- tarjetas principales (capitán y mercado): borde de luz verde ---- */
+.ch,.mh{border:1px solid color-mix(in srgb,var(--acc) 45%,var(--line));box-shadow:var(--borde-luz);position:relative;overflow:hidden}
+.ch::after,.mh::after{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,#2fd46ecc,transparent);pointer-events:none}
+.ch-kpi,.ct-t,.pl-tr>div,.tuj-f,.q-duelo,.ch-gana{border:1px solid color-mix(in srgb,var(--line) 80%,transparent);background:color-mix(in srgb,var(--panel2) 85%,transparent)}
+.ch-kpi b{font-size:24px;font-weight:700}
+
+/* ---- cuenta atrás como un marcador de estadio ---- */
+.av-j{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,#fff 3%),var(--panel));box-shadow:var(--borde-luz)}
+.av-r{font-family:var(--f-disp);font-stretch:78%;font-weight:700;font-size:19px;letter-spacing:.5px;min-width:96px;padding:8px 10px;border-radius:10px;
+  background:#050a07;color:var(--accFg);border:1px solid #2fd46e40;text-shadow:0 0 10px #2fd46ecc;box-shadow:inset 0 0 14px #000}
+@media (prefers-color-scheme:light){.av-r{background:#0f1a15;color:#5cf096;text-shadow:0 0 8px #2fd46e99}}
+.av-j.vivo .av-r{background:#1a0606;color:#ff8080;border-color:#ff6b6b55;text-shadow:0 0 10px #ff6b6bcc}
+.av-j>span:nth-child(2){display:flex;flex-direction:column;min-width:0;flex:1}
+.av-cal{flex:none;margin-left:auto;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--accFg);border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent)}
+.av-cal:hover{border-color:var(--acc)}
+/* ---- directo ---- */
+.vivo-d{box-shadow:0 0 0 0 #2fd46e99;animation:latido2 1.8s ease-out infinite}
+@keyframes latido2{0%{box-shadow:0 0 0 0 #2fd46e99}70%{box-shadow:0 0 0 8px #2fd46e00}100%{box-shadow:0 0 0 0 #2fd46e00}}
+
+/* ---- modo marcador ---- */
+body.tv-on{overflow:hidden}
+.tv{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 70% at 50% -20%,#14402a,transparent 60%),#040806;color:#eaf4ee;color-scheme:dark;display:flex}
+.tv[hidden]{display:none}
+.tv::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' fill='none' stroke='%232fd46e' stroke-opacity='.10' stroke-width='2'%3E%3Crect x='20' y='20' width='960' height='560' rx='4'/%3E%3Cpath d='M500 20v560'/%3E%3Ccircle cx='500' cy='300' r='90'/%3E%3Cpath d='M20 160h150v280H20M980 160H830v280h150M20 230h55v140H20M980 230h-55v140h55'/%3E%3C/svg%3E") center/cover no-repeat}
+.tv-in{position:relative;display:flex;flex-direction:column;width:100%;max-width:1200px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) clamp(14px,3vw,40px) max(12px,env(safe-area-inset-bottom));min-height:0}
+.tv-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid #2fd46e33}
+.tv-lg{font-family:var(--f-disp);font-stretch:120%;font-weight:800;font-size:clamp(20px,3.4vw,40px);letter-spacing:.5px;text-shadow:0 0 22px #2fd46e55}
+.tv-st{font-family:var(--f-disp);font-size:clamp(13px,1.8vw,20px);font-weight:600;color:#a9bcb1;display:inline-flex;align-items:center;gap:8px}
+.tv-st b{color:#5cf096;text-shadow:0 0 10px #2fd46e99;font-stretch:85%}
+.tv-vivo{color:#ff9a9a}.tv-vivo i{width:10px;height:10px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 0 #ff4d4daa;animation:tvlat 1.6s ease-out infinite}
+@keyframes tvlat{0%{box-shadow:0 0 0 0 #ff4d4daa}80%{box-shadow:0 0 0 10px #ff4d4d00}100%{box-shadow:0 0 0 0 #ff4d4d00}}
+.tv-hr{margin-left:auto;font-family:var(--f-disp);font-stretch:80%;font-weight:700;font-size:clamp(18px,2.6vw,32px);color:#5cf096;text-shadow:0 0 12px #2fd46eaa;background:#020503;border:1px solid #2fd46e33;border-radius:10px;padding:2px 12px;box-shadow:inset 0 0 12px #000}
+.tv-x{width:44px;height:44px;border-radius:50%;border:1px solid #2fd46e44;color:#cfe3d7;font-size:18px;display:grid;place-items:center}
+.tv-x:hover{background:#2fd46e22}
+.tv-c{flex:1;min-height:0;overflow:auto;padding:10px 0}
+.tv-nx{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:10px 0 0;font-size:clamp(13px,1.6vw,19px);color:#93a69b}
+.tv-nx b{color:#eaf4ee;font-family:var(--f-disp);font-weight:700}.tv-nx em{font-style:normal;color:#5cf096;font-family:var(--f-disp);font-stretch:85%;font-weight:600}
+.tv-nx small{font-size:.9em;color:#7f948a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tv-sub{margin:4px 0 12px;color:#93a69b;font-size:clamp(13px,1.6vw,18px)}
+.tv-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(6px,1vh,12px)}
+.tv-l li{display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);padding:clamp(8px,1.4vh,16px) clamp(10px,1.6vw,22px);border-radius:14px;background:linear-gradient(90deg,#0f1a15ee,#0a120ecc);border:1px solid #21302a;box-shadow:inset 0 1px 0 #ffffff0a}
+.tv-l li:first-child{border-color:#2fd46e88;box-shadow:0 0 0 1px #2fd46e55,0 0 30px -8px #2fd46e99,inset 0 1px 0 #ffffff12}
+.tv-p{font-family:var(--f-disp);font-stretch:80%;font-weight:700;font-size:clamp(18px,2.6vw,34px);width:1.4em;text-align:center;color:#7f948a}
+.tv-l li:first-child .tv-p{color:#5cf096}
+.tv-l .av{width:clamp(40px,5.5vw,72px);height:clamp(40px,5.5vw,72px)}
+.tv-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.tv-n b{font-size:clamp(16px,2.4vw,30px);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-n small{font-size:clamp(12px,1.5vw,18px);color:#93a69b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-b{display:block;height:4px;border-radius:2px;background:#ffffff10;position:relative;overflow:hidden}
+.tv-b::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--c);box-shadow:0 0 10px var(--c)}
+.tv-v{font-family:var(--f-disp);font-stretch:78%;font-weight:700;font-size:clamp(28px,5vw,64px);line-height:1;min-width:2.6ch;text-align:right;color:#f2fbf5}
+.tv-l li:first-child .tv-v{color:#5cf096;text-shadow:0 0 18px #2fd46ebb}
+.tv-tk{overflow:hidden;border-top:1px solid #2fd46e33;padding-top:10px;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.tv-tk>div{display:flex;gap:28px;width:max-content;animation:tvtk 60s linear infinite}
+.tv-tk span{font-family:var(--f-disp);font-weight:600;font-size:clamp(13px,1.7vw,20px);color:#cfe3d7;white-space:nowrap}
+.tv-tk span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#2fd46e;margin-right:10px;vertical-align:middle;box-shadow:0 0 6px #2fd46e}
+@keyframes tvtk{to{transform:translateX(-50%)}}
+.tv-meta{display:flex;align-items:center;gap:clamp(8px,1.2vw,18px);min-width:0;margin-top:2px}
+.tv-cap{display:inline-flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:999px;background:linear-gradient(90deg,#2fd46e2e,#2fd46e08);border:1px solid #2fd46e45;min-width:0;flex:0 1 auto}
+.tv-cap.pend{background:linear-gradient(90deg,#ffffff0f,#ffffff03);border-color:#ffffff24}
+.tv-cap-f{position:relative;flex:none;display:grid}
+.tv-cap-f .cara{--t:clamp(28px,2.7vw,40px)!important;width:var(--t);height:var(--t)}
+.tv-cap-f .cara-e{display:none}
+.tv-brz{position:absolute;right:-5px;bottom:-4px;width:clamp(15px,1.3vw,19px);height:clamp(15px,1.3vw,19px);border-radius:50%;background:#2fd46e;color:#03200e;font:800 clamp(9px,.8vw,11px)/1 var(--f-disp);display:grid;place-items:center;font-style:normal;box-shadow:0 0 0 2px #0b140f,0 0 8px #2fd46e99}
+.tv-cap.pend .tv-brz{background:#cfe3d7;box-shadow:0 0 0 2px #0b140f}
+.tv-cap-t{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.tv-cap-t small{font-size:clamp(9.5px,.85vw,12px);color:#7f948a;white-space:nowrap}
+.tv-cap-t b{font-size:clamp(12.5px,1.3vw,18px);font-weight:700;color:#eaf4ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-cap-p{font-family:var(--f-disp);font-stretch:82%;font-weight:700;font-size:clamp(17px,1.9vw,26px);color:#5cf096;text-shadow:0 0 10px #2fd46e66;margin-left:2px}
+.tv-cap.pend .tv-cap-p{color:#cfe3d7;text-shadow:none;font-size:clamp(14px,1.4vw,19px)}
+.tv-cap{flex:0 0 auto;max-width:72%}
+.tv-cap-t b{max-width:14ch}
+.tv-once{display:flex;align-items:center;gap:10px;margin-top:6px}
+.tv-dots{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;flex:1;max-width:100%}
+.tv-dots i{height:5px;border-radius:2px;background:var(--c);box-shadow:0 0 8px color-mix(in srgb,var(--c) 70%,transparent)}
+.tv-dots i.f{background:#ffffff14;box-shadow:none}
+.tv-once small{flex:none;font-size:clamp(11px,1vw,14px);color:#7f948a;white-space:nowrap}
+.tv-vw{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.tv-pr{display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:999px;border:1px solid #2fd46e40;background:#2fd46e12;color:#5cf096;font-family:var(--f-disp);line-height:1.2;white-space:nowrap}
+.tv-pr svg{width:clamp(11px,1vw,15px);height:clamp(11px,1vw,15px);flex:none}
+.tv-pr b{font-weight:700;font-stretch:85%;font-size:clamp(14px,1.5vw,20px);color:#eaf4ee}
+.tv-pr em{font-style:normal;font-weight:600;font-size:clamp(11px,1.05vw,14px);color:#5cf096}
+.tv-pr0{border-color:#ffffff1f;background:#ffffff08;color:#93a69b}.tv-pr0 em{color:#93a69b;font-weight:500}
+.tv-proy{display:flex;flex-direction:column;line-height:1.1;flex:none;margin-left:auto;text-align:right}
+.tv-proy small{font-size:clamp(9.5px,.85vw,12px);color:#7f948a}
+.tv-proy b{font-family:var(--f-disp);font-stretch:85%;font-weight:700;font-size:clamp(16px,1.8vw,24px);color:#eaf4ee}
+@media (max-width:420px){.tv-once small{display:none}.tv-pr{padding:1px 6px 1px 5px;gap:3px}.tv-pr svg{display:none}.tv-pr b{font-size:15px}.tv-pr em{font-size:11px}.tv-l li{gap:10px;padding:10px 12px}.tv-p{width:1em}.tv-cap{max-width:100%}}
+@media (max-width:699px){.tv-g{display:none}.tv-st{order:5;flex-basis:100%}.tv-hr{font-size:18px}}
+@media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.2vw,58px);height:clamp(40px,4.2vw,58px)}.tv-l li{padding:clamp(6px,1vh,12px) clamp(10px,1.3vw,18px);gap:clamp(8px,1.2vw,16px)}.tv-cap-t b{font-size:clamp(12px,1.15vw,16px)}.tv-cap-f .cara{--t:clamp(26px,2.3vw,34px)!important}.tv-proy b{font-size:clamp(15px,1.6vw,22px)}.tv-once{margin-top:4px}.tv-v{font-size:clamp(28px,4.4vw,60px)}.tv-sub{display:none}.tv-c{padding-top:12px}.tv-n b{font-size:clamp(15px,1.55vw,24px)}.tv-n{gap:2px}}
+@media (prefers-reduced-motion:reduce){.tv-tk>div{animation:none;flex-wrap:wrap;width:auto}}
+/* ---- cabecera compacta fuera de Clasificación; etiquetas en minúscula ---- */
+body[data-sec]:not([data-sec="clas"]) .head{padding-top:12px}
+body[data-sec]:not([data-sec="clas"]) .head h1{font-size:clamp(24px,7vw,32px)}
+body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
+.mpuja small,.hero-et{text-transform:none!important;letter-spacing:.1px!important;font-size:11.5px!important}
+.mpuja{background:color-mix(in srgb,var(--bg) 55%,var(--panel2));border:1px solid var(--line)}
+.mpuja b{font-family:var(--f-disp);font-stretch:85%;font-size:17px}
+@media (max-width:420px){.acciones{gap:6px}.busc{width:40px!important;height:40px!important}.refresh{padding:7px 11px}.logo{font-size:17px}}
+@media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px}}
+.comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
+/* ---- el once sobre un campo con sus líneas ---- */
+.pitch,.oi{position:relative;isolation:isolate;background:repeating-linear-gradient(180deg,#1f6b3c 0 52px,#1c6337 52px 104px);box-shadow:inset 0 0 40px #0008,inset 0 1px 0 #ffffff14;border:1px solid #2fd46e33}
+.pitch::before,.oi::before{content:"";position:absolute;inset:6px;z-index:-1;pointer-events:none;border:2px solid #ffffff2e;border-radius:6px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none' fill='none' stroke='%23ffffff' stroke-opacity='.18' stroke-width='.8'%3E%3Cpath d='M0 70h100'/%3E%3Ccircle cx='50' cy='70' r='12'/%3E%3Cpath d='M25 0v16h50V0M38 0v6h24V0M25 140v-16h50v16M38 140v-6h24v6'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+/* ---- cambio de pestaña y pulsaciones ---- */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+#nav,.nav{view-transition-name:none}
+.btn-wa:active,.btn-comp:active,.refresh:active,.tuj-f:active,.pill:active,.indice button:active{transform:scale(.97)}
+.btn-wa,.btn-comp,.refresh,.tuj-f,.pill,.indice button{transition:transform .12s ease,background-color .15s,color .15s}
+/* ---- perfil de cada manager (radar) ---- */
+.rd-sel{display:flex;gap:2px;justify-content:space-between;max-width:360px;margin:0 auto}
+.rd-sel button{width:40px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;opacity:.55;transition:opacity .15s,border-color .15s}
+.rd-sel button.on{opacity:1;border-color:var(--acc);box-shadow:0 0 12px #2fd46e66}
+.rd-sel .av{width:34px;height:34px}
+.rd-w{max-width:340px;margin:6px auto 0}
+.rd{width:100%;height:auto;overflow:visible}
+.rd-an{fill:none;stroke:var(--line);stroke-width:1}
+.rd-c{fill:none;stroke:var(--mut);stroke-width:1.5;stroke-dasharray:4 4;opacity:.7}
+.rd-p{fill-opacity:.22;stroke-width:2.2;filter:drop-shadow(0 0 6px currentColor)}
+.rd-t{fill:var(--mut);font:600 13.5px var(--f-disp)}
+.rd-ley{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin:4px 0 0}
+.rd-ley span{display:inline-flex;align-items:center;gap:6px}.rd-ley i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.rd-ic{border-top:2px dashed var(--mut);height:0!important;background:none!important}
+/* ---- ficha de jugador ---- */
+.f4 b{font-family:var(--f-disp);font-stretch:85%;font-size:18px}
+.ov-c{box-shadow:0 -1px 0 #2fd46e55,0 -20px 60px -20px #2fd46e40}
+.esq i{background:linear-gradient(90deg,var(--panel) 0,color-mix(in srgb,var(--panel2) 70%,#2fd46e 6%) 50%,var(--panel) 100%);background-size:200% 100%}
+/* ---- detalles ---- */
+::selection{background:#2fd46e55}
+:focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
+input[type=range]{accent-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -600,10 +821,12 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
   <span class="acciones">
     <!-- TEMPORAL: botón de carga manual, oculto (quita el style="display:none" para volver a verlo) -->
     <label class="refresh" id="tmp-carga" style="display:none">📂 Cargar JSON<input id="file" type="file" accept=".json" hidden></label>
+    <button class="busc" id="btnTV" aria-label="Modo marcador: la jornada a pantalla completa" title="Modo marcador"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4M8 11h2M14 9v4"/></svg></button>
     <button class="busc" id="btnBusc" aria-label="Buscar jugador"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
     <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
+<div id="tv" class="tv" role="dialog" aria-modal="true" aria-label="Modo marcador" hidden></div>
 <main id="contenido">
   <div class="head"><h1 id="titulo" style="margin-bottom:14px">Mi liga</h1></div>
   <div id="aviso" aria-live="polite"></div>
@@ -682,6 +905,7 @@ function pintarNav() {
 
 function ir(sec) {
   seccion = sec;
+  document.body.dataset.sec = sec;   // el tema usa la sección para la cabecera
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
   $("#cap").hidden = sec !== "cap";
@@ -707,13 +931,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05f";
+const NOVEDADES_V = "2026-11-06a";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación: elige tu escudo y verás tu capitán, tus opciones y qué revisar (y, con la jornada en juego, cómo vas). La <b>Predicción de la jornada</b> con el duelo por el liderato, la <b>previa</b> con la probabilidad de ganar de cada uno y la crónica dice si acertó. En Mercado, la <b>puja ideal</b> sale de lo que de verdad se paga en esta liga, con la probabilidad de llevártelo y un simulador. En Equipos, el <b>valor dentro de una semana</b>.</span>
+    <span>Nuevo diseño «Noche de partido». Toca 📺 arriba para el <b>modo marcador</b> (la jornada a pantalla completa para la tele), 🖼️ para <b>compartir como imagen</b> la previa, la predicción o la crónica, y 📅 en la cuenta atrás para meter las jornadas en tu <b>calendario</b>. En Equipos, el <b>perfil de cada manager</b>.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -759,9 +983,29 @@ function pintarAviso() {
   const falta = ini - ahora, d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
   const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
   cont.innerHTML = htmlNovedades() + (falta > 0
-    ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
+    ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span><button class="av-cal" data-ics="1" aria-label="Añadir el inicio de las próximas jornadas a mi calendario" title="Añadir a mi calendario"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg></button></div>`
     : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
 }
+
+// Calendario: un archivo .ics con el inicio de cada jornada que falta y un aviso 2 horas antes (para el capitán)
+function descargarICS() {
+  if (!CAL || !CAL.games) return;
+  const ahora = Date.now() / 1000, liga = ($("#titulo").textContent || "Mi liga").trim();
+  // primer partido de cada jornada; solo jornadas que aún no han empezado (un aplazado suelto no cuenta)
+  const por = {}; CAL.games.forEach(g => { if (!g.ts) return; const p = por[g.gw]; if (!p || g.ts < p.ts) por[g.gw] = g; });
+  Object.keys(por).forEach(gw => { if (por[gw].ts < ahora - 3600) delete por[gw]; });
+  const f = t => new Date(t * 1000).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  const ev = Object.keys(por).sort((a, b) => a - b).map(gw => { const g = por[gw];
+    return ["BEGIN:VEVENT", `UID:golometro-${liga.replace(/\W+/g, "")}-j${gw}@golometrov2`, `DTSTAMP:${f(ahora)}`, `DTSTART:${f(g.ts)}`, `DTEND:${f(g.ts + 7200)}`,
+      `SUMMARY:${liga}: empieza la jornada ${gw}`, `DESCRIPTION:Primer partido: ${g.homeName || ""} - ${g.awayName || ""}. Revisa tu once y tu capitán en el Golómetro.`,
+      "BEGIN:VALARM", "ACTION:DISPLAY", "TRIGGER:-PT2H", `DESCRIPTION:Pon tu once y tu capitán (${liga})`, "END:VALARM", "END:VEVENT"].join("\r\n"); });
+  if (!ev.length) return;
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Golometro//ES", "CALSCALE:GREGORIAN", ...ev, "END:VCALENDAR"].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "jornadas-golometro.ics"; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+document.addEventListener("click", e => { if (e.target.closest && e.target.closest("[data-ics]")) descargarICS(); });
 
 // Botón «Actualizar»: vuelve a leer todos los datos que publica GitHub (clasificación, plantillas, calendario, onces,
 // mercado, parámetros) y muestra lo recientes que son. Además se recarga solo cada 5 minutos mientras la web está abierta
@@ -1320,7 +1564,8 @@ function pintarPrevia() {
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
     ${hayEsp ? `<h3 class="sec">¿Quién gana la jornada?</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${((f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>≈ ${Math.round(f.media ?? f.esp)} pts · ${esc(f.x.formation || "")} · © ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana || 0)}</span></li>`).join("")}</ul>
       <p class="note">Probabilidad de ganar la jornada al empezar, con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro. No cambia mientras avanza la jornada: eso lo cuenta la clasificación en directo.</p>` : ""}
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button>${hayEsp ? `<button class="btn-comp" data-img="prev" aria-label="Compartir como imagen">🖼️ Imagen</button>` : ""}</div>`;
+  if (hayEsp) IMG_DATOS.prev = { titulo: `Previa · jornada ${n}`, sub: "Probabilidad de ganar con los onces y capitanes reales", filas: favorito.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana || 0), det: `≈ ${Math.round(f.media ?? f.esp)} pts · capitán ${f.x.captain ? apellido(f.x.captain.name) : "—"}`, w: (f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) })), pie: "" };
 }
 function copiarTexto(btn, txt, base) {
   const listo = t => { btn.textContent = t; setTimeout(() => { btn.textContent = base; }, 2200); };
@@ -1489,7 +1734,8 @@ function pintarQuiniela() {
     ${duelo ? `<h3 class="sec">Duelo por el liderato</h3><div class="q-duelo">${avatar(duelo.a.m, duelo.a.i)}<span><b>${esc(duelo.a.m.name)}</b> le gana la jornada a <b>${esc(duelo.b.m.name)}</b> ${pctQ(duelo.p)} de las veces. ${duelo.dif ? `Llega con ${duelo.dif} ${duelo.dif === 1 ? "punto" : "puntos"} de ventaja.` : "Llegan empatados."}</span>${avatar(duelo.b.m, duelo.b.i)}</div>` : ""}
     ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
     <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Cada jugador del once juega con su probabilidad de jugar (Futbol Fantasy, Analítica Fantasy y el modelo propio) y, si juega, saca unos puntos al azar según su media, su regularidad y el rival, igual que en la pestaña Capitán. El capitán multiplica. Se juega la jornada 4.000 veces y se cuenta cuántas gana cada uno. «Entre» es lo que saca 8 de cada 10 veces. Si alguien deja a un lesionado o no pone el mejor once, sus opciones bajan.</p></details>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button></div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button><button class="btn-comp" data-img="quin" aria-label="Compartir como imagen">🖼️ Imagen</button></div>`;
+  IMG_DATOS.quin = { titulo: `Predicción · jornada ${r.gw}`, sub: "Probabilidad de ganar la jornada con el mejor once", filas: F.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana), det: `≈ ${Math.round(f.media)} pts · capitán ${capN(f)}`, w: f.pGana / mx })), pie: cuando ? `Empieza el ${cuando}` : "" };
 }
 
 /* ---------- Crónica de la jornada ---------- */
@@ -1561,9 +1807,10 @@ function pintarCronica() {
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Compartir como imagen">🖼️ Imagen</button></div>
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
+  IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · resultado`, sub: `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
 }
 // Puntos que cada manager dejó en el banquillo: su plantilla al empezar la jornada (la de hoy deshaciendo los movimientos
 // posteriores) frente al mejor once posible a toro pasado, sin contar el capitán. null si los movimientos guardados no llegan tan atrás.
@@ -2071,6 +2318,55 @@ function bloqueClausulas(ms) {
     <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
+// Perfil de cada manager: un radar con seis cosas que se miden igual para todos (el mejor de la liga en cada una = borde)
+let radarSel = null;
+function datosRadar(ms) {
+  const js = jornadas(), u3 = js.slice(-3), H = (E && E.history) || {};
+  const hoy = Date.now(), hace7 = new Date(hoy - 7 * 864e5).toISOString().slice(0, 10);
+  const L = ms.map(m => {
+    const dm = (D.managers || []).find(x => String(x.id) === String(m.id)), pj = js.map(j => ((D.matchdays[j] || {})[m.id] || {}).points).filter(capNum);
+    const media = pj.length ? pj.reduce((a, b) => a + b, 0) / pj.length : 0, sd = pj.length > 1 ? Math.sqrt(pj.reduce((t, v) => t + (v - media) ** 2, 0) / pj.length) : 0;
+    const forma = u3.map(j => ((D.matchdays[j] || {})[m.id] || {}).points || 0).reduce((a, b) => a + b, 0);
+    const caps = js.reduce((t, j) => { const c = ((D.matchdays[j] || {})[m.id] || {}).captain; return t + (c && capNum(c.bonus) ? c.bonus : 0); }, 0);
+    let reval = 0; m.players.forEach(p => { const h = H[p.id] || []; const a = h.filter(x => x[0] <= hace7).pop() || h[0]; if (a && capNum(a[1]) && capNum(p.value)) reval += p.value - a[1]; });
+    return { m, media, sd, v: { pts: dm ? total(dm) : 0, forma, caps, reg: media ? media / (sd + 8) : 0, valor: m.squadValue || 0, reval } };
+  });
+  const ejes = [["pts", "Puntos"], ["forma", "Forma"], ["caps", "Capitanes"], ["reg", "Regularidad"], ["valor", "Plantilla"], ["reval", "Revalorización"]];
+  ejes.forEach(([k]) => { const v = L.map(x => x.v[k]), mn = Math.min(...v), mx = Math.max(...v);
+    L.forEach(x => { x.n = x.n || {}; x.n[k] = mx > mn ? 0.18 + 0.82 * (x.v[k] - mn) / (mx - mn) : 0.6; }); });
+  return { L, ejes };
+}
+function svgRadar(R, sel, comp) {
+  const W = 300, C = W / 2, Rr = 104, n = R.ejes.length, ang = k => -Math.PI / 2 + k * 2 * Math.PI / n;
+  const pt = (k, r) => [C + Math.cos(ang(k)) * r, C + Math.sin(ang(k)) * r];
+  const poly = x => R.ejes.map(([key], k) => pt(k, Rr * x.n[key]).map(v => v.toFixed(1)).join(",")).join(" ");
+  const anillos = [0.25, 0.5, 0.75, 1].map(f => `<polygon points="${R.ejes.map((e, k) => pt(k, Rr * f).join(",")).join(" ")}" class="rd-an"/>`).join("");
+  const radios = R.ejes.map((e, k) => `<line x1="${C}" y1="${C}" x2="${pt(k, Rr)[0]}" y2="${pt(k, Rr)[1]}" class="rd-an"/>`).join("");
+  const etq = R.ejes.map(([key, t], k) => { const [x, y] = pt(k, Rr + 22), an = Math.abs(x - C) < 4 ? "middle" : x > C ? "start" : "end";
+    return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${an}" class="rd-t">${t}</text>`; }).join("");
+  const c = col(sel.m.i);
+  return `<svg viewBox="-62 -6 424 312" class="rd" role="img" aria-label="Perfil de ${esc(sel.m.name)}">${anillos}${radios}
+    ${comp ? `<polygon points="${poly(comp)}" class="rd-c"/>` : ""}
+    <polygon points="${poly(sel)}" style="fill:${c};stroke:${c}" class="rd-p"/>
+    ${R.ejes.map(([key], k) => { const [x, y] = pt(k, Rr * sel.n[key]); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" style="fill:${c}"/>`; }).join("")}${etq}</svg>`;
+}
+function bloqueRadar(ms) {
+  if (!D || !D.matchdays || ms.length < 3) return "";
+  const R = datosRadar(ms);
+  if (!radarSel || !R.L.some(x => String(x.m.id) === String(radarSel))) radarSel = YO && R.L.some(x => String(x.m.id) === String(YO)) ? YO : R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[0].m.id;
+  const sel = R.L.find(x => String(x.m.id) === String(radarSel));
+  const lider = R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[0], comp = lider === sel ? R.L.slice().sort((a, b) => b.v.pts - a.v.pts)[1] : lider;
+  const mejor = R.ejes.filter(([k]) => sel.n[k] >= 0.999).map(e => e[1].toLowerCase()), peor = R.ejes.slice().sort((a, b) => sel.n[a[0]] - sel.n[b[0]])[0];
+  const fmt = { pts: v => `${v} pts`, forma: v => `${v} pts en 3 jornadas`, caps: v => `+${v} pts de capitán`, reg: () => `${Math.round(sel.media)} pts por jornada, ± ${Math.round(sel.sd)}`, valor: v => eur(v), reval: v => sig(v) };
+  return `<section class="card"><div class="gh"><h2>Perfil de cada manager</h2></div>
+    <div class="rd-sel">${R.L.map(x => `<button data-radar="${esc(x.m.id)}" class="${x === sel ? "on" : ""}" aria-label="${esc(x.m.name)}" aria-pressed="${x === sel}">${avatar(x.m, x.m.i)}</button>`).join("")}</div>
+    <div class="rd-w">${svgRadar(R, sel, comp)}</div>
+    <p class="rd-ley"><span><i style="background:${col(sel.m.i)}"></i>${esc(sel.m.name)}</span><span><i class="rd-ic"></i>${esc(comp.m.name)}</span></p>
+    <p class="note">${mejor.length ? `El mejor de la liga en ${mejor.join(" y ")}. ` : ""}Su punto flojo: ${peor[1].toLowerCase()} (${fmt[peor[0]](sel.v[peor[0]])}).</p>
+    <details class="cdet"><summary>Qué mide cada eje</summary><p class="note">Puntos: total de la temporada. Forma: puntos de las 3 últimas jornadas. Capitanes: puntos extra que han dado sus capitanes. Regularidad: media por jornada frente a lo que varía (más alto = más fiable). Plantilla: valor de hoy. Revalorización: cuánto han subido sus jugadores actuales en 7 días. En cada eje, el borde es el mejor de la liga y el centro, el peor.</p></details></section>`;
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-radar]"); if (b) { radarSel = b.dataset.radar; if (seccion === "eq") pintarEquipos(); } });
+
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
@@ -2162,6 +2458,7 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueRadar(ms)}
     ${bloqueValor7(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
@@ -3753,6 +4050,175 @@ function pintarEquipos() {
 }
 
 /* ---------- Lista principal ---------- */
+/* ---------- Compartir como imagen: una tarjeta vertical con el tema de la web, lista para el grupo ---------- */
+// Se dibuja en un canvas (1080 px de ancho) con la misma fuente y colores. En el móvil se abre el menú de compartir
+// con la imagen; si no se puede, se descarga.
+const IMG_DATOS = {};
+function cargarImg(src) { return new Promise(res => { if (!src) return res(null); const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
+async function dibujarTarjeta(o) {
+  try { await document.fonts.load('700 60px "Saira"'); } catch (e) {}
+  const W = 1080, fila = 132, alto = 330 + o.filas.length * fila + 150, c = document.createElement("canvas");
+  c.width = W; c.height = alto; const x = c.getContext("2d");
+  const disp = (peso, tam, ancho) => `${peso} ${ancho ? ancho + " " : ""}${tam}px "Saira", system-ui, sans-serif`;
+  const rr = (X, Y, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(X, Y, w, h, r); else x.rect(X, Y, w, h); };
+  // fondo de noche con foco y líneas del campo
+  x.fillStyle = "#06100b"; x.fillRect(0, 0, W, alto);
+  const g = x.createRadialGradient(W * 0.2, -60, 0, W * 0.2, -60, 900); g.addColorStop(0, "#2fd46e33"); g.addColorStop(1, "#2fd46e00"); x.fillStyle = g; x.fillRect(0, 0, W, alto);
+  x.strokeStyle = "#2fd46e22"; x.lineWidth = 3;
+  x.strokeRect(36, 36, W - 72, alto - 72); x.beginPath(); x.moveTo(36, alto / 2); x.lineTo(W - 36, alto / 2); x.stroke();
+  x.beginPath(); x.arc(W / 2, alto / 2, 150, 0, Math.PI * 2); x.stroke();
+  // cabecera
+  x.fillStyle = "#eaf4ee"; x.font = disp(800, 74, "expanded");
+  x.fillText(($("#titulo").textContent || "Mi liga").toUpperCase().slice(0, 18), 80, 160);
+  x.fillStyle = "#2fd46e"; x.shadowColor = "#2fd46e"; x.shadowBlur = 18; x.fillRect(80, 186, 90, 7); x.shadowBlur = 0;
+  x.fillStyle = "#5cf096"; x.font = disp(700, 44); x.fillText(o.titulo, 80, 256);
+  x.fillStyle = "#93a69b"; x.font = "400 30px system-ui, sans-serif"; x.fillText(o.sub.length > 62 ? o.sub.slice(0, 60) + "…" : o.sub, 80, 300);
+  // filas
+  const ims = await Promise.all(o.filas.map(f => cargarImg(f.m.avatarUrl)));
+  o.filas.forEach((f, k) => {
+    const y = 340 + k * fila, h = fila - 18;
+    x.fillStyle = k === 0 ? "#0f2219" : "#0e1813"; x.strokeStyle = k === 0 ? "#2fd46e99" : "#21302a"; x.lineWidth = 2;
+    rr(64, y, W - 128, h, 22); x.fill(); x.stroke();
+    x.fillStyle = k === 0 ? "#5cf096" : "#7f948a"; x.font = disp(700, 40, "condensed"); x.textAlign = "center"; x.fillText(String(k + 1), 112, y + h / 2 + 14); x.textAlign = "left";
+    const ax = 150, ay = y + (h - 76) / 2;
+    x.save(); x.beginPath(); x.arc(ax + 38, ay + 38, 38, 0, Math.PI * 2); x.clip();
+    x.fillStyle = col(f.i); x.fillRect(ax, ay, 76, 76);
+    if (ims[k]) x.drawImage(ims[k], ax, ay, 76, 76);
+    else { x.fillStyle = "#fff"; x.font = disp(700, 30); x.textAlign = "center"; x.fillText(f.m.avatar || "MF", ax + 38, ay + 49); x.textAlign = "left"; }
+    x.restore();
+    x.fillStyle = "#eaf4ee"; x.font = "700 36px system-ui, sans-serif";
+    let nom = f.m.name; while (x.measureText(nom).width > 560 && nom.length > 4) nom = nom.slice(0, -2); if (nom !== f.m.name) nom += "…";
+    x.fillText(nom, 250, y + 50);
+    x.fillStyle = "#93a69b"; x.font = "400 26px system-ui, sans-serif"; x.fillText(f.det.length > 40 ? f.det.slice(0, 39) + "…" : f.det, 250, y + 84);
+    x.fillStyle = "#ffffff12"; x.fillRect(250, y + h - 18, 560, 6);
+    x.fillStyle = col(f.i); x.shadowColor = col(f.i); x.shadowBlur = 10; x.fillRect(250, y + h - 18, Math.max(6, 560 * Math.min(1, f.w)), 6); x.shadowBlur = 0;
+    x.fillStyle = k === 0 ? "#5cf096" : "#f2fbf5"; if (k === 0) { x.shadowColor = "#2fd46e"; x.shadowBlur = 20; }
+    x.font = disp(700, 64, "condensed"); x.textAlign = "right"; x.fillText(f.valor.replace(/ /g, " "), W - 96, y + h / 2 + 22); x.textAlign = "left"; x.shadowBlur = 0;
+  });
+  x.fillStyle = "#93a69b"; x.font = "400 28px system-ui, sans-serif"; x.fillText(o.pie || "", 80, alto - 92);
+  x.fillStyle = "#2fd46e"; x.font = disp(700, 30, "expanded"); x.textAlign = "right"; x.fillText("Golómetro", W - 80, alto - 92); x.textAlign = "left";
+  return new Promise(res => c.toBlob(res, "image/png"));
+}
+async function compartirImagen(clave, btn) {
+  const o = IMG_DATOS[clave]; if (!o) return;
+  const html0 = btn ? btn.innerHTML : "", corto = btn && !btn.textContent.trim();
+  if (btn) { btn.disabled = true; if (!corto) btn.textContent = "Preparando…"; }
+  try {
+    const blob = await dibujarTarjeta(o); if (!blob) throw new Error("sin imagen");
+    const nombre = `golometro-${clave}.png`, file = new File([blob], nombre, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file] }).catch(() => {});
+    else { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+    if (btn) btn.innerHTML = html0;
+  } catch (e) { if (btn) { if (!corto) btn.textContent = "No se pudo crear"; setTimeout(() => { btn.innerHTML = html0; }, 1600); } }
+  finally { if (btn) btn.disabled = false; }
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-img]"); if (b) compartirImagen(b.dataset.img, b); });
+
+/* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
+let ENTRADA_HECHA = false;
+function entradaMarcador() {
+  const els = [...document.querySelectorAll(".rank .pts b")];
+  if (!els.length) return;
+  ENTRADA_HECHA = true;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const fin = els.map(e => e.textContent), num = fin.map(t => parseFloat(t.replace(/\./g, "").replace(",", ".")));
+  if (num.some(n => !isFinite(n))) return;
+  const t0 = performance.now(), dur = 900;
+  const paso = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    els.forEach((el, i) => { if (el.isConnected) el.textContent = k < 1 ? Math.round(num[i] * e).toLocaleString("es-ES") : fin[i]; });
+    if (k < 1) requestAnimationFrame(paso); };
+  requestAnimationFrame(paso);
+}
+
+/* ---------- Modo marcador: la jornada a pantalla completa, para dejarla puesta en la tele o en la mesa ---------- */
+// Se refresca sola cada minuto (los datos) y cada 20 s (el reloj y la cuenta atrás). Mantiene la pantalla encendida
+// si el navegador lo permite. Antes de la jornada enseña la Predicción; durante, el marcador en directo; al acabar, el final.
+let TV = { abierto: false, t1: null, t2: null, lock: null };
+function abrirTV() {
+  const tv = $("#tv"); if (!tv) return;
+  TV.abierto = true; tv.hidden = false; document.body.classList.add("tv-on");
+  pintarTV();
+  try { if (tv.requestFullscreen && matchMedia("(pointer:coarse)").matches) tv.requestFullscreen().catch(() => {}); } catch (e) {}
+  try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(l => { TV.lock = l; }).catch(() => {}); } catch (e) {}
+  clearInterval(TV.t1); clearInterval(TV.t2);
+  TV.t1 = setInterval(() => { recargarTodo(false); }, 60000);
+  TV.t2 = setInterval(pintarTV, 20000);
+  setTimeout(() => { const b = tv.querySelector(".tv-x"); if (b) b.focus(); }, 50);
+}
+function cerrarTV() {
+  const tv = $("#tv"); if (!tv) return;
+  TV.abierto = false; tv.hidden = true; document.body.classList.remove("tv-on");
+  clearInterval(TV.t1); clearInterval(TV.t2);
+  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
+  try { if (TV.lock) TV.lock.release(); } catch (e) {} TV.lock = null;
+  const b = $("#btnTV"); if (b) b.focus();
+}
+// Ficha del capitán en el marcador: su cara con el brazalete, apellido y sus puntos (o «por jugar» con su multiplicador)
+function chipCapTV(id, nombre, teamId, valor, pendiente, etiqueta) {
+  return `<span class="tv-cap${pendiente ? " pend" : ""}"><span class="tv-cap-f">${cara(id, nombre, teamId, 34)}<i class="tv-brz" aria-hidden="true">C</i></span>
+    <span class="tv-cap-t"><small>${pendiente ? "Por jugar" : etiqueta}</small><b>${esc(apellido(nombre))}</b></span>${valor !== "" && valor != null ? `<span class="tv-cap-p">${esc(String(valor))}</span>` : ""}</span>`;
+}
+// Cuántos de los once ya han jugado: una raya por jugador (llena = jugado)
+function puntosOnce(jug, total) {
+  if (!total) return "";
+  return `<span class="tv-once" role="img" aria-label="${jug} de ${total} alineados ya han jugado"><span class="tv-dots">${Array.from({ length: total }, (_, k) => `<i${k < jug ? "" : ' class="f"'}></i>`).join("")}</span><small>${jug} de ${total} jugados</small></span>`;
+}
+function pintarTV() {
+  const tv = $("#tv"); if (!tv || !TV.abierto || !D) return;
+  const js = jornadas(), j = js[js.length - 1], n = j ? +j.slice(1) : null, md = (j && D.matchdays[j]) || {};
+  const ahora = Date.now() / 1000, hora = enMadrid(Date.now(), { hour: "2-digit", minute: "2-digit" });
+  const Q = datosQuiniela();
+  const vivo = j ? proyeccionVivo(j) : null;
+  const titulo = esc($("#titulo").textContent || "Mi liga");
+  let estado = "", cuerpo = "", ticker = [];
+  if (Q && !vivo) {
+    // antes de la jornada: cuenta atrás y Predicción
+    const falta = Math.max(0, Q.primero - ahora), d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
+    estado = `<span class="tv-st">Jornada ${Q.gw} · empieza en <b>${d ? `${d} d ${hh} h` : `${hh} h ${String(mm).padStart(2, "0")} min`}</b></span>`;
+    const mx = Math.max(...Q.filas.map(f => f.pGana), 0.01);
+    cuerpo = `<p class="tv-sub">Quién tiene más opciones de ganar la jornada si cada uno pone su mejor once</p>
+      <ol class="tv-l" style="--fil:${Math.ceil(Q.filas.length / 2)}">${Q.filas.map((f, k) => `<li style="--c:${col(f.i)};--w:${(f.pGana / mx * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(f.m, f.i)}<span class="tv-n"><b>${esc(f.m.name)}</b><span class="tv-meta">${chipCapTV(f.o.cap.p.id, f.o.cap.p.short || f.o.cap.p.name, f.o.cap.p.teamId, f.o.cap.m > 1 ? `×${coma(f.o.cap.m)}` : "", false, "Capitán")}</span><i class="tv-b"></i></span><span class="tv-vw"><span class="tv-v">${pctQ(f.pGana)}</span><span class="tv-pr tv-pr0" aria-label="Puntos previstos: ${Math.round(f.media)}"><b>${Math.round(f.media)}</b><em>pts<span class="tv-g"> previstos</span></em></span></span></li>`).join("")}</ol>`;
+    ticker = Q.filas.map(f => `${f.m.name}: líder tras la jornada ${pctQ(f.pLider)}`);
+    IMG_DATOS.tv = { titulo: `Predicción · jornada ${Q.gw}`, sub: "Probabilidad de ganar la jornada con el mejor once", filas: Q.filas.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana), det: `≈ ${Math.round(f.media)} pts`, w: f.pGana / mx })), pie: "" };
+  } else if (j) {
+    // durante o después de la jornada: puntos de la jornada, cuántos faltan y cómo acabaría cada uno
+    const S = serieLiga(), kj = S.js.indexOf(j);
+    const L = D.managers.map((m, i) => { const x = md[m.id] || {}, v = (vivo || {})[m.id] || { n: 0, esp: 0 };
+      const k = S.ms.findIndex(o => o.m.id === m.id);
+      const pl = x.players || [], cp = x.captain ? pl.find(p => p.id === x.captain.id) : null, pend = new Set();
+      (CAL && CAL.games || []).filter(g => g.gw === n && g.ts && g.ts > ahora && !capNum(g.gh)).forEach(g => { pend.add(g.home); pend.add(g.away); });
+      const capPend = !!(cp && (cp.played === false || (pend.has(cp.teamId) && !cp.points)));
+      return { m, i, pts: x.points || 0, cap: x.captain, capTeam: cp ? cp.teamId : null, capPend, alin: pl.length, jugados: pl.filter(p => !pend.has(p.teamId)).length, v, gen: k >= 0 && kj >= 0 ? S.cum[k][kj] : total(m) }; })
+      .sort((a, b) => b.pts - a.pts || b.gen - a.gen);
+    const termin = !vivo;
+    estado = termin ? `<span class="tv-st">Jornada ${n} · <b>final</b></span>` : `<span class="tv-st tv-vivo"><i aria-hidden="true"></i>En directo · jornada ${n}</span>`;
+    const genOrd = L.slice().sort((a, b) => b.gen - a.gen);
+    cuerpo = `<p class="tv-sub">${termin ? "Puntos de la jornada" : "Puntos de la jornada. Debajo, en verde, con cuántos acabaría cada uno y lo que le queda por sumar"}</p>
+      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><span class="tv-meta">${x.cap ? chipCapTV(x.cap.id, x.cap.name, x.capTeam, x.capPend ? `×${coma(x.cap.multiplier || 1)}` : x.cap.points ?? "", x.capPend, "Capitán") : ""}${termin ? `<span class="tv-proy"><small>en la general</small><b>${genOrd.indexOf(x) + 1}.º</b></span>` : ""}</span>${termin ? `<i class="tv-b"></i>` : puntosOnce(x.jugados, x.alin)}</span><span class="tv-vw"><span class="tv-v">${x.pts}</span>${!termin && x.v.n ? `<span class="tv-pr" title="Previsión al final de la jornada" aria-label="Previsión al final: ${Math.round(x.pts + x.v.esp)} puntos"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4.5-4.5 3 3L14 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 6h4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${Math.round(x.pts + x.v.esp)}</b><em>+${Math.round(x.v.esp)}</em></span>` : ""}</span></li>`).join("")}</ol>`;
+    IMG_DATOS.tv = { titulo: `Jornada ${n} · ${termin ? "resultado" : "en directo"}`, sub: termin ? "Puntos de la jornada" : `Actualizado a las ${hora}`, filas: L.map(x => ({ m: x.m, i: x.i, valor: String(x.pts), det: !termin && x.v.n ? `${x.v.n} por jugar · ≈ ${Math.round(x.pts + x.v.esp)}` : `${genOrd.indexOf(x) + 1}.º en la general`, w: x.pts / Math.max(1, L[0].pts) })), pie: "" };
+    const jug = []; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played !== false && capNum(p.points)) jug.push(p); }));
+    const vistos = new Set();
+    ticker = jug.sort((a, b) => b.points - a.points).filter(p => !vistos.has(p.id) && vistos.add(p.id)).slice(0, 14).map(p => `${p.name} ${p.points}${p.captain ? " ©" : ""}`);
+  } else { tv.innerHTML = ""; return; }
+  // próximo partido de la jornada y quién tiene jugadores en él
+  let prox = "";
+  const gwP = Q && !vivo ? Q.gw : n, sig = (CAL && CAL.games || []).filter(g => g.gw === gwP && g.ts && g.ts > ahora && !capNum(g.gh)).sort((a, b) => a.ts - b.ts)[0];
+  if (sig) {
+    const con = !Q || vivo ? D.managers.map(m => ({ m, k: ((md[m.id] || {}).players || []).filter(p => p.teamId === sig.home || p.teamId === sig.away).length })).filter(x => x.k) : [];
+    prox = `<p class="tv-nx"><span>Próximo partido</span><b>${esc(sig.homeName || "")} – ${esc(sig.awayName || "")}</b><em>${esc(enMadrid(sig.ts * 1000, { weekday: "short", hour: "2-digit", minute: "2-digit" }))}</em>${con.length ? `<small>${con.map(x => `${esc(x.m.name.split(" ")[0])} ${x.k}`).join(" · ")}</small>` : ""}</p>`;
+  }
+  const tick = ticker.length ? `<div class="tv-tk" aria-hidden="true"><div>${[...ticker, ...ticker].map(t => `<span>${esc(t)}</span>`).join("")}</div></div>` : "";
+  tv.innerHTML = `<div class="tv-in">
+    <header class="tv-h"><span class="tv-lg">${titulo}</span>${estado}<span class="tv-hr">${esc(hora)}</span><button class="tv-x" data-img="tv" aria-label="Compartir como imagen" title="Compartir como imagen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button class="tv-x" data-tvx="1" aria-label="Salir del modo marcador">✕</button></header>
+    ${prox}<div class="tv-c">${cuerpo}</div>${tick}</div>`;
+}
+document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("#btnTV")) { abrirTV(); return; }
+  if (e.target.closest && e.target.closest("[data-tvx]")) cerrarTV();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && TV.abierto) cerrarTV(); });
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && TV.abierto && matchMedia("(pointer:coarse)").matches) cerrarTV(); });
+
 function pintar() {
   const meta = METRICAS.find(x => x[0] === orden.k);
   const rank = estadisticas();
@@ -3825,6 +4291,8 @@ function pintar() {
   pintarPrevia();
   pintarQuiniela();
   pintarTuJornada();
+  if (TV.abierto) pintarTV();
+  if (!ENTRADA_HECHA) entradaMarcador();
   pintarCronica();
   pintarGrafico();
   pintarPronostico();
@@ -3847,7 +4315,12 @@ document.addEventListener("click", e => {
   const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
-  if (d.s) { ir(d.s); return; }
+  if (d.s) {
+    // cambio de pestaña con un fundido corto si el navegador lo permite (y sin movimiento si se ha pedido así)
+    if (document.startViewTransition && d.s !== seccion && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(() => ir(d.s));
+    else ir(d.s);
+    return;
+  }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
   if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
   if (d.sub) { subVista = d.sub; pintarMercado(); return; }
