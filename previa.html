@@ -1162,7 +1162,10 @@ function gwPrevia() {
   const g = CAL.games.filter(x => x.gw === +ult.slice(1));
   return g.length && g.filter(x => !capNum(x.gh) && x.status !== "played").length >= 1 && g.some(x => capNum(x.gh) || x.status === "played" || (x.ts || 0) <= Date.now() / 1000) ? ult : null;
 }
-const waHref = t => "https://wa.me/?text=" + encodeURIComponent(t);
+// wa.me pasa por una redirección que estropea los emojis (salen como «�»): en el móvil abrimos la app directamente
+const ES_MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const waHref = t => (ES_MOVIL ? "whatsapp://send?text=" : "https://api.whatsapp.com/send?text=") + encodeURIComponent(t);
+const waDestino = ES_MOVIL ? "" : ' target="_blank" rel="noopener"';
 function pintarPrevia() {
   const cont = $("#previa");
   if (!cont) return;
@@ -1217,7 +1220,7 @@ function pintarPrevia() {
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
     ${hayEsp ? `<h3 class="sec">Pronóstico de la jornada</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.esp / favorito[0].esp * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${esc(f.x.formation || "")} · capitán ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${Math.round(f.esp)}</span></li>`).join("")}</ul>
       <p class="note">Puntos esperados de cada once con su capitán, según el motor del Golómetro.</p>` : ""}
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}" target="_blank" rel="noopener">Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
 }
 function copiarTexto(btn, txt, base) {
   const listo = t => { btn.textContent = t; setTimeout(() => { btn.textContent = base; }, 2200); };
@@ -1274,7 +1277,7 @@ function pintarCronica() {
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}" target="_blank" rel="noopener">Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
 }
 let onceAbierto = false, CRON_TXT = "";
