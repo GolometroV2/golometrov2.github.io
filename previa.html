@@ -566,6 +566,10 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .og-ley span{display:inline-flex;align-items:center;gap:5px}
 .og-ley i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .og-cap{background:repeating-linear-gradient(45deg,var(--acc) 0 3px,transparent 3px 5px);box-shadow:inset 0 0 0 1px var(--acc)}
+.vivo-d{font-style:normal;color:var(--red);font-size:10px;vertical-align:2px;animation:latido 2s ease-in-out infinite}
+.cl2 .cq>span.cl2-g{font-size:11.5px;white-space:normal;line-height:1.3;color:var(--mut)}
+.cl2-g.up{color:var(--pos)!important}.cl2-g.dn{color:var(--red)!important}
+.chollo{font-size:10px;font-weight:800;color:var(--accTxt);background:var(--acc);border-radius:6px;padding:1px 6px;vertical-align:2px}
 </style>
 </head>
 <body>
@@ -690,6 +694,12 @@ function htmlNovedades() {
   return `<div class="nov"><b>Novedades en el Golómetro</b>
     <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
+}
+// número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+function jornadaEnVivo() {
+  if (!CAL || !CAL.games) return null;
+  const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
+  return g ? g.gw : null;
 }
 function pintarAviso() {
   const cont = $("#aviso");
@@ -1079,7 +1089,7 @@ function abrirFicha(id) {
     <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
       <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
-    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : `${Math.round(ff.p * 100)} %`}</b> de ser titular según Futbol Fantasy` : ""}.</p>` : ""}
+    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
     ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
@@ -1277,7 +1287,7 @@ function pintarComparador() {
     const fe = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], fk = fe && Object.keys(fe).sort()[0], ff = fk ? fe[fk] : null;
     if (!g) return "Sin partido próximo";
     const casa = g.home === p.teamId;
-    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : Math.round(ff.p * 100) + " % titular"}</small>` : ""}`;
+    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;
   };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
@@ -1285,7 +1295,7 @@ function pintarComparador() {
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
     <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
-    <p class="note">Próximo partido y probabilidad de ser titular según Futbol Fantasy.</p>
+    <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
     <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones.</p>`;
 }
@@ -1557,20 +1567,49 @@ function graficaValor(ms) {
 }
 
 // Jugadores de otras plantillas con mejor relación entre lo que se espera que puntúen y lo que cuesta su cláusula
+// Subida diaria del valor de un jugador: media de sus últimos días (equipos.json -> history) combinada con el modelo de la liga
+// probabilidad de jugar de un jugador en su próximo partido: modelo propio mezclado con Futbol Fantasy + Analítica Fantasy
+function pjConTitular(p, pjModelo) {
+  const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort()[0], ff = k ? e[k] : null;
+  const mz = ff ? capMezclaFF(ff, pjModelo, p.status) : null;
+  return { pj: mz ? mz.pj : pjModelo, tit: ff ? ff.p : null, ff };
+}
+function crecDiario(p) {
+  const u = ((E && E.history) || {})[String(p.id)] || [];
+  const r = u.slice(-4).filter(x => x[2] > 0).map(x => x[1] / x[2] - 1);
+  let g = r.length ? r.reduce((a, b) => a + b, 0) / r.length : null;
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  const gm = LIGA && LIGA.valorDin ? capCrecModelo({ ...p, owner: 1 }) : null;
+  if (gm && !gm.bajo) g = g == null ? gm.g : 0.5 * g + 0.5 * gm.g;
+  return capClamp(g ?? 0, [-0.05, 0.05]);
+}
+// Cláusulas que merecen la pena: SIEMPRE rentables en puntos (≥ 4 por jornada y al menos lo que se espera de su precio);
+// entre ellas pesan los puntos por millón de cláusula, lo cerca que está la cláusula de su valor y lo rápido que sube
+// (si sube cada día, en una semana su valor se come buena parte del sobrecoste de la cláusula).
+const CLAUS_DIAS = 7;
 function clausulasRentables(ms) {
   const L = [];
   ms.forEach(m => (m.players || []).forEach(p => {
-    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    if (!p.clause || !capNum(p.value) || p.value <= 0 || p.status === "injury" || p.status === "susp") return;
     const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
     const prior = (typeof capPrior === "function" ? capPrior(p.pos, p.value) : null) ?? 3.9;
     const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
     const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
-    const pj = (typeof capPJuega === "function" ? capPJuega(racha, p.value, p.pos) : null) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const pjM = (typeof capPJuega === "function" ? capPJuega(racha, p.value, p.pos) : null) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const { pj, tit, ff } = pjConTitular(p, pjM);
+    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no se recomienda
     const esp = mu * pj;
-    if (esp < 3) return;
-    L.push({ m, p, esp, pj, r: esp / (p.clause / 1e6) });
+    if (esp < 4 || esp < 0.9 * prior) return;                       // requisito indispensable: rentable en puntos
+    const g = crecDiario(p), sobre = p.clause / p.value - 1;
+    const v7 = p.value * Math.pow(1 + g, CLAUS_DIAS), sobreEf = p.clause / v7 - 1;
+    const dias = g > 0.001 && sobre > 0 ? Math.log(p.clause / p.value) / Math.log(1 + g) : null;
+    L.push({ m, p, esp, pj, ff, prior, g, sobre, sobreEf, dias, r: esp / (p.clause / 1e6) });
   }));
-  return L.sort((a, b) => b.r - a.r);
+  if (!L.length) return L;
+  const pct = (f, asc) => { const o = L.map(f).slice().sort((a, b) => a - b); return x => { const v = f(x); const k = o.filter(y => asc ? y > v : y < v).length; return k / Math.max(1, o.length - 1); }; };
+  const pR = pct(x => x.r), pS = pct(x => x.sobreEf, true), pE = pct(x => x.esp);
+  L.forEach(x => { x.nota = 0.35 * pR(x) + 0.40 * pS(x) + 0.25 * pE(x); });
+  return L.sort((a, b) => b.nota - a.nota);
 }
 // Los jugadores de una plantilla más «baratos» de clausular para lo que rinden: los que un rival se llevaría primero
 function bloqueExpuestos(m) {
@@ -1578,19 +1617,57 @@ function bloqueExpuestos(m) {
   const mios = todos.map((x, k) => ({ ...x, puesto: k + 1 })).filter(x => String(x.m.id) === String(m.id)).slice(0, 3);
   if (!mios.length) return "";
   return `<section class="card"><div class="gh"><h2>En riesgo de cláusula</h2></div>
-    <p class="note" style="margin:0 0 6px">Sus jugadores que más interesan a un rival: muchos puntos esperados para lo que cuesta su cláusula.</p>
-    <ul class="clist">${mios.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${x.puesto}.º más apetecible de la liga · ${nf1.format(x.esp)} pts/jornada</span></span><span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul></section>`;
+    <p class="note" style="margin:0 0 6px">Sus jugadores que más interesan a un rival: rentables en puntos, con la cláusula cerca de su valor o subiendo rápido.</p>
+    <ul class="clist">${mios.map(x => `<li class="crow cl2" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${x.puesto}.º cláusula más apetecible · ${nf1.format(x.esp)} pts/jornada</span><span class="cl2-g ${x.g >= 0.002 ? "up" : x.g <= -0.002 ? "dn" : ""}">${esc(textoCrec(x))}</span></span><span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre su valor</small></span></li>`).join("")}</ul></section>`;
 }
+function textoCrec(x) {
+  if (x.g >= 0.002) return `+${nf1.format(x.g * 100)} %/día · ` + (x.dias != null && x.dias <= 30 ? `alcanza la cláusula en ~${Math.max(1, Math.round(x.dias))} días` : `en 7 días la cláusula quedará +${Math.max(0, Math.round(x.sobreEf * 100))} %`);
+  if (x.g <= -0.002) return `−${nf1.format(-x.g * 100)} %/día · se aleja de su cláusula`;
+  return "valor estable";
+}
+// Chollos: las cláusulas más baratas por cada punto esperado (sobre todo jugadores de poco precio)
+function clausulasBaratas(ms) {
+  const L = [];
+  ms.forEach(m => (m.players || []).forEach(p => {
+    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const { pj, tit, ff } = pjConTitular(p, pjM);
+    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no es un chollo
+    const esp = mu * pj;
+    if (esp < 3) return;
+    L.push({ m, p, esp, pj, ff, g: crecDiario(p), sobre: p.clause / p.value - 1, r: esp / (p.clause / 1e6) });
+  }));
+  return L.sort((a, b) => b.r - a.r);
+}
+let clVista = "todos";
 function bloqueClausulas(ms) {
-  const top = clausulasRentables(ms).slice(0, 8);
+  const seg = [["baratos", "Chollos"], ["todos", "TOP Cláusulas"]].map(([k, t]) => `<button data-clv="${k}" class="${clVista === k ? "on" : ""}">${t}</button>`).join("");
+  if (clVista === "baratos") {
+    const L = clausulasBaratas(ms).slice(0, 10);
+    if (!L.length) return "";
+    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+      <p class="note" style="margin:0 0 6px">Las cláusulas que menos cuestan por cada punto que se espera del jugador (3 o más por jornada), solo entre los que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Suelen ser jugadores baratos que rinden por encima de su precio.</p>
+      <ul class="clist">${L.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+        <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
+          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
+          <span class="cl2-g">${nf1c(x.r)} pts por millón de cláusula${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
+        <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
+      <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+  }
+  const top = clausulasRentables(ms).slice(0, 10);
   if (!top.length) return "";
-  return `<section class="card"><div class="gh"><h2>Cláusulas más rentables</h2></div>
-    <p class="note" style="margin:0 0 6px">Jugadores de las plantillas con más puntos esperados por cada millón de cláusula (sin lesionados ni sancionados).</p>
-    <ul class="clist">${top.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
-      <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-        <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
-      <span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul>
-    <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+  return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+    <p class="note" style="margin:0 0 6px">Solo jugadores rentables en puntos (4 o más por jornada y al menos lo que se espera de su precio) y que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Entre ellos suben los que dan más puntos por millón, tienen la cláusula más cerca de su valor y más suben cada día.</p>
+    <ul class="clist">${top.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+      <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span>${x.sobreEf <= 0.1 ? ` <span class="chollo">chollo</span>` : ""}</b>
+        <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
+        <span class="cl2-g ${x.g >= 0.002 ? "up" : x.g <= -0.002 ? "dn" : ""}">${esc(textoCrec(x))}</span>${x.ff ? `<span class="cl2-g">${esc(textoTit(x.ff, true))}</span>` : ""}</span>
+      <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
+    <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
@@ -1860,13 +1937,21 @@ function capFFCalib(p) {
   for (let i = 1; i < t.length; i++) if (p <= t[i].pFF) { const a = t[i - 1], b = t[i], w = (p - a.pFF) / Math.max(b.pFF - a.pFF, 1e-6); return a.juega + w * (b.juega - a.juega); }
   return t[t.length - 1].juega;
 }
+// Texto de titularidad: la mezcla de las dos webs y, entre paréntesis, lo que dice cada una
+function textoTit(ff, corto) {
+  if (!ff) return "";
+  if (ff.conf) return ff.p >= 0.5 ? "titular confirmado" : "suplente confirmado";
+  const fu = [ff.pff != null ? `Futbol Fantasy ${Math.round(ff.pff * 100)} %` : "", ff.paf != null ? `Analítica Fantasy ${Math.round(ff.paf * 100)} %` : ""].filter(Boolean);
+  const det = fu.length > 1 ? (corto ? ` (FF ${Math.round(ff.pff * 100)} · AF ${Math.round(ff.paf * 100)})` : ` (${fu.join(" · ")})`) : fu.length ? ` (${corto ? fu[0].replace("Futbol Fantasy", "FF").replace("Analítica Fantasy", "AF") : fu[0]})` : "";
+  return `${Math.round(ff.p * 100)} % titular${det}`;
+}
 function capMezclaFF(ff, pjModelo, estado) {
   if (!ff || estado === "susp") return null;
   const cal = capFFCalib(ff.p);
   const pff = ff.conf ? ff.p : cal != null ? cal : Math.min(0.98, ff.p + (1 - ff.p) * FF_SUB);
   let pj = ff.conf ? pff : FF_PESO * pff + (1 - FF_PESO) * pjModelo;
   if (estado === "injury" && ff.p < 0.5) pj = Math.min(pj, 0.5 * pjModelo + 0.5 * pff);
-  const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular en el once de Futbol Fantasy" : "En el banquillo según Futbol Fantasy") : `Futbol Fantasy: ${Math.round(ff.p * 100)} % de ser titular`;
+  const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular confirmado" : "En el banquillo (once confirmado)") : `Titular: ${textoTit(ff).replace(" titular", "")}`;
   return { pj: Math.max(0, Math.min(0.99, pj)), suplente: ff.p < 0.5 && ff.once === "suplente", texto: txt };
 }
 let LIGA = null;
@@ -2679,7 +2764,7 @@ function panelAprendizaje() {
 function cargarAlineaciones() {
   fetch("alineaciones.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : null).catch(() => null)
-    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); } });
+    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); } });
 }
 function cargarCalendario() {
   cargarParametros();
@@ -2771,7 +2856,7 @@ function clavesCandidato(c, r) {
     let txt;
     if (c.confirmado) txt = `<p>El once de su partido ya está confirmado, así que no hay incertidumbre: ${c.pj > 0.5 ? "es titular" : "no está en el once"}.</p>`;
     else if (c.pj <= 0.05) txt = `<p>${esc(c.fuente)}: prácticamente no puede jugar.</p>`;
-    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dice Futbol Fantasy y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. ${capFFCalib(c.ffP) != null ? `En las jornadas pasadas, de los jugadores a los que Futbol Fantasy daba un ${Math.round(c.ffP * 100)} %, jugó (de titular o saliendo del banquillo) un ${Math.round(capFFCalib(c.ffP) * 100)} %.` : `Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo.`} Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
+    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dicen Futbol Fantasy y Analítica Fantasy (la media de las dos) y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. ${capFFCalib(c.ffP) != null ? `En las jornadas pasadas, de los jugadores a los que Futbol Fantasy daba un ${Math.round(c.ffP * 100)} %, jugó (de titular o saliendo del banquillo) un ${Math.round(capFFCalib(c.ffP) * 100)} %.` : `Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo.`} Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     else txt = `<p>El once todavía no está confirmado. Su probabilidad de jugar parte de <b>${pc(CAP.P_XI_BASE)} + ${pc(CAP.P_XI_REGULAR)} × su titularidad</b> si está en el once probable de Mister, y es mucho menor si no está.
       Su titularidad estimada es del <b>${pc(c.tasa)}</b> (mezcla de las últimas 5 jornadas y de toda la temporada), lo que da <b>${pc(c.pj)}</b>.${c.suplente ? ` Al no estar en el once probable, si juega sería suplente y se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     cl.push(claveHtml("🟢", "Disponibilidad", esc(c.fuente) + (c.rota ? ` · rota (titular en ~${pc(c.tasa)})` : ""), c.confirmado ? (c.pj > 0.5 ? "Titular" : "Fuera") : pc(c.pj), tono, txt));
@@ -3030,7 +3115,7 @@ function pintar() {
       <button class="jsel-t ${!enJ ? "on" : ""}" data-v="General" aria-pressed="${!enJ}">Total</button>
       <div class="jsel-j ${enJ ? "on" : ""}">
         <button data-v="${esc(ant || (enJ ? js_[0] : ultima))}" ${enJ && !ant ? "disabled" : ""} aria-label="Jornada anterior">‹</button>
-        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"} <span aria-hidden="true">▾</span></button>
+        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
         <button data-v="${esc(sig_ || ultima)}" ${enJ && !sig_ ? "disabled" : ""} aria-label="Jornada siguiente">›</button>
       </div></div>
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
@@ -3098,11 +3183,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
   if (d.sub) { subVista = d.sub; pintarMercado(); return; }
   if (d.jsel) { jselAbierto = !jselAbierto; pintar(); return; }
   if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); return; }
