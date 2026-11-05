@@ -734,6 +734,15 @@ body.tv-on{overflow:hidden}
 @media (max-width:699px){.tv-g{display:none}}
 @media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.6vw,64px);height:clamp(40px,4.6vw,64px)}}
 @media (prefers-reduced-motion:reduce){.tv-tk>div{animation:none;flex-wrap:wrap;width:auto}}
+/* ---- cabecera compacta fuera de Clasificación; etiquetas en minúscula ---- */
+body[data-sec]:not([data-sec="clas"]) .head{padding-top:12px}
+body[data-sec]:not([data-sec="clas"]) .head h1{font-size:clamp(24px,7vw,32px)}
+body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
+.mpuja small,.hero-et{text-transform:none!important;letter-spacing:.1px!important;font-size:11.5px!important}
+.mpuja{background:color-mix(in srgb,var(--bg) 55%,var(--panel2));border:1px solid var(--line)}
+.mpuja b{font-family:var(--f-disp);font-stretch:85%;font-size:17px}
+@media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px}}
+.comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
 /* ---- detalles ---- */
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
@@ -831,6 +840,7 @@ function pintarNav() {
 
 function ir(sec) {
   seccion = sec;
+  document.body.dataset.sec = sec;   // el tema usa la sección para la cabecera
   $("#app").hidden = sec !== "clas";
   $("#eq").hidden = sec !== "eq";
   $("#cap").hidden = sec !== "cap";
@@ -1469,7 +1479,8 @@ function pintarPrevia() {
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
     ${hayEsp ? `<h3 class="sec">¿Quién gana la jornada?</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${((f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>≈ ${Math.round(f.media ?? f.esp)} pts · ${esc(f.x.formation || "")} · © ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana || 0)}</span></li>`).join("")}</ul>
       <p class="note">Probabilidad de ganar la jornada al empezar, con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro. No cambia mientras avanza la jornada: eso lo cuenta la clasificación en directo.</p>` : ""}
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button>${hayEsp ? `<button class="btn-comp" data-img="prev" aria-label="Compartir como imagen">🖼️ Imagen</button>` : ""}</div>`;
+  if (hayEsp) IMG_DATOS.prev = { titulo: `Previa · jornada ${n}`, sub: "Probabilidad de ganar con los onces y capitanes reales", filas: favorito.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana || 0), det: `≈ ${Math.round(f.media ?? f.esp)} pts · capitán ${f.x.captain ? apellido(f.x.captain.name) : "—"}`, w: (f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) })), pie: "" };
 }
 function copiarTexto(btn, txt, base) {
   const listo = t => { btn.textContent = t; setTimeout(() => { btn.textContent = base; }, 2200); };
@@ -1638,7 +1649,8 @@ function pintarQuiniela() {
     ${duelo ? `<h3 class="sec">Duelo por el liderato</h3><div class="q-duelo">${avatar(duelo.a.m, duelo.a.i)}<span><b>${esc(duelo.a.m.name)}</b> le gana la jornada a <b>${esc(duelo.b.m.name)}</b> ${pctQ(duelo.p)} de las veces. ${duelo.dif ? `Llega con ${duelo.dif} ${duelo.dif === 1 ? "punto" : "puntos"} de ventaja.` : "Llegan empatados."}</span>${avatar(duelo.b.m, duelo.b.i)}</div>` : ""}
     ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
     <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Cada jugador del once juega con su probabilidad de jugar (Futbol Fantasy, Analítica Fantasy y el modelo propio) y, si juega, saca unos puntos al azar según su media, su regularidad y el rival, igual que en la pestaña Capitán. El capitán multiplica. Se juega la jornada 4.000 veces y se cuenta cuántas gana cada uno. «Entre» es lo que saca 8 de cada 10 veces. Si alguien deja a un lesionado o no pone el mejor once, sus opciones bajan.</p></details>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button></div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button><button class="btn-comp" data-img="quin" aria-label="Compartir como imagen">🖼️ Imagen</button></div>`;
+  IMG_DATOS.quin = { titulo: `Predicción · jornada ${r.gw}`, sub: "Probabilidad de ganar la jornada con el mejor once", filas: F.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana), det: `≈ ${Math.round(f.media)} pts · capitán ${capN(f)}`, w: f.pGana / mx })), pie: cuando ? `Empieza el ${cuando}` : "" };
 }
 
 /* ---------- Crónica de la jornada ---------- */
@@ -1710,9 +1722,10 @@ function pintarCronica() {
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Compartir como imagen">🖼️ Imagen</button></div>
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
+  IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · resultado`, sub: `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
 }
 // Puntos que cada manager dejó en el banquillo: su plantilla al empezar la jornada (la de hoy deshaciendo los movimientos
 // posteriores) frente al mejor once posible a toro pasado, sin contar el capitán. null si los movimientos guardados no llegan tan atrás.
@@ -3902,6 +3915,69 @@ function pintarEquipos() {
 }
 
 /* ---------- Lista principal ---------- */
+/* ---------- Compartir como imagen: una tarjeta vertical con el tema de la web, lista para el grupo ---------- */
+// Se dibuja en un canvas (1080 px de ancho) con la misma fuente y colores. En el móvil se abre el menú de compartir
+// con la imagen; si no se puede, se descarga.
+const IMG_DATOS = {};
+function cargarImg(src) { return new Promise(res => { if (!src) return res(null); const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
+async function dibujarTarjeta(o) {
+  try { await document.fonts.load('700 60px "Saira"'); } catch (e) {}
+  const W = 1080, fila = 132, alto = 330 + o.filas.length * fila + 150, c = document.createElement("canvas");
+  c.width = W; c.height = alto; const x = c.getContext("2d");
+  const disp = (peso, tam, ancho) => `${peso} ${ancho ? ancho + " " : ""}${tam}px "Saira", system-ui, sans-serif`;
+  const rr = (X, Y, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(X, Y, w, h, r); else x.rect(X, Y, w, h); };
+  // fondo de noche con foco y líneas del campo
+  x.fillStyle = "#06100b"; x.fillRect(0, 0, W, alto);
+  const g = x.createRadialGradient(W * 0.2, -60, 0, W * 0.2, -60, 900); g.addColorStop(0, "#2fd46e33"); g.addColorStop(1, "#2fd46e00"); x.fillStyle = g; x.fillRect(0, 0, W, alto);
+  x.strokeStyle = "#2fd46e22"; x.lineWidth = 3;
+  x.strokeRect(36, 36, W - 72, alto - 72); x.beginPath(); x.moveTo(36, alto / 2); x.lineTo(W - 36, alto / 2); x.stroke();
+  x.beginPath(); x.arc(W / 2, alto / 2, 150, 0, Math.PI * 2); x.stroke();
+  // cabecera
+  x.fillStyle = "#eaf4ee"; x.font = disp(800, 74, "expanded");
+  x.fillText(($("#titulo").textContent || "Mi liga").toUpperCase().slice(0, 18), 80, 160);
+  x.fillStyle = "#2fd46e"; x.shadowColor = "#2fd46e"; x.shadowBlur = 18; x.fillRect(80, 186, 90, 7); x.shadowBlur = 0;
+  x.fillStyle = "#5cf096"; x.font = disp(700, 44); x.fillText(o.titulo, 80, 256);
+  x.fillStyle = "#93a69b"; x.font = "400 30px system-ui, sans-serif"; x.fillText(o.sub.length > 62 ? o.sub.slice(0, 60) + "…" : o.sub, 80, 300);
+  // filas
+  const ims = await Promise.all(o.filas.map(f => cargarImg(f.m.avatarUrl)));
+  o.filas.forEach((f, k) => {
+    const y = 340 + k * fila, h = fila - 18;
+    x.fillStyle = k === 0 ? "#0f2219" : "#0e1813"; x.strokeStyle = k === 0 ? "#2fd46e99" : "#21302a"; x.lineWidth = 2;
+    rr(64, y, W - 128, h, 22); x.fill(); x.stroke();
+    x.fillStyle = k === 0 ? "#5cf096" : "#7f948a"; x.font = disp(700, 40, "condensed"); x.textAlign = "center"; x.fillText(String(k + 1), 112, y + h / 2 + 14); x.textAlign = "left";
+    const ax = 150, ay = y + (h - 76) / 2;
+    x.save(); x.beginPath(); x.arc(ax + 38, ay + 38, 38, 0, Math.PI * 2); x.clip();
+    x.fillStyle = col(f.i); x.fillRect(ax, ay, 76, 76);
+    if (ims[k]) x.drawImage(ims[k], ax, ay, 76, 76);
+    else { x.fillStyle = "#fff"; x.font = disp(700, 30); x.textAlign = "center"; x.fillText(f.m.avatar || "MF", ax + 38, ay + 49); x.textAlign = "left"; }
+    x.restore();
+    x.fillStyle = "#eaf4ee"; x.font = "700 36px system-ui, sans-serif";
+    let nom = f.m.name; while (x.measureText(nom).width > 560 && nom.length > 4) nom = nom.slice(0, -2); if (nom !== f.m.name) nom += "…";
+    x.fillText(nom, 250, y + 50);
+    x.fillStyle = "#93a69b"; x.font = "400 26px system-ui, sans-serif"; x.fillText(f.det.length > 40 ? f.det.slice(0, 39) + "…" : f.det, 250, y + 84);
+    x.fillStyle = "#ffffff12"; x.fillRect(250, y + h - 18, 560, 6);
+    x.fillStyle = col(f.i); x.shadowColor = col(f.i); x.shadowBlur = 10; x.fillRect(250, y + h - 18, Math.max(6, 560 * Math.min(1, f.w)), 6); x.shadowBlur = 0;
+    x.fillStyle = k === 0 ? "#5cf096" : "#f2fbf5"; if (k === 0) { x.shadowColor = "#2fd46e"; x.shadowBlur = 20; }
+    x.font = disp(700, 64, "condensed"); x.textAlign = "right"; x.fillText(f.valor.replace(/ /g, " "), W - 96, y + h / 2 + 22); x.textAlign = "left"; x.shadowBlur = 0;
+  });
+  x.fillStyle = "#93a69b"; x.font = "400 28px system-ui, sans-serif"; x.fillText(o.pie || "", 80, alto - 92);
+  x.fillStyle = "#2fd46e"; x.font = disp(700, 30, "expanded"); x.textAlign = "right"; x.fillText("Golómetro", W - 80, alto - 92); x.textAlign = "left";
+  return new Promise(res => c.toBlob(res, "image/png"));
+}
+async function compartirImagen(clave, btn) {
+  const o = IMG_DATOS[clave]; if (!o) return;
+  const txt0 = btn ? btn.textContent : ""; if (btn) { btn.disabled = true; btn.textContent = "Preparando…"; }
+  try {
+    const blob = await dibujarTarjeta(o); if (!blob) throw new Error("sin imagen");
+    const nombre = `golometro-${clave}.png`, file = new File([blob], nombre, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file] }).catch(() => {});
+    else { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+    if (btn) btn.textContent = txt0;
+  } catch (e) { if (btn) { btn.textContent = "No se pudo crear"; setTimeout(() => { btn.textContent = txt0; }, 1600); } }
+  finally { if (btn) btn.disabled = false; }
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-img]"); if (b) compartirImagen(b.dataset.img, b); });
+
 /* ---------- Modo marcador: la jornada a pantalla completa, para dejarla puesta en la tele o en la mesa ---------- */
 // Se refresca sola cada minuto (los datos) y cada 20 s (el reloj y la cuenta atrás). Mantiene la pantalla encendida
 // si el navegador lo permite. Antes de la jornada enseña la Predicción; durante, el marcador en directo; al acabar, el final.
