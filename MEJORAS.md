@@ -36,6 +36,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - 2026-11-04 (herramienta nueva): **Comparador de jugadores** en Clasificación (índice «🆚 Jugadores»): dos casillas con buscador de nombre sobre los 537 jugadores de `jugadores.json`; compara puntos, media, media de las últimas 5, valor y puntos por millón, con valores, cláusulas, propietario y últimas 5 jornadas. Solo lectura de datos existentes. Probado a 360 px: sin errores ni desborde. Idea: añadir el comparador también en Mercado con puntos esperados y próximo rival.
 - 2026-11-04 (agente, revisión 360 px): la cabecera desbordaba 1 px en Clasificación y Mercado a 360 px (logo + lupa + Actualizar). Hueco y relleno algo menores por debajo de 380 px. Probado a 360 y 390 px en las 4 pestañas: sin desborde ni errores de consola. Cierra la idea pendiente 1.
 - 2026-11-05 (agente, herramienta): el Comparador de jugadores muestra ahora el próximo rival (vs/@) y la probabilidad de ser titular según Futbol Fantasy de cada jugador. Solo lectura de datos existentes. Probado a 360 px con Playwright: sin errores de consola ni desborde. Cierra la idea 4 salvo puntos esperados del modelo.
+- 2026-11-05 (agente, herramienta): el Comparador añade la fila «Puntos esperados» (nivel del jugador × probabilidad de jugar con Futbol Fantasy/AF; misma fórmula que «Cláusulas que merecen la pena»). Probado con Playwright a 360 px: sin errores ni desborde. Cierra la idea 4.
 - 2026-11-05 (agente, herramienta): en el Comparador de jugadores, tocar un jugador abre su ficha y el «vs» central es ahora un botón ⇄ que intercambia A y B (44 px táctiles). Solo interfaz; datos intactos. Probado a 360 px con Playwright: sin errores ni desborde. Idea: puntos esperados del modelo en el comparador.
 
 ## Ideas del dueño (máxima prioridad, léelas siempre)
@@ -46,5 +47,4 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. Historial de pujas ideales frente al precio real de cierre (cuando haya datos suficientes) para calibrar la puja.
 3. Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
-4. Comparador de jugadores: hecho en Clasificación; falta versión con puntos esperados y partido.
 5. Gráfico de la evolución del valor de plantilla de cada manager.
