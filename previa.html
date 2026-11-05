@@ -2777,13 +2777,15 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const redondea = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };   // evita empatar en cifras redondas
     // Con datos de la liga (pujas.json): la puja es la que gana con la probabilidad que pide su prioridad frente a lo que
     // de verdad se paga aquí por jugadores de su precio; nunca menos de lo que se espera que suba antes de jugar.
-    const pl = prio === "evitar" ? null : pujaLiga(V, prio, tasaC, recup > 0 ? recup : 0);
+    // Futbol Fantasy: «puja máxima rentable» (lo que se puede pagar sin perder dinero con lo que se espera que suba)
+    const ffP = pujaFF(j.id), sFF = ffP != null ? ffP : null;
+    const pl = prio === "evitar" ? null : pujaLiga(V, prio, tasaC, Math.max(recup > 0 ? recup : 0, sFF || 0));
     const sAnt = s;   // la regla de antes (se usa si aún no hay compras suficientes con precio)
-    if (pl) s = pl.s;
+    if (pl) s = pl.s; else if (sFF && prio !== "evitar") s = Math.max(s, sFF);
     const puja = prio === "evitar" ? V : redondea(V * (1 + s));
     const techo = prio === "evitar" ? V : pl ? Math.max(puja, redondea(V * (1 + pl.sSeguro))) : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
     return { j, pos, V, mu, mu0, forma, avg, nPart, tasa, pj, fuente, rival: c1, ctx, fProx, fMed, espProx, espGen, cr, diasJornada, horizonte,
-             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, sAnt, puja, techo, pl };
+             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, sAnt, sFF, puja, techo, pl };
   });
   const orden = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
   lista.sort((a, b) => orden[a.prio] - orden[b.prio] || b.score - a.score);
@@ -2802,9 +2804,17 @@ const PUJA = {
   MAX_EUR: { imperdible: 4e6, top: 2.5e6, bueno: 1.5e6, favorable: 1e6, inversion: 0.8e6, normal: 0.3e6 },  // y en euros por encima del valor
   SEGURO: 0.97, ANCHO: 0.5, SUAVE: 0.05, MIN_OBS: 8
 };
-let PUJAS = null, PUJAS_OBS = null;
+let PUJAS = null, PUJAS_OBS = null, PUJAS_FF = null;
+// sobrepuja que da como «puja máxima rentable» Futbol Fantasy (null si no hay dato de hoy; 0 = «sin rentabilidad»)
+function pujaFF(id) {
+  const x = PUJAS_FF && PUJAS_FF.jugadores && PUJAS_FF.jugadores[String(id)];
+  if (!x || !x.valor || !MER_DATA || Math.abs(Date.parse(PUJAS_FF.updatedAt) - Date.parse(MER_DATA.updatedAt)) > 20 * 3600 * 1000) return null;
+  return x.puja ? Math.max(0, x.puja / x.valor - 1) : 0;
+}
 function cargarPujas() {
   if (PUJAS) return; PUJAS = { compras: [] };
+  fetch("pujas_ff.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { PUJAS_FF = j && j.jugadores ? j : null; if (PUJAS_FF && seccion === "mer") pintarMercado(); });
   fetch("pujas.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); });
 }
@@ -2856,7 +2866,7 @@ function bloquePujasLiga() {
   return `<section class="card"><div class="gh"><h2>Cómo se puja en esta liga</h2></div>
     <p class="note" style="margin:0 0 10px">Lo que se ha pagado de verdad en ${O.length} compras del mercado (el precio sale de la cláusula, que Mister pone en 1,5 veces lo pagado), frente al valor del jugador ese día.</p>
     <div class="pl-tr">${tramos.map(x => `<div><small>${x.t}</small><b>${pcS(x.med)}</b><span>mediana · ${x.n} compras${x.alta ? ` · ${x.alta} por encima de +10 %` : ""}</span></div>`).join("")}</div>
-    ${barato && barato.alta ? `<p class="note">Por los baratos se paga mucho más en porcentaje: hasta ${pcS(barato.max)}. Analítica Fantasy recomienda pujar entre un +2 % y un +6 % (lo que se espera que suba hasta el partido), lo que aquí no basta para ganar a nadie que de verdad lo quiera.</p>` : ""}
+    ${barato && barato.alta ? `<p class="note">Por los baratos se paga mucho más en porcentaje: hasta ${pcS(barato.max)}. Analítica Fantasy recomienda pujar entre un +2 % y un +6 % (lo que se espera que suba hasta el partido), lo que aquí no basta para ganar a nadie que de verdad lo quiera. La «puja máxima rentable» de Futbol Fantasy (sobre +14 % en los baratos, +8 % entre 3 y 8 M y +7 % en los caros) se queda corta en los baratos y suele bastar en los demás.</p>` : ""}
     <p class="ordlbl" style="margin-top:12px">Cómo puja cada manager (sobrepuja mediana)</p>
     <ul class="pron">${porM.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.max(0, x.med) / mxM * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · máx. ${pcS(x.max)} · ${eur(x.gasto)} por encima del valor</small></span><span class="pp" style="font-size:15px">${pcS(x.med)}</span></li>`).join("")}</ul>
     <details class="cdet"><summary>Últimas compras y lo que se pagó</summary><ul class="clist" style="margin-top:6px">${ult.map(o => `<li class="crow" data-ficha="${esc(o.playerId)}">${cara(o.playerId, o.name, null, 34)}<span class="cq"><b>${esc(o.name)}</b><span>${esc(nom(o.to))} · valía ${merEur(o.V)}</span></span><span class="cr"><b class="${o.s >= 0.1 ? "dn" : ""}">${merEur(o.precio)}</b><small>${pcS(o.s)}</small></span></li>`).join("")}</ul></details></section>`;
@@ -2877,6 +2887,7 @@ const MER_GRUPOS = [
   ["imperdible", "🔥 No dejar pasar"], ["top", "⭐ Top"], ["bueno", "👍 Buenos fichajes"], ["favorable", "🎯 Partido favorable"], ["inversion", "📈 Suben de valor"]
 ];
 const merPuja = v => v.toLocaleString("es-ES") + " €";
+const redondeaPuja = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };
 const merEur = v => v >= 1e6 ? nf.format(Math.round(v / 1e4) / 100) + " M" : nf.format(Math.round(v / 1e3)) + " k";
 const merFecha = ts => enMadrid(new Date(ts * 1000).toISOString(), { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
@@ -2899,7 +2910,7 @@ function heroMer(r, cierre) {
         <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
-    ${r.pl ? `<p class="ch-gana">Con esta puja te lo llevas <b>${pc(r.pl.p)}</b> de las veces${r.pl.tope ? " (no compensa pagar más)" : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}: <b>${merPuja(r.techo)}</b>.` : ""}</p>` : ""}
+    ${r.pl ? `<p class="ch-gana">Con esta puja te lo llevas <b>${pc(r.pl.p)}</b> de las veces${r.pl.tope ? " (no compensa pagar más)" : ""}.${r.sFF != null ? ` Futbol Fantasy: ${r.sFF > 0 ? `puja máxima rentable <b>${merPuja(redondeaPuja(r.V * (1 + r.sFF)))}</b> (+${nf1.format(r.sFF * 100)} %)` : "sin rentabilidad (cree que va a bajar)"}.` : ""} ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}: <b>${merPuja(r.techo)}</b>.` : ""}</p>` : ""}
     <p class="ch-por">${esc(fraseMer(r))}${r.pl ? "" : ` No pases de <b>${merPuja(r.techo)}</b>.`}${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
@@ -2916,7 +2927,7 @@ function merTarjeta(r) {
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
-    ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> habrías superado a la mayoría de los que ganaron jugadores de su precio: te lo llevas un <b>${pc(r.pl.p)}</b>${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
+    ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> habrías superado a la mayoría de los que ganaron jugadores de su precio: te lo llevas un <b>${pc(r.pl.p)}</b>${r.sFF > 0 && r.s <= r.sFF + 1e-9 ? ` (aquí manda la puja máxima rentable de Futbol Fantasy, +${nf1.format(r.sFF * 100)} %: pagar hasta ahí no hace perder dinero)` : ""}${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
       <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
