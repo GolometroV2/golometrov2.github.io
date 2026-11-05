@@ -712,7 +712,7 @@ function htmlNovedades() {
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación (elige tu escudo y verás tu capitán, tus opciones y qué revisar). La <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Quiniela</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
+    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación (elige tu escudo y verás tu capitán, tus opciones y qué revisar). La <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Predicción</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -1356,7 +1356,7 @@ function pintarTuJornada() {
     <ul class="tuj-l">${filas.join("")}</ul>`;
 }
 
-/* ---------- Quiniela de la jornada: quién la gana y quién acaba líder (simulación de cada once) ---------- */
+/* ---------- Predicción de la jornada: quién la gana y quién acaba líder (simulación de cada once) ---------- */
 // Cada jugador juega con su probabilidad (pj) y, si juega, saca un resultado al azar de su distribución de puntos
 // (la misma del motor del capitán: su media, su regularidad y el rival). El capitán multiplica. Los que ya han jugado
 // cuentan lo que sacaron. Se repite 4.000 veces con una semilla fija, así cada visita da los mismos porcentajes.
@@ -1427,11 +1427,11 @@ function pintarQuiniela() {
   const lid = F.slice().sort((a, b) => b.pLider - a.pLider).filter(f => f.pLider >= 0.005);
   const cuando = isFinite(r.primero) ? enMadrid(r.primero * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }) : "";
   const capN = f => apellido(f.o.cap.p.short || f.o.cap.p.name);
-  QUIN_TXT = [`🎲 ${$("#titulo").textContent} · Quiniela de la jornada ${r.gw}`, "Probabilidad de ganar la jornada si cada uno alinea su mejor once:",
+  QUIN_TXT = [`🎲 ${$("#titulo").textContent} · Predicción de la jornada ${r.gw}`, "Probabilidad de ganar la jornada si cada uno alinea su mejor once:",
     ...F.map(f => `• ${f.m.name}: ${pctQ(f.pGana)} (≈ ${Math.round(f.media)} pts, capitán ${capN(f)}${f.o.faltan ? `, ⚠️ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan} jugadores`} para el once` : ""})`), "",
     lid.length ? `👑 Líder tras la jornada: ${lid.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pLider)}`).join(", ")}` : "",
     cuando ? `⏰ Empieza el ${cuando}` : ""].filter(Boolean).join("\n");
-  cont.innerHTML = `<div class="gh"><h2>Quiniela de la jornada ${r.gw}</h2></div>
+  cont.innerHTML = `<div class="gh"><h2>Predicción de la jornada ${r.gw}</h2></div>
     <p class="note" style="margin:0 0 10px">Si cada uno alinea su mejor once (el que el Golómetro recomienda con su plantilla de hoy), esto es lo probable que gane la jornada.${cuando ? ` Empieza el ${esc(cuando)}.` : ""}</p>
     <ul class="pron">${F.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.pGana / mx * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${f.o.faltan ? `<span class="dn">⚠ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan}`} para el once</span> · ` : ""}≈ ${Math.round(f.media)} pts (entre ${Math.round(f.p10)} y ${Math.round(f.p90)}) · © ${esc(capN(f))}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana)}</span></li>`).join("")}</ul>
     ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
@@ -3092,7 +3092,7 @@ function bloqueParaTi(r) {
       const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
       return tit ? { x, tit, g: x.espProx - tit.esp } : null;
     }).filter(y => y && y.g >= 0.3).sort((a, b) => b.g - a.g).slice(0, 5);
-    // cuánto cambian sus opciones de ganar la jornada (misma simulación que la Quiniela)
+    // cuánto cambian sus opciones de ganar la jornada (misma simulación que la Predicción de la jornada)
     const Q = datosQuiniela(), yo = Q && Q.gw === r.gw ? Q.orden.find(f => String(f.m.id) === String(merMan)) : null;
     if (yo && ganan.length) {
       const eqs = Q.orden.map(f => ({ antes: total(f.m), js: [...f.o.PT, ...f.o.DF, ...f.o.MC, ...f.o.DL].map(c => ({ c, mult: c === f.o.cap ? c.m : 1 })) }));
@@ -3113,7 +3113,7 @@ function bloqueParaTi(r) {
   }
   return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
     ${pills}${cuerpo}
-    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado. «Ganar la J»: sus opciones de ganar la jornada con y sin el fichaje, con la simulación de la Quiniela.</p></section>`;
+    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado. «Ganar la J»: sus opciones de ganar la jornada con y sin el fichaje, con la simulación de la Predicción de la jornada.</p></section>`;
 }
 
 // Subidas y bajadas de valor de hoy en toda la liga (jugadores.json: valor de hoy frente al de ayer)
@@ -3732,7 +3732,7 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar y con cuántos puntos acabaría (≈, estimación del Golómetro).</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Quiniela</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
