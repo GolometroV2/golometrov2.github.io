@@ -543,6 +543,33 @@ li[data-ficha]{cursor:pointer}
 li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 @media(max-width:380px){.nav>div{gap:6px}.logo{font-size:17px;gap:6px}.acciones{gap:6px}.refresh{padding:7px 11px}}
 .oi-p[data-ficha]{cursor:pointer}
+.forma{display:flex;align-items:center;gap:3px;margin-top:2px}
+.fm{font-style:normal;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--panel2);color:var(--mut);margin:0!important}
+.fm-a{background:var(--pos);color:var(--accTxt)}.fm-b{background:var(--red);color:#fff}
+.forma em{font-style:normal;margin-left:6px;font-size:11.5px;color:var(--mut)}
+.hor{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hor li{display:flex;gap:10px;padding:8px;border-radius:12px;background:var(--panel2)}
+.hor li.ya{opacity:.5}
+.hor-t{flex:none;width:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--mut);text-transform:capitalize}
+.hor-t b{font-size:15px;color:var(--txt)}
+.hor-p{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.hor-p small{font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hor-p .shield{width:14px;height:14px}
+.hor-p>span{display:flex;flex-wrap:wrap;gap:6px}
+.hor-j{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;background:var(--panel);border-radius:999px;padding:2px 9px 2px 2px;cursor:pointer}
+.og{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.og li{display:flex;align-items:center;gap:10px}
+.og .av{width:34px;height:34px;font-size:11px}
+.og-b{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--panel2)}
+.og-b i{display:block;height:100%}
+.og-ley{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;font-size:11.5px;color:var(--mut)}
+.og-ley span{display:inline-flex;align-items:center;gap:5px}
+.og-ley i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.og-cap{background:repeating-linear-gradient(45deg,var(--acc) 0 3px,transparent 3px 5px);box-shadow:inset 0 0 0 1px var(--acc)}
+.vivo-d{font-style:normal;color:var(--red);font-size:10px;vertical-align:2px;animation:latido 2s ease-in-out infinite}
+.cl2 .cq>span.cl2-g{font-size:11.5px;white-space:normal;line-height:1.3;color:var(--mut)}
+.cl2-g.up{color:var(--pos)!important}.cl2-g.dn{color:var(--red)!important}
+.chollo{font-size:10px;font-weight:800;color:var(--accTxt);background:var(--acc);border-radius:6px;padding:1px 6px;vertical-align:2px}
 </style>
 </head>
 <body>
@@ -667,6 +694,12 @@ function htmlNovedades() {
   return `<div class="nov"><b>Novedades en el Golómetro</b>
     <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
+}
+// número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+function jornadaEnVivo() {
+  if (!CAL || !CAL.games) return null;
+  const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
+  return g ? g.gw : null;
 }
 function pintarAviso() {
   const cont = $("#aviso");
@@ -1056,9 +1089,11 @@ function abrirFicha(id) {
     <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
       <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
-    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : `${Math.round(ff.p * 100)} %`}</b> de ser titular según Futbol Fantasy` : ""}.</p>` : ""}
+    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
-    ${spark}</div>`;
+    ${spark}
+    ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
+      return mv.length ? `<h3 class="sec">Sus últimos movimientos en la liga</h3><ul class="clist">${mv.map(t => `<li class="mv mv2" style="padding:6px 0"><span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>` : ""; })()}</div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
 }
 function cerrarOv() { ["#ovBusc", "#ovFicha"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
@@ -1067,7 +1102,13 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-cerrar]") || e.target.classList.contains("ov")) { cerrarOv(); return; }
   if (e.target.closest("#btnBusc")) abrirBuscador();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarOv(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") cerrarOv();
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-ficha]:not(button)")) { e.preventDefault(); e.target.click(); }
+});
+// los jugadores que abren ficha también se pueden usar con teclado y lector de pantalla
+new MutationObserver(() => document.querySelectorAll("[data-ficha]:not(button):not([tabindex])").forEach(el => { el.tabIndex = 0; el.setAttribute("role", "button"); }))
+  .observe(document.body, { childList: true, subtree: true });
 
 const FORMACIONES = [[3, 4, 3], [3, 5, 2], [4, 3, 3], [4, 4, 2], [4, 5, 1], [5, 3, 2], [5, 4, 1]];
 function onceIdeal(gw) {
@@ -1238,11 +1279,23 @@ function pintarComparador() {
   const sel = lado => { const p = lado ? B : A; return `<input class="cp-in" list="cp-lista" data-csel="${lado}" value="${esc(p.name)}" aria-label="Jugador ${lado ? "B" : "A"}" autocomplete="off" onfocus="this.select()">`; };
   const cab = p => `<div class="du-m">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
   const rac = p => (p.streak || []).map(v => `<span>${v === "-" || v == null ? "–" : v}</span>`).join(" ");
+  // próximo partido y probabilidad de ser titular (Futbol Fantasy), igual que en la ficha
+  const nomEq = {}; (CAL && CAL.games || []).forEach(g => { nomEq[g.home] = g.homeName; nomEq[g.away] = g.awayName; });
+  const ahora = Date.now() / 1000;
+  const sig = p => {
+    const g = (CAL && CAL.games || []).filter(x => !capNum(x.gh) && x.status !== "played" && (x.home === p.teamId || x.away === p.teamId) && (x.ts || 0) > ahora - 3 * 3600).sort((x, y) => x.ts - y.ts)[0];
+    const fe = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], fk = fe && Object.keys(fe).sort()[0], ff = fk ? fe[fk] : null;
+    if (!g) return "Sin partido próximo";
+    const casa = g.home === p.teamId;
+    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;
+  };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
     <div class="du-sel">${sel(0)}<span>vs</span>${sel(1)}</div>
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
+    <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
+    <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
     <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones.</p>`;
 }
@@ -1291,6 +1344,29 @@ function pintarPronostico() {
     <p class="note" style="margin:0 0 10px">Simulación de las ${quedan} jornadas que faltan, 3.000 veces, con el ritmo de cada uno hasta ahora.</p>
     <ul class="pron">${PRON.filas.map(f => `<li>${avatar(f.o.m, f.o.i)}<span class="pq"><b>${esc(f.o.m.name)}</b><span class="pb"><i style="width:${(f.g * 100).toFixed(1)}%;background:${col(f.o.i)}"></i></span><small>Podio ${pct(f.p)} · último ${pct(f.u)} · acabaría con ~${Math.round(f.f)} pts</small></span><span class="pp">${pct(f.g)}</span></li>`).join("")}</ul>
     <p class="note">Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
+}
+
+/* ---------- De dónde salen los puntos de cada manager (por posición, con capitán aparte) ---------- */
+function pintarOrigen() {
+  const cont = $("#origen");
+  if (!cont) return;
+  const js = vista === "General" ? jornadas() : [vista];
+  const POSC = { PT: "var(--pt)", DF: "var(--df)", MC: "var(--mc)", DL: "var(--dl)" };
+  const filas = D.managers.map((m, i) => {
+    const s = { PT: 0, DF: 0, MC: 0, DL: 0, CAP: 0 };
+    js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+      (x.players || []).forEach(p => { const base = p.basePoints ?? p.points ?? 0; if (s[p.pos] != null) s[p.pos] += base; });
+      s.CAP += (x.captain || {}).bonus || 0; });
+    const tot = s.PT + s.DF + s.MC + s.DL + s.CAP;
+    return { m, i, s, tot };
+  }).sort((a, b) => b.tot - a.tot);
+  const mx = Math.max(1, ...filas.map(f => f.tot));
+  const seg = (v, c, t) => v > 0 ? `<i style="width:${(v / mx * 100).toFixed(2)}%;background:${c}" title="${t}: ${v}"></i>` : "";
+  cont.innerHTML = `<div class="gh"><h2>¿De dónde salen los puntos?</h2></div>
+    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
+    <div class="og-ley">${[["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<span><i style="background:${POSC[k]}"></i>${t}</span>`).join("")}<span><i class="og-cap"></i>Capitán</span></div>
+    <ul class="og">${filas.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="og-b">${seg(f.s.PT, POSC.PT, "Porteros")}${seg(f.s.DF, POSC.DF, "Defensas")}${seg(f.s.MC, POSC.MC, "Medios")}${seg(f.s.DL, POSC.DL, "Delanteros")}${seg(f.s.CAP, "repeating-linear-gradient(45deg,var(--acc) 0 4px,transparent 4px 7px)", "Capitán")}</span>
+      <small>PT ${f.s.PT} · DF ${f.s.DF} · MC ${f.s.MC} · DL ${f.s.DL} · capitán +${f.s.CAP}</small></span><span class="pp" style="font-size:16px">${f.tot}</span></li>`).join("")}</ul>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -1491,28 +1567,107 @@ function graficaValor(ms) {
 }
 
 // Jugadores de otras plantillas con mejor relación entre lo que se espera que puntúen y lo que cuesta su cláusula
-function bloqueClausulas(ms) {
+// Subida diaria del valor de un jugador: media de sus últimos días (equipos.json -> history) combinada con el modelo de la liga
+// probabilidad de jugar de un jugador en su próximo partido: modelo propio mezclado con Futbol Fantasy + Analítica Fantasy
+function pjConTitular(p, pjModelo) {
+  const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort()[0], ff = k ? e[k] : null;
+  const mz = ff ? capMezclaFF(ff, pjModelo, p.status) : null;
+  return { pj: mz ? mz.pj : pjModelo, tit: ff ? ff.p : null, ff };
+}
+function crecDiario(p) {
+  const u = ((E && E.history) || {})[String(p.id)] || [];
+  const r = u.slice(-4).filter(x => x[2] > 0).map(x => x[1] / x[2] - 1);
+  let g = r.length ? r.reduce((a, b) => a + b, 0) / r.length : null;
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  const gm = LIGA && LIGA.valorDin ? capCrecModelo({ ...p, owner: 1 }) : null;
+  if (gm && !gm.bajo) g = g == null ? gm.g : 0.5 * g + 0.5 * gm.g;
+  return capClamp(g ?? 0, [-0.05, 0.05]);
+}
+// Cláusulas que merecen la pena: SIEMPRE rentables en puntos (≥ 4 por jornada y al menos lo que se espera de su precio);
+// entre ellas pesan los puntos por millón de cláusula, lo cerca que está la cláusula de su valor y lo rápido que sube
+// (si sube cada día, en una semana su valor se come buena parte del sobrecoste de la cláusula).
+const CLAUS_DIAS = 7;
+function clausulasRentables(ms) {
   const L = [];
   ms.forEach(m => (m.players || []).forEach(p => {
-    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    if (!p.clause || !capNum(p.value) || p.value <= 0 || p.status === "injury" || p.status === "susp") return;
     const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
     const prior = (typeof capPrior === "function" ? capPrior(p.pos, p.value) : null) ?? 3.9;
     const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
     const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
-    const pj = (typeof capPJuega === "function" ? capPJuega(racha, p.value, p.pos) : null) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const pjM = (typeof capPJuega === "function" ? capPJuega(racha, p.value, p.pos) : null) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const { pj, tit, ff } = pjConTitular(p, pjM);
+    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no se recomienda
+    const esp = mu * pj;
+    if (esp < 4 || esp < 0.9 * prior) return;                       // requisito indispensable: rentable en puntos
+    const g = crecDiario(p), sobre = p.clause / p.value - 1;
+    const v7 = p.value * Math.pow(1 + g, CLAUS_DIAS), sobreEf = p.clause / v7 - 1;
+    const dias = g > 0.001 && sobre > 0 ? Math.log(p.clause / p.value) / Math.log(1 + g) : null;
+    L.push({ m, p, esp, pj, ff, prior, g, sobre, sobreEf, dias, r: esp / (p.clause / 1e6) });
+  }));
+  if (!L.length) return L;
+  const pct = (f, asc) => { const o = L.map(f).slice().sort((a, b) => a - b); return x => { const v = f(x); const k = o.filter(y => asc ? y > v : y < v).length; return k / Math.max(1, o.length - 1); }; };
+  const pR = pct(x => x.r), pS = pct(x => x.sobreEf, true), pE = pct(x => x.esp);
+  L.forEach(x => { x.nota = 0.35 * pR(x) + 0.40 * pS(x) + 0.25 * pE(x); });
+  return L.sort((a, b) => b.nota - a.nota);
+}
+// Los jugadores de una plantilla más «baratos» de clausular para lo que rinden: los que un rival se llevaría primero
+function bloqueExpuestos(m) {
+  const todos = clausulasRentables(E.managers.map((x, i) => ({ ...x, i })));
+  const mios = todos.map((x, k) => ({ ...x, puesto: k + 1 })).filter(x => String(x.m.id) === String(m.id)).slice(0, 3);
+  if (!mios.length) return "";
+  return `<section class="card"><div class="gh"><h2>En riesgo de cláusula</h2></div>
+    <p class="note" style="margin:0 0 6px">Sus jugadores que más interesan a un rival: rentables en puntos, con la cláusula cerca de su valor o subiendo rápido.</p>
+    <ul class="clist">${mios.map(x => `<li class="crow cl2" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b><span>${x.puesto}.º cláusula más apetecible · ${nf1.format(x.esp)} pts/jornada</span><span class="cl2-g ${x.g >= 0.002 ? "up" : x.g <= -0.002 ? "dn" : ""}">${esc(textoCrec(x))}</span></span><span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre su valor</small></span></li>`).join("")}</ul></section>`;
+}
+function textoCrec(x) {
+  if (x.g >= 0.002) return `+${nf1.format(x.g * 100)} %/día · ` + (x.dias != null && x.dias <= 30 ? `alcanza la cláusula en ~${Math.max(1, Math.round(x.dias))} días` : `en 7 días la cláusula quedará +${Math.max(0, Math.round(x.sobreEf * 100))} %`);
+  if (x.g <= -0.002) return `−${nf1.format(-x.g * 100)} %/día · se aleja de su cláusula`;
+  return "valor estable";
+}
+// Chollos: las cláusulas más baratas por cada punto esperado (sobre todo jugadores de poco precio)
+function clausulasBaratas(ms) {
+  const L = [];
+  ms.forEach(m => (m.players || []).forEach(p => {
+    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+    const { pj, tit, ff } = pjConTitular(p, pjM);
+    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no es un chollo
     const esp = mu * pj;
     if (esp < 3) return;
-    L.push({ m, p, esp, pj, r: esp / (p.clause / 1e6) });
+    L.push({ m, p, esp, pj, ff, g: crecDiario(p), sobre: p.clause / p.value - 1, r: esp / (p.clause / 1e6) });
   }));
-  if (!L.length) return "";
-  const top = L.sort((a, b) => b.r - a.r).slice(0, 8);
-  return `<section class="card"><div class="gh"><h2>Cláusulas más rentables</h2></div>
-    <p class="note" style="margin:0 0 6px">Jugadores de las plantillas con más puntos esperados por cada millón de cláusula (sin lesionados ni sancionados).</p>
-    <ul class="clist">${top.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
-      <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-        <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span>
-      <span class="cr"><b>${eur(x.p.clause)}</b><small>${nf1c(x.p.clause / x.p.value)} × su valor</small></span></li>`).join("")}</ul>
-    <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+  return L.sort((a, b) => b.r - a.r);
+}
+let clVista = "todos";
+function bloqueClausulas(ms) {
+  const seg = [["baratos", "Chollos"], ["todos", "TOP Cláusulas"]].map(([k, t]) => `<button data-clv="${k}" class="${clVista === k ? "on" : ""}">${t}</button>`).join("");
+  if (clVista === "baratos") {
+    const L = clausulasBaratas(ms).slice(0, 10);
+    if (!L.length) return "";
+    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+      <p class="note" style="margin:0 0 6px">Las cláusulas que menos cuestan por cada punto que se espera del jugador (3 o más por jornada), solo entre los que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Suelen ser jugadores baratos que rinden por encima de su precio.</p>
+      <ul class="clist">${L.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+        <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
+          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
+          <span class="cl2-g">${nf1c(x.r)} pts por millón de cláusula${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
+        <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
+      <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+  }
+  const top = clausulasRentables(ms).slice(0, 10);
+  if (!top.length) return "";
+  return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+    <p class="note" style="margin:0 0 6px">Solo jugadores rentables en puntos (4 o más por jornada y al menos lo que se espera de su precio) y que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Entre ellos suben los que dan más puntos por millón, tienen la cláusula más cerca de su valor y más suben cada día.</p>
+    <ul class="clist">${top.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+      <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span>${x.sobreEf <= 0.1 ? ` <span class="chollo">chollo</span>` : ""}</b>
+        <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
+        <span class="cl2-g ${x.g >= 0.002 ? "up" : x.g <= -0.002 ? "dn" : ""}">${esc(textoCrec(x))}</span>${x.ff ? `<span class="cl2-g">${esc(textoTit(x.ff, true))}</span>` : ""}</span>
+      <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
+    <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
@@ -1655,6 +1810,7 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
+    ${bloqueExpuestos(m)}
     ${bloqueVender(m)}
     ${bloquePrevision(m)}
     ${bloqueRivalesEq(m)}`;
@@ -1781,13 +1937,21 @@ function capFFCalib(p) {
   for (let i = 1; i < t.length; i++) if (p <= t[i].pFF) { const a = t[i - 1], b = t[i], w = (p - a.pFF) / Math.max(b.pFF - a.pFF, 1e-6); return a.juega + w * (b.juega - a.juega); }
   return t[t.length - 1].juega;
 }
+// Texto de titularidad: la mezcla de las dos webs y, entre paréntesis, lo que dice cada una
+function textoTit(ff, corto) {
+  if (!ff) return "";
+  if (ff.conf) return ff.p >= 0.5 ? "titular confirmado" : "suplente confirmado";
+  const fu = [ff.pff != null ? `Futbol Fantasy ${Math.round(ff.pff * 100)} %` : "", ff.paf != null ? `Analítica Fantasy ${Math.round(ff.paf * 100)} %` : ""].filter(Boolean);
+  const det = fu.length > 1 ? (corto ? ` (FF ${Math.round(ff.pff * 100)} · AF ${Math.round(ff.paf * 100)})` : ` (${fu.join(" · ")})`) : fu.length ? ` (${corto ? fu[0].replace("Futbol Fantasy", "FF").replace("Analítica Fantasy", "AF") : fu[0]})` : "";
+  return `${Math.round(ff.p * 100)} % titular${det}`;
+}
 function capMezclaFF(ff, pjModelo, estado) {
   if (!ff || estado === "susp") return null;
   const cal = capFFCalib(ff.p);
   const pff = ff.conf ? ff.p : cal != null ? cal : Math.min(0.98, ff.p + (1 - ff.p) * FF_SUB);
   let pj = ff.conf ? pff : FF_PESO * pff + (1 - FF_PESO) * pjModelo;
   if (estado === "injury" && ff.p < 0.5) pj = Math.min(pj, 0.5 * pjModelo + 0.5 * pff);
-  const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular en el once de Futbol Fantasy" : "En el banquillo según Futbol Fantasy") : `Futbol Fantasy: ${Math.round(ff.p * 100)} % de ser titular`;
+  const txt = ff.conf ? (ff.p >= 0.5 ? "✔ Titular confirmado" : "En el banquillo (once confirmado)") : `Titular: ${textoTit(ff).replace(" titular", "")}`;
   return { pj: Math.max(0, Math.min(0.99, pj)), suplente: ff.p < 0.5 && ff.once === "suplente", texto: txt };
 }
 let LIGA = null;
@@ -2282,12 +2446,16 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const fiab = cr.fuente === "flecha" ? 0.5 : 1;
     const recup = capClamp(apre * MER.RECUP * fiab, [-0.12, MER.RECUP_MAX]);
     let s = (base + bonusTop) * tf;
+    // competencia: si en esta liga se fichan muchos libres de este precio, hay que pujar algo más (y menos si casi nadie los ficha)
+    const tasaC = typeof tasaFichaje === "function" ? tasaFichaje(V) : null;
+    const fComp = tasaC != null ? capClamp(0.8 + 0.67 * tasaC, [0.8, 1.15]) : 1;
+    s *= fComp;
     s = capClamp(s + (recup > 0 ? recup : Math.max(recup, -s * 0.6)), [prio === "evitar" ? 0 : 0.01, prio === "normal" ? 0.08 : 0.5]);
     const redondea = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };   // evita empatar en cifras redondas
     const puja = prio === "evitar" ? V : redondea(V * (1 + s));
     const techo = prio === "evitar" ? V : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
     return { j, pos, V, mu, mu0, forma, avg, nPart, tasa, pj, fuente, rival: c1, ctx, fProx, fMed, espProx, espGen, cr, diasJornada, horizonte,
-             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, pct, apre, recup, s, puja, techo };
+             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, puja, techo };
   });
   const orden = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
   lista.sort((a, b) => orden[a.prio] - orden[b.prio] || b.score - a.score);
@@ -2331,7 +2499,7 @@ function heroMer(r, cierre) {
         <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
-    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.</p>
+    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
 
@@ -2347,7 +2515,7 @@ function merTarjeta(r) {
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
-    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
+    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
       <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
@@ -2446,6 +2614,47 @@ function bloqueCalendario() {
     <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${equipos.map(fila).join("")}</tbody></table></div></details>`;
 }
 
+// El mercado anterior: qué libres había y quién se los llevó (equipos.json -> transfers desde el mercado)
+let MER_HIST = null;
+function cargarMerHist() {
+  if (MER_HIST) return; MER_HIST = {};
+  fetch("mercado_historial.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => { MER_HIST = j || {}; TASAS = null; if (seccion === "mer") pintarMercado(); });
+}
+// Competencia: qué parte de los libres de un precio parecido acabó fichando alguien (historial del mercado + fichajes)
+let TASAS = null;
+function tasaFichaje(v) {
+  if (!MER_HIST || !E || !E.transfers || !Object.keys(MER_HIST).length) return null;
+  if (!TASAS) {
+    const fich = E.transfers.filter(t => !t.from && t.to && t.ts);
+    const tramo = x => x < 1e6 ? 0 : x < 5e6 ? 1 : 2, c = [0, 0, 0], n = [0, 0, 0];
+    Object.entries(MER_HIST).forEach(([f, lst]) => { const ini = Date.parse(f + "T00:00:00Z"), fin = ini + 54 * 3600 * 1000;
+      Object.entries(lst || {}).forEach(([id, val]) => { const k = tramo(val); n[k]++; if (fich.some(t => String(t.playerId) === id && Date.parse(t.ts) >= ini && Date.parse(t.ts) <= fin)) c[k]++; }); });
+    const tot = c.reduce((a, b) => a + b, 0) / Math.max(1, n.reduce((a, b) => a + b, 0));
+    TASAS = n.map((nn, k) => ({ p: (c[k] + 5 * tot) / (nn + 5), n: nn }));
+  }
+  const t = TASAS[v < 1e6 ? 0 : v < 5e6 ? 1 : 2];
+  return t.n >= 8 ? t.p : null;
+}
+function bloqueMercadoAyer(M) {
+  cargarMerHist();
+  const fechas = Object.keys(MER_HIST || {}).sort();
+  const hoy = (M.updatedAt || "").slice(0, 10);
+  const f = fechas.filter(x => x < hoy).slice(-1)[0];
+  if (!f || !E || !M.jug) return "";
+  const ids = Object.keys(MER_HIST[f] || {});
+  if (!ids.length) return "";
+  // se resuelve a las 05:00 del día siguiente: fichajes desde el mercado entre el día del listado y 30 h después
+  const ini = Date.parse(f + "T00:00:00Z"), fin = ini + 54 * 3600 * 1000;
+  const fich = (E.transfers || []).filter(t => !t.from && t.to && t.ts && Date.parse(t.ts) >= ini && Date.parse(t.ts) <= fin);
+  const nombreM = id => ((E.managers || []).find(m => String(m.id) === String(id)) || {}).name || "";
+  const filas = ids.map(id => { const p = M.jug[id] || { id, name: "Jugador " + id }; const t = fich.find(x => String(x.playerId) === String(id)); return { p, t, v: MER_HIST[f][id] }; })
+    .sort((a, b) => (b.t ? 1 : 0) - (a.t ? 1 : 0) || b.v - a.v);
+  const n = filas.filter(x => x.t).length;
+  return `<details class="card cdet-card"><summary class="sumh">El mercado anterior</summary>
+    <p class="note" style="margin:6px 0 8px">Libres del ${f.slice(8, 10)}/${f.slice(5, 7)}: ${n} de ${filas.length} encontraron dueño.</p>
+    <ul class="clist">${filas.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.name)}</b><span>${x.t ? `Fichado por <b class="ct-n">${esc(nombreM(x.t.to))}</b>` : "Nadie lo fichó"}</span></span><span class="cr"><b>${merEur(x.v)}</b><small>valía</small></span></li>`).join("")}</ul></details>`;
+}
+
 function pintarMercado() {
   const cont = $("#mer");
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
@@ -2472,6 +2681,7 @@ function pintarMercado() {
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
+    ${bloqueMercadoAyer(MER_DATA)}
     ${bloqueSubidas(MER_DATA)}
     ${bloqueCalendario()}
     ${bloqueRacha(MER_DATA)}
@@ -2554,7 +2764,7 @@ function panelAprendizaje() {
 function cargarAlineaciones() {
   fetch("alineaciones.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : null).catch(() => null)
-    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); } });
+    .then(j => { if (j && j.jugadores) { FFDATA = j; if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); } });
 }
 function cargarCalendario() {
   cargarParametros();
@@ -2646,7 +2856,7 @@ function clavesCandidato(c, r) {
     let txt;
     if (c.confirmado) txt = `<p>El once de su partido ya está confirmado, así que no hay incertidumbre: ${c.pj > 0.5 ? "es titular" : "no está en el once"}.</p>`;
     else if (c.pj <= 0.05) txt = `<p>${esc(c.fuente)}: prácticamente no puede jugar.</p>`;
-    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dice Futbol Fantasy y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. ${capFFCalib(c.ffP) != null ? `En las jornadas pasadas, de los jugadores a los que Futbol Fantasy daba un ${Math.round(c.ffP * 100)} %, jugó (de titular o saliendo del banquillo) un ${Math.round(capFFCalib(c.ffP) * 100)} %.` : `Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo.`} Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
+    else if (c.ffP != null) txt = `<p>${esc(c.fuente)}. Se combina con el modelo propio (últimas jornadas y valor): un ${Math.round(FF_PESO * 100)} % lo que dicen Futbol Fantasy y Analítica Fantasy (la media de las dos) y un ${Math.round((1 - FF_PESO) * 100)} % el modelo. ${capFFCalib(c.ffP) != null ? `En las jornadas pasadas, de los jugadores a los que Futbol Fantasy daba un ${Math.round(c.ffP * 100)} %, jugó (de titular o saliendo del banquillo) un ${Math.round(capFFCalib(c.ffP) * 100)} %.` : `Si no fuera titular, hay un ${Math.round(FF_SUB * 100)} % de que entre desde el banquillo.`} Resultado: <b>${pc(c.pj)}</b> de jugar.${c.suplente ? ` Como suplente se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     else txt = `<p>El once todavía no está confirmado. Su probabilidad de jugar parte de <b>${pc(CAP.P_XI_BASE)} + ${pc(CAP.P_XI_REGULAR)} × su titularidad</b> si está en el once probable de Mister, y es mucho menor si no está.
       Su titularidad estimada es del <b>${pc(c.tasa)}</b> (mezcla de las últimas 5 jornadas y de toda la temporada), lo que da <b>${pc(c.pj)}</b>.${c.suplente ? ` Al no estar en el once probable, si juega sería suplente y se estima que hace un ${Math.round(CAP.F_SUPLENTE * 100)} % de sus puntos habituales.` : ""}</p>`;
     cl.push(claveHtml("🟢", "Disponibilidad", esc(c.fuente) + (c.rota ? ` · rota (titular en ~${pc(c.tasa)})` : ""), c.confirmado ? (c.pj > 0.5 ? "Titular" : "Fuera") : pc(c.pj), tono, txt));
@@ -2802,6 +3012,22 @@ function htmlCapLiga(cg, gw) {
       <span class="cr"><b class="up">+${nf1.format(x.c.extra)}</b><small>extra esperado</small></span></li>`).join("")}</ul></details>`;
 }
 
+// Horario de la jornada: cuándo juega cada jugador de la plantilla, partido a partido
+function htmlHorario(r) {
+  const cs = (r.candidatos || []).filter(c => c.g && c.g.ts);
+  if (!cs.length) return "";
+  const porP = {};
+  cs.forEach(c => { (porP[c.g.id] = porP[c.g.id] || { g: c.g, js: [] }).js.push(c); });
+  const L = Object.values(porP).sort((a, b) => a.g.ts - b.g.ts);
+  const ahora = Date.now() / 1000;
+  return `<details class="card cdet-card"><summary class="sumh">Cuándo juegan tus jugadores</summary>
+    <ul class="hor">${L.map(x => { const ya = x.g.ts < ahora;
+      return `<li class="${ya ? "ya" : ""}"><span class="hor-t">${esc(enMadrid(x.g.ts * 1000, { weekday: "short", day: "numeric" }))}<b>${esc(enMadrid(x.g.ts * 1000, { hour: "2-digit", minute: "2-digit" }))}</b></span>
+        <span class="hor-p"><small>${img(merUrlEscudo(x.g.home), "shield")} ${esc(x.g.homeName || "")} – ${esc(x.g.awayName || "")} ${img(merUrlEscudo(x.g.away), "shield")}</small>
+        <span>${x.js.map(c => `<span class="hor-j" data-ficha="${esc(c.p.id)}">${cara(c.p.id, c.p.name, null, 26)}${esc(c.p.short || c.p.name)}</span>`).join("")}</span></span></li>`; }).join("")}</ul>
+    <p class="note">Ordenado por hora (de Madrid). Los partidos ya empezados aparecen apagados.</p></details>`;
+}
+
 function pintarCapitan() {
   const cont = $("#cap");
   if (!eqOk) {
@@ -2828,6 +3054,7 @@ function pintarCapitan() {
     cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
       ${htmlOnceRec(r)}
       ${htmlCapLiga(cg, gwVer)}
+      ${htmlHorario(r)}
       ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
@@ -2888,7 +3115,7 @@ function pintar() {
       <button class="jsel-t ${!enJ ? "on" : ""}" data-v="General" aria-pressed="${!enJ}">Total</button>
       <div class="jsel-j ${enJ ? "on" : ""}">
         <button data-v="${esc(ant || (enJ ? js_[0] : ultima))}" ${enJ && !ant ? "disabled" : ""} aria-label="Jornada anterior">‹</button>
-        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"} <span aria-hidden="true">▾</span></button>
+        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
         <button data-v="${esc(sig_ || ultima)}" ${enJ && !sig_ ? "disabled" : ""} aria-label="Jornada siguiente">›</button>
       </div></div>
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
@@ -2900,6 +3127,14 @@ function pintar() {
     const S = serieLiga(), n = S.js.length;
     S.ms.forEach((o, x) => { mov[o.m.id] = S.rank[n - 2][x] - S.rank[n - 1][x]; });
   }
+  // forma: puesto de cada manager en sus últimas 5 jornadas (verde arriba, rojo abajo), como en las tablas de fútbol
+  const forma = {};
+  if (vista === "General" && jornadas().length) {
+    const S = serieLiga(), n = S.js.length, N = S.ms.length;
+    S.ms.forEach((o, x) => { forma[o.m.id] = S.js.slice(-5).map((j, kk) => { const k = n - Math.min(5, n) + kk;
+      const pos = 1 + S.ms.filter((_, y) => S.pts[y][k] > S.pts[x][k]).length;
+      return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
+  }
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
@@ -2907,7 +3142,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
-          <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
+          ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
       </button>
@@ -2920,13 +3155,14 @@ function pintar() {
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
     <ul class="rank">${filas}</ul>
-    <nav class="indice" aria-label="Más de la liga">${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga">${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="comp"></section>
     <section class="card" id="caps"></section>
+    <section class="card" id="origen"></section>
     <section class="card" id="premios"></section>`;
   pintarCronica();
   pintarGrafico();
@@ -2935,6 +3171,7 @@ function pintar() {
   pintarComparador();
   pintarCapitanes();
   pintarPremios();
+  pintarOrigen();
 }
 document.addEventListener("change", e => {
   const s = e.target.closest("[data-dsel]");
@@ -2946,11 +3183,12 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) { ir(d.s); return; }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
+  if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
   if (d.sub) { subVista = d.sub; pintarMercado(); return; }
   if (d.jsel) { jselAbierto = !jselAbierto; pintar(); return; }
   if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); return; }
