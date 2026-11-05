@@ -26,8 +26,7 @@ jobs:
           print('len rsc', len(data))
           for kw in ['probab','titular','starter','"percent','lineup','doubt','duda']:
               idx=[m.start() for m in re.finditer(kw,data,re.I)][:3]; print(kw, len(re.findall(kw,data,re.I)), idx)
-          for nm in ['Lamine','Griezmann','Pedri']:
-              i=data.find(nm); print('==',nm,i); print(data[max(0,i-1200):i+800] if i>0 else '')
-          ks=re.findall(r'"([a-zA-Z]*(?:[Pp]rob|[Pp]ercent|[Ss]tart|[Tt]itular|[Cc]hance)[a-zA-Z]*)":',data)
-          import collections; print(collections.Counter(ks).most_common(30))
+          ms=[m.start() for m in re.finditer(r'"chance":',data)]
+          print(len(ms))
+          for i in ms[:2]+ms[100:101]: print('OBJ:', data[i-700:i+250])
           PY
