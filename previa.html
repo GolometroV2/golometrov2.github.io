@@ -1210,7 +1210,11 @@ function pintarPrevia() {
   const favorito = filas.slice().sort((a, b) => b.esp - a.esp);
   const hayEsp = favorito[0] && favorito[0].esp > 0;
   const titulo = $("#titulo").textContent;
-  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, "", "🎖️ Capitanes:",
+  // cómo llega la general: clasificación acumulada hasta la jornada anterior
+  const S = serieLiga(), kp = S.js.indexOf("J" + n) - 1;
+  const llega = kp >= 0 ? S.ms.map((o, x) => ({ o, t: S.cum[x][kp] })).sort((a, b) => b.t - a.t) : [];
+  const lider = llega.length > 1 ? `🏁 Llega líder ${llega[0].o.m.name} (${llega[0].t}), ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} por delante de ${llega[1].o.m.name}` : "";
+  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, lider, "", "🎖️ Capitanes:",
     ...filas.map(f => { const c = f.x.captain; if (!c) return `• ${f.m.name}: sin capitán`; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
       return `• ${f.m.name}: ${c.name} ×${coma(c.multiplier || 1)}${r ? ` (${r}, ${hora(g)})` : ""}`; }), "",
     dudas.length ? `⚠️ Alineados en duda: ${dudas.slice(0, 6).map(d => `${d.p.name} (${d.f.m.name}, ${d.les ? "lesionado" : Math.round(d.t * 100) + " % titular"})`).join(", ")}` : "✅ Nadie ha alineado a jugadores en duda",
@@ -1221,7 +1225,7 @@ function pintarPrevia() {
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
   cont.innerHTML = `<div class="gh"><h2>Previa de la jornada ${n}</h2></div>
-    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.</p>
+    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja.` : ""}</p>
     <h3 class="sec">Capitanes</h3><ul class="clist">${filas.map(filaCap).join("")}</ul>
     <div class="ct-grid" style="margin-top:10px">
       ${primero && enPrimero.length ? `<div class="ct-t"><span class="ct-ico">🚀</span><span class="ct-x"><small>Abre la jornada</small><b>${esc(nombre[primero.home] || "")}–${esc(nombre[primero.away] || "")}</b><span>${esc(enPrimero.slice(0, 2).map(x => `${x.f.m.name} ${x.n}`).join(" · "))}</span></span></div>` : ""}
@@ -1280,7 +1284,9 @@ function pintarCronica() {
   CRON_TXT = [`📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}`, "",
     `🥇 Ganador: ${gan.m.name} (${gan.p} pts)`,
     caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
+    caps.length > 2 ? `🙈 Peor capitán: ${caps[caps.length - 1].d.captain.name} ${caps[caps.length - 1].d.captain.points} pts (${caps[caps.length - 1].m.name})` : "",
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
+    gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
     `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`, "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
