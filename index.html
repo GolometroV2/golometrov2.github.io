@@ -507,15 +507,15 @@ code{color:var(--accFg)}
 .refresh{display:inline-flex;align-items:center;gap:6px}
 .ra-i{display:inline-block;font-size:15px;line-height:1;transition:transform .6s}
 .refresh.girando .ra-i{transform:rotate(360deg)}
-.jsel{display:grid;grid-template-columns:auto 1fr;gap:8px}
-.jsel-t{min-height:var(--tap);padding:0 18px;border-radius:var(--r-full);background:var(--panel2);font-weight:700;color:var(--mut)}
+.jsel{display:flex;gap:8px}.jsel-j{flex:1;min-width:0}.jsel-t{flex:none}
+.jsel-t{min-height:var(--tap);padding:0 16px;border-radius:var(--r-full);background:var(--panel2);font-weight:700;color:var(--mut)}
 .jsel-t.on{background:var(--acc);color:var(--accTxt)}
 .jsel-j{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;border-radius:var(--r-full);background:var(--panel2);overflow:hidden}
 .jsel-j.on{box-shadow:inset 0 0 0 2px var(--acc)}
 .jsel-j button{min-height:var(--tap);font-weight:700;font-size:15px;color:var(--txt)}
 .jsel-j button:disabled{opacity:.3;cursor:default}
 .jsel-j>button:first-child,.jsel-j>button:last-child{font-size:22px;line-height:1}
-.jsel-n{font-size:14px!important}.jsel-n span{color:var(--mut);font-size:11px}
+.jsel-n{font-size:14px!important;white-space:nowrap}.jsel-n span{color:var(--mut);font-size:11px}
 .jsel-j:not(.on) .jsel-n{color:var(--mut)}
 .jsel-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:8px;padding:8px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
 .jsel-g button{min-height:40px;border-radius:10px;background:var(--panel2);font-weight:700}
@@ -695,7 +695,7 @@ function htmlNovedades() {
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
+    <span>Nuevo: cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -768,8 +768,11 @@ addEventListener("dragover", e => e.preventDefault());
 addEventListener("drop", e => { e.preventDefault(); leerArchivo(e.dataTransfer.files[0]); });
 // ===== FIN TEMPORAL =====
 
+// jornadas que suma la vista elegida: todas («Total»), las 3 últimas («Forma») o una sola
+const jsVista = () => vista === "General" ? jornadas() : vista === "Ult3" ? jornadas().slice(-3) : [vista];
+const rangoUlt3 = () => { const j = jornadas().slice(-3); return j.length ? (j.length > 1 ? `jornadas ${j[0].slice(1)} a ${j[j.length - 1].slice(1)}` : `jornada ${j[0].slice(1)}`) : ""; };
 function estadisticas() {
-  const js = vista === "General" ? jornadas() : [vista];
+  const js = jsVista();
   return D.managers.map((m, idx) => {
     const s = { ...m, idx, points: 0, cap: 0, sinCap: 0, goals: 0, assists: 0, yellow: 0, redCards: 0, goalsConceded: 0 };
     js.forEach(j => {
@@ -800,7 +803,7 @@ function jugador(p) {
 }
 
 function detalle(m) {
-  if (vista !== "General") {
+  if (vista !== "General" && vista !== "Ult3") {
     const x = (D.matchdays[vista] || {})[m.id];
     if (!x || !(x.players || []).length) return `<p class="top">No hay alineación guardada para esta jornada.</p>`;
     const lineas = ["DL", "MC", "DF", "PT"].map(pos => {
@@ -1431,7 +1434,7 @@ function pintarPronostico() {
 function pintarOrigen() {
   const cont = $("#origen");
   if (!cont) return;
-  const js = vista === "General" ? jornadas() : [vista];
+  const js = jsVista();
   const POSC = { PT: "var(--pt)", DF: "var(--df)", MC: "var(--mc)", DL: "var(--dl)" };
   const filas = D.managers.map((m, i) => {
     const s = { PT: 0, DF: 0, MC: 0, DL: 0, CAP: 0 };
@@ -1444,7 +1447,7 @@ function pintarOrigen() {
   const mx = Math.max(1, ...filas.map(f => f.tot));
   const seg = (v, c, t) => v > 0 ? `<i style="width:${(v / mx * 100).toFixed(2)}%;background:${c}" title="${t}: ${v}"></i>` : "";
   cont.innerHTML = `<div class="gh"><h2>¿De dónde salen los puntos?</h2></div>
-    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
+    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : vista === "Ult3" ? "Últimas 3 jornadas" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
     <div class="og-ley">${[["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<span><i style="background:${POSC[k]}"></i>${t}</span>`).join("")}<span><i class="og-cap"></i>Capitán</span></div>
     <ul class="og">${filas.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="og-b">${seg(f.s.PT, POSC.PT, "Porteros")}${seg(f.s.DF, POSC.DF, "Defensas")}${seg(f.s.MC, POSC.MC, "Medios")}${seg(f.s.DL, POSC.DL, "Delanteros")}${seg(f.s.CAP, "repeating-linear-gradient(45deg,var(--acc) 0 4px,transparent 4px 7px)", "Capitán")}</span>
       <small>PT ${f.s.PT} · DF ${f.s.DF} · MC ${f.s.MC} · DL ${f.s.DL} · capitán +${f.s.CAP}</small></span><span class="pp" style="font-size:16px">${f.tot}</span></li>`).join("")}</ul>`;
@@ -3241,12 +3244,14 @@ function pintar() {
   const js_ = jornadas(), kv = js_.indexOf(vista), enJ = kv >= 0, ultima = js_[js_.length - 1];
   const ant = enJ ? js_[kv - 1] : null, sig_ = enJ ? js_[kv + 1] : null;
   const pills = `<div class="jsel">
-      <button class="jsel-t ${!enJ ? "on" : ""}" data-v="General" aria-pressed="${!enJ}">Total</button>
+      <button class="jsel-t ${vista === "General" ? "on" : ""}" data-v="General" aria-pressed="${vista === "General"}">Total</button>
+      ${js_.length > 3 ? `<button class="jsel-t ${vista === "Ult3" ? "on" : ""}" data-v="Ult3" aria-pressed="${vista === "Ult3"}" title="Puntos de las últimas 3 jornadas">Forma</button>` : ""}
       <div class="jsel-j ${enJ ? "on" : ""}">
         <button data-v="${esc(ant || (enJ ? js_[0] : ultima))}" ${enJ && !ant ? "disabled" : ""} aria-label="Jornada anterior">‹</button>
-        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
+        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
         <button data-v="${esc(sig_ || ultima)}" ${enJ && !sig_ ? "disabled" : ""} aria-label="Jornada siguiente">›</button>
       </div></div>
+    ${vista === "Ult3" ? `<p class="note" style="margin:8px 0 0">Clasificación de las últimas 3 jornadas (${esc(rangoUlt3())}): quién llega mejor.</p>` : ""}
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
   const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
@@ -3344,7 +3349,7 @@ document.addEventListener("click", e => {
     return;
   }
   if (d.cpv) { capVista = d.cpv; pintarCapitanes(); return; }
-  if (d.cj) { const js = jornadas(), k = js.indexOf(cronJ) + (+d.cj); if (js[k]) { cronJ = js[k]; if (vista !== "General") { vista = cronJ; abierto = null; pintar(); } else pintarCronica(); } return; }
+  if (d.cj) { const js = jornadas(), k = js.indexOf(cronJ) + (+d.cj); if (js[k]) { cronJ = js[k]; if (js.includes(vista)) { vista = cronJ; abierto = null; pintar(); } else pintarCronica(); } return; }
   if (d.v) { vista = d.v; abierto = null; jselAbierto = false; }
   else if (d.o) { orden = orden.k === d.o ? { k: d.o, asc: !orden.asc } : { k: d.o, asc: false }; }
   else if (d.m) { abierto = abierto === d.m ? null : d.m; }
