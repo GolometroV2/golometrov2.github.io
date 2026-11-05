@@ -426,6 +426,8 @@ code{color:var(--accFg)}
 .mh .ch-kpi b{font-size:19px}
 .seg2{display:grid;grid-template-columns:1fr 1fr;margin:0 0 12px;border-radius:var(--r-m);padding:3px}
 .seg2 button{min-height:38px;border-radius:9px;font-size:12.5px}
+.seg3{display:grid;grid-template-columns:1fr 1fr 1fr;margin:0 0 12px;border-radius:var(--r-m);padding:3px}
+.seg3 button{min-height:38px;border-radius:9px;font-size:12.5px}
 .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pr{position:relative;display:flex;flex-direction:column;gap:4px;background:var(--panel2);border-radius:var(--r-l);padding:12px 10px 11px;min-width:0}
 .pr-i{position:absolute;top:9px;right:9px;font-size:20px}
@@ -3109,12 +3111,16 @@ function bloqueSubidas(M) {
   if (!J.length) return "";
   const libres = new Set((M.libres || []).map(x => String(x.id)));
   const L = J.map(p => ({ p, d: p.value - p.prev, r: p.value / p.prev - 1 }));
-  const ord = subVista === "sube" ? L.filter(x => x.d > 0).sort((a, b) => b.d - a.d) : L.filter(x => x.d < 0).sort((a, b) => a.d - b.d);
+  // «Mañana»: previsión del modelo con inercia (solo jugadores de 1 M o más, por debajo se mueve al azar)
+  const conModelo = LIGA && LIGA.valorDin && LIGA.valorDin.phi;
+  const M2 = conModelo ? Object.values(M.jug || {}).filter(p => capNum(p.value) && p.value >= (LIGA.valorDin.corte || 1e6)).map(p => { const g = capCrecModelo(p); return g && !g.bajo ? { p, d: p.value * g.g, r: g.g } : null; }).filter(Boolean) : [];
+  if (subVista === "manana" && !M2.length) subVista = "sube";
+  const ord = subVista === "manana" ? M2.filter(x => x.d > 0).sort((a, b) => b.d - a.d) : subVista === "sube" ? L.filter(x => x.d > 0).sort((a, b) => b.d - a.d) : L.filter(x => x.d < 0).sort((a, b) => a.d - b.d);
   const tot = L.reduce((t, x) => t + x.d, 0), suben = L.filter(x => x.d > 0).length, bajan = L.filter(x => x.d < 0).length;
-  const seg = [["sube", `Suben (${suben})`], ["baja", `Bajan (${bajan})`]].map(([k, t]) => `<button data-sub="${k}" class="${subVista === k ? "on" : ""}">${t}</button>`).join("");
+  const seg = [["sube", `Suben (${suben})`], ["baja", `Bajan (${bajan})`], ...(M2.length ? [["manana", "Mañana"]] : [])].map(([k, t]) => `<button data-sub="${k}" class="${subVista === k ? "on" : ""}">${t}</button>`).join("");
   return `<section class="card"><div class="gh"><h2>Subidas y bajadas de hoy</h2></div>
-    <p class="note" style="margin:0 0 8px">Cambio de valor desde ayer en toda la liga: ${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))} en total.</p>
-    <div class="seg seg2">${seg}</div>
+    <p class="note" style="margin:0 0 8px">${subVista === "manana" ? "Los que más se espera que suban mañana (previsión con la inercia de los últimos días; explica en torno al " + Math.round((LIGA.valorDin.r2 || 0.9) * 100) + " % de los cambios diarios)." : `Cambio de valor desde ayer en toda la liga: ${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))} en total.`}</p>
+    <div class="seg ${M2.length ? "seg3" : "seg2"}">${seg}</div>
     <ul class="clist">${ord.slice(0, 10).map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 36)}
       <span class="cq"><b>${esc(x.p.name)}</b><span>${merEur(x.p.value)} · ${libres.has(String(x.p.id)) ? `<span class="rc-e libre">libre</span>` : x.p.owner ? esc(x.p.ownerName || "") : "sin dueño"}</span></span>
       <span class="cr"><b class="${x.d > 0 ? "up" : "dn"}">${x.d > 0 ? "+" : "−"}${eur(Math.abs(x.d))}</b><small>${x.d > 0 ? "+" : "−"}${nf1.format(Math.abs(x.r) * 100)} %</small></span></li>`).join("")}</ul></section>`;
