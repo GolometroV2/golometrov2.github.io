@@ -2868,6 +2868,18 @@ function pujaLiga(V, prio, tasaC, sMin) {
   if (P(sSeguro) - P(s) < 0.04) sSeguro = s;       // si pagar más apenas sube la probabilidad, no se propone
   return { s, sSeguro, p: P(s), pSeguro: P(sSeguro), q, n: obs.length, tope: s >= max - 1e-9 && P(s) < (PUJA.OBJETIVO[prio] ?? 0.5) };
 }
+// Para invertir: libres cuyo valor se espera que suba más de lo que se paga por encima de su valor (modelo con inercia)
+function bloqueInversion(r) {
+  const L = r.lista.filter(x => x.prio !== "evitar" && x.V >= 1e6 && x.cr && x.cr.fuente === "modelo" && x.cr.phi).map(x => {
+    const g3 = crecAcum(x.cr, 3), g7 = crecAcum(x.cr, 7), extra = x.puja - x.V;
+    return { x, g3, g7, extra, neto3: x.V * g3 - extra, neto7: x.V * g7 - extra };
+  }).filter(y => y.neto7 > 50000).sort((a, b) => b.neto7 - a.neto7).slice(0, 5);
+  if (!L.length) return "";
+  return `<section class="card"><div class="gh"><h2>Para invertir</h2></div>
+    <p class="note" style="margin:0 0 8px">Libres cuyo valor se espera que suba más de lo que pagarías por encima de él con la puja ideal. El valor en Mister tiene mucha inercia: si sube hoy, mañana suele subir casi lo mismo y se va frenando poco a poco.</p>
+    <ul class="clist">${L.map(y => `<li class="crow" data-ficha="${esc(y.x.j.id)}">${cara(y.x.j.id, y.x.j.name, y.x.j.teamId, 36)}<span class="cq"><b>${esc(y.x.j.name)}</b><span>puja ${merEur(y.x.puja)} → ${merEur(y.x.V * (1 + y.g7))}</span></span><span class="cr"><b class="up">+${eur(y.neto7)}</b><small>en 7 días</small></span></li>`).join("")}</ul>
+    <p class="note">A la derecha, lo que ganarías vendiéndolo en 7 días, ya descontado lo que pagas de más. Es una previsión: un mal partido o una lesión la cambian de golpe. Por debajo de 1 M el valor se mueve al azar y no se incluye.</p></section>`;
+}
 // Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
 function bloquePujasLiga() {
   const O = obsPujas();
@@ -3130,6 +3142,7 @@ function pintarMercado() {
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
+    ${bloqueInversion(r)}
     ${bloqueMercadoAyer(MER_DATA)}
     ${bloqueSubidas(MER_DATA)}
     ${bloqueCalendario()}
