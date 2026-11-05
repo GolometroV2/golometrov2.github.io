@@ -207,6 +207,7 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .hero-et{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accFg);margin:0 0 8px}
 .cp.hero .jp-right b{font-size:22px}
 .cdet{margin-top:8px}
+.hueco{margin:8px 0 10px;padding:10px 12px;border-radius:var(--r-m,10px);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);display:flex;flex-direction:column;gap:4px;font-size:13px}.hueco>b{color:var(--red)}.hueco>span{color:var(--txt)}
 .q-lid{display:flex;flex-wrap:wrap;gap:8px}.q-chip{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel2);font-size:13px}
 .q-chip .av{width:28px;height:28px;font-size:10px;flex:none}.q-chip b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.q-chip em{font-style:normal;font-weight:800;color:var(--accFg);flex:none}
 .cdet>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--accFg);list-style:none}
@@ -2782,7 +2783,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
@@ -3091,6 +3092,7 @@ function cargarCalendario() {
 
 const signoPct = v => (v >= 0 ? "+" : "−") + Math.round(Math.abs(v) * 100) + " %";
 const POSN = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
+const POSN1 = { PT: "portero", DF: "defensa", MC: "centrocampista", DL: "delantero" };
 
 const num = v => v == null ? "–" : nf1.format(v);
 const coma = v => String(v).replace(".", ",");
@@ -3224,13 +3226,30 @@ function onceRecomendado(cands) {
   });
   return mejor;
 }
+// Si la plantilla no da para un once completo: qué posiciones faltan y los mejores libres del mercado que las cubren
+let merPedidoCap = false;
+function htmlHueco(o) {
+  const [d, m, f] = o.form.split("-").map(Number), nec = { PT: 1, DF: d, MC: m, DL: f };
+  const faltan = Object.keys(nec).map(p => [p, nec[p] - o[p].length]).filter(x => x[1] > 0);
+  if (!faltan.length) return "";
+  const txt = faltan.map(([p, n]) => `${n} ${n === 1 ? POSN1[p] : POSN[p]}`).join(" y ");
+  let sug = "";
+  if (!MER_DATA && !merError && !merPedidoCap) { merPedidoCap = true; cargarMercado(); }
+  if (MER_DATA) { try {
+    const L = (recomendarMercado({ M: MER_DATA, cal: CAL, D, E }).lista || []).filter(x => faltan.some(([p]) => p === x.pos) && x.prio !== "evitar")
+      .sort((a, b) => b.espGen - a.espGen).slice(0, 3);
+    if (L.length) sug = `<p class="ordlbl" style="margin-top:10px">Libres en el mercado que lo cubren</p><ul class="clist">${L.map(x => `<li class="crow">${cara(x.j.id, x.j.name, x.j.teamId, 34)}<span class="cq"><b>${esc(x.j.name)}</b><span>${x.pos} · puja ideal ${merEur(x.puja)}</span></span><span class="cr"><b>${nf1.format(x.espGen)}</b><small>pts/jornada</small></span></li>`).join("")}</ul>`;
+  } catch (e) {} }
+  return `<div class="hueco"><b>⚠ Tu plantilla no da para un once completo</b><span>Te ${faltan.reduce((t, x) => t + x[1], 0) === 1 ? "falta" : "faltan"} ${txt}: si no fichas, jugarás con ${11 - faltan.reduce((t, x) => t + x[1], 0)}. Este es el mejor once que puedes poner hoy.</span>${sug}</div>`;
+}
 function htmlOnceRec(r) {
-  const o = onceRecomendado(r.candidatos || []);
+  const o = onceQuiniela(r.candidatos || []);
   if (!o) return "";
   const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : ""}</small></div>`;
   const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
+    ${o.faltan ? htmlHueco(o) : ""}
     <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número amarillo: puntos esperados de cada uno.</p>
     <div class="oi">${filas}</div>
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
