@@ -1,0 +1,28 @@
+name: Explorar Analitica Fantasy (temporal)
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL'
+        default: 'https://www.analiticafantasy.com'
+jobs:
+  e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirar
+        env:
+          URL: ${{ github.event.inputs.url }}
+        run: |
+          UA="Mozilla/5.0 (compatible; GolometroBot/1.0; uso personal de una liga privada)"
+          echo "=== robots ==="; curl -sS -A "$UA" https://www.analiticafantasy.com/robots.txt | head -40
+          curl -sS -A "$UA" -o /tmp/p.html -w "HTTP %{http_code} bytes %{size_download}\n" "$URL"
+          python3 - <<"PY"
+          import re, collections
+          h=open('/tmp/p.html',encoding='utf-8',errors='replace').read()
+          print("enlaces alineac:", sorted(set(re.findall(r'href="([^"]*alinea[^"]*)"',h)))[:30])
+          print("enlaces partido:", sorted(set(re.findall(r'href="([^"]*(?:partido|match)[^"]*)"',h)))[:20])
+          print("next data:", '__NEXT_DATA__' in h, "nuxt:", '__NUXT' in h)
+          for k in ['titular','probab','%','starter','lineup']:
+              print(k, h.lower().count(k))
+          i=h.find('__NEXT_DATA__'); print(h[i:i+1500] if i>0 else h[:1200])
+          PY
