@@ -83,6 +83,8 @@ jobs:
           python jugadores_mister.py || echo "Aviso - no se pudo leer la lista de jugadores"
           # fotos de los jugadores libres guardadas en el repositorio (como las de las plantillas) para que la web las muestre siempre
           python3 -c "import json,seguimiento_equipos as s;[s.descargar_foto(p.get('photo'),'jugadores',p.get('id')) for p in json.load(open('mercado.json')).get('libres',[])];s.indice_fotos()" || echo "Aviso - no se pudieron guardar las fotos del mercado"
+          # puja máxima rentable de Futbol Fantasy para los libres de hoy (una petición por jugador, con pausa)
+          python pujas_ff.py || echo "Aviso - no se pudo leer la puja de Futbol Fantasy"
 
       - name: Guardar cambios
         if: steps.hora.outputs.seguir == 'si'
@@ -91,6 +93,7 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           git add mercado.json mercado_historial.json
           if [ -d fotos ]; then git add fotos; fi
+          if [ -f pujas_ff.json ]; then git add pujas_ff.json; fi
           if [ -f jugadores.json ]; then git add jugadores.json jugadores_historial.json; fi
           if ! git diff --staged --quiet; then
             git commit -m "Mercado actualizado"
