@@ -1235,7 +1235,7 @@ function probJornada(n) {
       // alineados que ya no están en ninguna plantilla (vendidos después): un jugador típico de su posición
       const gen = p => ({ pj: 0.85, ys: CAP.MUESTRA_DEF[p.pos] || CAP.MUESTRA_DEF.MC });
       return { antes: antes[m.id] || 0, js: (x.players || []).map(p => ({ c: espDe[p.id] || gen(p), mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
-    ms.forEach((m, i) => { res[m.id] = sim[i]; });
+    ms.forEach((m, i) => { res[m.id] = { ...sim[i], contra: Object.fromEntries(ms.map((o, j) => [o.id, sim[i].vence[j]])) }; });
   }
   PROBJ = { k, v: { espDe, res } };
   return PROBJ.v;
@@ -1304,6 +1304,7 @@ function pintarPrevia() {
     ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
+    llega.length > 1 && PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? `⚔️ Duelo por el liderato: ${llega[0].o.m.name} le gana la jornada a ${llega[1].o.m.name} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : "",
     hayEsp ? ["", "🔮 Probabilidad de ganar la jornada (al empezar):", ...favorito.map(f => `• ${f.m.name}: ${pctQ(f.pGana || 0)} (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
     "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
@@ -3326,7 +3327,7 @@ function cargarParametros() {
     .catch(() => {});
 }
 
-const pc = v => Math.round(v * 100) + " %";
+const pc = v => Math.round(v * 100) + "\u00a0%";
 const nf2 = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // Resultado del recomendador en jornadas ya jugadas (con datos anteriores a cada jornada)
