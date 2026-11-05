@@ -2361,12 +2361,16 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const fiab = cr.fuente === "flecha" ? 0.5 : 1;
     const recup = capClamp(apre * MER.RECUP * fiab, [-0.12, MER.RECUP_MAX]);
     let s = (base + bonusTop) * tf;
+    // competencia: si en esta liga se fichan muchos libres de este precio, hay que pujar algo más (y menos si casi nadie los ficha)
+    const tasaC = typeof tasaFichaje === "function" ? tasaFichaje(V) : null;
+    const fComp = tasaC != null ? capClamp(0.8 + 0.67 * tasaC, [0.8, 1.15]) : 1;
+    s *= fComp;
     s = capClamp(s + (recup > 0 ? recup : Math.max(recup, -s * 0.6)), [prio === "evitar" ? 0 : 0.01, prio === "normal" ? 0.08 : 0.5]);
     const redondea = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };   // evita empatar en cifras redondas
     const puja = prio === "evitar" ? V : redondea(V * (1 + s));
     const techo = prio === "evitar" ? V : redondea(V * (1 + Math.min(0.6, s * MER.TECHO)));
     return { j, pos, V, mu, mu0, forma, avg, nPart, tasa, pj, fuente, rival: c1, ctx, fProx, fMed, espProx, espGen, cr, diasJornada, horizonte,
-             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, pct, apre, recup, s, puja, techo };
+             sRend, sCtx, sVal, sCho, score, prio, etiqueta, tf, base, bonusTop, fComp, tasaC, pct, apre, recup, s, puja, techo };
   });
   const orden = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
   lista.sort((a, b) => orden[a.prio] - orden[b.prio] || b.score - a.score);
@@ -2426,7 +2430,7 @@ function merTarjeta(r) {
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
-    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
+    <p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
       <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
