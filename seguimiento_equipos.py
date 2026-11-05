@@ -27,6 +27,8 @@ import mister_extractor as m
 ARCHIVO = os.path.join(m.CARPETA_SCRIPT, "equipos.json")
 MAX_HISTORIAL = 60        # entradas guardadas por jugador / plantilla
 MAX_MOVIMIENTOS = 100
+ARCHIVO_PUJAS = os.path.join(m.CARPETA_SCRIPT, "pujas.json")
+CLAUSULA_MINIMA = 1000000
 CARPETA_FOTOS = os.path.join(m.CARPETA_SCRIPT, "fotos")
 _fallos_foto = {"n": 0}
 POS = {1: "PT", 2: "DF", 3: "MC", 4: "DL"}
@@ -157,6 +159,42 @@ def detectar_movimientos(previo, managers, ahora):
     return nuevos
 
 
+def registrar_pujas(movimientos, managers):
+    """pujas.json: lo que se pagó en cada compra, para calibrar la puja ideal de la web.
+    Mister pone la cláusula en 1,5 veces el precio pagado (comprobado con todas las cláusulas pagadas en la liga),
+    así que precio = cláusula / 1,5. Con la cláusula mínima (1.000.000 €) solo se sabe que se pagó 666.667 € o menos."""
+    compras = [mv for mv in movimientos if mv.get("to")]
+    if not compras:
+        return
+    try:
+        with open(ARCHIVO_PUJAS, encoding="utf-8") as f:
+            datos = json.load(f)
+    except (OSError, ValueError):
+        datos = {"compras": []}
+    try:
+        with open(os.path.join(m.CARPETA_SCRIPT, "mercado_historial.json"), encoding="utf-8") as f:
+            hist = json.load(f)
+    except (OSError, ValueError):
+        hist = {}
+    jug = {(mg["id"], str(p["id"])): p for mg in managers for p in mg["players"]}
+    for mv in compras:
+        pid = str(mv["playerId"])
+        p = jug.get((mv["to"], pid))
+        cl = (p or {}).get("clause")
+        if not cl:
+            continue
+        tipo = "clausula" if p.get("origin") == "clause" else ("mercado" if not mv.get("from") else "traspaso")
+        dias = [d for d in sorted(hist) if d < mv["ts"][:10] and pid in hist[d]]
+        datos.setdefault("compras", []).insert(0, {
+            "ts": mv["ts"], "playerId": pid, "name": mv["name"], "from": mv.get("from"), "to": mv["to"], "tipo": tipo,
+            "valor": mv["value"], "listado": hist[dias[-1]][pid] if tipo == "mercado" and dias else None,
+            "precio": round(cl / 1.5) if cl > CLAUSULA_MINIMA else None, "clausulaMinima": cl <= CLAUSULA_MINIMA})
+        print(f"   Puja: {mv['name']} ({tipo}) por {round(cl / 1.5) if cl > CLAUSULA_MINIMA else '≤ 666.667'} €")
+    datos["updatedAt"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    with open(ARCHIVO_PUJAS, "w", encoding="utf-8") as f:
+        json.dump(datos, f, ensure_ascii=False, indent=0)
+
+
 def indice_fotos():
     """fotos/indice.json: {idJugador: ruta de su foto más reciente}. La página lo usa para poner cara a los capitanes de
     jornadas pasadas aunque ese jugador ya no esté en ninguna plantilla."""
@@ -204,6 +242,10 @@ def main():
         mv["ts"] = ahora_utc
         print(f"   Movimiento: {mv['name']} | {mv['from']} -> {mv['to']}")
     transfers = (movimientos + previo.get("transfers", []))[:MAX_MOVIMIENTOS]
+    try:
+        registrar_pujas(movimientos, managers)
+    except Exception as e:          # nunca debe impedir guardar las plantillas
+        print(f"[!] No se pudo registrar el precio de las compras: {e}")
 
     salida = {
         "updated": ahora.strftime("%d/%m/%Y %H:%M"),
