@@ -1283,7 +1283,7 @@ function pintarPrevia() {
     ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
-    hayEsp ? `🔮 Probabilidad de ganar la jornada: ${favorito.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pGana || 0)}`).join(", ")}` : "",
+    hayEsp ? ["", "🔮 Probabilidad de ganar la jornada:", ...favorito.map(f => `• ${f.m.name}: ${pctQ(f.pGana || 0)} (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
     "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
