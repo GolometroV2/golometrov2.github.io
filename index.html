@@ -557,6 +557,15 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .hor-p .shield{width:14px;height:14px}
 .hor-p>span{display:flex;flex-wrap:wrap;gap:6px}
 .hor-j{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;background:var(--panel);border-radius:999px;padding:2px 9px 2px 2px;cursor:pointer}
+.og{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.og li{display:flex;align-items:center;gap:10px}
+.og .av{width:34px;height:34px;font-size:11px}
+.og-b{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--panel2)}
+.og-b i{display:block;height:100%}
+.og-ley{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;font-size:11.5px;color:var(--mut)}
+.og-ley span{display:inline-flex;align-items:center;gap:5px}
+.og-ley i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.og-cap{background:repeating-linear-gradient(45deg,var(--acc) 0 3px,transparent 3px 5px);box-shadow:inset 0 0 0 1px var(--acc)}
 </style>
 </head>
 <body>
@@ -1319,6 +1328,29 @@ function pintarPronostico() {
     <p class="note" style="margin:0 0 10px">Simulación de las ${quedan} jornadas que faltan, 3.000 veces, con el ritmo de cada uno hasta ahora.</p>
     <ul class="pron">${PRON.filas.map(f => `<li>${avatar(f.o.m, f.o.i)}<span class="pq"><b>${esc(f.o.m.name)}</b><span class="pb"><i style="width:${(f.g * 100).toFixed(1)}%;background:${col(f.o.i)}"></i></span><small>Podio ${pct(f.p)} · último ${pct(f.u)} · acabaría con ~${Math.round(f.f)} pts</small></span><span class="pp">${pct(f.g)}</span></li>`).join("")}</ul>
     <p class="note">Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
+}
+
+/* ---------- De dónde salen los puntos de cada manager (por posición, con capitán aparte) ---------- */
+function pintarOrigen() {
+  const cont = $("#origen");
+  if (!cont) return;
+  const js = vista === "General" ? jornadas() : [vista];
+  const POSC = { PT: "var(--pt)", DF: "var(--df)", MC: "var(--mc)", DL: "var(--dl)" };
+  const filas = D.managers.map((m, i) => {
+    const s = { PT: 0, DF: 0, MC: 0, DL: 0, CAP: 0 };
+    js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+      (x.players || []).forEach(p => { const base = p.basePoints ?? p.points ?? 0; if (s[p.pos] != null) s[p.pos] += base; });
+      s.CAP += (x.captain || {}).bonus || 0; });
+    const tot = s.PT + s.DF + s.MC + s.DL + s.CAP;
+    return { m, i, s, tot };
+  }).sort((a, b) => b.tot - a.tot);
+  const mx = Math.max(1, ...filas.map(f => f.tot));
+  const seg = (v, c, t) => v > 0 ? `<i style="width:${(v / mx * 100).toFixed(2)}%;background:${c}" title="${t}: ${v}"></i>` : "";
+  cont.innerHTML = `<div class="gh"><h2>¿De dónde salen los puntos?</h2></div>
+    <p class="note" style="margin:0 0 10px">${vista === "General" ? "Toda la temporada" : "Jornada " + esc(vista.slice(1))}: puntos de sus porteros, defensas, medios y delanteros, y el extra del capitán.</p>
+    <div class="og-ley">${[["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<span><i style="background:${POSC[k]}"></i>${t}</span>`).join("")}<span><i class="og-cap"></i>Capitán</span></div>
+    <ul class="og">${filas.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="og-b">${seg(f.s.PT, POSC.PT, "Porteros")}${seg(f.s.DF, POSC.DF, "Defensas")}${seg(f.s.MC, POSC.MC, "Medios")}${seg(f.s.DL, POSC.DL, "Delanteros")}${seg(f.s.CAP, "repeating-linear-gradient(45deg,var(--acc) 0 4px,transparent 4px 7px)", "Capitán")}</span>
+      <small>PT ${f.s.PT} · DF ${f.s.DF} · MC ${f.s.MC} · DL ${f.s.DL} · capitán +${f.s.CAP}</small></span><span class="pp" style="font-size:16px">${f.tot}</span></li>`).join("")}</ul>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -3000,13 +3032,14 @@ function pintar() {
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
     <ul class="rank">${filas}</ul>
-    <nav class="indice" aria-label="Más de la liga">${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga">${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="comp"></section>
     <section class="card" id="caps"></section>
+    <section class="card" id="origen"></section>
     <section class="card" id="premios"></section>`;
   pintarCronica();
   pintarGrafico();
@@ -3015,6 +3048,7 @@ function pintar() {
   pintarComparador();
   pintarCapitanes();
   pintarPremios();
+  pintarOrigen();
 }
 document.addEventListener("change", e => {
   const s = e.target.closest("[data-dsel]");
