@@ -41,6 +41,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - 2026-11-04 (agente, revisión 360 px): la cabecera desbordaba 1 px en Clasificación y Mercado a 360 px (logo + lupa + Actualizar). Hueco y relleno algo menores por debajo de 380 px. Probado a 360 y 390 px en las 4 pestañas: sin desborde ni errores de consola. Cierra la idea pendiente 1.
 - 2026-11-05 (agente, herramienta): el Comparador de jugadores muestra ahora el próximo rival (vs/@) y la probabilidad de ser titular según Futbol Fantasy de cada jugador. Solo lectura de datos existentes. Probado a 360 px con Playwright: sin errores de consola ni desborde. Cierra la idea 4 salvo puntos esperados del modelo.
 - 2026-11-05 (agente, herramienta): el Comparador añade la fila «Puntos esperados» (nivel del jugador × probabilidad de jugar con Futbol Fantasy/AF; misma fórmula que «Cláusulas que merecen la pena»). Probado con Playwright a 360 px: sin errores ni desborde. Cierra la idea 4.
+- 2026-11-05 (agente, textos): dos notas decían «amarillo» (mapa de calor y once recomendado) pero el color es el acento verde; corregidas. Solo texto.
 - 2026-11-05 (agente, herramienta): en el Comparador de jugadores, tocar un jugador abre su ficha y el «vs» central es ahora un botón ⇄ que intercambia A y B (44 px táctiles). Solo interfaz; datos intactos. Probado a 360 px con Playwright: sin errores ni desborde. Idea: puntos esperados del modelo en el comparador.
 
 ## Ideas del dueño (máxima prioridad, léelas siempre)
