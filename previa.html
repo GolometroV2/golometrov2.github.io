@@ -207,6 +207,7 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .hero-et{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accFg);margin:0 0 8px}
 .cp.hero .jp-right b{font-size:22px}
 .cdet{margin-top:8px}
+.cq>span.pq-g{display:block;white-space:normal;font-size:11.5px;color:var(--mut);margin-top:2px}.pq-g b{color:var(--accFg)}
 .hueco{margin:8px 0 10px;padding:10px 12px;border-radius:var(--r-m,10px);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);display:flex;flex-direction:column;gap:4px;font-size:13px}.hueco>b{color:var(--red)}.hueco>span{color:var(--txt)}
 .q-lid{display:flex;flex-wrap:wrap;gap:8px}.q-chip{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel2);font-size:13px}
 .q-chip .av{width:28px;height:28px;font-size:10px;flex:none}.q-chip b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.q-chip em{font-style:normal;font-weight:800;color:var(--accFg);flex:none}
@@ -1289,12 +1290,14 @@ function copiarTexto(btn, txt, base) {
 // (la misma del motor del capitán: su media, su regularidad y el rival). El capitán multiplica. Los que ya han jugado
 // cuentan lo que sacaron. Se repite 4.000 veces con una semilla fija, así cada visita da los mismos porcentajes.
 function simularJornada(eqs, N = 4000) {
-  let s = 20261106; const rnd = () => (s = s * 16807 % 2147483647) / 2147483647;
+  // un generador por manager y dos números por jugador siempre: cambiar un jugador de un once no altera los sorteos de los demás
+  const gen = i => { let s = 20261106 + i * 7919; return () => (s = s * 16807 % 2147483647) / 2147483647; }, rnds = eqs.map((e, i) => gen(i));
   const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N));
   for (let k = 0; k < N; k++) {
     const t = eqs.map((e, i) => {
       let a = e.fijos || 0;
-      e.js.forEach(({ c, mult }) => { if (c.ys && c.ys.length && rnd() < c.pj) a += Math.round(c.ys[Math.floor(rnd() * c.ys.length)]) * mult; });
+      const rnd = rnds[i];
+      e.js.forEach(({ c, mult }) => { const u = rnd(), v = rnd(); if (c.ys && c.ys.length && u < c.pj) a += Math.round(c.ys[Math.floor(v * c.ys.length)]) * mult; });
       tot[i][k] = a; return a;
     });
     const reparte = (v, cuenta) => { const mx = Math.max(...v), w = v.filter(x => x === mx).length; v.forEach((x, i) => { if (x === mx) cuenta[i] += 1 / w; }); };
@@ -1304,6 +1307,7 @@ function simularJornada(eqs, N = 4000) {
   return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
     return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)] }; });
 }
+const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
 const pctQ = p => p < 0.005 ? "<1 %" : p > 0.995 ? ">99 %" : Math.round(p * 100) + " %";
 // Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
 function onceQuiniela(cands) {
@@ -1337,7 +1341,7 @@ function datosQuiniela() {
   if (filas.length >= 3) {
     const sim = simularJornada(filas.map(f => ({ antes: total(f.m), js: [...f.o.PT, ...f.o.DF, ...f.o.MC, ...f.o.DL].map(c => ({ c, mult: c === f.o.cap ? c.m : 1 })) })));
     filas.forEach((f, k) => Object.assign(f, sim[k]));
-    r = { gw: obj.gw, filas: filas.sort((a, b) => b.pGana - a.pGana), primero };
+    r = { gw: obj.gw, orden: filas.slice(), filas: filas.sort((a, b) => b.pGana - a.pGana), primero };   // «orden»: el de la simulación
   }
   QUIN = { clave, r }; return r;
 }
@@ -2870,22 +2874,39 @@ function bloqueParaTi(r) {
   if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = YO && E.managers.some(m => m.id === YO) ? YO : capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
   let rc;
   try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
-  const o = rc && !rc.error ? onceRecomendado(rc.candidatos || []) : null;
+  const o = rc && !rc.error ? onceQuiniela(rc.candidatos || []) : null;
   const pills = selectorM(merMan, "data-mm", null, "Manager");
+  // huecos del once (plantilla que no da para 11): un libre de ese puesto suma entero
+  const nec = o ? (([d, m, f]) => ({ PT: 1, DF: d, MC: m, DL: f }))(o.form.split("-").map(Number)) : {};
   let cuerpo = `<p class="note">No hay datos suficientes de esta plantilla.</p>`;
   if (o) {
     const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
+      if ((o[x.pos] || []).length < (nec[x.pos] || 0)) return { x, tit: null, g: x.espProx };
       const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
       return tit ? { x, tit, g: x.espProx - tit.esp } : null;
     }).filter(y => y && y.g >= 0.3).sort((a, b) => b.g - a.g).slice(0, 5);
-    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
-        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}</span></span>
+    // cuánto cambian sus opciones de ganar la jornada (misma simulación que la Quiniela)
+    const Q = datosQuiniela(), yo = Q && Q.gw === r.gw ? Q.orden.find(f => String(f.m.id) === String(merMan)) : null;
+    if (yo && ganan.length) {
+      const eqs = Q.orden.map(f => ({ antes: total(f.m), js: [...f.o.PT, ...f.o.DF, ...f.o.MC, ...f.o.DL].map(c => ({ c, mult: c === f.o.cap ? c.m : 1 })) }));
+      const k = Q.orden.indexOf(yo);
+      ganan.forEach(y => {
+        const pj = Math.max(0.01, y.x.pj || 0), mu = y.x.espProx / pj;
+        const forma = y.tit && y.tit.ys && y.tit.ys.length ? y.tit.ys : (CAP.MUESTRA_DEF[y.x.pos] || [mu]);
+        const m0 = forma.reduce((t, v) => t + v, 0) / forma.length;
+        const nuevo = { pj, ys: forma.map(v => v - m0 + mu) };
+        const js = y.tit ? eqs[k].js.map(e => e.c.p.id === y.tit.p.id ? { c: nuevo, mult: e.mult > 1 ? 1 : e.mult } : e) : eqs[k].js.concat([{ c: nuevo, mult: 1 }]);
+        y.pAntes = yo.pGana; y.pDesp = simularJornada(eqs.map((e, i) => i === k ? { ...e, js } : e))[k].pGana;
+      });
+    }
+    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g, pAntes, pDesp }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
+        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>${tit ? `por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}` : `cubre el hueco de tu once · ${nf1.format(x.espProx)} pts`}</span>${pDesp != null ? `<span class="pq-g">Ganar la J${r.gw}: ${pctF(pAntes)} → <b>${pctF(pDesp)}</b></span>` : ""}</span>
         <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}</small></span></li>`).join("")}</ul>`
       : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
   }
   return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
     ${pills}${cuerpo}
-    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado.</p></section>`;
+    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado. «Ganar la J»: sus opciones de ganar la jornada con y sin el fichaje, con la simulación de la Quiniela.</p></section>`;
 }
 
 // Subidas y bajadas de valor de hoy en toda la liga (jugadores.json: valor de hoy frente al de ayer)
