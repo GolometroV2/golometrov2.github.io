@@ -1426,7 +1426,7 @@ function simularJornada(eqs, N = 4000) {
   return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
     return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)], vence: vence[i].map(x => x / N) }; });
 }
-const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
+const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + "\u00a0%" : pctQ(p);   // con un decimal
 const pctQ = p => p < 0.005 ? "<1\u00a0%" : p > 0.995 ? ">99\u00a0%" : Math.round(p * 100) + "\u00a0%";   // espacio duro: el % no se separa del número
 // Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
 function onceQuiniela(cands) {
