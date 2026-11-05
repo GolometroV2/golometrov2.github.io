@@ -19,15 +19,15 @@ jobs:
           python3 - <<"PY"
           import re, collections
           h=open('/tmp/p.html',encoding='utf-8',errors='replace').read()
-          links=sorted(set(re.findall(r'href="(/[^"#?]*)"',h)))
-          print([l for l in links if 'alinea' in l or 'partido' in l][:40])
-          for k in ['titular','probab','porcentaje','%']:
-              print(k, h.lower().count(k))
-          # trozos con porcentajes
-          txt=re.sub(r'<script.*?</script>|<style.*?</style>','',h,flags=re.S)
-          for m in list(re.finditer(r'(\d{1,3})\s*%',txt))[:6]:
-              print('---', re.sub(r'\s+',' ',txt[m.start()-700:m.end()+200]))
-          # datos embebidos de Next (self.__next_f)
+          import json
           print('next_f:', h.count('self.__next_f'))
-          i=h.find('probab'); print('PROBAB:', h[i-600:i+600])
+          chunks=re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)</script>',h,re.S)
+          data=''.join(c.encode().decode('unicode_escape',errors='ignore') for c in chunks)
+          print('len rsc', len(data))
+          for kw in ['probab','titular','starter','"percent','lineup','doubt','duda']:
+              idx=[m.start() for m in re.finditer(kw,data,re.I)][:3]; print(kw, len(re.findall(kw,data,re.I)), idx)
+          i=data.lower().find('probab'); print('RSC1:', data[max(0,i-1500):i+1500])
+          txt=re.sub(r'<script.*?</script>|<style.*?</style>|<svg.*?</svg>','',h,flags=re.S)
+          j=txt.find('%'); 
+          for m in list(re.finditer(r'\d{1,3}\s?%',txt))[:3]: print('HTML%:', re.sub(r'\s+',' ',re.sub(r'<[^>]+>',' | ',txt[m.start()-900:m.end()+100]))[-500:])
           PY
