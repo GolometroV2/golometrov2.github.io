@@ -737,7 +737,7 @@ body.tv-on{overflow:hidden}
 .tv-tk span{font-family:var(--f-disp);font-weight:600;font-size:clamp(13px,1.7vw,20px);color:#cfe3d7;white-space:nowrap}
 .tv-tk span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#2fd46e;margin-right:10px;vertical-align:middle;box-shadow:0 0 6px #2fd46e}
 @keyframes tvtk{to{transform:translateX(-50%)}}
-@media (max-width:699px){.tv-g{display:none}}
+@media (max-width:699px){.tv-g{display:none}.tv-st{order:5;flex-basis:100%}.tv-hr{font-size:18px}}
 @media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.6vw,64px);height:clamp(40px,4.6vw,64px)}}
 @media (prefers-reduced-motion:reduce){.tv-tk>div{animation:none;flex-wrap:wrap;width:auto}}
 /* ---- cabecera compacta fuera de Clasificación; etiquetas en minúscula ---- */
@@ -772,6 +772,10 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .rd-ley{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin:4px 0 0}
 .rd-ley span{display:inline-flex;align-items:center;gap:6px}.rd-ley i{width:14px;height:3px;border-radius:2px;display:inline-block}
 .rd-ic{border-top:2px dashed var(--mut);height:0!important;background:none!important}
+/* ---- ficha de jugador ---- */
+.f4 b{font-family:var(--f-disp);font-stretch:85%;font-size:18px}
+.ov-c{box-shadow:0 -1px 0 #2fd46e55,0 -20px 60px -20px #2fd46e40}
+.esq i{background:linear-gradient(90deg,var(--panel) 0,color-mix(in srgb,var(--panel2) 70%,#2fd46e 6%) 50%,var(--panel) 100%);background-size:200% 100%}
 /* ---- detalles ---- */
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
@@ -4065,14 +4069,15 @@ async function dibujarTarjeta(o) {
 }
 async function compartirImagen(clave, btn) {
   const o = IMG_DATOS[clave]; if (!o) return;
-  const txt0 = btn ? btn.textContent : ""; if (btn) { btn.disabled = true; btn.textContent = "Preparando…"; }
+  const html0 = btn ? btn.innerHTML : "", corto = btn && !btn.textContent.trim();
+  if (btn) { btn.disabled = true; if (!corto) btn.textContent = "Preparando…"; }
   try {
     const blob = await dibujarTarjeta(o); if (!blob) throw new Error("sin imagen");
     const nombre = `golometro-${clave}.png`, file = new File([blob], nombre, { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file] }).catch(() => {});
     else { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
-    if (btn) btn.textContent = txt0;
-  } catch (e) { if (btn) { btn.textContent = "No se pudo crear"; setTimeout(() => { btn.textContent = txt0; }, 1600); } }
+    if (btn) btn.innerHTML = html0;
+  } catch (e) { if (btn) { if (!corto) btn.textContent = "No se pudo crear"; setTimeout(() => { btn.innerHTML = html0; }, 1600); } }
   finally { if (btn) btn.disabled = false; }
 }
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-img]"); if (b) compartirImagen(b.dataset.img, b); });
@@ -4132,6 +4137,7 @@ function pintarTV() {
     cuerpo = `<p class="tv-sub">Quién tiene más opciones de ganar la jornada si cada uno pone su mejor once</p>
       <ol class="tv-l" style="--fil:${Math.ceil(Q.filas.length / 2)}">${Q.filas.map((f, k) => `<li style="--c:${col(f.i)};--w:${(f.pGana / mx * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(f.m, f.i)}<span class="tv-n"><b>${esc(f.m.name)}</b><small>≈ ${Math.round(f.media)} pts · capitán ${esc(apellido(f.o.cap.p.short || f.o.cap.p.name))}</small><i class="tv-b"></i></span><span class="tv-v">${pctQ(f.pGana)}</span></li>`).join("")}</ol>`;
     ticker = Q.filas.map(f => `${f.m.name}: líder tras la jornada ${pctQ(f.pLider)}`);
+    IMG_DATOS.tv = { titulo: `Predicción · jornada ${Q.gw}`, sub: "Probabilidad de ganar la jornada con el mejor once", filas: Q.filas.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana), det: `≈ ${Math.round(f.media)} pts`, w: f.pGana / mx })), pie: "" };
   } else if (j) {
     // durante o después de la jornada: puntos de la jornada, cuántos faltan y cómo acabaría cada uno
     const S = serieLiga(), kj = S.js.indexOf(j);
@@ -4144,6 +4150,7 @@ function pintarTV() {
     const genOrd = L.slice().sort((a, b) => b.gen - a.gen);
     cuerpo = `<p class="tv-sub">${termin ? "Puntos de la jornada" : "Puntos de la jornada y cómo acabaría cada uno con los partidos que faltan"}</p>
       <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><small>${x.cap ? `© ${esc(apellido(x.cap.name))} ${x.cap.points ?? ""}` : ""}${!termin && x.v.n ? ` · ⏳ ${x.v.n}<span class="tv-g"> por jugar</span> · ≈ ${Math.round(x.pts + x.v.esp)}` : ""}<span class="tv-g"> · ${genOrd.indexOf(x) + 1}.º en la general (${x.gen})</span></small><i class="tv-b"></i></span><span class="tv-v">${x.pts}</span></li>`).join("")}</ol>`;
+    IMG_DATOS.tv = { titulo: `Jornada ${n} · ${termin ? "resultado" : "en directo"}`, sub: termin ? "Puntos de la jornada" : `Actualizado a las ${hora}`, filas: L.map(x => ({ m: x.m, i: x.i, valor: String(x.pts), det: !termin && x.v.n ? `${x.v.n} por jugar · ≈ ${Math.round(x.pts + x.v.esp)}` : `${genOrd.indexOf(x) + 1}.º en la general`, w: x.pts / Math.max(1, L[0].pts) })), pie: "" };
     const jug = []; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played !== false && capNum(p.points)) jug.push(p); }));
     const vistos = new Set();
     ticker = jug.sort((a, b) => b.points - a.points).filter(p => !vistos.has(p.id) && vistos.add(p.id)).slice(0, 14).map(p => `${p.name} ${p.points}${p.captain ? " ©" : ""}`);
@@ -4157,7 +4164,7 @@ function pintarTV() {
   }
   const tick = ticker.length ? `<div class="tv-tk" aria-hidden="true"><div>${[...ticker, ...ticker].map(t => `<span>${esc(t)}</span>`).join("")}</div></div>` : "";
   tv.innerHTML = `<div class="tv-in">
-    <header class="tv-h"><span class="tv-lg">${titulo}</span>${estado}<span class="tv-hr">${esc(hora)}</span><button class="tv-x" data-tvx="1" aria-label="Salir del modo marcador">✕</button></header>
+    <header class="tv-h"><span class="tv-lg">${titulo}</span>${estado}<span class="tv-hr">${esc(hora)}</span><button class="tv-x" data-img="tv" aria-label="Compartir como imagen" title="Compartir como imagen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button class="tv-x" data-tvx="1" aria-label="Salir del modo marcador">✕</button></header>
     ${prox}<div class="tv-c">${cuerpo}</div>${tick}</div>`;
 }
 document.addEventListener("click", e => {
