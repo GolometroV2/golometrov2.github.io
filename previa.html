@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Golómetro">
 <title>MONEYBALL · Golómetro V2</title>
+<link rel="preload" href="fuentes/saira.woff" as="font" type="font/woff" crossorigin>
 <style>
 /* Paleta "Carbón y verde" (la de la primera versión del Golómetro, elegida por el dueño: nada de amarillo).
    --acc es el verde de acento; --pos es el verde de lo que sube y --red lo que baja. Texto de acento: --accFg. */
@@ -626,7 +627,7 @@ body{background:
 
 /* ---- cabecera ---- */
 .nav{background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4)}
-.logo{font-stretch:118%;font-weight:700;letter-spacing:.2px;font-size:18px}
+.logo{font-stretch:106%;font-weight:700;letter-spacing:.1px;font-size:18px}
 .logo svg{filter:drop-shadow(0 0 6px #2fd46e88)}
 .logo span span{font-stretch:90%;color:var(--accFg);font-weight:600}
 .refresh{font-family:var(--f-disp);font-weight:600;letter-spacing:.2px}
@@ -747,6 +748,7 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .mpuja small,.hero-et{text-transform:none!important;letter-spacing:.1px!important;font-size:11.5px!important}
 .mpuja{background:color-mix(in srgb,var(--bg) 55%,var(--panel2));border:1px solid var(--line)}
 .mpuja b{font-family:var(--f-disp);font-stretch:85%;font-size:17px}
+@media (max-width:420px){.acciones{gap:6px}.busc{width:40px!important;height:40px!important}.refresh{padding:7px 11px}.logo{font-size:17px}}
 @media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px}}
 .comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
 /* ---- el once sobre un campo con sus líneas ---- */
@@ -899,13 +901,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05f";
+const NOVEDADES_V = "2026-11-06a";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación: elige tu escudo y verás tu capitán, tus opciones y qué revisar (y, con la jornada en juego, cómo vas). La <b>Predicción de la jornada</b> con el duelo por el liderato, la <b>previa</b> con la probabilidad de ganar de cada uno y la crónica dice si acertó. En Mercado, la <b>puja ideal</b> sale de lo que de verdad se paga en esta liga, con la probabilidad de llevártelo y un simulador. En Equipos, el <b>valor dentro de una semana</b>.</span>
+    <span>Nuevo diseño «Noche de partido». Toca 📺 arriba para el <b>modo marcador</b> (la jornada a pantalla completa para la tele), 🖼️ para <b>compartir como imagen</b> la previa, la predicción o la crónica, y 📅 en la cuenta atrás para meter las jornadas en tu <b>calendario</b>. En Equipos, el <b>perfil de cada manager</b>.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
