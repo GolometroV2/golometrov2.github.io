@@ -416,6 +416,7 @@ code{color:var(--accFg)}
 .mh.prio-imperdible{border-color:var(--red);background:linear-gradient(165deg,var(--redBg),var(--panel) 55%)}
 .mh .ch-q b{font-size:20px}
 .mh-puja{color:var(--accFg)}
+.simp{margin:10px 0 0;display:flex;flex-direction:column;gap:6px;font-size:12.5px}.simp label{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;color:var(--mut)}.simp-v{color:var(--txt);font-size:14px}.simp-r{color:var(--accFg);font-weight:700}.simp input{width:100%;min-height:44px;accent-color:var(--acc,#22c55e);margin:0}
 .pl-tr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pl-tr>div{background:var(--panel2);border-radius:var(--r-m,10px);padding:8px;display:flex;flex-direction:column;gap:2px;min-width:0}.pl-tr small{font-size:11px;color:var(--mut)}.pl-tr b{font-size:18px;color:var(--accFg)}.pl-tr span{font-size:10.5px;color:var(--mut);line-height:1.25}
 .ch-gana{margin:8px 0 0;font-size:13px;padding:8px 10px;border-radius:var(--r-m,10px);background:var(--panel2)}.ch-gana b{color:var(--accFg)}
 .mh .ch-kpi b{font-size:19px}
@@ -2880,6 +2881,20 @@ function bloqueInversion(r) {
     <ul class="clist">${L.map(y => `<li class="crow" data-ficha="${esc(y.x.j.id)}">${cara(y.x.j.id, y.x.j.name, y.x.j.teamId, 36)}<span class="cq"><b>${esc(y.x.j.name)}</b><span>puja ${merEur(y.x.puja)} → ${merEur(y.x.V * (1 + y.g7))}</span></span><span class="cr"><b class="up">+${eur(y.neto7)}</b><small>en 7 días</small></span></li>`).join("")}</ul>
     <p class="note">A la derecha, lo que ganarías vendiéndolo en 7 días, ya descontado lo que pagas de más. Es una previsión: un mal partido o una lesión la cambian de golpe. Por debajo de 1 M el valor se mueve al azar y no se incluye.</p></section>`;
 }
+// Simulador: «si pujo esto, ¿me lo llevo?» (misma cuenta que la puja ideal)
+function htmlSimPuja(r) {
+  if (!r.pl || r.prio === "evitar") return "";
+  const max = Math.max(r.techo, r.puja, r.V * 2.2), paso = r.V >= 5e6 ? 50000 : r.V >= 1e6 ? 10000 : 1000;
+  return `<div class="simp" data-simv="${r.V}" data-simq="${r.pl.q}"><label>¿Y si pujo otra cifra? <b class="simp-v">${merPuja(r.puja)}</b> <span class="simp-r">+${Math.round((r.puja / r.V - 1) * 100)} % · te lo llevas ${pc(r.pl.p)}</span></label>
+    <input type="range" min="${r.V}" max="${Math.round(max / paso) * paso}" step="${paso}" value="${r.puja}" data-simp="1" aria-label="Puja de prueba"></div>`;
+}
+function moverSimPuja(inp) {
+  const c = inp.closest(".simp"); if (!c) return;
+  const V = +c.dataset.simv, q = +c.dataset.simq, b = +inp.value, s = b / V - 1, p = pGanarPuja(V, s, q, obsPujas());
+  c.querySelector(".simp-v").textContent = merPuja(b);
+  c.querySelector(".simp-r").textContent = `+${Math.round(s * 100)} % · te lo llevas ${p != null ? pc(p) : "?"}`;
+}
+document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-simp]")) moverSimPuja(e.target); });
 // Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
 function bloquePujasLiga() {
   const O = obsPujas();
@@ -2942,6 +2957,7 @@ function heroMer(r, cierre) {
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
     ${r.pl ? `<p class="ch-gana">Con esta puja te lo llevas <b>${pc(r.pl.p)}</b> de las veces${r.pl.tope ? " (no compensa pagar más)" : ""}.${r.sFF != null ? ` Futbol Fantasy: ${r.sFF > 0 ? `puja máxima rentable <b>${merPuja(redondeaPuja(r.V * (1 + r.sFF)))}</b> (+${nf1.format(r.sFF * 100)} %)` : "sin rentabilidad (cree que va a bajar)"}.` : ""} ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}: <b>${merPuja(r.techo)}</b>.` : ""}</p>` : ""}
+    ${htmlSimPuja(r)}
     <p class="ch-por">${esc(fraseMer(r))}${r.pl ? "" : ` No pases de <b>${merPuja(r.techo)}</b>.`}${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
@@ -2969,7 +2985,7 @@ function merTarjeta(r) {
       </div>
       <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}${r.pl && r.prio !== "evitar" ? ` · ${pc(r.pl.p)}` : ""}</span></div>
     </div>
-    <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}</div></details></li>`;
+    <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}${htmlSimPuja(r)}</div></details></li>`;
 }
 
 // Jugadores de toda la liga con mejores últimas 3 jornadas, y si se pueden conseguir (libres, en venta o de quién son)
