@@ -543,6 +543,10 @@ li[data-ficha]{cursor:pointer}
 li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 @media(max-width:380px){.nav>div{gap:6px}.logo{font-size:17px;gap:6px}.acciones{gap:6px}.refresh{padding:7px 11px}}
 .oi-p[data-ficha]{cursor:pointer}
+.forma{display:flex;align-items:center;gap:3px;margin-top:2px}
+.fm{font-style:normal;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--panel2);color:var(--mut);margin:0!important}
+.fm-a{background:var(--pos);color:var(--accTxt)}.fm-b{background:var(--red);color:#fff}
+.forma em{font-style:normal;margin-left:6px;font-size:11.5px;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -2912,6 +2916,14 @@ function pintar() {
     const S = serieLiga(), n = S.js.length;
     S.ms.forEach((o, x) => { mov[o.m.id] = S.rank[n - 2][x] - S.rank[n - 1][x]; });
   }
+  // forma: puesto de cada manager en sus últimas 5 jornadas (verde arriba, rojo abajo), como en las tablas de fútbol
+  const forma = {};
+  if (vista === "General" && jornadas().length) {
+    const S = serieLiga(), n = S.js.length, N = S.ms.length;
+    S.ms.forEach((o, x) => { forma[o.m.id] = S.js.slice(-5).map((j, kk) => { const k = n - Math.min(5, n) + kk;
+      const pos = 1 + S.ms.filter((_, y) => S.pts[y][k] > S.pts[x][k]).length;
+      return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
+  }
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
@@ -2919,7 +2931,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
-          <span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>
+          ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
       </button>
