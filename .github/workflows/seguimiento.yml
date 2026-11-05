@@ -72,6 +72,7 @@ jobs:
               GH_TOKEN="${{ github.token }}" gh workflow run mercado.yml --repo "${{ github.repository }}" --ref main || echo "Aviso: no se pudo lanzar el mercado"
             fi
             if [ -f equipos.json ]; then git add equipos.json; fi
+            if [ -f pujas.json ]; then git add pujas.json; fi
             if [ -f calendario.json ]; then git add calendario.json; fi
             if [ -d avatars ]; then git add avatars; fi
             if [ -d fotos ]; then git add fotos; fi
