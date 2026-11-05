@@ -48,7 +48,12 @@ jobs:
             python calendario_mister.py || echo "Aviso: no se pudo actualizar el calendario"
             # Puntos en directo: mientras haya un partido en juego (o acabado hace menos de 3 h), se relee
             # la clasificación de Mister cada 15 minutos para que la web muestre los puntos de la jornada en curso.
-            if python3 -c "import json,time,sys;c=json.load(open('calendario.json'));t=time.time();sys.exit(0 if any(0<(g.get('ts') or 0)<=t<=(g.get('ts') or 0)+3*3600 for g in c.get('games',[])) else 1)" 2>/dev/null && [ $((SECONDS - ULTIMO_EXT)) -ge 900 ]; then
+            # Al arrancar una jornada, los onces guardados son de antes del primer partido y Mister tarda un rato
+            # en cerrarlos: hasta tener una lectura de al menos 5 minutos después del primer partido de la jornada
+            # (la que usa la «Previa de la jornada»), se relee en cada vuelta, es decir, cada 5 minutos.
+            CADA=900
+            if python3 -c "import json,time,sys,datetime;c=json.load(open('calendario.json'));d=json.load(open('mister_fantasy_data.json'));t=time.time();v=[g['gw'] for g in c.get('games',[]) if 0<(g.get('ts') or 0)<=t<=(g.get('ts') or 0)+3*3600];p=min((g['ts'] for g in c['games'] if v and g.get('gw')==v[0] and g.get('ts')),default=0);u=datetime.datetime.fromisoformat(d['updatedAt'].replace('Z','+00:00')).timestamp();sys.exit(0 if v and u<p+300 else 1)" 2>/dev/null; then CADA=240; fi
+            if python3 -c "import json,time,sys;c=json.load(open('calendario.json'));t=time.time();sys.exit(0 if any(0<(g.get('ts') or 0)<=t<=(g.get('ts') or 0)+3*3600 for g in c.get('games',[])) else 1)" 2>/dev/null && [ $((SECONDS - ULTIMO_EXT)) -ge $CADA ]; then
               ULTIMO_EXT=$SECONDS
               if python mister_extractor.py > /tmp/extractor.log 2>&1; then
                 git add mister_fantasy_data.json
