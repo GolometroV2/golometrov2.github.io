@@ -1387,6 +1387,12 @@ function pintarCronica() {
     filas.forEach(f => { const dlt = S.rank[k - 1][f.x] - S.rank[k][f.x]; if (dlt > 0 && (!sube || dlt > sube.dlt)) sube = { f, dlt }; if (dlt < 0 && (!baja || dlt < baja.dlt)) baja = { f, dlt }; });
   }
   const gol = filas.slice().sort((a, b) => (b.d.goals || 0) - (a.d.goals || 0))[0];
+  // banquillo: quién se dejó más puntos fuera y quién clavó la alineación (necesita plantillas y puntos de todos los jugadores)
+  if (!LIGAJ) cargarLigaJ();
+  const BQ = banquilloJornada(cronJ);
+  const bqL = BQ ? filas.filter(f => BQ[f.m.id]).map(f => ({ f, b: BQ[f.m.id] })) : [];
+  const bqTop = bqL.filter(x => x.b.perdidos > 0).sort((a, b) => b.b.perdidos - a.b.perdidos)[0];
+  const bqPerf = bqL.filter(x => x.b.perdidos === 0).map(x => x.f);
   const tile = (ico, tit, main, sub, extra = "") => `<div class="ct-t">${extra || `<span class="ct-ico">${ico}</span>`}<span class="ct-x"><small>${tit}</small><b>${main}</b><span>${sub}</span></span></div>`;
   const nav = `<div class="ct-nav"><button data-cj="-1" ${k === 0 ? "disabled" : ""} aria-label="Jornada anterior">‹</button><span>Jornada ${esc(cronJ.slice(1))}</span><button data-cj="1" ${k === js.length - 1 ? "disabled" : ""} aria-label="Jornada siguiente">›</button></div>`;
   const tiles = [
@@ -1395,7 +1401,9 @@ function pintarCronica() {
     sube ? tile("📈", "La remontada", esc(sube.f.m.name), `Sube ${sube.dlt} ${sube.dlt === 1 ? "puesto" : "puestos"}: ahora ${S.rank[k][sube.f.x]}.º`) : "",
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
-    tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`)
+    tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
+    bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
+    bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
   ].join("");
   // texto listo para pegar en el grupo de WhatsApp de la liga
   const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
@@ -1406,13 +1414,43 @@ function pintarCronica() {
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
     gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
-    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`, "", "Clasificación:",
+    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
+    bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
+    bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button></div>
+    ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
+}
+// Puntos que cada manager dejó en el banquillo: su plantilla al empezar la jornada (la de hoy deshaciendo los movimientos
+// posteriores) frente al mejor once posible a toro pasado, sin contar el capitán. null si los movimientos guardados no llegan tan atrás.
+function banquilloJornada(j) {
+  if (!E || !E.transfers || !E.managers || !CAL || !LIGAJ || LIGAJ.cargando) return null;
+  const g = (CAL.gameweeks || []).find(x => "J" + x.gw === j); if (!g || !g.first) return null;
+  const ini = Date.parse(g.first.replace(" ", "T") + "+01:00");
+  const T = E.transfers.filter(t => t.ts).sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts));
+  if (!T.length || Date.parse(T[T.length - 1].ts) > ini) return null;
+  const sq = {}; E.managers.forEach(m => { sq[m.id] = {}; m.players.forEach(p => { sq[m.id][p.id] = p.pos; }); });
+  for (const t of T) { if (Date.parse(t.ts) <= ini) break;
+    if (t.to && sq[t.to]) delete sq[t.to][t.playerId];
+    if (t.from && sq[t.from]) sq[t.from][t.playerId] = (LIGAJ.jug[String(t.playerId)] || {}).pos; }
+  const md = D.matchdays[j] || {}, n = j.slice(1), bp = p => p.basePoints ?? p.points ?? 0, out = {};
+  D.managers.forEach(m => {
+    const x = md[m.id]; if (!x || !(x.players || []).length || !sq[m.id]) return;
+    const lin = {}; x.players.forEach(p => { lin[p.id] = p; });
+    const todos = {}; Object.entries(sq[m.id]).forEach(([id, pos]) => { todos[id] = { pos, pts: lin[id] ? bp(lin[id]) : +((LIGAJ.pts[id] || {})[n]) || 0 }; });
+    x.players.forEach(p => { if (!todos[p.id]) todos[p.id] = { pos: p.pos, pts: bp(p) }; });
+    const por = pos => Object.values(todos).filter(v => v.pos === pos).map(v => v.pts).sort((a, b) => b - a);
+    const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") }, suma = (v, k) => v.slice(0, k).reduce((t, y) => t + y, 0);
+    const max = Math.max(...FORMACIONES.map(([d, mm, f]) => suma(L.PT, 1) + suma(L.DF, d) + suma(L.MC, mm) + suma(L.DL, f)));
+    const real = x.players.reduce((t, p) => t + bp(p), 0);
+    const banco = Object.entries(todos).filter(([id]) => !lin[id]).map(([id, v]) => ({ id, ...v, name: (LIGAJ.jug[id] || {}).name || "?" })).sort((a, b) => b.pts - a.pts);
+    out[m.id] = { real, max, perdidos: Math.max(0, max - real), banco };
+  });
+  return Object.keys(out).length >= 2 ? out : null;
 }
 let onceAbierto = false, CRON_TXT = "";
 function compartirCronica(btn) { copiarTexto(btn, CRON_TXT, "📋 Copiar"); }
