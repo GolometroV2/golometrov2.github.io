@@ -1062,7 +1062,9 @@ function abrirFicha(id) {
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : `${Math.round(ff.p * 100)} %`}</b> de ser titular según Futbol Fantasy` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
-    ${spark}</div>`;
+    ${spark}
+    ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
+      return mv.length ? `<h3 class="sec">Sus últimos movimientos en la liga</h3><ul class="clist">${mv.map(t => `<li class="mv mv2" style="padding:6px 0"><span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>` : ""; })()}</div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
 }
 function cerrarOv() { ["#ovBusc", "#ovFicha"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
