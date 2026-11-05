@@ -2391,7 +2391,7 @@ function heroMer(r, cierre) {
         <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
-    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.</p>
+    <p class="ch-por">${esc(fraseMer(r))} No pases de <b>${merPuja(r.techo)}</b>.${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
 
@@ -2510,7 +2510,22 @@ function bloqueCalendario() {
 let MER_HIST = null;
 function cargarMerHist() {
   if (MER_HIST) return; MER_HIST = {};
-  fetch("mercado_historial.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => { MER_HIST = j || {}; if (seccion === "mer") pintarMercado(); });
+  fetch("mercado_historial.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => { MER_HIST = j || {}; TASAS = null; if (seccion === "mer") pintarMercado(); });
+}
+// Competencia: qué parte de los libres de un precio parecido acabó fichando alguien (historial del mercado + fichajes)
+let TASAS = null;
+function tasaFichaje(v) {
+  if (!MER_HIST || !E || !E.transfers || !Object.keys(MER_HIST).length) return null;
+  if (!TASAS) {
+    const fich = E.transfers.filter(t => !t.from && t.to && t.ts);
+    const tramo = x => x < 1e6 ? 0 : x < 5e6 ? 1 : 2, c = [0, 0, 0], n = [0, 0, 0];
+    Object.entries(MER_HIST).forEach(([f, lst]) => { const ini = Date.parse(f + "T00:00:00Z"), fin = ini + 54 * 3600 * 1000;
+      Object.entries(lst || {}).forEach(([id, val]) => { const k = tramo(val); n[k]++; if (fich.some(t => String(t.playerId) === id && Date.parse(t.ts) >= ini && Date.parse(t.ts) <= fin)) c[k]++; }); });
+    const tot = c.reduce((a, b) => a + b, 0) / Math.max(1, n.reduce((a, b) => a + b, 0));
+    TASAS = n.map((nn, k) => ({ p: (c[k] + 5 * tot) / (nn + 5), n: nn }));
+  }
+  const t = TASAS[v < 1e6 ? 0 : v < 5e6 ? 1 : 2];
+  return t.n >= 8 ? t.p : null;
 }
 function bloqueMercadoAyer(M) {
   cargarMerHist();
