@@ -1238,11 +1238,23 @@ function pintarComparador() {
   const sel = lado => { const p = lado ? B : A; return `<input class="cp-in" list="cp-lista" data-csel="${lado}" value="${esc(p.name)}" aria-label="Jugador ${lado ? "B" : "A"}" autocomplete="off" onfocus="this.select()">`; };
   const cab = p => `<div class="du-m">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
   const rac = p => (p.streak || []).map(v => `<span>${v === "-" || v == null ? "–" : v}</span>`).join(" ");
+  // próximo partido y probabilidad de ser titular (Futbol Fantasy), igual que en la ficha
+  const nomEq = {}; (CAL && CAL.games || []).forEach(g => { nomEq[g.home] = g.homeName; nomEq[g.away] = g.awayName; });
+  const ahora = Date.now() / 1000;
+  const sig = p => {
+    const g = (CAL && CAL.games || []).filter(x => !capNum(x.gh) && x.status !== "played" && (x.home === p.teamId || x.away === p.teamId) && (x.ts || 0) > ahora - 3 * 3600).sort((x, y) => x.ts - y.ts)[0];
+    const fe = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], fk = fe && Object.keys(fe).sort()[0], ff = fk ? fe[fk] : null;
+    if (!g) return "Sin partido próximo";
+    const casa = g.home === p.teamId;
+    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${ff.conf ? (ff.p >= 0.5 ? "titular confirmado" : "suplente") : Math.round(ff.p * 100) + " % titular"}</small>` : ""}`;
+  };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
     <div class="du-sel">${sel(0)}<span>vs</span>${sel(1)}</div>
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
+    <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
+    <p class="note">Próximo partido y probabilidad de ser titular según Futbol Fantasy.</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
     <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones.</p>`;
 }
