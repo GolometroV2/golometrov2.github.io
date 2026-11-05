@@ -566,6 +566,7 @@ li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)
 .og-ley span{display:inline-flex;align-items:center;gap:5px}
 .og-ley i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .og-cap{background:repeating-linear-gradient(45deg,var(--acc) 0 3px,transparent 3px 5px);box-shadow:inset 0 0 0 1px var(--acc)}
+.vivo-d{font-style:normal;color:var(--red);font-size:10px;vertical-align:2px;animation:latido 2s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -690,6 +691,12 @@ function htmlNovedades() {
   return `<div class="nov"><b>Novedades en el Golómetro</b>
     <span>Pulsa «☆ Soy yo» al elegir tu equipo y la web te lo marcará en todas partes. Nuevo: capitanes previstos de toda la liga, tabla de duelos y candidatos a vender. Y puedes instalarla como una app: en el móvil, menú del navegador → «Añadir a pantalla de inicio».</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
+}
+// número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
+function jornadaEnVivo() {
+  if (!CAL || !CAL.games) return null;
+  const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
+  return g ? g.gw : null;
 }
 function pintarAviso() {
   const cont = $("#aviso");
@@ -3030,7 +3037,7 @@ function pintar() {
       <button class="jsel-t ${!enJ ? "on" : ""}" data-v="General" aria-pressed="${!enJ}">Total</button>
       <div class="jsel-j ${enJ ? "on" : ""}">
         <button data-v="${esc(ant || (enJ ? js_[0] : ultima))}" ${enJ && !ant ? "disabled" : ""} aria-label="Jornada anterior">‹</button>
-        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"} <span aria-hidden="true">▾</span></button>
+        <button class="jsel-n" data-jsel="1" aria-expanded="${jselAbierto}">${enJ ? `Jornada ${esc(vista.slice(1))}` : "Por jornada"}${enJ && jornadaEnVivo() === +vista.slice(1) ? ` <i class="vivo-d" title="En directo">●</i>` : ""} <span aria-hidden="true">▾</span></button>
         <button data-v="${esc(sig_ || ultima)}" ${enJ && !sig_ ? "disabled" : ""} aria-label="Jornada siguiente">›</button>
       </div></div>
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
