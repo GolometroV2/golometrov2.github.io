@@ -19,10 +19,8 @@ jobs:
           python3 - <<"PY"
           import re, collections
           h=open('/tmp/p.html',encoding='utf-8',errors='replace').read()
-          print("enlaces alineac:", sorted(set(re.findall(r'href="([^"]*alinea[^"]*)"',h)))[:30])
-          print("enlaces partido:", sorted(set(re.findall(r'href="([^"]*(?:partido|match)[^"]*)"',h)))[:20])
-          print("next data:", '__NEXT_DATA__' in h, "nuxt:", '__NUXT' in h)
-          for k in ['titular','probab','%','starter','lineup']:
+          links=sorted(set(re.findall(r'href="(/[^"#?]*)"',h)))
+          print(len(links)); print([l for l in links if not l.startswith('/noticias/')][:120])
+          for k in ['titular','probab','%','starter','lineup','alinea']:
               print(k, h.lower().count(k))
-          i=h.find('__NEXT_DATA__'); print(h[i:i+1500] if i>0 else h[:1200])
           PY
