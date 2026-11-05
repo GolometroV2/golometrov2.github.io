@@ -653,7 +653,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -705,6 +705,8 @@ function htmlNovedades() {
 // Proyección de una jornada empezada: por manager, alineados cuyo partido aún no ha empezado y sus puntos esperados
 // (capitán incluido). null si la jornada no está a medias.
 let PROY = { k: "", v: null };
+// la clasificación se pinta antes de tener calendario y plantillas: si hay jornada a medias, se repinta al llegar
+function repintarSiVivo() { if (seccion === "clas" && D && CAL && E && jornadas().length && proyeccionVivo(jornadas().slice(-1)[0])) pintar(); }
 function proyeccionVivo(j) {
   if (!CAL || !CAL.games || !E) return null;
   const n = +j.slice(1), g = CAL.games.filter(x => x.gw === n), t = Date.now() / 1000;
@@ -2940,7 +2942,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) pintarPrevia(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) pintarPrevia(); repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
