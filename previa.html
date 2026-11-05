@@ -2799,7 +2799,9 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
 //   F(s) = parte de las compras de la liga de jugadores de precio parecido que se cerraron por debajo de s.
 const PUJA = {
   OBJETIVO: { imperdible: 0.95, top: 0.9, bueno: 0.85, favorable: 0.8, inversion: 0.8, normal: 0.75 },   // probabilidad de llevártelo que se busca
-  RIVAL: { imperdible: 3, top: 2.6, bueno: 2, favorable: 1.6, inversion: 1.6, normal: 1 },                   // interés de los demás frente a un libre cualquiera
+  // probabilidad de que otro manager puje por él. Medido el 05/11 en 165 libres: con media de 5 pts o más se fichó
+  // el 60 % (9 de 15); con 3-5 pts el 32 %; con menos de 3 pts el 8 %. «normal» usa la tasa de fichaje de su precio.
+  RIVAL: { imperdible: 0.8, top: 0.7, bueno: 0.55, favorable: 0.45, inversion: 0.45 },
   MAX: { imperdible: 1.3, top: 0.9, bueno: 0.5, favorable: 0.35, inversion: 0.3, normal: 0.12 },             // sobrepuja máxima que compensa
   MAX_EUR: { imperdible: 4e6, top: 2.5e6, bueno: 1.5e6, favorable: 1e6, inversion: 0.8e6, normal: 0.3e6 },  // y en euros por encima del valor
   SEGURO: 0.97, ANCHO: 0.5, SUAVE: 0.05, MIN_OBS: 8
@@ -2836,7 +2838,7 @@ function pGanarPuja(V, s, q, obs) {
 function pujaLiga(V, prio, tasaC, sMin) {
   const obs = obsPujas();
   if (obs.length < PUJA.MIN_OBS) return null;
-  const q = capClamp((tasaC ?? 0.3) * (PUJA.RIVAL[prio] || 1), [0.15, 0.95]), max = Math.max(0.02, Math.min(PUJA.MAX[prio] ?? 0.12, (PUJA.MAX_EUR[prio] ?? 3e5) / V));
+  const q = capClamp(PUJA.RIVAL[prio] ?? (tasaC ?? 0.3), [0.1, 0.9]), max = Math.max(0.02, Math.min(PUJA.MAX[prio] ?? 0.12, (PUJA.MAX_EUR[prio] ?? 3e5) / V));
   const P = x => pGanarPuja(V, x, q, obs);
   let s = null, sSeguro = null;
   for (let x = 0.005; x <= 1.6 + 1e-9; x += 0.005) {
