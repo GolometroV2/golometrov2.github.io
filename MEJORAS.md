@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (a mano por Claude): en Equipos, cada jugador muestra su % de titular en el próximo partido (Futbol Fantasy + Analítica Fantasy, verde/ámbar/rojo) y la cabecera avisa de cuántos están por debajo del 50 %.
 - 2026-11-05 (a mano por Claude): vista «Forma» en Clasificación (clasificación de las últimas 3 jornadas, con todas las métricas y el detalle de cada manager) y novedades actualizadas.
 - 2026-11-05 (a mano por Claude): «¿Quién ficha mejor?» en Equipos (cuánto valor ha ganado o perdido cada compra reciente desde el fichaje, puntos dados desde entonces y balance por manager) y atajo «📣 Previa» en Clasificación mientras la previa está activa.
 - 2026-11-05 (a mano por Claude, petición del dueño): «Previa de la jornada» en Clasificación (aparece cuando la última jornada ha arrancado y aún quedan partidos): capitanes de cada manager con rival y hora, alineados en duda (lesionados o <60 % de titular), qué partido abre la jornada y quién tiene más jugadores, partido clave y pronóstico de puntos de cada once. Botones «Enviar por WhatsApp» en la previa y en la crónica.

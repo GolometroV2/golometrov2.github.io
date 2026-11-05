@@ -228,6 +228,8 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .eqhead{margin-top:12px;border-radius:var(--r-l)}
 .eqhead .mini span{min-height:28px;display:inline-flex;align-items:center}
 .tendline{padding-top:6px;border-top:1px dashed var(--line);margin-top:8px}
+.titc{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-right:8px;white-space:nowrap}
+.titc-ok{background:var(--posBg);color:var(--pos)}.titc-duda{background:color-mix(in srgb,var(--pt) 18%,transparent);color:var(--pt)}.titc-no{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
 .jp-main{display:flex;align-items:center;gap:8px}
 .jp-side{display:flex;flex-direction:column;align-items:center;gap:3px;width:28px;flex:none}
 .shield{width:15px;height:15px;object-fit:contain}
@@ -1915,6 +1917,12 @@ function bloqueVender(m) {
 function detalleEq(m, hp) {
   const L = m.players.map(p => ({ p, h: hp(p.id), t: tendencia(hp(p.id), p) }));
   const dM = m.squadValue - m.squadPrev;
+  // titularidad en su próximo partido (mezcla de Futbol Fantasy y Analítica Fantasy, alineaciones.json)
+  const titDe = p => { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort((a, b) => a - b)[0]; return k ? { gw: k, ff: e[k] } : null; };
+  const chipTit = p => { const x = titDe(p); if (!x) return "";
+    const v = x.ff.p, nv = v >= 0.7 ? "ok" : v >= 0.4 ? "duda" : "no";
+    return `<span class="titc titc-${nv}" title="${esc(textoTit(x.ff))}">J${esc(x.gw)} · ${x.ff.conf ? (v >= 0.5 ? "titular ✔" : "suplente") : Math.round(v * 100) + " % titular"}</span>`; };
+  const enDuda = m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
   const ord = { delta: (a, b) => b.t.d - a.t.d, valor: (a, b) => b.p.value - a.p.value,
     alerta: (a, b) => RANGO[a.t.k] - RANGO[b.t.k] || b.p.value - a.p.value }[eqOrden];
   const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
@@ -1932,13 +1940,13 @@ function detalleEq(m, hp) {
       </div>
       <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
     </div>
-    <div class="tendline"><span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
+    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
   return `<section class="card eqhead"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
       <div style="flex:1;min-width:0"><div class="nm">${esc(m.name)}</div><div class="sub">Valor de plantilla</div></div>
       <div class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(dM)}">${sig(dM)} hoy</em></div></div>
-    <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div></section>
+    <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div>${enDuda ? `<p class="note" style="margin:8px 0 0">⚠ ${enDuda} ${enDuda === 1 ? "jugador tiene" : "jugadores tienen"} menos de un 50 % de ser titular en su próximo partido (Futbol Fantasy y Analítica Fantasy).</p>` : ""}</section>
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
