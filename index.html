@@ -2464,6 +2464,32 @@ function bloqueCalendario() {
     <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${equipos.map(fila).join("")}</tbody></table></div></details>`;
 }
 
+// El mercado anterior: qué libres había y quién se los llevó (equipos.json -> transfers desde el mercado)
+let MER_HIST = null;
+function cargarMerHist() {
+  if (MER_HIST) return; MER_HIST = {};
+  fetch("mercado_historial.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => { MER_HIST = j || {}; if (seccion === "mer") pintarMercado(); });
+}
+function bloqueMercadoAyer(M) {
+  cargarMerHist();
+  const fechas = Object.keys(MER_HIST || {}).sort();
+  const hoy = (M.updatedAt || "").slice(0, 10);
+  const f = fechas.filter(x => x < hoy).slice(-1)[0];
+  if (!f || !E || !M.jug) return "";
+  const ids = Object.keys(MER_HIST[f] || {});
+  if (!ids.length) return "";
+  // se resuelve a las 05:00 del día siguiente: fichajes desde el mercado entre el día del listado y 30 h después
+  const ini = Date.parse(f + "T00:00:00Z"), fin = ini + 54 * 3600 * 1000;
+  const fich = (E.transfers || []).filter(t => !t.from && t.to && t.ts && Date.parse(t.ts) >= ini && Date.parse(t.ts) <= fin);
+  const nombreM = id => ((E.managers || []).find(m => String(m.id) === String(id)) || {}).name || "";
+  const filas = ids.map(id => { const p = M.jug[id] || { id, name: "Jugador " + id }; const t = fich.find(x => String(x.playerId) === String(id)); return { p, t, v: MER_HIST[f][id] }; })
+    .sort((a, b) => (b.t ? 1 : 0) - (a.t ? 1 : 0) || b.v - a.v);
+  const n = filas.filter(x => x.t).length;
+  return `<details class="card cdet-card"><summary class="sumh">El mercado anterior</summary>
+    <p class="note" style="margin:6px 0 8px">Libres del ${f.slice(8, 10)}/${f.slice(5, 7)}: ${n} de ${filas.length} encontraron dueño.</p>
+    <ul class="clist">${filas.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.name)}</b><span>${x.t ? `Fichado por <b class="ct-n">${esc(nombreM(x.t.to))}</b>` : "Nadie lo fichó"}</span></span><span class="cr"><b>${merEur(x.v)}</b><small>valía</small></span></li>`).join("")}</ul></details>`;
+}
+
 function pintarMercado() {
   const cont = $("#mer");
   if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
@@ -2490,6 +2516,7 @@ function pintarMercado() {
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
+    ${bloqueMercadoAyer(MER_DATA)}
     ${bloqueSubidas(MER_DATA)}
     ${bloqueCalendario()}
     ${bloqueRacha(MER_DATA)}
