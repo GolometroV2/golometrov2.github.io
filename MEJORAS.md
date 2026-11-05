@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (Claude a mano, pedido del dueño) · **Previa: probabilidad de ganar la jornada al empezar**. Sale para todos los managers en el WhatsApp de la previa y no cambia mientras avanza la jornada: se calcula con los datos de antes del primer partido (`capCongelar`, como la pestaña Capitán) y sin contar lo ya jugado. Comprobado simulando la J11 a medias: mismos porcentajes que al empezar.
 - 2026-11-05 (Claude a mano) · El dueño no quiere el nombre «Quiniela»: en la web se llama **«Predicción de la jornada»** (atajo «🎲 Predicción»). En el código siguen los nombres `datosQuiniela`, `pintarQuiniela`, `#quin`. No volver a usar «Quiniela» en textos.
 - 2026-11-05 (Claude a mano) · **WhatsApp sin emojis rotos**: en el móvil, el enlace `whatsapp://send?text=` seguía estropeando algunos emojis (aviso del dueño; copiar y pegar iba bien). Ahora los botones «Enviar por WhatsApp» abren el menú de compartir del sistema (`navigator.share`), que pasa el texto tal cual; si el móvil no lo tiene, se usa el enlace.
 - 2026-11-05 (Claude a mano) · **Subidas y bajadas: «Mañana»** (Mercado): los jugadores de toda la liga que más se espera que suban mañana según el modelo con inercia (solo ≥ 1 M; aparece cuando `valorDin.phi` existe).
