@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (Claude a mano) · **Duelo por el liderato** (Predicción de la jornada y su WhatsApp): cuántas veces gana la jornada el líder al segundo (la simulación guarda ahora quién supera a quién en cada vuelta).
 - 2026-11-05 (Claude a mano) · **Tu jornada en directo**: con la jornada a medias la tarjeta pasa a contar cuántos puntos llevas y tu puesto en la jornada, cuántos alineados te faltan y con cuántos acabarías (≈, puesto previsto) y qué probabilidad te daba la previa.
 - 2026-11-05 (Claude a mano) · **Valor dentro de una semana** (Equipos): cuánto se espera que gane o pierda cada plantilla en 7 días con el modelo con inercia, con el jugador que más tira y el que más lastra. Dato curioso medido: la cláusula más rápida se pagó 5 días después de la compra anterior (Fortuño), así que el bloqueo de cláusulas de esta liga es de 5 días o menos.
 - 2026-11-05 (Claude a mano) · **¿Acertó la previa?** (Crónica de la última jornada y su WhatsApp): quién era el favorito de la previa y con qué probabilidad ganó el ganador real. La probabilidad sale de `probJornada(n)` (nueva, compartida con la Previa): datos de antes del primer partido, la jornada se trata como abierta aunque haya terminado, y los alineados que ya no están en ninguna plantilla cuentan como un jugador típico de su posición.

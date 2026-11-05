@@ -213,6 +213,7 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .tuj-yo{display:flex;flex-wrap:wrap;gap:6px}.tuj-yo button{display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%;background:none;border:2px solid transparent;cursor:pointer}.tuj-yo button:hover,.tuj-yo button:focus-visible{border-color:var(--acc)}.tuj-yo .av{width:38px;height:38px}
 .cq>span.pq-g{display:block;white-space:normal;font-size:11.5px;color:var(--mut);margin-top:2px}.pq-g b{color:var(--accFg)}
 .hueco{margin:8px 0 10px;padding:10px 12px;border-radius:var(--r-m,10px);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);display:flex;flex-direction:column;gap:4px;font-size:13px}.hueco>b{color:var(--red)}.hueco>span{color:var(--txt)}
+.q-duelo{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-m,10px);background:var(--panel2);font-size:13px;line-height:1.35}.q-duelo .av{width:34px;height:34px;flex:none}.q-duelo>span{flex:1;min-width:0}
 .q-lid{display:flex;flex-wrap:wrap;gap:8px}.q-chip{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel2);font-size:13px}
 .q-chip .av{width:28px;height:28px;font-size:10px;flex:none}.q-chip b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.q-chip em{font-style:normal;font-weight:800;color:var(--accFg);flex:none}
 .cdet>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--accFg);list-style:none}
@@ -1408,7 +1409,7 @@ function pintarTuJornada() {
 function simularJornada(eqs, N = 4000) {
   // un generador por manager y dos números por jugador siempre: cambiar un jugador de un once no altera los sorteos de los demás
   const gen = i => { let s = 20261106 + i * 7919; return () => (s = s * 16807 % 2147483647) / 2147483647; }, rnds = eqs.map((e, i) => gen(i));
-  const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N));
+  const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N)), vence = eqs.map(() => Array(n).fill(0));
   for (let k = 0; k < N; k++) {
     const t = eqs.map((e, i) => {
       let a = e.fijos || 0;
@@ -1419,12 +1420,13 @@ function simularJornada(eqs, N = 4000) {
     const reparte = (v, cuenta) => { const mx = Math.max(...v), w = v.filter(x => x === mx).length; v.forEach((x, i) => { if (x === mx) cuenta[i] += 1 / w; }); };
     reparte(t, gana);
     reparte(t.map((x, i) => x + (eqs[i].antes || 0)), lider);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (i !== j) vence[i][j] += t[i] > t[j] ? 1 : t[i] === t[j] ? 0.5 : 0;
   }
   return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
-    return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)] }; });
+    return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)], vence: vence[i].map(x => x / N) }; });
 }
 const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
-const pctQ = p => p < 0.005 ? "<1 %" : p > 0.995 ? ">99 %" : Math.round(p * 100) + " %";
+const pctQ = p => p < 0.005 ? "<1\u00a0%" : p > 0.995 ? ">99\u00a0%" : Math.round(p * 100) + "\u00a0%";   // espacio duro: el % no se separa del número
 // Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
 function onceQuiniela(cands) {
   const o = onceRecomendado(cands); if (o) return Object.assign(o, { faltan: 0 });
@@ -1472,13 +1474,18 @@ function pintarQuiniela() {
   const lid = F.slice().sort((a, b) => b.pLider - a.pLider).filter(f => f.pLider >= 0.005);
   const cuando = isFinite(r.primero) ? enMadrid(r.primero * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }) : "";
   const capN = f => apellido(f.o.cap.p.short || f.o.cap.p.name);
+  // los dos primeros de la general: cuántas veces gana la jornada el líder al segundo
+  const gen = r.orden.map(f => ({ f, t: total(f.m) })).sort((a, b) => b.t - a.t);
+  const duelo = gen.length > 1 ? { a: gen[0].f, b: gen[1].f, dif: gen[0].t - gen[1].t, p: gen[0].f.vence[r.orden.indexOf(gen[1].f)] } : null;
   QUIN_TXT = [`🎲 ${$("#titulo").textContent} · Predicción de la jornada ${r.gw}`, "Probabilidad de ganar la jornada si cada uno alinea su mejor once:",
     ...F.map(f => `• ${f.m.name}: ${pctQ(f.pGana)} (≈ ${Math.round(f.media)} pts, capitán ${capN(f)}${f.o.faltan ? `, ⚠️ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan} jugadores`} para el once` : ""})`), "",
+    duelo ? `⚔️ Duelo por el liderato: ${duelo.a.m.name} le gana la jornada a ${duelo.b.m.name} un ${pctQ(duelo.p)} de las veces` : "",
     lid.length ? `👑 Líder tras la jornada: ${lid.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pLider)}`).join(", ")}` : "",
     cuando ? `⏰ Empieza el ${cuando}` : ""].filter(Boolean).join("\n");
   cont.innerHTML = `<div class="gh"><h2>Predicción de la jornada ${r.gw}</h2></div>
     <p class="note" style="margin:0 0 10px">Si cada uno alinea su mejor once (el que el Golómetro recomienda con su plantilla de hoy), esto es lo probable que gane la jornada.${cuando ? ` Empieza el ${esc(cuando)}.` : ""}</p>
     <ul class="pron">${F.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.pGana / mx * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${f.o.faltan ? `<span class="dn">⚠ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan}`} para el once</span> · ` : ""}≈ ${Math.round(f.media)} pts (entre ${Math.round(f.p10)} y ${Math.round(f.p90)}) · © ${esc(capN(f))}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana)}</span></li>`).join("")}</ul>
+    ${duelo ? `<h3 class="sec">Duelo por el liderato</h3><div class="q-duelo">${avatar(duelo.a.m, duelo.a.i)}<span><b>${esc(duelo.a.m.name)}</b> le gana la jornada a <b>${esc(duelo.b.m.name)}</b> ${pctQ(duelo.p)} de las veces. ${duelo.dif ? `Llega con ${duelo.dif} ${duelo.dif === 1 ? "punto" : "puntos"} de ventaja.` : "Llegan empatados."}</span>${avatar(duelo.b.m, duelo.b.i)}</div>` : ""}
     ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
     <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Cada jugador del once juega con su probabilidad de jugar (Futbol Fantasy, Analítica Fantasy y el modelo propio) y, si juega, saca unos puntos al azar según su media, su regularidad y el rival, igual que en la pestaña Capitán. El capitán multiplica. Se juega la jornada 4.000 veces y se cuenta cuántas gana cada uno. «Entre» es lo que saca 8 de cada 10 veces. Si alguien deja a un lesionado o no pone el mejor once, sus opciones bajan.</p></details>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button></div>`;
