@@ -707,13 +707,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05e";
+const NOVEDADES_V = "2026-11-05f";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación (elige tu escudo y verás tu capitán, tus opciones y qué revisar). La <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Predicción</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
+    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación: elige tu escudo y verás tu capitán, tus opciones y qué revisar (y, con la jornada en juego, cómo vas). La <b>Predicción de la jornada</b> con el duelo por el liderato, la <b>previa</b> con la probabilidad de ganar de cada uno y la crónica dice si acertó. En Mercado, la <b>puja ideal</b> sale de lo que de verdad se paga en esta liga, con la probabilidad de llevártelo y un simulador. En Equipos, el <b>valor dentro de una semana</b>.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
