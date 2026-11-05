@@ -1216,6 +1216,18 @@ function gwPrevia() {
 const ES_MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const waHref = t => (ES_MOVIL ? "whatsapp://send?text=" : "https://api.whatsapp.com/send?text=") + encodeURIComponent(t);
 const waDestino = ES_MOVIL ? "" : ' target="_blank" rel="noopener"';
+// En el móvil, el enlace de WhatsApp sigue estropeando algunos emojis (los que van con selector de variante o unidos,
+// como 🎖️ o 🧙‍♂️). Si el móvil deja compartir, se usa el menú de compartir del sistema, que pasa el texto tal cual
+// (como copiar y pegar): se elige WhatsApp y el grupo.
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("a.btn-wa");
+  if (!a || !ES_MOVIL || !navigator.share) return;
+  const m = (a.getAttribute("href") || "").match(/[?&]text=([^&]*)/);
+  if (!m) return;
+  let txt; try { txt = decodeURIComponent(m[1]); } catch (err) { return; }
+  e.preventDefault();
+  navigator.share({ text: txt }).catch(err => { if (err && err.name !== "AbortError") location.href = a.href; });
+}, true);
 function pintarPrevia() {
   const cont = $("#previa");
   if (!cont) return;
