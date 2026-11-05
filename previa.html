@@ -707,13 +707,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05e";
+const NOVEDADES_V = "2026-11-05f";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación (elige tu escudo y verás tu capitán, tus opciones y qué revisar). La <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Predicción</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
+    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación: elige tu escudo y verás tu capitán, tus opciones y qué revisar (y, con la jornada en juego, cómo vas). La <b>Predicción de la jornada</b> con el duelo por el liderato, la <b>previa</b> con la probabilidad de ganar de cada uno y la crónica dice si acertó. En Mercado, la <b>puja ideal</b> sale de lo que de verdad se paga en esta liga, con la probabilidad de llevártelo y un simulador. En Equipos, el <b>valor dentro de una semana</b>.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -1235,7 +1235,7 @@ function probJornada(n) {
       // alineados que ya no están en ninguna plantilla (vendidos después): un jugador típico de su posición
       const gen = p => ({ pj: 0.85, ys: CAP.MUESTRA_DEF[p.pos] || CAP.MUESTRA_DEF.MC });
       return { antes: antes[m.id] || 0, js: (x.players || []).map(p => ({ c: espDe[p.id] || gen(p), mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
-    ms.forEach((m, i) => { res[m.id] = sim[i]; });
+    ms.forEach((m, i) => { res[m.id] = { ...sim[i], contra: Object.fromEntries(ms.map((o, j) => [o.id, sim[i].vence[j]])) }; });
   }
   PROBJ = { k, v: { espDe, res } };
   return PROBJ.v;
@@ -1304,6 +1304,7 @@ function pintarPrevia() {
     ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
+    llega.length > 1 && PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? `⚔️ Duelo por el liderato: ${llega[0].o.m.name} le gana la jornada a ${llega[1].o.m.name} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : "",
     hayEsp ? ["", "🔮 Probabilidad de ganar la jornada (al empezar):", ...favorito.map(f => `• ${f.m.name}: ${pctQ(f.pGana || 0)} (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
     "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
@@ -1425,7 +1426,7 @@ function simularJornada(eqs, N = 4000) {
   return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
     return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)], vence: vence[i].map(x => x / N) }; });
 }
-const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
+const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + "\u00a0%" : pctQ(p);   // con un decimal
 const pctQ = p => p < 0.005 ? "<1\u00a0%" : p > 0.995 ? ">99\u00a0%" : Math.round(p * 100) + "\u00a0%";   // espacio duro: el % no se separa del número
 // Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
 function onceQuiniela(cands) {
@@ -3326,7 +3327,7 @@ function cargarParametros() {
     .catch(() => {});
 }
 
-const pc = v => Math.round(v * 100) + " %";
+const pc = v => Math.round(v * 100) + "\u00a0%";
 const nf2 = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // Resultado del recomendador en jornadas ya jugadas (con datos anteriores a cada jornada)
