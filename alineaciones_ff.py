@@ -166,6 +166,68 @@ def emparejar(jugs_ff, candidatos):
     return res, sin
 
 
+# ---------- Analítica Fantasy (analiticafantasy.com; su robots.txt permite las páginas, no su /api/) ----------
+AF_BASE = "https://www.analiticafantasy.com"
+ALIAS_AF = {"atletico-madrid": "atletico", "deportivo-la-coruna": "deportivo", "racing-santander": "racing", "rayo-vallecano": "rayo",
+            "real-betis": "betis", "celta-vigo": "celta", "athletic-club": "athletic"}
+
+
+def leer_af(html):
+    """Jugadores de un partido de Analítica Fantasy con su probabilidad de ser titular («chance»)."""
+    trozos = re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)</script>', html, re.S)
+    datos = ""
+    for c in trozos:
+        try:
+            datos += json.loads('"' + c + '"')
+        except ValueError:
+            pass
+    vistos, jug = set(), []
+    patron = r'"playerId":(\d+),"grid":(?:\d+|null),"chance":(\d+|null),.{0,400}?"esTitular":(true|false),"name":"([^"]*)","slug":"([^"]*)"'
+    for m in re.finditer(patron, datos):
+        pid, ch, tit, nom, slug = m.groups()
+        if pid in vistos or ch == "null":
+            continue
+        vistos.add(pid)
+        bloque = datos[m.end():m.end() + 700]
+        sanc = '"isSanctioned":true' in bloque[:bloque.find('"predictedFantasyPoints"')] if '"predictedFantasyPoints"' in bloque else False
+        p = 0.0 if sanc else int(ch) / 100.0
+        jug.append({"ffId": "af" + pid, "slug": slug, "corto": nom, "p": round(p, 3), "tit": tit == "true"})
+    return jug
+
+
+def leer_analitica(s, pend, eq, por_equipo):
+    """{idMister: {jornada: probabilidad}} con las alineaciones probables de Analítica Fantasy."""
+    lista = descargar(f"{AF_BASE}/la-liga/alineaciones-probables", s)
+    if not lista:
+        print("No se pudo leer la lista de Analítica Fantasy.")
+        return {}, 0
+    partidos = dict(re.findall(r'href="/partido/(\d+)-([a-z0-9-]+)"', lista))
+    claves = set(ALIAS_AF) | set(ALIAS_EQUIPOS)
+    res, leidos = {}, 0
+    for pid, resto in partidos.items():
+        par = partir_slug(resto, claves)
+        if not par:
+            print(f"  AVISO Analítica: no reconozco los equipos de {resto}")
+            continue
+        a, b = (ALIAS_AF.get(x, x) for x in par)
+        ha, hb = equipo_de_ff(a, eq), equipo_de_ff(b, eq)
+        g = next((g for g in sorted(pend, key=lambda x: x.get("ts") or 0) if g["home"] == ha and g["away"] == hb), None)
+        if not g:
+            continue
+        time.sleep(PAUSA)
+        html = descargar(f"{AF_BASE}/partido/{pid}-{resto}", s)
+        if not html:
+            continue
+        lst = leer_af(html)
+        cands = por_equipo.get(g["home"], []) + por_equipo.get(g["away"], [])
+        emp, _ = emparejar(lst, cands)
+        for idm, j in emp.items():
+            res.setdefault(idm, {})[str(g["gw"])] = {"p": j["p"], "tit": j["tit"]}
+        leidos += 1
+        print(f"  Analítica {resto} (J{g['gw']}): {len(lst)} jugadores, {len(emp)} emparejados")
+    return res, leidos
+
+
 def main():
     prueba = "--prueba" in sys.argv
     cal = cargar("calendario.json", {})
@@ -234,11 +296,33 @@ def main():
                      "confirmada": any(j["conf"] for j in lst)})
         print(f"  {a}-{b} (J{g['gw']}): {len(lst)} jugadores en FF, {len(par)} emparejados con Mister")
 
+    # mezcla con Analítica Fantasy: media de las dos webs cuando ambas tienen al jugador
+    try:
+        af, n_af = leer_analitica(s, pend, eq, por_equipo)
+    except Exception as e:
+        af, n_af = {}, 0
+        print(f"[!] Analítica Fantasy no disponible: {e}")
+    for idm, porgw in af.items():
+        for gw, d in porgw.items():
+            e = out_j.setdefault(idm, {}).get(gw)
+            if e is None:
+                out_j[idm][gw] = {"p": d["p"], "pff": None, "paf": d["p"], "conf": False, "les": -1, "ff": None, "once": "titular" if d["tit"] else "suplente"}
+            else:
+                e["pff"] = e["p"]
+                e["paf"] = d["p"]
+                if not e["conf"]:                       # alineación confirmada en FF: manda la confirmación
+                    e["p"] = round((e["pff"] + d["p"]) / 2, 3)
+    for porgw in out_j.values():
+        for e in porgw.values():
+            e.setdefault("pff", e["p"] if e.get("ff") else None)
+            e.setdefault("paf", None)
+    print(f"Analítica Fantasy: {n_af} partidos leídos")
+
     if not out_j:
         print("No se ha podido leer ninguna alineacion: no se escribe nada.")
         sys.exit(1)
     ahora_iso = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    res = {"updatedAt": ahora_iso, "fuente": "futbolfantasy.com", "partidos": info, "jugadores": out_j, "sinEmparejar": sin_par[:80]}
+    res = {"updatedAt": ahora_iso, "fuente": "futbolfantasy.com + analiticafantasy.com", "partidos": info, "jugadores": out_j, "sinEmparejar": sin_par[:80]}
     # solo reescribe si cambia algo (para no llenar el historial de commits)
     if {k: previo.get(k) for k in ("partidos", "jugadores")} != {k: res[k] for k in ("partidos", "jugadores")}:
         with open(os.path.join(CARPETA, "alineaciones.json"), "w", encoding="utf-8") as f:
@@ -254,7 +338,7 @@ def main():
         for gw, d in porgw.items():
             game = next((x for x in pend if str(x["gw"]) == gw and equipo_de.get(idm) in (x["home"], x["away"])), None)
             if game and (game.get("ts") or 9e12) > ahora:
-                hist.setdefault(gw, {})[idm] = [d["p"], int(d["conf"]), ahora_iso]
+                hist.setdefault(gw, {})[idm] = [d["p"], int(d["conf"]), ahora_iso, d.get("pff"), d.get("paf")]
     with open(os.path.join(CARPETA, "alineaciones_historial.json"), "w", encoding="utf-8") as f:
         json.dump(hist, f, ensure_ascii=False, separators=(",", ":"))
 
