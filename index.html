@@ -750,6 +750,11 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .pitch,.oi{position:relative;isolation:isolate;background:repeating-linear-gradient(180deg,#1f6b3c 0 52px,#1c6337 52px 104px);box-shadow:inset 0 0 40px #0008,inset 0 1px 0 #ffffff14;border:1px solid #2fd46e33}
 .pitch::before,.oi::before{content:"";position:absolute;inset:6px;z-index:-1;pointer-events:none;border:2px solid #ffffff2e;border-radius:6px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none' fill='none' stroke='%23ffffff' stroke-opacity='.18' stroke-width='.8'%3E%3Cpath d='M0 70h100'/%3E%3Ccircle cx='50' cy='70' r='12'/%3E%3Cpath d='M25 0v16h50V0M38 0v6h24V0M25 140v-16h50v16M38 140v-6h24v6'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+/* ---- cambio de pestaña y pulsaciones ---- */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+#nav,.nav{view-transition-name:none}
+.btn-wa:active,.btn-comp:active,.refresh:active,.tuj-f:active,.pill:active,.indice button:active{transform:scale(.97)}
+.btn-wa,.btn-comp,.refresh,.tuj-f,.pill,.indice button{transition:transform .12s ease,background-color .15s,color .15s}
 /* ---- detalles ---- */
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
@@ -4171,7 +4176,12 @@ document.addEventListener("click", e => {
   const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
-  if (d.s) { ir(d.s); return; }
+  if (d.s) {
+    // cambio de pestaña con un fundido corto si el navegador lo permite (y sin movimiento si se ha pedido así)
+    if (document.startViewTransition && d.s !== seccion && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(() => ir(d.s));
+    else ir(d.s);
+    return;
+  }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
   if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
   if (d.sub) { subVista = d.sub; pintarMercado(); return; }
