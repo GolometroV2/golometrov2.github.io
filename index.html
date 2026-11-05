@@ -213,6 +213,7 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .tuj-yo{display:flex;flex-wrap:wrap;gap:6px}.tuj-yo button{display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%;background:none;border:2px solid transparent;cursor:pointer}.tuj-yo button:hover,.tuj-yo button:focus-visible{border-color:var(--acc)}.tuj-yo .av{width:38px;height:38px}
 .cq>span.pq-g{display:block;white-space:normal;font-size:11.5px;color:var(--mut);margin-top:2px}.pq-g b{color:var(--accFg)}
 .hueco{margin:8px 0 10px;padding:10px 12px;border-radius:var(--r-m,10px);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);display:flex;flex-direction:column;gap:4px;font-size:13px}.hueco>b{color:var(--red)}.hueco>span{color:var(--txt)}
+.q-duelo{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-m,10px);background:var(--panel2);font-size:13px;line-height:1.35}.q-duelo .av{width:34px;height:34px;flex:none}.q-duelo>span{flex:1;min-width:0}
 .q-lid{display:flex;flex-wrap:wrap;gap:8px}.q-chip{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel2);font-size:13px}
 .q-chip .av{width:28px;height:28px;font-size:10px;flex:none}.q-chip b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.q-chip em{font-style:normal;font-weight:800;color:var(--accFg);flex:none}
 .cdet>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--accFg);list-style:none}
@@ -667,7 +668,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -706,13 +707,13 @@ function cargarDatos() {
 
 // Aviso de la próxima jornada: cuándo empieza (para poner once y capitán a tiempo) o cuántos partidos quedan
 // Novedades: se enseña una vez por versión (se puede cerrar); se guarda en este navegador
-const NOVEDADES_V = "2026-11-05e";
+const NOVEDADES_V = "2026-11-05f";
 function htmlNovedades() {
   let visto = false;
   try { visto = localStorage.getItem("novedades") === NOVEDADES_V; } catch (e) {}
   if (visto) return "";
   return `<div class="nov"><b>Novedades en el Golómetro</b>
-    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación (elige tu escudo y verás tu capitán, tus opciones y qué revisar). La <b>puja ideal</b> del Mercado ahora sale de lo que de verdad se paga en esta liga y te dice la probabilidad de llevarte cada jugador. Y la <b>Predicción</b> de la jornada (quién tiene más opciones de ganarla y de acabar líder). Cuando arranca la jornada sale la <b>Previa</b> con los capitanes de todos, lista para mandarla por WhatsApp (el resumen de la jornada también). Además, «Forma» para ver quién llega mejor en las últimas 3 jornadas y «¿Quién ficha mejor?» en Equipos.</span>
+    <span>Nuevo: <b>Tu jornada</b> debajo de la clasificación: elige tu escudo y verás tu capitán, tus opciones y qué revisar (y, con la jornada en juego, cómo vas). La <b>Predicción de la jornada</b> con el duelo por el liderato, la <b>previa</b> con la probabilidad de ganar de cada uno y la crónica dice si acertó. En Mercado, la <b>puja ideal</b> sale de lo que de verdad se paga en esta liga, con la probabilidad de llevártelo y un simulador. En Equipos, el <b>valor dentro de una semana</b>.</span>
     <button data-nov="1" aria-label="Cerrar novedades">Entendido</button></div>`;
 }
 // número de la jornada que se está jugando ahora mismo (algún partido empezado hace menos de 3 h), o null
@@ -1212,6 +1213,33 @@ function gwPrevia() {
   const primero = Math.min(...g.map(x => x.ts || Infinity)), leido = Date.parse(D.updatedAt || "") / 1000;
   return isFinite(primero) && leido >= primero + 300 ? ult : null;
 }
+// Probabilidad de ganar una jornada con los onces reales, con los datos de antes del primer partido (como la pestaña
+// Capitán): no cambia mientras avanza la jornada. Solo vale para la última jornada con datos (la congelación usa la
+// última racha de cada jugador). Devuelve los puntos esperados de cada jugador (espDe) y el resultado por manager.
+let PROBJ = { k: "", v: null };
+function probJornada(n) {
+  const md = (D.matchdays || {})["J" + n] || {};
+  const k = [n, D.updatedAt, E && E.updatedAt, CAL && CAL.updatedAt, FFDATA ? FFDATA.updatedAt || 1 : 0, PAR ? 1 : 0].join("|");
+  if (PROBJ.k === k) return PROBJ.v;
+  const espDe = {}, res = {};
+  if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
+  const cg = capCongelar({ cal: CAL, D, E, gw: n });
+  // si la jornada ya terminó, se trata como abierta para que el motor la tome como objetivo
+  const cal3 = { ...cg.cal, gameweeks: (cg.cal.gameweeks || []).map(g => g.gw === n ? { ...g, status: "playing" } : g) };
+  const ms = (D.managers || []).filter(m => md[m.id] && (md[m.id].players || []).length);
+  ms.forEach(m => { try { const r = recomendarCapitanes({ cal: cal3, D: cg.D, E: cg.E, managerId: m.id, gw: n }); (r.candidatos || []).forEach(c => { if (!espDe[c.p.id]) espDe[c.p.id] = c; }); } catch (e) {} });
+  if (ms.length >= 2) {
+    const S0 = serieLiga(), k0 = S0.js.indexOf("J" + n) - 1, antes = {};
+    if (k0 >= 0) S0.ms.forEach((o, x) => { antes[o.m.id] = S0.cum[x][k0]; });
+    const sim = simularJornada(ms.map(m => { const x = md[m.id], cap = x.captain;
+      // alineados que ya no están en ninguna plantilla (vendidos después): un jugador típico de su posición
+      const gen = p => ({ pj: 0.85, ys: CAP.MUESTRA_DEF[p.pos] || CAP.MUESTRA_DEF.MC });
+      return { antes: antes[m.id] || 0, js: (x.players || []).map(p => ({ c: espDe[p.id] || gen(p), mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
+    ms.forEach((m, i) => { res[m.id] = { ...sim[i], contra: Object.fromEntries(ms.map((o, j) => [o.id, sim[i].vence[j]])) }; });
+  }
+  PROBJ = { k, v: { espDe, res } };
+  return PROBJ.v;
+}
 // wa.me pasa por una redirección que estropea los emojis (salen como «�»): en el móvil abrimos la app directamente
 const ES_MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const waHref = t => (ES_MOVIL ? "whatsapp://send?text=" : "https://api.whatsapp.com/send?text=") + encodeURIComponent(t);
@@ -1242,8 +1270,7 @@ function pintarPrevia() {
   const partidoDe = t => juegos.find(g => g.home === t || g.away === t);
   const hora = g => g && g.ts ? enMadrid(g.ts * 1000, { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
   // puntos esperados de cada jugador alineado (motor del capitán) para el favorito de la jornada
-  const espDe = {};
-  filas.forEach(f => { try { const r = recomendarCapitanes({ cal: CAL, D, E, managerId: f.m.id, gw: n }); (r.candidatos || []).forEach(c => { espDe[c.p.id] = c; }); } catch (e) {} });
+  const PJ = probJornada(n), espDe = PJ.espDe;
   const conteo = {}, caps = {};
   filas.forEach(f => {
     (f.x.players || []).forEach(p => { (conteo[p.id] = conteo[p.id] || { p, de: [] }).de.push(f.m.name); });
@@ -1260,15 +1287,9 @@ function pintarPrevia() {
   const primero = juegos.filter(g => g.ts).sort((a, b) => a.ts - b.ts)[0];
   const enPrimero = primero ? filas.map(f => ({ f, n: (f.x.players || []).filter(p => p.teamId === primero.home || p.teamId === primero.away).length })).filter(x => x.n).sort((a, b) => b.n - a.n) : [];
   const porPartido = juegos.map(g => ({ g, n: filas.reduce((t, f) => t + (f.x.players || []).filter(p => p.teamId === g.home || p.teamId === g.away).length, 0) })).sort((a, b) => b.n - a.n)[0];
-  // probabilidad de ganar la jornada con los onces reales: lo ya jugado cuenta tal cual, el resto se simula
-  if (filas.some(f => f.esp > 0)) {
-    const S0 = serieLiga(), k0 = S0.js.indexOf(gw) - 1;
-    const antes = {}; if (k0 >= 0) S0.ms.forEach((o, x) => { antes[o.m.id] = S0.cum[x][k0]; });
-    const sim = simularJornada(filas.map(f => { const cap = f.x.captain;
-      return { antes: antes[f.m.id] || 0, fijos: (f.x.players || []).filter(p => p.played).reduce((t, p) => t + (p.points || 0), 0),
-        js: (f.x.players || []).filter(p => !p.played && espDe[p.id]).map(p => ({ c: espDe[p.id], mult: cap && cap.id === p.id ? Math.max(1, cap.multiplier || 1) : 1 })) }; }));
-    filas.forEach((f, k) => { f.pGana = sim[k].pGana; f.pLider = sim[k].pLider; f.media = sim[k].media; });
-  }
+  // probabilidad de ganar la jornada con los onces reales, tal y como estaba al empezar: no cambia aunque avance la jornada
+  // (es la que se manda al grupo con la previa; lo que pasa después ya lo cuenta la clasificación en directo)
+  if (filas.some(f => f.esp > 0)) filas.forEach(f => { const r = PJ.res[f.m.id]; if (r) { f.pGana = r.pGana; f.pLider = r.pLider; f.media = r.media; } });
   const favorito = filas.slice().sort((a, b) => (b.pGana || 0) - (a.pGana || 0) || b.esp - a.esp);
   const hayEsp = favorito[0] && favorito[0].esp > 0;
   const titulo = $("#titulo").textContent;
@@ -1283,12 +1304,13 @@ function pintarPrevia() {
     ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
-    hayEsp ? `🔮 Probabilidad de ganar la jornada: ${favorito.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pGana || 0)}`).join(", ")}` : "",
+    llega.length > 1 && PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? `⚔️ Duelo por el liderato: ${llega[0].o.m.name} le gana la jornada a ${llega[1].o.m.name} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : "",
+    hayEsp ? ["", "🔮 Probabilidad de ganar la jornada (al empezar):", ...favorito.map(f => `• ${f.m.name}: ${pctQ(f.pGana || 0)} (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
     "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
   const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
   cont.innerHTML = `<div class="gh"><h2>Previa de la jornada ${n}</h2></div>
-    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja.` : ""}</p>
+    <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja${PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? ` y le gana la jornada a ${esc(llega[1].o.m.name)} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : ""}.` : ""}</p>
     <h3 class="sec">Capitanes</h3><ul class="clist">${filas.map(filaCap).join("")}</ul>
     <div class="ct-grid" style="margin-top:10px">
       ${primero && enPrimero.length ? `<div class="ct-t"><span class="ct-ico">🚀</span><span class="ct-x"><small>Abre la jornada</small><b>${esc(nombre[primero.home] || "")}–${esc(nombre[primero.away] || "")}</b><span>${esc(enPrimero.slice(0, 2).map(x => `${x.f.m.name} ${x.n}`).join(" · "))}</span></span></div>` : ""}
@@ -1297,7 +1319,7 @@ function pintarPrevia() {
     ${filas.filter(f => f.x.players.length < 11).map(f => `<p class="hueco" style="flex-direction:row;align-items:center;gap:10px">${avatar(f.m, f.i)}<span><b style="color:var(--red)">${esc(f.m.name)}</b> juega con ${f.x.players.length}: le ${11 - f.x.players.length === 1 ? "falta un jugador" : `faltan ${11 - f.x.players.length} jugadores`} en el once.</span></p>`).join("")}
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
     ${hayEsp ? `<h3 class="sec">¿Quién gana la jornada?</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${((f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>≈ ${Math.round(f.media ?? f.esp)} pts · ${esc(f.x.formation || "")} · © ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana || 0)}</span></li>`).join("")}</ul>
-      <p class="note">Probabilidad de ganar la jornada con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro.</p>` : ""}
+      <p class="note">Probabilidad de ganar la jornada al empezar, con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro. No cambia mientras avanza la jornada: eso lo cuenta la clasificación en directo.</p>` : ""}
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button></div>`;
 }
 function copiarTexto(btn, txt, base) {
@@ -1308,10 +1330,35 @@ function copiarTexto(btn, txt, base) {
 
 /* ---------- Tu jornada: lo que te toca hacer antes de que empiece (capitán, opciones, alertas, valor y mercado) ---------- */
 let merPedidoTuj = false;
+const filaTuj = (ico, tit, txt, sec) => `<li><button class="tuj-f" ${sec ? `data-s="${sec}"` : ""}><span class="tuj-i">${ico}</span><span class="tuj-x"><small>${tit}</small><b>${txt}</b></span>${sec ? `<span class="tuj-a" aria-hidden="true">›</span>` : ""}</button></li>`;
+// Con la jornada a medias: cómo vas, cuántos te faltan, cómo acabarías y qué te daba la previa
+function pintarTuJornadaVivo(cont) {
+  const j = jornadas().slice(-1)[0]; if (!j) return false;
+  const v = proyeccionVivo(j); if (!v) return false;
+  const md = D.matchdays[j] || {}, n = +j.slice(1);
+  const L = D.managers.map((m, i) => ({ m, i, pts: (md[m.id] || {}).points || 0, v: v[m.id] || { n: 0, esp: 0 } })).filter(x => md[x.m.id]);
+  if (L.length < 2) return false;
+  cont.hidden = false;
+  const yo = YO && L.find(x => String(x.m.id) === String(YO));
+  if (!yo) {
+    cont.innerHTML = `<div class="gh"><h2>Tu jornada ${n}</h2></div><p class="note" style="margin:0 0 10px">¿Cuál es tu equipo? Toca tu escudo y aquí verás cómo vas en la jornada.</p>
+      <div class="tuj-yo">${L.map(x => `<button data-yo="${esc(x.m.id)}" aria-label="${esc(x.m.name)}" title="${esc(x.m.name)}">${avatar(x.m, x.i)}</button>`).join("")}</div>`;
+    return true;
+  }
+  const ahora = L.slice().sort((a, b) => b.pts - a.pts), fin = L.slice().sort((a, b) => (b.pts + b.v.esp) - (a.pts + a.v.esp));
+  const filas = [filaTuj("⏱️", `Jornada ${n} en juego`, `Llevas ${yo.pts} pts · ${ahora.indexOf(yo) + 1}.º de la jornada`, null)];
+  if (yo.v.n) filas.push(filaTuj("⏳", `Te ${yo.v.n === 1 ? "falta 1 jugador" : `faltan ${yo.v.n} jugadores`} por jugar`, `Acabarías con ≈ ${Math.round(yo.pts + yo.v.esp)} pts · ${fin.indexOf(yo) + 1}.º previsto`, null));
+  else filas.push(filaTuj("✅", "Ya han jugado todos tus alineados", `Te quedas en ${yo.pts} pts`, null));
+  try { const PJ = probJornada(n), r = PJ.res[yo.m.id]; if (r) filas.push(filaTuj("🔮", "Lo que te daba la previa", `${pctQ(r.pGana)} de ganar la jornada`, null)); } catch (e) {}
+  cont.innerHTML = `<div class="gh"><h2>Tu jornada ${n}</h2><button class="tuj-cambia" data-yo="${esc(yo.m.id)}" aria-label="Dejar de ser ${esc(yo.m.name)}">${avatar(yo.m, yo.i)}</button></div>
+    <ul class="tuj-l">${filas.join("")}</ul>`;
+  return true;
+}
 function pintarTuJornada() {
   const cont = $("#tuj");
   if (!cont) return;
   const Q = datosQuiniela();
+  if (!Q && E && E.managers && pintarTuJornadaVivo(cont)) return;
   if (!Q || !E || !E.managers) { cont.hidden = true; cont.innerHTML = ""; return; }
   cont.hidden = false;
   const yo = YO && Q.orden.find(f => String(f.m.id) === String(YO));
@@ -1363,7 +1410,7 @@ function pintarTuJornada() {
 function simularJornada(eqs, N = 4000) {
   // un generador por manager y dos números por jugador siempre: cambiar un jugador de un once no altera los sorteos de los demás
   const gen = i => { let s = 20261106 + i * 7919; return () => (s = s * 16807 % 2147483647) / 2147483647; }, rnds = eqs.map((e, i) => gen(i));
-  const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N));
+  const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N)), vence = eqs.map(() => Array(n).fill(0));
   for (let k = 0; k < N; k++) {
     const t = eqs.map((e, i) => {
       let a = e.fijos || 0;
@@ -1374,12 +1421,13 @@ function simularJornada(eqs, N = 4000) {
     const reparte = (v, cuenta) => { const mx = Math.max(...v), w = v.filter(x => x === mx).length; v.forEach((x, i) => { if (x === mx) cuenta[i] += 1 / w; }); };
     reparte(t, gana);
     reparte(t.map((x, i) => x + (eqs[i].antes || 0)), lider);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (i !== j) vence[i][j] += t[i] > t[j] ? 1 : t[i] === t[j] ? 0.5 : 0;
   }
   return eqs.map((e, i) => { const o = Array.from(tot[i]).sort((a, b) => a - b);
-    return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)] }; });
+    return { pGana: gana[i] / N, pLider: lider[i] / N, media: o.reduce((a, b) => a + b, 0) / N, p10: o[Math.floor(N * 0.1)], p90: o[Math.floor(N * 0.9)], vence: vence[i].map(x => x / N) }; });
 }
-const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + " %" : pctQ(p);   // con un decimal
-const pctQ = p => p < 0.005 ? "<1 %" : p > 0.995 ? ">99 %" : Math.round(p * 100) + " %";
+const pctF = p => p > 0.0005 && p < 0.995 ? nf1.format(p * 100) + "\u00a0%" : pctQ(p);   // con un decimal
+const pctQ = p => p < 0.005 ? "<1\u00a0%" : p > 0.995 ? ">99\u00a0%" : Math.round(p * 100) + "\u00a0%";   // espacio duro: el % no se separa del número
 // Mejor once posible; si la plantilla no da para un once completo (p. ej. un solo delantero), el mejor once incompleto
 function onceQuiniela(cands) {
   const o = onceRecomendado(cands); if (o) return Object.assign(o, { faltan: 0 });
@@ -1427,13 +1475,18 @@ function pintarQuiniela() {
   const lid = F.slice().sort((a, b) => b.pLider - a.pLider).filter(f => f.pLider >= 0.005);
   const cuando = isFinite(r.primero) ? enMadrid(r.primero * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }) : "";
   const capN = f => apellido(f.o.cap.p.short || f.o.cap.p.name);
+  // los dos primeros de la general: cuántas veces gana la jornada el líder al segundo
+  const gen = r.orden.map(f => ({ f, t: total(f.m) })).sort((a, b) => b.t - a.t);
+  const duelo = gen.length > 1 ? { a: gen[0].f, b: gen[1].f, dif: gen[0].t - gen[1].t, p: gen[0].f.vence[r.orden.indexOf(gen[1].f)] } : null;
   QUIN_TXT = [`🎲 ${$("#titulo").textContent} · Predicción de la jornada ${r.gw}`, "Probabilidad de ganar la jornada si cada uno alinea su mejor once:",
     ...F.map(f => `• ${f.m.name}: ${pctQ(f.pGana)} (≈ ${Math.round(f.media)} pts, capitán ${capN(f)}${f.o.faltan ? `, ⚠️ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan} jugadores`} para el once` : ""})`), "",
+    duelo ? `⚔️ Duelo por el liderato: ${duelo.a.m.name} le gana la jornada a ${duelo.b.m.name} un ${pctQ(duelo.p)} de las veces` : "",
     lid.length ? `👑 Líder tras la jornada: ${lid.slice(0, 3).map(f => `${f.m.name} ${pctQ(f.pLider)}`).join(", ")}` : "",
     cuando ? `⏰ Empieza el ${cuando}` : ""].filter(Boolean).join("\n");
   cont.innerHTML = `<div class="gh"><h2>Predicción de la jornada ${r.gw}</h2></div>
     <p class="note" style="margin:0 0 10px">Si cada uno alinea su mejor once (el que el Golómetro recomienda con su plantilla de hoy), esto es lo probable que gane la jornada.${cuando ? ` Empieza el ${esc(cuando)}.` : ""}</p>
     <ul class="pron">${F.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(f.pGana / mx * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${f.o.faltan ? `<span class="dn">⚠ le ${f.o.faltan === 1 ? "falta 1 jugador" : `faltan ${f.o.faltan}`} para el once</span> · ` : ""}≈ ${Math.round(f.media)} pts (entre ${Math.round(f.p10)} y ${Math.round(f.p90)}) · © ${esc(capN(f))}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana)}</span></li>`).join("")}</ul>
+    ${duelo ? `<h3 class="sec">Duelo por el liderato</h3><div class="q-duelo">${avatar(duelo.a.m, duelo.a.i)}<span><b>${esc(duelo.a.m.name)}</b> le gana la jornada a <b>${esc(duelo.b.m.name)}</b> ${pctQ(duelo.p)} de las veces. ${duelo.dif ? `Llega con ${duelo.dif} ${duelo.dif === 1 ? "punto" : "puntos"} de ventaja.` : "Llegan empatados."}</span>${avatar(duelo.b.m, duelo.b.i)}</div>` : ""}
     ${lid.length ? `<h3 class="sec">Líder tras la jornada</h3><div class="q-lid">${lid.slice(0, 4).map(f => `<span class="q-chip">${avatar(f.m, f.i)}<b>${esc(f.m.name)}</b><em>${pctQ(f.pLider)}</em></span>`).join("")}</div>` : ""}
     <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Cada jugador del once juega con su probabilidad de jugar (Futbol Fantasy, Analítica Fantasy y el modelo propio) y, si juega, saca unos puntos al azar según su media, su regularidad y el rival, igual que en la pestaña Capitán. El capitán multiplica. Se juega la jornada 4.000 veces y se cuenta cuántas gana cada uno. «Entre» es lo que saca 8 de cada 10 veces. Si alguien deja a un lesionado o no pone el mejor once, sus opciones bajan.</p></details>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(QUIN_TXT))}"${waDestino}>Enviar por WhatsApp</a><button class="btn-comp" data-compq="1">📋 Copiar</button></div>`;
@@ -1472,6 +1525,12 @@ function pintarCronica() {
   const bqL = BQ ? filas.filter(f => BQ[f.m.id]).map(f => ({ f, b: BQ[f.m.id] })) : [];
   const bqTop = bqL.filter(x => x.b.perdidos > 0).sort((a, b) => b.b.perdidos - a.b.perdidos)[0];
   const bqPerf = bqL.filter(x => x.b.perdidos === 0).map(x => x.f);
+  // ¿Acertó la previa? Solo para la última jornada (la probabilidad se calcula con lo que se sabía antes de empezar)
+  let prev = null;
+  if (cronJ === js[js.length - 1] && E && E.managers && CAL && CAL.games) { try {
+    const PJ = probJornada(+cronJ.slice(1)), fav = filas.filter(f => PJ.res[f.m.id]).sort((a, b) => PJ.res[b.m.id].pGana - PJ.res[a.m.id].pGana)[0];
+    if (fav && PJ.res[gan.m.id]) prev = { fav, pf: PJ.res[fav.m.id].pGana, pg: PJ.res[gan.m.id].pGana };
+  } catch (e) {} }
   const tile = (ico, tit, main, sub, extra = "") => `<div class="ct-t">${extra || `<span class="ct-ico">${ico}</span>`}<span class="ct-x"><small>${tit}</small><b>${main}</b><span>${sub}</span></span></div>`;
   const nav = `<div class="ct-nav"><button data-cj="-1" ${k === 0 ? "disabled" : ""} aria-label="Jornada anterior">‹</button><span>Jornada ${esc(cronJ.slice(1))}</span><button data-cj="1" ${k === js.length - 1 ? "disabled" : ""} aria-label="Jornada siguiente">›</button></div>`;
   const tiles = [
@@ -1481,6 +1540,7 @@ function pintarCronica() {
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
     tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
+    prev ? tile("🔮", prev.fav === gan ? "La previa acertó" : "La previa falló", prev.fav === gan ? esc(gan.m.name) : `Favorito: ${esc(prev.fav.m.name)}`, prev.fav === gan ? `Era el favorito, con un ${pctQ(prev.pf)} de ganar` : `Tenía un ${pctQ(prev.pf)}; ${esc(gan.m.name)} ganó con un ${pctQ(prev.pg)}`) : "",
     bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
     bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
   ].join("");
@@ -1494,6 +1554,7 @@ function pintarCronica() {
     gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
     `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
+    prev ? (prev.fav === gan ? `🔮 La previa acertó: ${gan.m.name} era el favorito (${pctQ(prev.pf)})` : `🔮 La previa daba favorito a ${prev.fav.m.name} (${pctQ(prev.pf)}); ${gan.m.name} ganó con un ${pctQ(prev.pg)}`) : "",
     bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
     bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "Clasificación:",
     ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
@@ -2010,6 +2071,23 @@ function bloqueClausulas(ms) {
     <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
+// Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
+function bloqueValor7(ms) {
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  if (!LIGA || !LIGA.valorDin || !LIGA.valorDin.phi) return "";
+  const L = ms.map(m => {
+    let d = 0, mejor = null, peor = null;
+    m.players.forEach(p => { const g = capCrecModelo({ ...p, owner: 1 }); if (!g || g.bajo) return;
+      const x = p.value * crecAcum({ g: g.g, gm: g.g0, phi: g.phi }, 7); d += x;
+      if (!mejor || x > mejor.x) mejor = { p, x }; if (!peor || x < peor.x) peor = { p, x }; });
+    return { m, d, mejor, peor };
+  }).sort((a, b) => b.d - a.d);
+  const mx = Math.max(1, ...L.map(x => Math.abs(x.d)));
+  return `<section class="card"><div class="gh"><h2>Valor dentro de una semana</h2></div>
+    <p class="note" style="margin:0 0 8px">Cuánto se espera que gane o pierda cada plantilla en 7 días si nadie ficha ni vende (previsión con la inercia del valor; los jugadores de menos de 1 M se dejan igual). Los partidos del fin de semana la cambiarán: tómalo como tendencia.</p>
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
+}
+
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
 function bloqueEficiencia(ms) {
   if (!D || !D.managers) return "";
@@ -2084,6 +2162,7 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueValor7(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
     ${bloqueFichajes(ms)}
@@ -3248,7 +3327,7 @@ function cargarParametros() {
     .catch(() => {});
 }
 
-const pc = v => Math.round(v * 100) + " %";
+const pc = v => Math.round(v * 100) + "\u00a0%";
 const nf2 = new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // Resultado del recomendador en jornadas ya jugadas (con datos anteriores a cada jornada)
@@ -3323,7 +3402,7 @@ function cargarCalendario() {
   cargarAlineaciones();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
