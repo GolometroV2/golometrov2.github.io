@@ -2038,6 +2038,23 @@ function bloqueClausulas(ms) {
     <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
 }
 
+// Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
+function bloqueValor7(ms) {
+  if (PAR && !LIGA) capAplicarLiga(PAR.liga);
+  if (!LIGA || !LIGA.valorDin || !LIGA.valorDin.phi) return "";
+  const L = ms.map(m => {
+    let d = 0, mejor = null, peor = null;
+    m.players.forEach(p => { const g = capCrecModelo({ ...p, owner: 1 }); if (!g || g.bajo) return;
+      const x = p.value * crecAcum({ g: g.g, gm: g.g0, phi: g.phi }, 7); d += x;
+      if (!mejor || x > mejor.x) mejor = { p, x }; if (!peor || x < peor.x) peor = { p, x }; });
+    return { m, d, mejor, peor };
+  }).sort((a, b) => b.d - a.d);
+  const mx = Math.max(1, ...L.map(x => Math.abs(x.d)));
+  return `<section class="card"><div class="gh"><h2>Valor dentro de una semana</h2></div>
+    <p class="note" style="margin:0 0 8px">Cuánto se espera que gane o pierda cada plantilla en 7 días si nadie ficha ni vende (previsión con la inercia del valor; los jugadores de menos de 1 M se dejan igual). Los partidos del fin de semana la cambiarán: tómalo como tendencia.</p>
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
+}
+
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
 function bloqueEficiencia(ms) {
   if (!D || !D.managers) return "";
@@ -2112,6 +2129,7 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueValor7(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
     ${bloqueFichajes(ms)}
