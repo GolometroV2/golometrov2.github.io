@@ -3307,7 +3307,7 @@ function pintar() {
       return `<i class="fm ${pos <= 2 ? "fm-a" : pos >= N - 1 ? "fm-b" : ""}" title="${esc(j)}: ${pos}.º de la jornada">${pos}</i>`; }).join(""); });
   }
   // jornada a medias: cuántos alineados de cada uno faltan por jugar y cómo acabaría según el motor del capitán
-  const vivo = enJ ? proyeccionVivo(vista) : null;
+  const vivo = enJ ? proyeccionVivo(vista) : vista === "General" && ultima ? proyeccionVivo(ultima) : null;
   const flecha = id => mov[id] > 0 ? `<span class="mov up" title="Sube ${mov[id]}">▲${mov[id]}</span>` : mov[id] < 0 ? `<span class="mov dn" title="Baja ${-mov[id]}">▼${-mov[id]}</span>` : "";
   const filas = rank.map((m, i) => `
     <li class="row${i === 0 ? " lider" : ""}">
