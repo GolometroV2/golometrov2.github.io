@@ -3376,6 +3376,8 @@ document.addEventListener("click", e => {
   new MutationObserver(() => { cancelAnimationFrame(t); t = requestAnimationFrame(marcar); }).observe(document.body, { childList: true, subtree: true });
   marcar();
 })();
+// fotos guardadas en el móvil y la última versión disponible sin conexión (sw.js)
+if ("serviceWorker" in navigator && location.protocol !== "file:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
 </body>
 </html>
