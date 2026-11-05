@@ -42,15 +42,27 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           FIN=$((SECONDS + 3000))
           FALLOS=0
+          ULTIMO_EXT=-100000
           while true; do
             if python seguimiento_equipos.py; then FALLOS=0; else FALLOS=$((FALLOS + 1)); fi
             python calendario_mister.py || echo "Aviso: no se pudo actualizar el calendario"
+            # Puntos en directo: mientras haya un partido en juego (o acabado hace menos de 3 h), se relee
+            # la clasificación de Mister cada 15 minutos para que la web muestre los puntos de la jornada en curso.
+            if python3 -c "import json,time,sys;c=json.load(open('calendario.json'));t=time.time();sys.exit(0 if any(0<(g.get('ts') or 0)<=t<=(g.get('ts') or 0)+3*3600 for g in c.get('games',[])) else 1)" 2>/dev/null && [ $((SECONDS - ULTIMO_EXT)) -ge 900 ]; then
+              ULTIMO_EXT=$SECONDS
+              if python mister_extractor.py > /tmp/extractor.log 2>&1; then
+                git add mister_fantasy_data.json
+                [ -f cache_mister.json ] && git add cache_mister.json
+              else
+                echo "Aviso: no se pudo leer la clasificación en directo"; tail -5 /tmp/extractor.log
+              fi
+            fi
             if [ -f equipos.json ]; then git add equipos.json; fi
             if [ -f calendario.json ]; then git add calendario.json; fi
             if [ -d avatars ]; then git add avatars; fi
             if [ -d fotos ]; then git add fotos; fi
             if ! git diff --staged --quiet; then
-              git commit -m "Seguimiento de plantillas y calendario: cambios detectados"
+              git commit -m "Seguimiento de plantillas, calendario y puntos en directo: cambios detectados"
               for i in 1 2 3; do
                 if git pull --rebase -X theirs origin main && git push origin main; then break; fi
                 sleep 5
