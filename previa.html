@@ -1762,6 +1762,23 @@ function bloqueEficiencia(ms) {
     <ul class="pron">${ord.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.r / mx * 100).toFixed(1)}%;background:${col(x.ci)}"></i></span><small>${x.pts} pts con ${eur(x.v)}</small></span><span class="pp" style="font-size:16px">${nf1c(x.r)}</span></li>`).join("")}</ul></section>`;
 }
 
+// Mayores fichajes y actividad de cada manager, a partir de los últimos movimientos guardados (equipos.json -> transfers)
+function bloqueFichajes(ms) {
+  const T = (E.transfers || []).filter(t => t.value && t.to);
+  if (T.length < 3) return "";
+  const top = T.slice().sort((a, b) => b.value - a.value).slice(0, 5);
+  const act = ms.map((m, i) => {
+    const c = T.filter(t => String(t.to) === String(m.id)), v = (E.transfers || []).filter(t => t.value && t.from && String(t.from) === String(m.id));
+    return { m, i, n: c.length, gasto: c.reduce((s, t) => s + t.value, 0), ing: v.reduce((s, t) => s + t.value, 0) };
+  }).filter(x => x.n).sort((a, b) => b.gasto - a.gasto);
+  const mx = Math.max(1, ...act.map(x => x.gasto));
+  return `<section class="card"><div class="gh"><h2>Mayores fichajes</h2></div>
+    <ul>${top.map(t => `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>
+    <p class="ordlbl" style="margin-top:12px">Quién ha gastado más</p>
+    <ul class="pron">${act.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.gasto / mx * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"}${x.ing ? " · vende por " + eur(x.ing) : ""}</small></span><span class="pp" style="font-size:15px">${eur(x.gasto)}</span></li>`).join("")}</ul>
+    <p class="note">Solo cuenta los últimos ${(E.transfers || []).length} movimientos guardados.</p></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -1780,6 +1797,7 @@ function resumenEq(ms, hp) {
     ${graficaValor(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
+    ${bloqueFichajes(ms)}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
 }
 
