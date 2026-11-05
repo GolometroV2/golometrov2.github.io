@@ -1390,11 +1390,22 @@ function pintarComparador() {
   const A = LIGAJ.jug[comp[0]], B = LIGAJ.jug[comp[1]], ca = "var(--acc)", cb = "var(--mut)";
   const ult = p => (p.streak || []).filter(v => typeof v === "number");
   const media5 = p => { const u = ult(p); return u.length ? u.reduce((t, v) => t + v, 0) / u.length : 0; };
+  // puntos esperados en el próximo partido: misma fórmula que «Cláusulas que merecen la pena»
+  const espJ = p => {
+    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+    const prior = capPrior(p.pos, p.value) ?? 3.9;
+    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+    return +(mu * pjConTitular(p, p.status === "injury" ? 0 : pjM).pj).toFixed(1);
+  };
+  let esp = [];
+  try { esp = [["Puntos esperados", espJ(A), espJ(B)]]; } catch (e) {}
   const est = [
     ["Puntos", A.points, B.points], ["Media", A.avg, B.avg], ["Media últimas 5", +media5(A).toFixed(1), +media5(B).toFixed(1)],
     ["Valor (M)", +(A.value / 1e6).toFixed(2), +(B.value / 1e6).toFixed(2)],
     ["Puntos por M", +(A.points / (A.value / 1e6)).toFixed(1), +(B.points / (B.value / 1e6)).toFixed(1)]
-  ].map(([t, a, b]) => { a = a || 0; b = b || 0; const mx = Math.max(Math.abs(a), Math.abs(b), 1);
+  ].concat(esp).map(([t, a, b]) => { a = a || 0; b = b || 0; const mx = Math.max(Math.abs(a), Math.abs(b), 1);
     return `<div class="du-e"><span class="du-v ${a > b ? "gana" : ""}">${nf1c(a)}</span><span class="du-b izq"><i style="width:${Math.abs(a) / mx * 100}%;background:${ca}"></i></span><span class="du-t">${t}</span><span class="du-b"><i style="width:${Math.abs(b) / mx * 100}%;background:${cb}"></i></span><span class="du-v ${b > a ? "gana" : ""}">${nf1c(b)}</span></div>`; }).join("");
   const sel = lado => { const p = lado ? B : A; return `<input class="cp-in" list="cp-lista" data-csel="${lado}" value="${esc(p.name)}" aria-label="Jugador ${lado ? "B" : "A"}" autocomplete="off" onfocus="this.select()">`; };
   const cab = p => `<div class="du-m" data-ficha="${esc(p.id)}" role="button" tabindex="0" title="Ver ficha" style="cursor:pointer">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
@@ -1417,7 +1428,7 @@ function pintarComparador() {
     <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
     <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
-    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones.</p>`;
+    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones. «Puntos esperados» = lo que se espera que sume en su próximo partido (su nivel por su probabilidad de jugar).</p>`;
 }
 // Cuántas jornadas le ha ganado cada manager (fila) a cada rival (columna) y su balance total
 function tablaDuelos(S, orden) {
