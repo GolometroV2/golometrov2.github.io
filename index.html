@@ -691,6 +691,9 @@ h3.sec,.ordlbl{text-transform:none!important;letter-spacing:.1px!important;font-
   background:#050a07;color:var(--accFg);border:1px solid #2fd46e40;text-shadow:0 0 10px #2fd46ecc;box-shadow:inset 0 0 14px #000}
 @media (prefers-color-scheme:light){.av-r{background:#0f1a15;color:#5cf096;text-shadow:0 0 8px #2fd46e99}}
 .av-j.vivo .av-r{background:#1a0606;color:#ff8080;border-color:#ff6b6b55;text-shadow:0 0 10px #ff6b6bcc}
+.av-j>span:nth-child(2){display:flex;flex-direction:column;min-width:0;flex:1}
+.av-cal{flex:none;margin-left:auto;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--accFg);border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent)}
+.av-cal:hover{border-color:var(--acc)}
 /* ---- directo ---- */
 .vivo-d{box-shadow:0 0 0 0 #2fd46e99;animation:latido2 1.8s ease-out infinite}
 @keyframes latido2{0%{box-shadow:0 0 0 0 #2fd46e99}70%{box-shadow:0 0 0 8px #2fd46e00}100%{box-shadow:0 0 0 0 #2fd46e00}}
@@ -930,9 +933,29 @@ function pintarAviso() {
   const falta = ini - ahora, d = Math.floor(falta / 86400), hh = Math.floor(falta % 86400 / 3600), mm = Math.floor(falta % 3600 / 60);
   const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
   cont.innerHTML = htmlNovedades() + (falta > 0
-    ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span></div>`
+    ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span><button class="av-cal" data-ics="1" aria-label="Añadir el inicio de las próximas jornadas a mi calendario" title="Añadir a mi calendario"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg></button></div>`
     : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
 }
+
+// Calendario: un archivo .ics con el inicio de cada jornada que falta y un aviso 2 horas antes (para el capitán)
+function descargarICS() {
+  if (!CAL || !CAL.games) return;
+  const ahora = Date.now() / 1000, liga = ($("#titulo").textContent || "Mi liga").trim();
+  // primer partido de cada jornada; solo jornadas que aún no han empezado (un aplazado suelto no cuenta)
+  const por = {}; CAL.games.forEach(g => { if (!g.ts) return; const p = por[g.gw]; if (!p || g.ts < p.ts) por[g.gw] = g; });
+  Object.keys(por).forEach(gw => { if (por[gw].ts < ahora - 3600) delete por[gw]; });
+  const f = t => new Date(t * 1000).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  const ev = Object.keys(por).sort((a, b) => a - b).map(gw => { const g = por[gw];
+    return ["BEGIN:VEVENT", `UID:golometro-${liga.replace(/\W+/g, "")}-j${gw}@golometrov2`, `DTSTAMP:${f(ahora)}`, `DTSTART:${f(g.ts)}`, `DTEND:${f(g.ts + 7200)}`,
+      `SUMMARY:${liga}: empieza la jornada ${gw}`, `DESCRIPTION:Primer partido: ${g.homeName || ""} - ${g.awayName || ""}. Revisa tu once y tu capitán en el Golómetro.`,
+      "BEGIN:VALARM", "ACTION:DISPLAY", "TRIGGER:-PT2H", `DESCRIPTION:Pon tu once y tu capitán (${liga})`, "END:VALARM", "END:VEVENT"].join("\r\n"); });
+  if (!ev.length) return;
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Golometro//ES", "CALSCALE:GREGORIAN", ...ev, "END:VCALENDAR"].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "jornadas-golometro.ics"; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+document.addEventListener("click", e => { if (e.target.closest && e.target.closest("[data-ics]")) descargarICS(); });
 
 // Botón «Actualizar»: vuelve a leer todos los datos que publica GitHub (clasificación, plantillas, calendario, onces,
 // mercado, parámetros) y muestra lo recientes que son. Además se recarga solo cada 5 minutos mientras la web está abierta
