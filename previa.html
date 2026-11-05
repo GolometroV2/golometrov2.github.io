@@ -1092,7 +1092,13 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-cerrar]") || e.target.classList.contains("ov")) { cerrarOv(); return; }
   if (e.target.closest("#btnBusc")) abrirBuscador();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarOv(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") cerrarOv();
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-ficha]:not(button)")) { e.preventDefault(); e.target.click(); }
+});
+// los jugadores que abren ficha también se pueden usar con teclado y lector de pantalla
+new MutationObserver(() => document.querySelectorAll("[data-ficha]:not(button):not([tabindex])").forEach(el => { el.tabIndex = 0; el.setAttribute("role", "button"); }))
+  .observe(document.body, { childList: true, subtree: true });
 
 const FORMACIONES = [[3, 4, 3], [3, 5, 2], [4, 3, 3], [4, 4, 2], [4, 5, 1], [5, 3, 2], [5, 4, 1]];
 function onceIdeal(gw) {
