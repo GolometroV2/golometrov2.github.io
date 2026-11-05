@@ -57,6 +57,15 @@ jobs:
                 echo "Aviso: no se pudo leer la clasificación en directo"; tail -5 /tmp/extractor.log
               fi
             fi
+            # Red de seguridad del mercado: GitHub a veces no lanza sus ejecuciones programadas. Si ya son las 06:30
+            # en Madrid y hoy no se ha leído el mercado, se lanza su flujo (como mucho una vez cada 45 minutos).
+            HM=$(TZ=Europe/Madrid date +%H%M); HOY=$(TZ=Europe/Madrid date +%F)
+            ULTM=$(python3 -c "import json,datetime,zoneinfo;m=json.load(open('mercado.json'));print(datetime.datetime.fromisoformat(m['updatedAt']).astimezone(zoneinfo.ZoneInfo('Europe/Madrid')).date())" 2>/dev/null || echo nunca)
+            if [ "$((10#$HM))" -ge 630 ] && [ "$ULTM" != "$HOY" ] && [ $((SECONDS - ${ULTIMO_MER:--100000})) -ge 2700 ]; then
+              ULTIMO_MER=$SECONDS
+              echo "El mercado de hoy aún no se ha leído: se lanza su flujo."
+              GH_TOKEN="${{ github.token }}" gh workflow run mercado.yml --repo "${{ github.repository }}" --ref main || echo "Aviso: no se pudo lanzar el mercado"
+            fi
             if [ -f equipos.json ]; then git add equipos.json; fi
             if [ -f calendario.json ]; then git add calendario.json; fi
             if [ -d avatars ]; then git add avatars; fi
