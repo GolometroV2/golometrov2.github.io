@@ -809,6 +809,54 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .ov-c{box-shadow:0 -1px 0 #2fd46e55,0 -20px 60px -20px #2fd46e40}
 .esq i{background:linear-gradient(90deg,var(--panel) 0,color-mix(in srgb,var(--panel2) 70%,#2fd46e 6%) 50%,var(--panel) 100%);background-size:200% 100%}
 .mv-val{color:var(--mut);font-weight:400}
+/* ---- simulador de puja ---- */
+.sp{--sp-c:#2fd46e}
+.sp-sel{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:0 -2px 6px;scroll-snap-type:x proximity}
+.sp-sel::-webkit-scrollbar{display:none}
+.sp-sel button{flex:none;scroll-snap-align:start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:4px 14px 4px 4px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent);color:var(--mut);font-weight:600;font-size:13px;transition:background .15s,color .15s,border-color .15s}
+.sp-sel button.on{color:var(--txt);border-color:color-mix(in srgb,var(--acc) 70%,transparent);background:linear-gradient(90deg,#2fd46e2a,#2fd46e0a);box-shadow:0 0 14px -4px #2fd46e88}
+.sp-sel .cara{--t:30px!important}.sp-sel .cara-e{display:none}
+.sp-top{display:flex;align-items:center;gap:14px;margin:6px 0 2px}
+.sp-cifra{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sp-cifra small{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-v{font-family:var(--f-disp);font-stretch:85%;font-weight:700;font-size:30px;line-height:1.05;letter-spacing:.2px}
+.sp-s{font-size:12.5px;color:var(--mut)}
+.sp-gauge{position:relative;flex:none;width:86px;height:86px}
+.sp-gauge svg{width:100%;height:100%;transform:rotate(-90deg)}
+.sp-g0{fill:none;stroke:color-mix(in srgb,var(--line) 85%,transparent);stroke-width:7}
+.sp-g1{fill:none;stroke:var(--sp-c);stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 0 5px var(--sp-c));transition:stroke-dasharray .25s ease,stroke .25s}
+.sp-gauge>span{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.sp-p{font-family:var(--f-disp);font-stretch:82%;font-weight:700;font-size:23px;color:var(--sp-c);transition:color .25s}
+.sp-gauge small{font-size:9.5px;color:var(--mut);margin-top:3px}
+.sp-fila{display:flex;align-items:flex-end;gap:8px;margin-top:8px}
+.sp-pista{position:relative;flex:1;min-width:0}
+.sp-mas{flex:none;width:40px;height:40px;margin-bottom:22px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent);font-size:20px;line-height:1;color:var(--txt);display:grid;place-items:center}
+.sp-mas:active{transform:scale(.94)}
+.sp-curva{display:block;width:100%;height:92px;overflow:visible}
+.sp-gr{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4;vector-effect:non-scaling-stroke}
+.sp-ln{fill:none;stroke:#2fd46e;stroke-width:2;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 4px #2fd46e99)}
+.sp-mk line{stroke-width:1;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.sp-mk text{font:600 9px var(--f-disp);fill:var(--mut)}
+.sp-id line{stroke:#2fd46e}.sp-id text{fill:var(--accFg)}
+.sp-ff line{stroke:var(--df)}.sp-seg line{stroke:var(--mut)}
+.sp-cur line{stroke:var(--sp-c);stroke-width:1.5;vector-effect:non-scaling-stroke;opacity:.8}
+.sp-dot{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--sp-c);border:2px solid var(--panel);box-shadow:0 0 10px var(--sp-c);pointer-events:none;transition:background .25s}
+.sp-r{-webkit-appearance:none;appearance:none;display:block;width:100%;height:44px;margin:-4px 0 0;background:transparent;cursor:pointer;--pos:50%}
+.sp-r:focus-visible{outline:none}
+.sp-r::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--sp-c) 0 var(--pos),color-mix(in srgb,var(--line) 90%,transparent) var(--pos) 100%);box-shadow:inset 0 1px 2px #0006}
+.sp-r::-moz-range-track{height:8px;border-radius:999px;background:color-mix(in srgb,var(--line) 90%,transparent)}
+.sp-r::-moz-range-progress{height:8px;border-radius:999px;background:var(--sp-c)}
+.sp-r::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff 0 34%,var(--sp-c) 36% 100%);border:3px solid var(--panel);box-shadow:0 0 0 1px var(--sp-c),0 0 16px var(--sp-c);transition:transform .12s}
+.sp-r::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff 0 34%,var(--sp-c) 36% 100%);border:3px solid var(--panel);box-shadow:0 0 0 1px var(--sp-c),0 0 16px var(--sp-c)}
+.sp-r:active::-webkit-slider-thumb{transform:scale(1.12)}
+.sp-r:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--accFg)}
+.sp-ejes{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:-6px}
+.sp-bot{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sp-bot button{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent);font-size:12.5px;font-weight:600;color:var(--txt);font-family:var(--f-disp)}
+.sp-bot button[data-spb="ideal"]{border-color:#2fd46e66;color:var(--accFg)}
+.sp-bot button:active{transform:scale(.96)}
+.sp-ir{margin-top:8px;min-height:40px;padding:0 14px;border-radius:12px;border:1px solid #2fd46e55;color:var(--accFg);font-weight:600;font-size:13px;background:#2fd46e12}
+@media (prefers-color-scheme:light){.sp-ln,.sp-g1{filter:none}.sp-r::-webkit-slider-thumb{border-color:#fff}}
 /* ---- detalles ---- */
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
@@ -3343,20 +3391,96 @@ function bloqueInversion(r) {
     <ul class="clist">${L.map(y => `<li class="crow" data-ficha="${esc(y.x.j.id)}">${cara(y.x.j.id, y.x.j.name, y.x.j.teamId, 36)}<span class="cq"><b>${esc(y.x.j.name)}</b><span>puja ${merEur(y.x.puja)} → ${merEur(y.x.V * (1 + y.g7))}</span></span><span class="cr"><b class="up">+${eur(y.neto7)}</b><small>en 7 días</small></span></li>`).join("")}</ul>
     <p class="note">A la derecha, lo que ganarías vendiéndolo en 7 días, ya descontado lo que pagas de más. Es una previsión: un mal partido o una lesión la cambian de golpe. Por debajo de 1 M el valor se mueve al azar y no se incluye.</p></section>`;
 }
-// Simulador: «si pujo esto, ¿me lo llevo?» (misma cuenta que la puja ideal)
-function htmlSimPuja(r) {
-  if (!r.pl || r.prio === "evitar") return "";
-  const max = Math.max(r.techo, r.puja, r.V * 2.2), paso = r.V >= 5e6 ? 50000 : r.V >= 1e6 ? 10000 : 1000;
-  return `<div class="simp" data-simv="${r.V}" data-simq="${r.pl.q}"><label>¿Y si pujo otra cifra? <b class="simp-v">${merPuja(r.puja)}</b> <span class="simp-r">+${Math.round((r.puja / r.V - 1) * 100)} % · te lo llevas ${pc(r.pl.p)}</span></label>
-    <input type="range" min="${r.V}" max="${Math.round(max / paso) * paso}" step="${paso}" value="${r.puja}" data-simp="1" aria-label="Puja de prueba"></div>`;
+// ---------- Simulador de puja ----------
+// Elige cualquier libre (por defecto, la oportunidad del día), mueve la barra y ves al momento la probabilidad de
+// llevártelo. Encima de la barra, la curva de probabilidad con las referencias: su valor, la puja ideal, la puja máxima
+// rentable de Futbol Fantasy y la puja segura. Misma cuenta que la puja ideal (pujaLiga / pGanarPuja).
+let SIM = { id: null, datos: {}, manual: false };
+function datoSim(r) {
+  if (!r || r.prio === "evitar") return null;
+  const V = r.V, q = r.pl ? r.pl.q : capClamp(r.tasaC ?? 0.3, [0.1, 0.9]);
+  const ideal = r.puja, seguro = Math.max(r.techo || ideal, ideal), ff = r.sFF > 0 ? redondeaPuja(V * (1 + r.sFF)) : null;
+  // la barra llega un poco más allá de donde la probabilidad deja de subir (pagar más ya no sirve)
+  const p0 = pGanarPuja(V, 0, q, obsPujas()) ?? 0, pMax = pGanarPuja(V, 1.6, q, obsPujas()) ?? 1, pTope = p0 + 0.88 * (pMax - p0);
+  let tope = V * 2.6; for (let x = 0.01; x <= 1.6; x += 0.01) { const p = pGanarPuja(V, x, q, obsPujas()); if (p != null && p >= pTope) { tope = V * (1 + x); break; } }
+  const max = Math.max(tope * 1.12, seguro * 1.1, ideal * 1.2, (ff || 0) * 1.1, V * 1.12), paso = V >= 5e6 ? 50000 : V >= 1e6 ? 10000 : 1000;
+  return { id: String(r.j.id), nombre: r.j.name, teamId: r.j.teamId, V, q, ideal, seguro, ff, max: Math.ceil(max / paso) * paso, paso };
 }
-function moverSimPuja(inp) {
-  const c = inp.closest(".simp"); if (!c) return;
-  const V = +c.dataset.simv, q = +c.dataset.simq, b = +inp.value, s = b / V - 1, p = pGanarPuja(V, s, q, obsPujas());
-  c.querySelector(".simp-v").textContent = merPuja(b);
-  c.querySelector(".simp-r").textContent = `+${Math.round(s * 100)} % · te lo llevas ${p != null ? pc(p) : "?"}`;
+const pSim = (d, b) => pGanarPuja(d.V, b / d.V - 1, d.q, obsPujas());
+function curvaSim(d) {
+  const W = 320, H = 92, n = 48, xs = v => 14 + (v - d.V) / (d.max - d.V) * (W - 28), ys = p => H - 6 - p * (H - 18);
+  const pts = Array.from({ length: n + 1 }, (_, k) => { const b = d.V + (d.max - d.V) * k / n, p = pSim(d, b) ?? 0; return [xs(b), ys(p)]; });
+  const linea = pts.map((q, k) => (k ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" ");
+  const marca = (v, cls, t) => v && v > d.V && v <= d.max ? `<g class="${cls}"><line x1="${xs(v).toFixed(1)}" x2="${xs(v).toFixed(1)}" y1="8" y2="${H - 6}"/><text x="${xs(v).toFixed(1)}" y="7" text-anchor="middle">${t}</text></g>` : "";
+  return `<svg class="sp-curva" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="spg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2fd46e" stop-opacity=".38"/><stop offset="1" stop-color="#2fd46e" stop-opacity="0"/></linearGradient></defs>
+    ${[0.25, 0.5, 0.75].map(p => `<line class="sp-gr" x1="14" x2="${W - 14}" y1="${ys(p)}" y2="${ys(p)}"/>`).join("")}
+    <path d="${linea} L${(W - 14)} ${H - 6} L14 ${H - 6} Z" fill="url(#spg)"/><path d="${linea}" class="sp-ln"/>
+    ${(() => { const cerca = (a, b) => a && b && Math.abs(xs(a) - xs(b)) < 34;   // etiquetas que se pisarían: una sola
+      const ffJ = cerca(d.ff, d.ideal), segJ = d.seguro > d.ideal && cerca(d.seguro, d.ideal);
+      return (d.ff ? marca(d.ff, "sp-mk sp-ff", ffJ ? "" : "FF") : "") + (d.seguro > d.ideal ? marca(d.seguro, "sp-mk sp-seg", segJ || cerca(d.seguro, d.ff) ? "" : "Segura") : "")
+        + marca(d.ideal, "sp-mk sp-id", ffJ ? "Ideal · FF" : "Ideal"); })()}
+    <g class="sp-cur"><line y1="8" y2="${H - 6}"/></g></svg><i class="sp-dot" aria-hidden="true"></i>`;
 }
-document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-simp]")) moverSimPuja(e.target); });
+function bloqueSimPuja(r, mejor) {
+  const L = r.lista.filter(x => x.prio !== "evitar");
+  if (!L.length || !obsPujas().length) return "";
+  SIM.datos = {}; L.forEach(x => { const d = datoSim(x); if (d) SIM.datos[d.id] = d; });
+  // por defecto, la oportunidad del día; si el usuario ha elegido otro, se respeta
+  if (!SIM.manual || !SIM.id || !SIM.datos[SIM.id]) SIM.id = mejor && SIM.datos[String(mejor.j.id)] ? String(mejor.j.id) : Object.keys(SIM.datos)[0];
+  const orden = [mejor, ...L.filter(x => x !== mejor)].filter(x => x && SIM.datos[String(x.j.id)]);
+  return `<section class="card sp" id="simPuja"><div class="gh"><h2>Simulador de puja</h2></div>
+    <p class="note" style="margin:0 0 10px">Elige un libre y mueve la barra: verás al momento cuántas veces te lo llevarías con esa cifra en esta liga.</p>
+    <div class="sp-sel" role="tablist" aria-label="Jugador">${orden.map(x => { const id = String(x.j.id);
+      return `<button role="tab" aria-selected="${id === SIM.id}" class="${id === SIM.id ? "on" : ""}" data-simsel="${esc(id)}">${cara(x.j.id, x.j.name, x.j.teamId, 30)}<span>${esc(apellido(x.j.name))}</span></button>`; }).join("")}</div>
+    <div class="sp-cuerpo" id="spCuerpo">${htmlCuerpoSim()}</div></section>`;
+}
+function htmlCuerpoSim() {
+  const d = SIM.datos[SIM.id]; if (!d) return "";
+  return `<div class="sp-top"><div class="sp-cifra"><small>Tu puja por ${esc(d.nombre)}</small><b class="sp-v"></b><span class="sp-s"></span></div>
+      <div class="sp-gauge"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" class="sp-g0"/><circle cx="32" cy="32" r="27" class="sp-g1"/></svg><span><b class="sp-p"></b><small>te lo llevas</small></span></div></div>
+    <div class="sp-fila"><button class="sp-mas" data-spb="-1" aria-label="Bajar la puja">−</button>
+      <div class="sp-pista">${curvaSim(d)}
+        <input class="sp-r" type="range" min="${d.V}" max="${d.max}" step="${d.paso}" value="${d.ideal}" data-sp="1" aria-label="Puja por ${esc(d.nombre)}">
+        <div class="sp-ejes"><span>Valor ${merEur(d.V)}</span><span>${merEur(d.max)}</span></div></div>
+      <button class="sp-mas" data-spb="1" aria-label="Subir la puja">+</button></div>
+    <div class="sp-bot"><button data-spb="ideal">Ideal · ${merEur(d.ideal)}</button>${d.ff && Math.abs(d.ff - d.ideal) > 0.02 * d.V ? `<button data-spb="ff">Futbol Fantasy · ${merEur(d.ff)}</button>` : ""}${d.seguro > d.ideal * 1.02 ? `<button data-spb="seg">Segura · ${merEur(d.seguro)}</button>` : ""}</div>`;
+}
+function moverSim() {
+  const c = $("#spCuerpo"), d = SIM.datos[SIM.id]; if (!c || !d) return;
+  const inp = c.querySelector(".sp-r"), b = +inp.value, p = pSim(d, b) ?? 0, s = b / d.V - 1;
+  c.querySelector(".sp-v").textContent = merPuja(b);
+  c.querySelector(".sp-s").textContent = `${s >= 0 ? "+" : "−"}${nf1.format(Math.abs(s) * 100)} % sobre su valor · ${b === d.ideal ? "la puja ideal" : b > d.ideal ? `${merEur(b - d.ideal)} más que la ideal` : `${merEur(d.ideal - b)} menos que la ideal`}`;
+  c.querySelector(".sp-p").textContent = pc(p);
+  const tono = p >= 0.8 ? "#2fd46e" : p >= 0.55 ? "#9be15d" : p >= 0.35 ? "#ff9f43" : "#ff6b6b";
+  c.style.setProperty("--sp-c", tono);
+  const g1 = c.querySelector(".sp-g1"), L = 2 * Math.PI * 27; g1.style.strokeDasharray = `${(L * p).toFixed(1)} ${L.toFixed(1)}`;
+  const W = 320, H = 92, x = 14 + (b - d.V) / (d.max - d.V) * (W - 28), y = H - 6 - p * (H - 18);
+  const cur = c.querySelector(".sp-cur"); cur.querySelector("line").setAttribute("x1", x); cur.querySelector("line").setAttribute("x2", x);
+  const dot = c.querySelector(".sp-dot"); if (dot) { dot.style.left = (x / W * 100).toFixed(2) + "%"; dot.style.top = y.toFixed(1) + "px"; }
+  inp.style.setProperty("--pos", ((b - d.V) / (d.max - d.V) * 100).toFixed(2) + "%");
+  inp.setAttribute("aria-valuetext", `${merPuja(b)}, te lo llevas ${pc(p)}`);
+}
+document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-sp]")) moverSim(); });
+document.addEventListener("click", e => {
+  const sel = e.target.closest && e.target.closest("[data-simsel]");
+  if (sel) {
+    SIM.id = sel.dataset.simsel; SIM.manual = true;
+    const card = $("#simPuja"); if (!card) return;
+    card.querySelectorAll(".sp-sel button").forEach(b => { const on = b.dataset.simsel === SIM.id; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+    $("#spCuerpo").innerHTML = htmlCuerpoSim(); moverSim();
+    if (!sel.closest(".sp-sel")) card.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    else sel.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    return;
+  }
+  const bt = e.target.closest && e.target.closest("[data-spb]");
+  if (bt) {
+    const d = SIM.datos[SIM.id], inp = $("#spCuerpo .sp-r"); if (!d || !inp) return;
+    const k = bt.dataset.spb;
+    inp.value = k === "ideal" ? d.ideal : k === "ff" ? d.ff : k === "seg" ? d.seguro : Math.min(d.max, Math.max(d.V, +inp.value + (+k) * d.paso * (d.V >= 1e6 ? 5 : 10)));
+    moverSim();
+  }
+});
 // Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
 function bloquePujasLiga() {
   const O = obsPujas();
@@ -3419,7 +3543,6 @@ function heroMer(r, cierre) {
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
     <div class="ch-kpi"><span><b class="mh-puja">${merEur(r.puja)}</b><small>puja ideal: ${merPuja(r.puja)} (+${sobre} %)</small></span><span><b>${nf1.format(r.espGen)}</b><small>pts por jornada</small></span><span><b class="${r.apre >= 0 ? "up" : "dn"}">${r.apre >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.apre) * 100)} %</b><small>valor hasta jugar</small></span></div>
     ${r.pl ? `<p class="ch-gana">Con esta puja te lo llevas <b>${pc(r.pl.p)}</b> de las veces${r.pl.tope ? " (no compensa pagar más)" : ""}.${r.sFF != null ? ` Futbol Fantasy: ${r.sFF > 0 ? `puja máxima rentable <b>${merPuja(redondeaPuja(r.V * (1 + r.sFF)))}</b> (+${nf1.format(r.sFF * 100)} %)` : "sin rentabilidad (cree que va a bajar)"}.` : ""} ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}: <b>${merPuja(r.techo)}</b>.` : ""}</p>` : ""}
-    ${htmlSimPuja(r)}
     <p class="ch-por">${esc(fraseMer(r))}${r.pl ? "" : ` No pases de <b>${merPuja(r.techo)}</b>.`}${(t => t != null ? ` En esta liga se fichan ${Math.round(t * 100)} de cada 100 libres de su precio: ${t >= 0.35 ? "habrá competencia" : "puede que nadie más puje"}.` : "")(tasaFichaje(r.V))}</p>
   </section>`;
 }
@@ -3447,7 +3570,7 @@ function merTarjeta(r) {
       </div>
       <div class="mpuja"><small>Puja ideal</small><b>${merPuja(r.puja)}</b><span>${r.prio === "evitar" ? "no fichar" : "+" + sobre + " %"}${r.pl && r.prio !== "evitar" ? ` · ${pc(r.pl.p)}` : ""}</span></div>
     </div>
-    <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}${htmlSimPuja(r)}</div></details></li>`;
+    <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}${r.prio !== "evitar" ? `<button class="sp-ir" data-simsel="${esc(r.j.id)}">Probar pujas por ${esc(r.j.name)}</button>` : ""}</div></details></li>`;
 }
 
 // Jugadores de toda la liga con mejores últimas 3 jornadas, y si se pueden conseguir (libres, en venta o de quién son)
@@ -3621,6 +3744,7 @@ function pintarMercado() {
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
     ${mejor ? heroMer(mejor, cierre) : ""}
+    ${bloqueSimPuja(r, mejor)}
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
@@ -3631,6 +3755,7 @@ function pintarMercado() {
     ${bloqueRacha(MER_DATA)}
     ${bloquePujasLiga()}
     <p class="note">La puja ideal sale de lo que de verdad se paga en esta liga por jugadores de precio parecido (el precio de cada compra se deduce de su cláusula, que es 1,5 veces lo pagado). El % junto a la puja es la probabilidad de llevártelo. Cuanto mejor es el jugador, más alta la probabilidad que se busca.</p>`;
+  moverSim();
 }
 
 // ---------- Pestaña Capitán ----------
