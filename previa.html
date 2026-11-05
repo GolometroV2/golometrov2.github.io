@@ -738,8 +738,32 @@ body.tv-on{overflow:hidden}
 .tv-tk span{font-family:var(--f-disp);font-weight:600;font-size:clamp(13px,1.7vw,20px);color:#cfe3d7;white-space:nowrap}
 .tv-tk span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#2fd46e;margin-right:10px;vertical-align:middle;box-shadow:0 0 6px #2fd46e}
 @keyframes tvtk{to{transform:translateX(-50%)}}
+.tv-meta{display:flex;align-items:center;gap:clamp(8px,1.2vw,18px);min-width:0;margin-top:2px}
+.tv-cap{display:inline-flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:999px;background:linear-gradient(90deg,#2fd46e2e,#2fd46e08);border:1px solid #2fd46e45;min-width:0;flex:0 1 auto}
+.tv-cap.pend{background:linear-gradient(90deg,#ffffff0f,#ffffff03);border-color:#ffffff24}
+.tv-cap-f{position:relative;flex:none;display:grid}
+.tv-cap-f .cara{--t:clamp(28px,2.7vw,40px)!important;width:var(--t);height:var(--t)}
+.tv-cap-f .cara-e{display:none}
+.tv-brz{position:absolute;right:-5px;bottom:-4px;width:clamp(15px,1.3vw,19px);height:clamp(15px,1.3vw,19px);border-radius:50%;background:#2fd46e;color:#03200e;font:800 clamp(9px,.8vw,11px)/1 var(--f-disp);display:grid;place-items:center;font-style:normal;box-shadow:0 0 0 2px #0b140f,0 0 8px #2fd46e99}
+.tv-cap.pend .tv-brz{background:#cfe3d7;box-shadow:0 0 0 2px #0b140f}
+.tv-cap-t{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.tv-cap-t small{font-size:clamp(9.5px,.85vw,12px);color:#7f948a;white-space:nowrap}
+.tv-cap-t b{font-size:clamp(12.5px,1.3vw,18px);font-weight:700;color:#eaf4ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-cap-p{font-family:var(--f-disp);font-stretch:82%;font-weight:700;font-size:clamp(17px,1.9vw,26px);color:#5cf096;text-shadow:0 0 10px #2fd46e66;margin-left:2px}
+.tv-cap.pend .tv-cap-p{color:#cfe3d7;text-shadow:none;font-size:clamp(14px,1.4vw,19px)}
+.tv-cap{flex:0 0 auto;max-width:72%}
+.tv-cap-t b{max-width:14ch}
+.tv-once{display:flex;align-items:center;gap:10px;margin-top:6px}
+.tv-dots{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;flex:1;max-width:100%}
+.tv-dots i{height:5px;border-radius:2px;background:var(--c);box-shadow:0 0 8px color-mix(in srgb,var(--c) 70%,transparent)}
+.tv-dots i.f{background:#ffffff14;box-shadow:none}
+.tv-once small{flex:none;font-size:clamp(11px,1vw,14px);color:#7f948a;white-space:nowrap}
+.tv-proy{display:flex;flex-direction:column;line-height:1.1;flex:none;margin-left:auto;text-align:right}
+.tv-proy small{font-size:clamp(9.5px,.85vw,12px);color:#7f948a}
+.tv-proy b{font-family:var(--f-disp);font-stretch:85%;font-weight:700;font-size:clamp(16px,1.8vw,24px);color:#eaf4ee}
+@media (max-width:420px){.tv-once small{display:none}}
 @media (max-width:699px){.tv-g{display:none}.tv-st{order:5;flex-basis:100%}.tv-hr{font-size:18px}}
-@media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.6vw,64px);height:clamp(40px,4.6vw,64px)}}
+@media (min-width:900px) and (min-aspect-ratio:4/3){.tv-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--fil,4),minmax(0,1fr));grid-auto-flow:column;gap:12px 16px;flex:1}.tv-c{display:flex;flex-direction:column}.tv-n b{font-size:clamp(16px,1.9vw,28px)}.tv-n small{font-size:clamp(12px,1.15vw,16px)}.tv-g{display:none}.tv-l .av{width:clamp(40px,4.2vw,58px);height:clamp(40px,4.2vw,58px)}.tv-l li{padding:clamp(6px,1vh,12px) clamp(10px,1.3vw,18px);gap:clamp(8px,1.2vw,16px)}.tv-cap-t b{font-size:clamp(12px,1.15vw,16px)}.tv-cap-f .cara{--t:clamp(26px,2.3vw,34px)!important}.tv-proy b{font-size:clamp(15px,1.6vw,22px)}.tv-once{margin-top:4px}.tv-v{font-size:clamp(28px,4.4vw,60px)}.tv-sub{display:none}.tv-c{padding-top:12px}.tv-n b{font-size:clamp(15px,1.55vw,24px)}.tv-n{gap:2px}}
 @media (prefers-reduced-motion:reduce){.tv-tk>div{animation:none;flex-wrap:wrap;width:auto}}
 /* ---- cabecera compacta fuera de Clasificación; etiquetas en minúscula ---- */
 body[data-sec]:not([data-sec="clas"]) .head{padding-top:12px}
@@ -4123,6 +4147,16 @@ function cerrarTV() {
   try { if (TV.lock) TV.lock.release(); } catch (e) {} TV.lock = null;
   const b = $("#btnTV"); if (b) b.focus();
 }
+// Ficha del capitán en el marcador: su cara con el brazalete, apellido y sus puntos (o «por jugar» con su multiplicador)
+function chipCapTV(id, nombre, teamId, valor, pendiente, etiqueta) {
+  return `<span class="tv-cap${pendiente ? " pend" : ""}"><span class="tv-cap-f">${cara(id, nombre, teamId, 34)}<i class="tv-brz" aria-hidden="true">C</i></span>
+    <span class="tv-cap-t"><small>${pendiente ? "Por jugar" : etiqueta}</small><b>${esc(apellido(nombre))}</b></span>${valor !== "" && valor != null ? `<span class="tv-cap-p">${esc(String(valor))}</span>` : ""}</span>`;
+}
+// Cuántos de los once ya han jugado: una raya por jugador (llena = jugado)
+function puntosOnce(jug, total) {
+  if (!total) return "";
+  return `<span class="tv-once" role="img" aria-label="${jug} de ${total} alineados ya han jugado"><span class="tv-dots">${Array.from({ length: total }, (_, k) => `<i${k < jug ? "" : ' class="f"'}></i>`).join("")}</span><small>${jug} de ${total} jugados</small></span>`;
+}
 function pintarTV() {
   const tv = $("#tv"); if (!tv || !TV.abierto || !D) return;
   const js = jornadas(), j = js[js.length - 1], n = j ? +j.slice(1) : null, md = (j && D.matchdays[j]) || {};
@@ -4137,7 +4171,7 @@ function pintarTV() {
     estado = `<span class="tv-st">Jornada ${Q.gw} · empieza en <b>${d ? `${d} d ${hh} h` : `${hh} h ${String(mm).padStart(2, "0")} min`}</b></span>`;
     const mx = Math.max(...Q.filas.map(f => f.pGana), 0.01);
     cuerpo = `<p class="tv-sub">Quién tiene más opciones de ganar la jornada si cada uno pone su mejor once</p>
-      <ol class="tv-l" style="--fil:${Math.ceil(Q.filas.length / 2)}">${Q.filas.map((f, k) => `<li style="--c:${col(f.i)};--w:${(f.pGana / mx * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(f.m, f.i)}<span class="tv-n"><b>${esc(f.m.name)}</b><small>≈ ${Math.round(f.media)} pts · capitán ${esc(apellido(f.o.cap.p.short || f.o.cap.p.name))}</small><i class="tv-b"></i></span><span class="tv-v">${pctQ(f.pGana)}</span></li>`).join("")}</ol>`;
+      <ol class="tv-l" style="--fil:${Math.ceil(Q.filas.length / 2)}">${Q.filas.map((f, k) => `<li style="--c:${col(f.i)};--w:${(f.pGana / mx * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(f.m, f.i)}<span class="tv-n"><b>${esc(f.m.name)}</b><span class="tv-meta">${chipCapTV(f.o.cap.p.id, f.o.cap.p.short || f.o.cap.p.name, f.o.cap.p.teamId, f.o.cap.m > 1 ? `×${coma(f.o.cap.m)}` : "", false, "Capitán ideal")}<span class="tv-proy"><small>previstos</small><b>≈ ${Math.round(f.media)}</b></span></span><i class="tv-b"></i></span><span class="tv-v">${pctQ(f.pGana)}</span></li>`).join("")}</ol>`;
     ticker = Q.filas.map(f => `${f.m.name}: líder tras la jornada ${pctQ(f.pLider)}`);
     IMG_DATOS.tv = { titulo: `Predicción · jornada ${Q.gw}`, sub: "Probabilidad de ganar la jornada con el mejor once", filas: Q.filas.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana), det: `≈ ${Math.round(f.media)} pts`, w: f.pGana / mx })), pie: "" };
   } else if (j) {
@@ -4145,13 +4179,16 @@ function pintarTV() {
     const S = serieLiga(), kj = S.js.indexOf(j);
     const L = D.managers.map((m, i) => { const x = md[m.id] || {}, v = (vivo || {})[m.id] || { n: 0, esp: 0 };
       const k = S.ms.findIndex(o => o.m.id === m.id);
-      return { m, i, pts: x.points || 0, cap: x.captain, v, gen: k >= 0 && kj >= 0 ? S.cum[k][kj] : total(m) }; })
+      const pl = x.players || [], cp = x.captain ? pl.find(p => p.id === x.captain.id) : null, pend = new Set();
+      (CAL && CAL.games || []).filter(g => g.gw === n && g.ts && g.ts > ahora && !capNum(g.gh)).forEach(g => { pend.add(g.home); pend.add(g.away); });
+      const capPend = !!(cp && (cp.played === false || (pend.has(cp.teamId) && !cp.points)));
+      return { m, i, pts: x.points || 0, cap: x.captain, capTeam: cp ? cp.teamId : null, capPend, alin: pl.length, jugados: pl.filter(p => !pend.has(p.teamId)).length, v, gen: k >= 0 && kj >= 0 ? S.cum[k][kj] : total(m) }; })
       .sort((a, b) => b.pts - a.pts || b.gen - a.gen);
     const termin = !vivo;
     estado = termin ? `<span class="tv-st">Jornada ${n} · <b>final</b></span>` : `<span class="tv-st tv-vivo"><i aria-hidden="true"></i>En directo · jornada ${n}</span>`;
     const genOrd = L.slice().sort((a, b) => b.gen - a.gen);
     cuerpo = `<p class="tv-sub">${termin ? "Puntos de la jornada" : "Puntos de la jornada y cómo acabaría cada uno con los partidos que faltan"}</p>
-      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><small>${x.cap ? `© ${esc(apellido(x.cap.name))} ${x.cap.points ?? ""}` : ""}${!termin && x.v.n ? ` · ⏳ ${x.v.n}<span class="tv-g"> por jugar</span> · ≈ ${Math.round(x.pts + x.v.esp)}` : ""}<span class="tv-g"> · ${genOrd.indexOf(x) + 1}.º en la general (${x.gen})</span></small><i class="tv-b"></i></span><span class="tv-v">${x.pts}</span></li>`).join("")}</ol>`;
+      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><span class="tv-meta">${x.cap ? chipCapTV(x.cap.id, x.cap.name, x.capTeam, x.capPend ? `×${coma(x.cap.multiplier || 1)}` : x.cap.points ?? "", x.capPend, "Capitán") : ""}${!termin && x.v.n ? `<span class="tv-proy"><small>acabaría</small><b>≈ ${Math.round(x.pts + x.v.esp)}</b></span>` : `<span class="tv-proy"><small>en la general</small><b>${genOrd.indexOf(x) + 1}.º</b></span>`}</span>${termin ? `<i class="tv-b"></i>` : puntosOnce(x.jugados, x.alin)}</span><span class="tv-v">${x.pts}</span></li>`).join("")}</ol>`;
     IMG_DATOS.tv = { titulo: `Jornada ${n} · ${termin ? "resultado" : "en directo"}`, sub: termin ? "Puntos de la jornada" : `Actualizado a las ${hora}`, filas: L.map(x => ({ m: x.m, i: x.i, valor: String(x.pts), det: !termin && x.v.n ? `${x.v.n} por jugar · ≈ ${Math.round(x.pts + x.v.esp)}` : `${genOrd.indexOf(x) + 1}.º en la general`, w: x.pts / Math.max(1, L[0].pts) })), pie: "" };
     const jug = []; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played !== false && capNum(p.points)) jug.push(p); }));
     const vistos = new Set();
