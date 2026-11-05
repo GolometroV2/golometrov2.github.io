@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-05 (a mano por Claude, fase 7 rendimiento): `sw.js` (service worker). Fotos, escudos y avatares se guardan en el móvil y salen al instante; página y JSON siempre de internet (red primero) y la última copia solo sin conexión. Probado: recarga en 0,2 s y la clasificación se ve sin conexión. Previa con el líder que llega y crónica con peor capitán y más goles.
 - 2026-11-05 (a mano por Claude): en Equipos, cada jugador muestra su % de titular en el próximo partido (Futbol Fantasy + Analítica Fantasy, verde/ámbar/rojo) y la cabecera avisa de cuántos están por debajo del 50 %.
 - 2026-11-05 (a mano por Claude): vista «Forma» en Clasificación (clasificación de las últimas 3 jornadas, con todas las métricas y el detalle de cada manager) y novedades actualizadas.
 - 2026-11-05 (a mano por Claude): «¿Quién ficha mejor?» en Equipos (cuánto valor ha ganado o perdido cada compra reciente desde el fichaje, puntos dados desde entonces y balance por manager) y atajo «📣 Previa» en Clasificación mientras la previa está activa.
