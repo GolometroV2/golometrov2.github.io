@@ -872,6 +872,8 @@ function fotoDe(id) {
   id = String(id);
   if (E) for (const m of E.managers || []) { const p = (m.players || []).find(q => String(q.id) === id); if (p && p.photo) return p.photo; }
   if (FOTOS && FOTOS[id]) return FOTOS[id];
+  const lib = MER_DATA && (MER_DATA.libres || []).find(q => String(q.id) === id);     // libres del mercado: su foto con versión
+  if (lib && lib.photo) return lib.photo;
   return `https://cdn-mister.mundodeportivo.com/file/cdn-common/players/${id}.png`;
 }
 const iniciales = n => String(n || "?").split(/\s+/).filter(Boolean).slice(-2).map(x => x[0]).join("").toUpperCase();
