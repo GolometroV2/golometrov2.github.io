@@ -2920,7 +2920,11 @@ const CAP = {
   P_XI_BASE: 0.5, P_XI_REGULAR: 0.45,   // prob. de jugar en el once probable = base + regular * tasa de titularidad
   P_FUERA_BASE: 0.03, P_FUERA_REGULAR: 0.25,  // idem si NO está en el once probable
   POS_DEF: { PT: 3.4, DF: 3.2, MC: 3.5, DL: 3.8 },
-  SIGMA_DEF: { PT: 3.2, DF: 3.0, MC: 3.6, DL: 4.0 }
+  SIGMA_DEF: { PT: 3.2, DF: 3.0, MC: 3.6, DL: 4.0 },
+  // Modelo de partido (liga.partido): la cola baja se estrecha en los resultados normales y se ensancha cuando su equipo
+  // encaja 3 o más (goleada); la alta se mantiene. Calibrado prediciendo J7-J11 solo con lo anterior: defensas y porteros
+  // acaban en ≤0 un 6,8 % previsto frente a 6,2 % real en partidos normales y 14 % frente a 17,5 % cuando se espera goleada
+  PART_BAJO: 0.4, PART_GOLEADA: 2.0, PART_ALTO: 1.0
 };
 // Parámetros recalculados cada día por autoajuste_capitan.py (parametros_capitan.json); solo se aceptan claves numéricas conocidas.
 function capAplicarParametros(par) {
@@ -3113,6 +3117,56 @@ function capObservaciones(D, E, cal) {
   return obs;
 }
 
+// ---- Modelo de partido medido con toda LaLiga (modelo_liga.py -> parametros_capitan.json -> liga.partido) ----
+// Para cada posición: puntos por encima de su nivel según los goles que encaja (0,1,2,3,4+) y marca (0..4+) su equipo, y
+// cómo se reparten alrededor. Con los goles esperados del partido (Poisson) da la media y el riesgo del jugador:
+// un defensa contra el Madrid tiene muchas más papeletas de encajar 3 o más, y con 3 o más encajados acaba en ≤0 un 17-20 %.
+function capPoisK(l) {
+  const p = [0, 1, 2, 3].map(k => Math.exp(-l) * l ** k / [1, 1, 2, 6][k]);
+  return [...p, Math.max(0, 1 - p.reduce((a, b) => a + b, 0))];
+}
+const CAPPART = {};
+function capPartido(pos, lf, lc, lfr, lcr) {
+  const m = LIGA && LIGA.partido && LIGA.partido[pos];
+  if (!m || !capNum(lf) || !capNum(lc) || !capNum(lfr) || !capNum(lcr)) return null;
+  const clave = [pos, lf, lc, lfr, lcr].map(x => typeof x === "number" ? x.toFixed(2) : x).join("|");
+  if (CAPPART[clave]) return CAPPART[clave];
+  const pc = capPoisK(lc), pf = capPoisK(lf);
+  const efecto = (qc, qf) => qc.reduce((t, p, k) => t + p * m.encajados[k], 0) + qf.reduce((t, p, j) => t + p * m.marcados[j], 0);
+  const eM = efecto(pc, pf), shift = eM - efecto(capPoisK(lcr), capPoisK(lfr));
+  // mezcla: cada resultado (j a favor, k en contra) con su probabilidad y el reparto de puntos medido para ese resultado
+  const pts = [];
+  pc.forEach((wk, k) => { const q = m.residuo[k <= 1 ? "0-1" : k === 2 ? "2" : "3+"], bajo = k >= 3 ? CAP.PART_GOLEADA : CAP.PART_BAJO;
+    pf.forEach((wj, j) => { const b = m.encajados[k] + m.marcados[j]; q.forEach(r => pts.push([b + r * (r < 0 ? bajo : CAP.PART_ALTO), wk * wj / q.length])); }); });
+  const m2 = pts.reduce((t, [v, w]) => t + v * w, 0);
+  pts.sort((a, b) => a[0] - b[0]);
+  const N = 48, off = [];
+  let acc = 0, i = 0;
+  for (let n = 0; n < N; n++) { const t = (n + 0.5) / N; while (i < pts.length - 1 && acc + pts[i][1] < t) { acc += pts[i][1]; i++; } off.push(pts[i][0] - m2); }
+  return (CAPPART[clave] = { shift, off, p3: pc[3] + pc[4], p0: pc[0], pGol: 1 - pf[0] });
+}
+// Goles esperados a favor y en contra que «ya lleva dentro» la media de cada equipo (sus partidos jugados)
+let CAPREF = { k: null, v: {} };
+function capRefEquipos(cal, modelo) {
+  const juegos = (cal.games || []).filter(g => capNum(g.gh));
+  const k = juegos.length + ":" + (EXTD && EXTD.updatedAt || "");
+  if (CAPREF.k === k) return CAPREF.v;
+  const acc = {}, todos = [];
+  juegos.forEach(g => {
+    const ep = extPartido(g.id), lh = ep ? ep.lh : modelo.xg(g.home, g.away, true), la = ep ? ep.la : modelo.xg(g.away, g.home, false);
+    [[g.home, lh, la], [g.away, la, lh]].forEach(([t, f, c]) => { (acc[t] = acc[t] || { f: [], c: [] }); acc[t].f.push(f); acc[t].c.push(c); todos.push(f); });
+  });
+  const lg = capMedia(todos) || modelo.lg, v = { lg };
+  Object.entries(acc).forEach(([t, x]) => { v[t] = { lf: capMedia(x.f), lc: capMedia(x.c) }; });
+  CAPREF = { k, v };
+  return v;
+}
+function capPartidoJugador(cal, modelo, teamId, pos, xgf, xgc, nPart) {
+  const R = capRefEquipos(cal, modelo), r = R[teamId] || { lf: R.lg, lc: R.lg };
+  const wq = nPart / (nPart + CAP.K_JUGADOR);     // su media solo contiene el contexto de su equipo en la parte que viene de sus partidos
+  return capPartido(pos, xgf, xgc, wq * r.lf + (1 - wq) * R.lg, wq * r.lc + (1 - wq) * R.lg);
+}
+
 function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
   const obj = capJornadaObjetivo(cal, gwElegida);
   if (!obj) return { error: "No hay partidos pendientes en el calendario." };
@@ -3206,7 +3260,10 @@ function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
     // 2) modelo de goles
     const ep = extPartido(g.id);     // si hay cuotas de este partido, mandan ellas
     const xgf = ep ? (casa ? ep.lh : ep.la) : modelo.xg(p.teamId, rival, casa), xgc = ep ? (casa ? ep.la : ep.lh) : modelo.xg(rival, p.teamId, !casa);
-    const fXg = 1 + (casa ? CAP.HOME_EXTRA : -CAP.HOME_EXTRA) + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
+    // modelo de partido medido con toda LaLiga; si aún no está, la fórmula anterior
+    const dP = capPartidoJugador(cal, modelo, p.teamId, pos, xgf, xgc, nPart);
+    const fXg = dP ? Math.max(0.3, mu + dP.shift) / mu
+      : 1 + (casa ? CAP.HOME_EXTRA : -CAP.HOME_EXTRA) + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
 
     // 3) puntos que concede el rival a esa posición
     const lista_ = concedido[rival + ":" + pos] || [];
@@ -3250,7 +3307,9 @@ function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
     const esc_ = capClamp(0.4 * (sig / sdBase) + 0.6, [0.85, 1.4]);
     const colaAlta = 1 + CAP.SENS_COLA * (CAP.ATAQUE[pos] * (xgf / modelo.lg - 1));
     const colaBaja = 1 + CAP.SENS_COLA * (CAP.PORTERIA[pos] * (xgc / modelo.lg - 1));
-    let ys = base.map(x => { const d = (x - muBase) * esc_; return muC + (d > 0 ? d * capClamp(colaAlta, [0.8, 1.4]) : d * capClamp(colaBaja, [0.8, 1.4])); });
+    // Con el modelo de partido, el reparto sale de los resultados posibles del partido (goleada incluida) medidos en toda la liga
+    let ys = dP ? dP.off.map(o => muC + o * (suplente ? CAP.F_SUPLENTE : 1))
+      : base.map(x => { const d = (x - muBase) * esc_; return muC + (d > 0 ? d * capClamp(colaAlta, [0.8, 1.4]) : d * capClamp(colaBaja, [0.8, 1.4])); });
     const desvio = capMedia(ys) - muC;
     ys = ys.map(y => y - desvio);                           // la media se mantiene en muC
     const esp = pj * muC;
@@ -3267,6 +3326,7 @@ function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado, ep, ajXg, ext: extJugador(p.id),
+      p3: dP ? dP.p3 : null, pCero: dP ? dP.p0 : null, pGolEq: dP ? dP.pGol : null, modeloPartido: !!dP,
       mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, ffP: ffm ? capFF(p.id, g.gw).p : null, ffConf: ffm ? capFF(p.id, g.gw).conf : false, esp, ys, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
@@ -3377,7 +3437,9 @@ function recomendarMercado({ M, cal, D, E, ahora }) {
     const casa = g.home === teamId, rival = casa ? g.away : g.home;
     const ep = extPartido(g.id);
     const xgf = ep ? (casa ? ep.lh : ep.la) : modelo.xg(teamId, rival, casa), xgc = ep ? (casa ? ep.la : ep.lh) : modelo.xg(rival, teamId, !casa);
-    const fXg = 1 + (casa ? CAP.HOME_EXTRA : -CAP.HOME_EXTRA) + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
+    const dP = capPartidoJugador(cal, modelo, teamId, pos, xgf, xgc, CAP.K_JUGADOR);   // nivel típico: mitad de sus partidos, mitad de su valor
+    const fXg = dP ? Math.max(0.3, mu0 + dP.shift) / mu0
+      : 1 + (casa ? CAP.HOME_EXTRA : -CAP.HOME_EXTRA) + CAP.ATAQUE[pos] * CAP.SENS_ATAQUE * (xgf / modelo.lg - 1) + CAP.PORTERIA[pos] * CAP.SENS_CS * (Math.exp(-xgc) / p0Liga - 1);
     const l = concedido[rival + ":" + pos] || [];
     const fPts = (((l.reduce((s, v) => s + v, 0)) + CAP.K_POS * mu0) / (l.length + CAP.K_POS)) / mu0;
     return { g, casa, rival, rivalNombre: nombres[rival], xgf, xgc, fXg, fPts, nR: l.length, f: capClamp(Math.max(fXg, 0.3) * (1 + CAP.W_RIVAL * (fPts - 1)), CAP.LIMITE_F) };
@@ -4210,7 +4272,15 @@ function clavesCandidato(c, r) {
       resumen = `${nom} marca ${num(inf.gf)} goles por partido (${inf.rankAtq}.º mejor ataque)`; ins = num(inf.gf); tono = inf.gf <= inf.lg * 0.85 ? "ok" : inf.gf >= inf.lg * 1.15 ? "mal" : "mid";
     }
     const pcs = Math.round(Math.exp(-c.xgc) * 100);
-    extra = `<p>En este partido el modelo espera <b>${num(c.xgf)} goles de su equipo</b> y <b>${num(c.xgc)} del rival</b>, contando el ataque y la defensa de ambos y la ventaja de jugar ${c.casa ? "en casa" : "fuera"}.
+    const origen = c.ep ? (c.ep.fuente === "mercado" ? "según el mercado (la fuerza de cada equipo que reflejan las cuotas de sus partidos anteriores)" : `según las cuotas de las casas de apuestas (${esc(c.ep.fuente)})`) : "según el ataque y la defensa de ambos en lo que va de liga";
+    if (c.modeloPartido) {
+      if (!ataca && c.p3 >= 0.35) tono = "mal";
+      extra = `<p>En este partido se esperan <b>${num(c.xgf)} goles de su equipo</b> y <b>${num(c.xgc)} del rival</b>, ${origen}, con la ventaja de jugar ${c.casa ? "en casa" : "fuera"} incluida.
+        Eso da un <b>${pc(c.pCero)}</b> de portería a cero y un <b>${pc(c.p3)}</b> de que su equipo encaje 3 o más.</p>
+        <p>El modelo mezcla todos los resultados posibles con lo que ha puntuado cada posición en toda LaLiga con cada resultado (un defensa hace de media 4,6 pts con portería a cero y 1,6 si encaja 4 o más, y acaba en negativo mucho más a menudo).
+        Frente a sus partidos habituales, efecto en sus puntos: <b>${signoPct(c.fXg - 1)}</b>.</p>`;
+      if (!ataca) resumen += ` · ${pc(c.p3)} de encajar 3 o más`;
+    } else extra = `<p>En este partido el modelo espera <b>${num(c.xgf)} goles de su equipo</b> y <b>${num(c.xgc)} del rival</b>, ${origen}, y la ventaja de jugar ${c.casa ? "en casa" : "fuera"}.
       Eso da unos <b>${pcs} %</b> de posibilidades de portería a cero. Para un ${c.pos}, ${ataca ? "pesan más los goles que puede marcar su equipo" : "pesa más la portería a cero y el ataque rival"}: efecto en sus puntos <b>${signoPct(c.fXg - 1)}</b>.</p>`;
     cl.push(claveHtml("⚽", ataca ? "Defensa rival" : "Ataque rival", resumen, ins, tono, bloqueEquipo(inf) + extra));
   }
@@ -4238,17 +4308,21 @@ function clavesCandidato(c, r) {
   // 5) Multiplicador
   if (c.ext || c.ep) {
     const x = c.ext, por90 = v => x && x.min ? nf2.format(v / x.min * 90) : "–";
-    const res = [x && x.nota ? `nota SofaScore ${nf1.format(x.nota)}${x.nota5 ? ` (últimos 5: ${nf1.format(x.nota5)})` : ""}` : "", x ? `xG ${por90(x.xg)} y xA ${por90(x.xa)} por 90 min` : "", c.ep ? `cuotas: su equipo marca ≈ ${nf1.format(c.xgf)} y encaja ≈ ${nf1.format(c.xgc)}` : ""].filter(Boolean).join(" · ");
-    const ins = c.ajXg ? (c.ajXg > 0 ? "+" : "−") + nf1.format(Math.abs(c.ajXg)) : x && x.nota ? nf1.format(x.nota) : "cuotas";
+    const merc = c.ep && c.ep.fuente === "mercado";
+    const res = [x && x.nota ? `nota SofaScore ${nf1.format(x.nota)}${x.nota5 ? ` (últimos 5: ${nf1.format(x.nota5)})` : ""}` : "", x ? `xG ${por90(x.xg)} y xA ${por90(x.xa)} por 90 min` : "", c.ep ? `${merc ? "mercado" : "cuotas"}: su equipo marca ≈ ${nf1.format(c.xgf)} y encaja ≈ ${nf1.format(c.xgc)}` : ""].filter(Boolean).join(" · ");
+    const ins = c.ajXg ? (c.ajXg > 0 ? "+" : "−") + nf1.format(Math.abs(c.ajXg)) : x && x.nota ? nf1.format(x.nota) : merc ? "mercado" : "cuotas";
     cl.push(claveHtml("📊", "Estadísticas avanzadas", res, ins, c.ajXg > 0.2 ? "ok" : c.ajXg < -0.2 ? "mal" : "mid",
-      `<p class="note">${x ? `${x.pj} partidos, ${x.min} minutos: ${x.g} goles con ${nf1.format(x.xg)} de xG y ${x.a} asistencias con ${nf1.format(x.xa)} de xA.` : ""} ${c.ajXg ? `Como ${c.ajXg > 0 ? "ha marcado menos de lo que merecen sus ocasiones" : "ha marcado más de lo que dicen sus ocasiones"}, se ${c.ajXg > 0 ? "suman" : "restan"} ${nf1.format(Math.abs(c.ajXg))} puntos a su nivel: con el tiempo los goles se acercan al xG.` : ""} ${c.ep ? `Los goles esperados de este partido salen de las cuotas de las casas de apuestas (${esc(c.ep.fuente)}), que resumen lesiones, rotaciones y nivel real mejor que los resultados de unas pocas jornadas.` : ""}</p>`));
+      `<p class="note">${x ? `${x.pj} partidos, ${x.min} minutos: ${x.g} goles con ${nf1.format(x.xg)} de xG y ${x.a} asistencias con ${nf1.format(x.xa)} de xA.` : ""} ${c.ajXg ? `Como ${c.ajXg > 0 ? "ha marcado menos de lo que merecen sus ocasiones" : "ha marcado más de lo que dicen sus ocasiones"}, se ${c.ajXg > 0 ? "suman" : "restan"} ${nf1.format(Math.abs(c.ajXg))} puntos a su nivel: con el tiempo los goles se acercan al xG.` : ""} ${c.ep ? (merc ? `Este partido aún no tiene cuotas publicadas: los goles esperados salen de la fuerza de ataque y defensa que dan las cuotas de los partidos ya jugados (validado con J3-J11: acierta los goles tanto como las cuotas del propio partido y mucho más que contar solo los resultados).`
+      : `Los goles esperados de este partido salen de las cuotas de las casas de apuestas (${esc(c.ep.fuente)}), que resumen lesiones, rotaciones y nivel real mejor que los resultados de unas pocas jornadas.`) : ""}</p>`));
   }
   cl.push(claveHtml("✖️", "Multiplicador", `Vale ${eur(c.p.value)} → capitán ×${coma(c.m)}`, "×" + coma(c.m), c.m >= 2 ? "ok" : "mid",
     `<p>El multiplicador depende del valor del jugador: más de 10 M → ×1,5 · de 5 a 10 M → ×2 · menos de 5 M → ×3.</p>
      <p>Como capitán gana (×${coma(c.m)} − 1) × sus puntos: <b>${coma(c.m - 1)} × ${nf1.format(c.esp)} = +${nf1.format(c.extra)}</b> puntos extra esperados.</p>`));
   // 6) Techo y suelo
   cl.push(claveHtml("⚖️", "Techo y suelo", `Gran jornada (≥ ${CAP.UMBRAL_ALTO} pts): ${pc(c.pAlto)} · puntuación negativa: ${pc(c.pNeg)}`, pc(c.pAlto), c.pAlto >= 0.2 && c.pNeg < 0.08 ? "ok" : c.pNeg >= 0.12 ? "mal" : "mid",
-    `<p>Rango típico del extra: de <b>${nf1.format(c.rango[0])}</b> a <b>${nf1.format(c.rango[1])}</b> puntos. Los ${pn} de vuestra liga puntúan de forma muy desigual; el modelo usa esa distribución real, no solo la media.</p>
+    `<p>Rango típico del extra: de <b>${nf1.format(c.rango[0])}</b> a <b>${nf1.format(c.rango[1])}</b> puntos. ${c.modeloPartido
+      ? `El reparto sale de todos los resultados posibles de su partido (de la portería a cero a la goleada) y de cómo han puntuado los ${pn} de toda LaLiga con cada resultado, no solo de la media.`
+      : `Los ${pn} de vuestra liga puntúan de forma muy desigual; el modelo usa esa distribución real, no solo la media.`}</p>
      <p>Puntuación = (multiplicador − 1) × (puntos esperados + ${Math.round(r.modo.k * 100)} % de la posible subida (${nf1.format(c.sdAlto)}) − ${Math.round(r.modo.l * 100)} % del posible bajón (${nf1.format(c.sdBajo)})). Esos dos porcentajes los calibra el algoritmo con las jornadas pasadas. Resultado: <b>${nf1.format(c.score)}</b>.</p>
      <p class="note">Fiabilidad de la estimación: ${["muy baja", "baja", "media", "alta"][c.conf]}.</p>`));
   return cl.join("");
@@ -4265,6 +4339,7 @@ function porQue(c) {
   if (c.confirmado && c.pj > 0.9) f.push("titular confirmado");
   else if (c.pj < 0.7) f.push("riesgo de no jugar");
   if (c.pAlto >= 0.3) f.push("mucho techo");
+  if ((c.pos === "DF" || c.pos === "PT") && c.p3 >= 0.35) f.push(`riesgo de goleada (${pc(c.p3)})`);
   return f.length ? f.join(" · ") : "perfil equilibrado";
 }
 
@@ -4366,14 +4441,17 @@ function bloqueCapGanar(r) {
 function htmlOnceRec(r) {
   const o = onceQuiniela(r.candidatos || []);
   if (!o) return "";
-  const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : ""}</small></div>`;
+  const goleada = c => (c.pos === "DF" || c.pos === "PT") && c.p3 >= 0.35;
+  const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : goleada(c) ? "⚠ goleada" : ""}</small></div>`;
   const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
+  const riesgo = [...o.PT, ...o.DF].filter(goleada);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
     <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
     <div class="oi">${filas}</div>
-    ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}</details>`;
+    ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}
+    ${riesgo.length ? `<p class="note">⚠ ${riesgo.map(c => `${esc(c.p.short || c.p.name)}: ${pc(c.p3)} de que su equipo encaje 3 o más contra ${esc(c.rivalNombre || "su rival")}`).join(" · ")}. En lo que va de liga, con 3 o más encajados un defensa hace de media 2 pts y acaba con 0 o menos casi 1 de cada 5 veces. Sigue en el once porque, aun así, sus puntos esperados superan a los del banquillo.</p>` : ""}</details>`;
 }
 
 function heroCap(c, r) {
