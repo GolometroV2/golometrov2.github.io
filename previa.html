@@ -915,6 +915,7 @@ input[type=range]{accent-color:var(--acc)}
 .refresh,.nov button,.tabs.ord .tab,.seg2 button,.seg3 button,.indice button,.jsel-g button,.sp-bot button,.sp-ir,.busc{min-height:44px}
 .busc,#btnTV,#btnBusc{width:44px;height:44px}
 @media (max-width:420px){.busc,#btnTV,#btnBusc{width:44px!important;height:44px!important}}
+.salta{position:absolute;left:8px;top:-60px;z-index:100;background:var(--acc);color:#04210f;padding:12px 16px;border-radius:10px;font-weight:700;min-height:44px}.salta:focus{top:8px}#contenido:focus{outline:none}
 </style>
 </head>
 <body>
@@ -930,7 +931,8 @@ input[type=range]{accent-color:var(--acc)}
   </span>
 </div></header>
 <div id="tv" class="tv" role="dialog" aria-modal="true" aria-label="Modo marcador" hidden></div>
-<main id="contenido">
+<a class="salta" href="#contenido">Saltar al contenido</a>
+<main id="contenido" tabindex="-1">
   <div class="head"><h1 id="titulo" style="margin-bottom:14px">Mi liga</h1></div>
   <div id="aviso" aria-live="polite"></div>
   <nav class="tabs" id="nav" aria-label="Secciones"></nav>
@@ -4743,7 +4745,7 @@ function pintar() {
       </div></div>
     ${vista === "Ult3" ? `<p class="note" style="margin:8px 0 0">Clasificación de las últimas 3 jornadas (${esc(rangoUlt3())}): quién llega mejor.</p>` : ""}
     ${jselAbierto ? `<div class="jsel-g">${js_.map(j => `<button class="${vista === j ? "on" : ""}" data-v="${esc(j)}">${esc(j.slice(1))}</button>`).join("")}</div>` : ""}`;
-  const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
+  const tabs = METRICAS.map(([k, t]) => `<button class="tab ${orden.k === k ? "on" : ""}" data-o="${k}" aria-pressed="${orden.k === k}">${t}${orden.k === k ? (orden.asc ? " ↑" : " ↓") : ""}</button>`).join("");
   const z = (e, n) => `<i class="${n ? "" : "z"}">${e}${n}</i>`;
   // cambio de puesto en la general respecto a la jornada anterior (solo en la vista Total ordenada por puntos)
   const mov = {};
