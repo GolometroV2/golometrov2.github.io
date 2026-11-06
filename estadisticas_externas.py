@@ -7,17 +7,16 @@ Mister puntúa con SofaScore: la nota de cada jugador en el partido, más los go
 predecir esa nota hace falta saber lo que hace cada jugador en el campo y cómo se espera que vaya el partido.
 Este script reúne, sin credenciales y con pausa entre peticiones (y solo si el robots.txt de cada web lo permite):
 
-  · SofaScore: por partido, la nota y las estadísticas de cada jugador (minutos, xG, xA, tiros, pases clave,
-    entradas, despejes, paradas...) y las cuotas de los partidos que faltan. Se conecta presentándose como Safari
-    (curl_cffi), porque su cortafuegos rechaza a los programas que se presentan como Chrome (idea de LanusStats).
   · football-data.co.uk: resultados y cuotas de cierre (Pinnacle / Bet365 / media) de toda la temporada y de los
-    próximos partidos.
-  · Understat (solo si se pide): xG y xA partido a partido. SofaScore ya los trae, así que no se descarga por defecto.
+    próximos partidos (ficheros CSV que la web ofrece para descargar).
+  · Understat: xG y xA de cada jugador y de cada equipo, partido a partido.
+  · SofaScore (solo si se pide): la nota y las estadísticas de cada jugador y las cuotas. Su protección antirobots
+    rechaza a los servidores de GitHub, y no se intenta esquivarla: solo funciona desde donde SofaScore lo permita.
 
 Cada fuente es independiente: si una falla, las demás se guardan igual. Lo ya descargado se guarda en externo/
 y solo se piden los partidos nuevos.
 
-Uso:  python estadisticas_externas.py            (SofaScore y cuotas)
+Uso:  python estadisticas_externas.py            (cuotas y Understat)
       python estadisticas_externas.py sofascore  (solo una fuente: sofascore, understat o cuotas)
 """
 import csv
@@ -32,15 +31,10 @@ from datetime import datetime, timezone
 
 import requests
 
-try:            # SofaScore bloquea a los programas que se presentan como Chrome, pero no como Safari (idea de LanusStats)
-    from curl_cffi import requests as cffi
-except ImportError:
-    cffi = None
-
 CARPETA = os.path.dirname(os.path.abspath(__file__))
 EXT = os.path.join(CARPETA, "externo")
 UA_BOT = "GolometroBot"
-UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+UA = "GolometroBot/1.0 (+https://github.com/GolometroV2/golometrov2.github.io)"   # se identifica tal cual es
 PAUSA = 1.5
 TEMPORADA_UNDERSTAT = "2026"          # Understat nombra la temporada 2026/27 como 2026
 TEMPORADA_FD = "2627"                 # football-data.co.uk: 2026/27
@@ -55,35 +49,6 @@ def log(*a):
     print(*a, flush=True)
 
 
-_sofa = {"sesion": None, "modo": None}
-SOFA_MODOS = ["safari184", "safari18_4", "safari180", "safari"]   # se prueba en orden hasta que uno responda
-
-
-def sesion_de(url):
-    """La sesión con la que se pide cada URL: SofaScore va con la de Safari si está disponible."""
-    if "sofascore.com" in url and _sofa["sesion"] is not None:
-        return _sofa["sesion"]
-    return sesion
-
-
-def abrir_sofascore(prueba):
-    """Busca una forma de conectarse que SofaScore acepte. Devuelve el JSON de la URL de prueba o None."""
-    modos = (SOFA_MODOS if cffi else []) + ["requests"]
-    for modo in modos:
-        try:
-            s = sesion if modo == "requests" else cffi.Session(impersonate=modo)
-        except Exception as e:          # ese modo no existe en esta versión de curl_cffi
-            log(f"  SofaScore con {modo}: no disponible ({type(e).__name__})")
-            continue
-        _sofa.update(sesion=None if modo == "requests" else s, modo=modo)
-        datos = pedir(prueba, intentos=1)
-        log(f"  SofaScore con {modo}: {'responde' if datos else 'bloqueado'}")
-        if datos:
-            return datos
-    _sofa.update(sesion=None, modo=None)
-    return None
-
-
 def permitido(url):
     """Respeta el robots.txt de cada web (si no se puede leer, se asume permitido, como hacen los navegadores)."""
     m = re.match(r"(https?://[^/]+)", url)
@@ -91,31 +56,32 @@ def permitido(url):
     if base not in _robots:
         rp = urllib.robotparser.RobotFileParser()
         try:
-            r = sesion_de(base).get(base + "/robots.txt", timeout=20)
+            r = sesion.get(base + "/robots.txt", timeout=20)
             if r.status_code == 200:
                 rp.parse(r.text.splitlines())
             else:
                 rp.parse([])
-        except Exception:
+        except requests.RequestException:
             rp.parse([])
         _robots[base] = rp
     return _robots[base].can_fetch(UA_BOT, url)
 
 
 def pedir(url, json_=True, cab=None, intentos=2):
+    """Una petición normal. Si la web la rechaza (403/429: protección antirobots o límite), se respeta y se deja."""
     if not permitido(url):
         log(f"  robots.txt no permite {url}: se omite")
         return None
     for i in range(intentos):
         try:
-            r = sesion_de(url).get(url, timeout=30, headers=cab or {})
+            r = sesion.get(url, timeout=30, headers=cab or {})
             time.sleep(PAUSA)
             if r.status_code == 200:
                 return r.json() if json_ else r.text
             log(f"  HTTP {r.status_code} en {url}")
             if r.status_code in (403, 404, 429):
                 return None
-        except Exception as e:          # requests y curl_cffi lanzan errores distintos
+        except (requests.RequestException, ValueError) as e:
             log(f"  error en {url}: {type(e).__name__}")
             time.sleep(PAUSA * 2)
     return None
@@ -150,7 +116,7 @@ SOFA_CAMPOS = ["rating", "minutesPlayed", "goals", "goalAssist", "expectedGoals"
 def sofascore():
     """Guarda un fichero por jornada (externo/sofascore/<temporada>/ronda_NN.json): las jornadas terminadas no se vuelven
        a pedir ni a reescribir, así el repositorio no crece cada día. Los próximos partidos (con cuotas) van aparte."""
-    t = abrir_sofascore(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/seasons")
+    t = pedir(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/seasons")
     if not t or not t.get("seasons"):
         estado["sofascore"] = "sin acceso"
         return
@@ -199,7 +165,7 @@ def sofascore():
         if len(guardados) > antes:
             guardar(ruta, guardados)
     guardar(f"sofascore/{sid}/proximos.json", {"actualizado": ahora(), "partidos": proximos})
-    estado["sofascore"] = f"ok ({_sofa['modo']}): {total} partidos con notas ({nuevos} nuevos), {len(proximos)} próximos"
+    estado["sofascore"] = f"ok: {total} partidos con notas ({nuevos} nuevos), {len(proximos)} próximos"
 
 
 def fraccion(x):
@@ -262,7 +228,6 @@ def understat():
         cache["partidos"][mid] = {"fecha": d.get("datetime"), "local": d["h"]["title"], "visitante": d["a"]["title"],
                                   "gl": d["goals"]["h"], "gv": d["goals"]["a"], "xgl": d["xG"]["h"], "xgv": d["xG"]["a"], "jugadores": jug}
         nuevos += 1
-    cache["actualizado"] = ahora()
     guardar("understat.json", cache)
     estado["understat"] = f"ok: {len(cache['partidos'])} partidos ({nuevos} nuevos), {len(cache['jugadores'])} jugadores"
 
@@ -289,7 +254,11 @@ def filas_csv(txt, div=None):
 
 def cuotas():
     jugados = filas_csv(pedir(f"{FD}/mmz4281/{TEMPORADA_FD}/SP1.csv", json_=False))
-    proximos = filas_csv(pedir(f"{FD}/fixtures.csv", json_=False), div="SP1")
+    fx = pedir(f"{FD}/fixtures.csv", json_=False)
+    proximos = filas_csv(fx, div="SP1")
+    if fx and not proximos:     # suele publicarse antes del fin de semana; si aún no hay LaLiga, decir qué ligas trae
+        divs = sorted({f.get("Div") for f in csv.DictReader(io.StringIO(fx.lstrip("﻿"))) if f.get("Div")})
+        log(f"  fixtures.csv sin partidos de LaLiga todavía (trae: {', '.join(divs[:12]) or 'nada'})")
     if not jugados and not proximos:
         estado["cuotas"] = "sin acceso"
         return
@@ -303,8 +272,8 @@ def ahora():
 
 def main():
     fuentes = {"sofascore": sofascore, "understat": understat, "cuotas": cuotas}
-    # Understat solo si se pide expresamente: SofaScore ya trae xG y xA, y el modelo no lo usa
-    pedidas = [a for a in sys.argv[1:] if a in fuentes] or ["sofascore", "cuotas"]
+    # SofaScore solo si se pide expresamente: rechaza a los servidores de GitHub y no se intenta esquivarlo
+    pedidas = [a for a in sys.argv[1:] if a in fuentes] or ["cuotas", "understat"]
     for nombre in pedidas:
         log(f"== {nombre}")
         try:

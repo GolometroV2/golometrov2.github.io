@@ -1,7 +1,8 @@
 name: Estadísticas externas
 
-# Lee estadísticas públicas de LaLiga (notas, xG y cuotas de SofaScore; cuotas de football-data.co.uk) para el modelo
-# de puntos. No usa secretos ni credenciales: solo datos públicos, respetando su robots.txt y con pausa entre peticiones.
+# Lee estadísticas públicas de LaLiga (cuotas de football-data.co.uk y xG/xA de Understat) para el modelo de puntos.
+# No usa secretos ni credenciales: solo datos públicos, respetando su robots.txt, con pausa entre peticiones y sin
+# esquivar ninguna protección antirobots (SofaScore rechaza a GitHub, así que aquí no se pide).
 # Añadido con permiso expreso del dueño (06/11/2026).
 on:
   schedule:
@@ -30,7 +31,7 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias
-        run: pip install requests "curl_cffi>=0.14"
+        run: pip install requests
 
       - name: Leer estadísticas externas
         run: python estadisticas_externas.py || echo "Aviso - ninguna fuente respondió"
