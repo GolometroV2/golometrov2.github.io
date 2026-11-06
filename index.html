@@ -4138,6 +4138,9 @@ function onceIds(cands, soloPendientes) {
 }
 let PLANC = { k: null, v: null };
 function planDatos(r) {
+  // el plan se pinta antes que el selector de manager: se elige aquí el mismo (tú, el del capitán o el primero)
+  if (E && E.managers && E.managers.length && (!merMan || !E.managers.some(x => x.id === merMan)))
+    merMan = YO && E.managers.some(x => x.id === YO) ? YO : capMan && E.managers.some(x => x.id === capMan) ? capMan : E.managers[0].id;
   const P = datosParon(CAL), m = E && (E.managers || []).find(x => x.id === merMan);
   if (!P || !m) return null;
   const k = [merMan, MER_DATA && MER_DATA.updatedAt, E.updatedAt, CAL.updatedAt, planSaldo(), PAR ? PAR.updatedAt || 1 : 0, PUJAS_M ? (PUJAS_M.compras || []).length : 0, Math.floor(Date.now() / 36e5)].join("|");
@@ -4203,7 +4206,8 @@ function bloquePlanParon(r) {
   const suben = d.suben.slice(0, 4).map(x => fila(x.p, `${merEur(x.V)} → ${merEur(x.Vh)}`, `<b class="up">${merEurS(x.d)}</b>`, pct(x))).join("");
   const sv = d.saldo != null ? String(d.saldo) : "";      // un campo numérico solo acepta el punto decimal
   return `<section class="card plan"><div class="gh"><h2>🧭 ${titulo}</h2></div>
-    <p class="note" style="margin:0 0 8px">${cuando}${m.id !== YO ? ` Plantilla de ${esc(m.name)}.` : ""}</p>
+    ${selectorM(merMan, "data-mm", null, "Plantilla")}
+    <p class="note" style="margin:0 0 8px">${cuando}</p>
     <div class="ch-kpi"><span><b class="${d.cartera >= 0 ? "up" : "dn"}">${merEurS(d.cartera)}</b><small>lo que gana tu plantilla en el parón</small></span><span><b class="up">${merEurS(d.ahorro + d.ganancia)}</b><small>extra con el plan</small></span>
       <span><label class="pl-saldo"><small>Tu saldo</small><input type="number" inputmode="decimal" step="0.1" placeholder="M €" value="${esc(sv)}" data-saldo aria-label="Tu saldo en millones"><small>millones</small></label></span></div>
     ${vender ? `<h3 class="sec">1 · Vende</h3><p class="note">Bajan de valor y no entran en tu once de la J${P.despues.gw}: venderlos a Mister te da su valor de hoy y te ahorras la bajada.</p><ul class="clist">${vender}</ul>` : ""}
