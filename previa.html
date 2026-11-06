@@ -869,6 +869,22 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .sp-rc{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 10px 3px 3px;border-radius:999px;background:color-mix(in srgb,var(--panel2) 80%,transparent);border:1px solid var(--line);font-size:12px}
 .sp-rc .av{width:24px;height:24px;font-size:9px;flex:none}.sp-rc b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
 .sp-rc em{font-style:normal;font-weight:800;color:#ff9f43;font-variant-numeric:tabular-nums}
+.qc-ds{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.qc-d{border-radius:14px;padding:10px 12px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 70%,transparent);min-width:0}
+.qc-d.bien{border-color:color-mix(in srgb,var(--acc) 55%,transparent);background:linear-gradient(160deg,#2fd46e1f,transparent 70%)}
+.qc-d.caro{border-color:#ff9f4355;background:linear-gradient(160deg,#ff9f431a,transparent 70%)}
+.qc-d>small{display:block;font-size:11px;color:var(--mut);margin-bottom:6px}
+.qc-d>div{display:flex;align-items:center;gap:8px;min-width:0}
+.qc-d>div>span{display:flex;flex-direction:column;min-width:0;gap:2px}
+.qc-d>div b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qc-d>div>span>span{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qc-d>div .av{width:20px;height:20px;font-size:8px;flex:none}
+.qc-d p{margin:8px 0 0;font-size:12px;color:var(--mut);line-height:1.4}.qc-d p b{color:var(--txt)}.qc-d p b.up{color:var(--pos)}.qc-d p b.dn{color:var(--red)}
+.qc-pp{display:flex;flex-direction:column;align-items:flex-end;font-size:15px!important;line-height:1.1;min-width:64px}
+.qc-pp small{font-size:10px;font-weight:600;color:var(--mut)}.qc-pp.up{color:var(--pos)}
+.qc .cq b.qc-m{display:inline;font-size:inherit;font-weight:600;color:var(--txt)}
+.qc .cq>span{display:block;white-space:normal;line-height:1.35}.qc .cr{flex:none;min-width:64px}
+.qc-e{font-size:11px;color:var(--mut)}.qc-e.pronto{color:#ff9f43}.qc-e.out{color:var(--accFg)}
 .sp-bot{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .sp-bot button{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent);font-size:12.5px;font-weight:600;color:var(--txt);font-family:var(--f-disp)}
 .sp-bot button[data-spb="ideal"]{border-color:#2fd46e66;color:var(--accFg)}
@@ -2476,6 +2492,92 @@ function bloqueEficiencia(ms) {
 }
 
 // Mayores fichajes y actividad de cada manager, a partir de los últimos movimientos guardados (equipos.json -> transfers)
+// ---------- ¿Quién clausula mejor? ----------
+// Cada cláusula pagada (pujas.json + noticias de Mister en pujas_mister.json) frente a lo que ha dado después:
+//  · puntos: los que sumó en el once del comprador (con el capitán) en las jornadas que empezaron mientras lo tenía
+//    (en Mister el once se cierra al empezar la jornada);
+//  · dinero: lo que vale hoy o, si ya no lo tiene, lo que cobró por él (cláusula o venta), menos lo pagado.
+// «Cada punto le ha costado» = dinero perdido / puntos. Se recalcula cada día, así que una cláusula cara que sigue
+// sumando puntos va bajando lo que le cuesta cada punto: el tiempo pone a cada una en su sitio.
+const tsMadrid = s => {     // «2026-10-30 20:00:00» (hora de Madrid) -> milisegundos
+  const t = Date.parse(String(s).replace(" ", "T") + "+01:00"), y = new Date(t).getUTCFullYear();
+  const domingo = m => { const d = new Date(Date.UTC(y, m + 1, 0)); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.getTime() + 3600e3; };
+  return t >= domingo(2) && t < domingo(9) ? t - 3600e3 : t;     // horario de verano: último domingo de marzo a último de octubre
+};
+function clausulasPagadas(ms) {
+  const P = (PUJAS && PUJAS.compras) || [], M = (PUJAS_M && PUJAS_M.compras) || [];
+  const idM = n => n === "Mister" ? "" : null;
+  // todos los movimientos conocidos de cada jugador: { t, de, a, precio } ("" = Mister)
+  const mov = {};
+  const add = (pid, t, de, a, precio, fiable) => { if (!pid || !isFinite(t)) return; (mov[pid] = mov[pid] || []).push({ t, de: de == null ? "" : String(de), a: a == null ? "" : String(a), precio, fiable }); };
+  (E.transfers || []).forEach(x => add(String(x.playerId), Date.parse(x.ts), x.from, x.to, x.value, false));
+  P.forEach(x => add(String(x.playerId), Date.parse(x.ts), x.from, x.to, x.precio, true));
+  M.forEach(x => add(String(x.playerId), Date.parse(x.ts), x.deId || idM(x.de), x.aId || idM(x.a), x.precio, true));
+  Object.values(mov).forEach(L => L.sort((a, b) => a.t - b.t));
+  // las cláusulas (una sola vez aunque estén en los dos ficheros)
+  const cls = [];
+  [...P.filter(x => x.tipo === "clausula").map(x => ({ pid: String(x.playerId), t: Date.parse(x.ts), a: String(x.to), de: String(x.from || ""), precio: x.precio, nombre: x.name })),
+   ...M.filter(x => x.tipo === "clausula" && x.aId).map(x => ({ pid: String(x.playerId), t: Date.parse(x.ts), a: String(x.aId), de: String(x.deId || ""), precio: x.precio, nombre: x.jugador }))]
+    .forEach(c => { if (isFinite(c.t) && c.precio && !cls.some(o => o.pid === c.pid && o.a === c.a && Math.abs(o.t - c.t) < 36 * 3600e3)) cls.push(c); });
+  const ini = {}; ((CAL && CAL.gameweeks) || []).forEach(g => { if (g.first) ini[g.gw] = tsMadrid(g.first); });
+  const ahora = Date.now();
+  return cls.map(c => {
+    const m = ms.find(x => String(x.id) === c.a), v = ms.find(x => String(x.id) === c.de);
+    if (!m) return null;
+    // ¿lo ha perdido? primer movimiento del jugador desde el comprador; el precio, el de las compras si se sabe
+    let sal = (mov[c.pid] || []).find(x => x.de === c.a && x.t > c.t + 5 * 60e3) || null;
+    if (sal && !sal.fiable) { const f = mov[c.pid].find(x => x.fiable && x.de === sal.de && x.a === sal.a && Math.abs(x.t - sal.t) < 36 * 3600e3); if (f) sal = f; }
+    const jg = LIGAJ.jug[c.pid] || {};
+    const fin = sal ? sal.precio : +jg.value || null;
+    // jornadas que empezaron con el jugador en su equipo, y los puntos que le dio en el once
+    const gws = Object.keys(ini).filter(g => ini[g] > c.t && (!sal || ini[g] < sal.t) && ini[g] < ahora && D && D.matchdays && D.matchdays["J" + g]);
+    let pts = 0, cap = 0, enOnce = 0;
+    gws.forEach(g => { const p = (((D.matchdays["J" + g] || {})[c.a] || {}).players || []).find(q => String(q.id) === c.pid);
+      if (p) { enOnce++; pts += p.points || 0; if (p.captain) cap += (p.points || 0) - (p.basePoints || 0); } });
+    const serie = LIGAJ.val[c.pid] || {}, dia = enMadrid(new Date(c.t).toISOString(), { year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-");
+    const antes = Object.keys(serie).filter(k => k <= dia).sort(), vCompra = antes.length ? serie[antes[antes.length - 1]] : null;
+    return { ...c, m, v, sal, fin, bal: fin != null ? fin - c.precio : null, nj: gws.length, enOnce, pts, cap, vCompra,
+             teamId: jg.teamId, media: jg.avg != null && jg.avg !== "None" ? +jg.avg : null, nombre: c.nombre || jg.name };
+  }).filter(x => x && x.bal != null).sort((a, b) => b.t - a.t);
+}
+function bloqueQuienClausula(ms) {
+  cargarPujas();
+  if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return ""; }
+  if (!D || !D.matchdays) return "";
+  const C = clausulasPagadas(ms);
+  if (C.length < 3) return "";
+  const porPunto = (bal, pts) => bal >= 0 ? -1 : pts > 0 ? -bal / pts : Infinity;   // -1: gana dinero (lo mejor)
+  const txtPunto = (bal, pts) => bal >= 0 ? "gana dinero" : pts > 0 ? eur(-bal / pts) + " por punto" : "sin puntos aún";
+  const man = ms.map(m => {
+    const L = C.filter(x => x.m === m), K = C.filter(x => x.v === m);
+    const pag = L.reduce((s, x) => s + x.precio, 0), bal = L.reduce((s, x) => s + x.bal, 0), pts = L.reduce((s, x) => s + x.pts, 0);
+    return { m, n: L.length, pag, bal, pts, nj: L.reduce((s, x) => s + x.nj, 0), pp: porPunto(bal, pts), cobrado: K.reduce((s, x) => s + x.precio, 0), nK: K.length };
+  }).filter(x => x.n).sort((a, b) => (a.pp - b.pp) || (b.bal - a.bal) || (b.pts - a.pts));
+  const sinCl = ms.filter(m => !C.some(x => x.m === m)).map(m => m.name);
+  // la mejor y la más cara por punto (solo entre las que ya han jugado alguna jornada)
+  const jugadas = C.filter(x => x.nj >= 1);
+  const mejor = jugadas.slice().sort((a, b) => (porPunto(a.bal, a.pts) - porPunto(b.bal, b.pts)) || (b.bal + b.pts * 1e5) - (a.bal + a.pts * 1e5))[0];
+  const cara_ = jugadas.filter(x => x.bal < 0 && x !== mejor).sort((a, b) => porPunto(b.bal, b.pts) - porPunto(a.bal, a.pts))[0];
+  const estado = x => x.sal ? (x.sal.a ? `se lo clausularon por ${eur(x.sal.precio)}` : `lo vendió por ${eur(x.sal.precio)}`)
+    : !x.nj ? "aún no ha jugado con él" : x.nj < 3 ? `${x.nj} ${x.nj === 1 ? "jornada" : "jornadas"}: pronto para juzgar` : `${x.nj} jornadas con él`;
+  const veces = x => x.vCompra ? ` (×${nf1.format(x.precio / x.vCompra)} su valor)` : "";
+  const fila = x => `<li class="crow qc" data-ficha="${esc(x.pid)}">${cara(x.pid, x.nombre, x.teamId, 38)}
+      <span class="cq"><b>${esc(x.nombre)}</b><span><b class="qc-m">${esc(x.m.name)}</b> se lo quita ${x.v ? `a ${esc(x.v.name)} ` : ""}el ${esc(enMadrid(new Date(x.t).toISOString(), { day: "numeric", month: "short" }))} · pagó ${eur(x.precio)}${veces(x)}${x.cap ? ` · ${x.cap} pts de capitán` : ""}</span><span class="qc-e${x.sal ? " out" : !x.nj || x.nj < 3 ? " pronto" : ""}">${esc(estado(x))}</span></span>
+      <span class="cr"><b class="${cl(x.bal)}">${sig(x.bal)}</b><small>${x.nj ? `${x.pts} pts` : "sin jugar"}</small></span></li>`;
+  const destacada = (x, t, cls) => x ? `<div class="qc-d ${cls}"><small>${t}</small><div>${cara(x.pid, x.nombre, x.teamId, 44)}<span><b>${esc(x.nombre)}</b><span>${avatar(x.m, x.m.i)}${esc(x.m.name)}</span></span></div>
+      <p><b class="${cl(x.bal)}">${sig(x.bal)}</b> y <b>${x.pts} pts</b> en ${x.nj} ${x.nj === 1 ? "jornada" : "jornadas"} · ${txtPunto(x.bal, x.pts)}</p></div>` : "";
+  const mxPts = Math.max(1, ...man.map(x => x.pts));
+  return `<section class="card" id="quienClausula"><div class="gh"><h2>¿Quién clausula mejor?</h2></div>
+    <p class="note" style="margin:0 0 10px">Cada cláusula pagada frente a lo que ha dado después: los puntos que sumó en el once de quien la pagó y lo que vale hoy (o lo que cobró si se lo quitaron). Se recalcula cada día.</p>
+    ${mejor || cara_ ? `<div class="qc-ds">${destacada(mejor, "La mejor hasta ahora", "bien")}${destacada(cara_, "La más cara por punto, de momento", "caro")}</div>` : ""}
+    <p class="ordlbl" style="margin-top:12px">Lo que le cuesta a cada uno cada punto</p>
+    <ul class="pron">${man.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.pts / mxPts * 100).toFixed(1)}%;background:${col(x.m.i)}"></i></span>
+      <small>${x.n} ${x.n === 1 ? "cláusula" : "cláusulas"} · pagó ${eur(x.pag)} · ${x.pts} pts en su once · <span class="${cl(x.bal)}">${sig(x.bal)}</span>${x.nK ? ` · cobró ${eur(x.cobrado)} cuando le clausularon` : ""}</small></span>
+      <span class="pp qc-pp ${x.bal >= 0 ? "up" : ""}">${x.bal >= 0 ? "gratis" : x.pts ? eur(-x.bal / x.pts) : "—"}<small>${x.bal >= 0 ? "y gana dinero" : x.pts ? "por punto" : "sin jugar"}</small></span></li>`).join("")}</ul>
+    ${sinCl.length ? `<p class="note">${esc(sinCl.join(" y "))} no ${sinCl.length === 1 ? "ha" : "han"} pagado ninguna cláusula.</p>` : ""}
+    <details class="cdet"><summary>Todas las cláusulas (${C.length})</summary><ul class="clist" style="margin-top:6px">${C.map(fila).join("")}</ul></details>
+    <p class="note">«Por punto»: lo que ha perdido en dinero (lo pagado menos lo que vale hoy o lo que cobró) dividido entre los puntos que le ha dado. Con pocas jornadas una cláusula cara sale muy cara por punto; si el jugador sigue sumando, cada día sale más barata. Si se lo vuelven a clausular, cobra 1,5 veces lo que pagó. Las cláusulas salen de las compras guardadas y de las noticias de Mister (últimos 30 días cada vez que se leen).</p></section>`;
+}
 function bloqueFichajes(ms) {
   cargarPujas();      // lo pagado de verdad (cláusulas incluidas) sale de pujas.json
   const T = (E.transfers || []).filter(t => t.value && t.to);
@@ -2545,6 +2647,7 @@ function resumenEq(ms, hp) {
     ${bloqueValor7(ms)}
     ${bloqueEficiencia(ms)}
     ${bloqueClausulas(ms)}
+    ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
@@ -3364,7 +3467,7 @@ function cargarPujas() {
   fetch("pujas_ff.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS_FF = j && j.jugadores ? j : null; if (PUJAS_FF && seccion === "mer") pintarMercado(); if (PUJAS_FF && seccion === "clas" && D) pintarTuJornada(); });
   fetch("pujas_mister.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
-    .then(j => { PUJAS_M = j && j.compras ? j : null; RIVALES = null; if (PUJAS_M && seccion === "mer") pintarMercado(); });
+    .then(j => { PUJAS_M = j && j.compras ? j : null; RIVALES = null; if (PUJAS_M && seccion === "mer") pintarMercado(); if (PUJAS_M && seccion === "eq" && E) pintarEquipos(); });
   fetch("pujas.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) pintarTuJornada(); });
 }
