@@ -1,7 +1,67 @@
 {
-"updatedAt": "2026-11-05T11:54:43Z",
+"updatedAt": "2026-11-06T04:01:17Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-06T04:01:17Z",
+"playerId": "59484",
+"name": "Marc Bernal",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 5060000,
+"listado": 5060000,
+"precio": 5550000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-06T04:01:17Z",
+"playerId": "3849388",
+"name": "Mamadou Sarr",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 4023000,
+"listado": 4023000,
+"precio": 4600000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-06T04:01:17Z",
+"playerId": "25631",
+"name": "Ilaix Moriba",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 6432000,
+"listado": 6432000,
+"precio": 6852000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-06T04:01:17Z",
+"playerId": "64033",
+"name": "Jon Gorrotxategi",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 1348000,
+"listado": 1348000,
+"precio": 1648000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-06T04:01:17Z",
+"playerId": "71176",
+"name": "Morten Hjulmand",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 5320000,
+"listado": 5320000,
+"precio": 5580000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-05T11:54:43Z",
 "playerId": "28395",
