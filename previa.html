@@ -1779,12 +1779,25 @@ function simularJornada(eqs, N = 4000) {
   const gen = i => { let s = 20261106 + i * 7919; return () => (s = s * 16807 % 2147483647) / 2147483647; }, rnds = eqs.map((e, i) => gen(i));
   const n = eqs.length, gana = Array(n).fill(0), lider = Array(n).fill(0), tot = eqs.map(() => new Float64Array(N)), vence = eqs.map(() => Array(n).fill(0));
   // datos de partido de cada jugador (si los tiene): goles esperados de su equipo y del rival, y cómo le afectan
+  // Con el modelo de partido (liga.partido), cada jugador puntúa según el resultado exacto sorteado de su partido
+  // (goles marcados y encajados por su equipo, medido con toda LaLiga): un 4-0 hunde a los defensas del que pierde
+  // mucho más que cuatro veces un gol. Sin él, la corrección lineal anterior.
   const prep = eqs.map(e => e.js.map(({ c }) => {
-    const gid = c && c.g && c.g.id, cr = c && corrPartido(c.pos);
-    if (!gid || !cr || !capNum(c.xgf) || !capNum(c.xgc) || !c.ys || !c.ys.length) return null;
+    const gid = c && c.g && c.g.id;
+    if (!gid || !capNum(c.xgf) || !capNum(c.xgc) || !c.ys || !c.ys.length) return null;
     const m = c.ys.reduce((a, b) => a + b, 0) / c.ys.length;
+    const pm = c.partido && LIGA && LIGA.partido && LIGA.partido[c.pos];
+    if (pm) return { gid, casa: !!c.casa, lf: c.xgf, lc: c.xgc, m, pm, m2: c.partido.m2, esc: c.suplente ? CAP.F_SUPLENTE : 1 };
+    const cr = corrPartido(c.pos);
+    if (!cr) return null;
     return { gid, casa: !!c.casa, lf: c.xgf, lc: c.xgc, gf: cr.gf, gc: cr.gc, s: Math.sqrt(Math.max(0.5, 1 - (cr.r2 || 0))), m };
   }));
+  const puntosPartido = (x, f, cc, v) => {
+    const k = Math.min(cc, 4), j = Math.min(f, 4), q = x.pm.residuo[k <= 1 ? "0-1" : k === 2 ? "2" : "3+"];
+    const r = q[Math.min(q.length - 1, Math.floor(v * q.length))];
+    const b = x.pm.encajados[k] + x.pm.marcados[j] + r * (r < 0 ? (k >= 3 ? CAP.PART_GOLEADA : CAP.PART_BAJO) : CAP.PART_ALTO);
+    return x.m + (b - x.m2) * x.esc;
+  };
   for (let k = 0; k < N; k++) {
     const goles = {};    // id del partido -> [goles del local, goles del visitante] en esta simulación
     const golesDe = x => { let G = goles[x.gid]; if (!G) { const r = rngPartido(x.gid, k), lh = x.casa ? x.lf : x.lc, la = x.casa ? x.lc : x.lf; G = goles[x.gid] = [poisson(lh, r), poisson(la, r)]; } return x.casa ? [G[0], G[1]] : [G[1], G[0]]; };
@@ -1795,7 +1808,7 @@ function simularJornada(eqs, N = 4000) {
         if (!(c.ys && c.ys.length && u < c.pj)) return;
         let y = c.ys[Math.floor(v * c.ys.length)];
         const x = prep[i][j];
-        if (x) { const [f, cc] = golesDe(x); y = x.m + (y - x.m) * x.s + x.gf * (f - x.lf) + x.gc * (cc - x.lc); }
+        if (x) { const [f, cc] = golesDe(x); y = x.pm ? puntosPartido(x, f, cc, v) : x.m + (y - x.m) * x.s + x.gf * (f - x.lf) + x.gc * (cc - x.lc); }
         a += Math.round(y) * mult; });
       tot[i][k] = a; return a;
     });
@@ -3143,7 +3156,7 @@ function capPartido(pos, lf, lc, lfr, lcr) {
   const N = 48, off = [];
   let acc = 0, i = 0;
   for (let n = 0; n < N; n++) { const t = (n + 0.5) / N; while (i < pts.length - 1 && acc + pts[i][1] < t) { acc += pts[i][1]; i++; } off.push(pts[i][0] - m2); }
-  return (CAPPART[clave] = { shift, off, p3: pc[3] + pc[4], p0: pc[0], pGol: 1 - pf[0] });
+  return (CAPPART[clave] = { shift, off, m2, p3: pc[3] + pc[4], p0: pc[0], pGol: 1 - pf[0] });
 }
 // Goles esperados a favor y en contra que «ya lleva dentro» la media de cada equipo (sus partidos jugados)
 let CAPREF = { k: null, v: {} };
@@ -3326,7 +3339,7 @@ function recomendarCapitanes({ cal, D, E, managerId, gw: gwElegida = null }) {
     const conf = Math.max(0, Math.min(3, (nPart >= 5 ? 1 : 0) + (eq ? 1 : 0) + (nR >= 5 ? 1 : 0)));
     lista.push({
       p, g, casa, rival, rivalNombre: nombres[rival], rivalEscudo: escudos[rival], pos, estado, ep, ajXg, ext: extJugador(p.id),
-      p3: dP ? dP.p3 : null, pCero: dP ? dP.p0 : null, pGolEq: dP ? dP.pGol : null, modeloPartido: !!dP,
+      p3: dP ? dP.p3 : null, pCero: dP ? dP.p0 : null, pGolEq: dP ? dP.pGol : null, modeloPartido: !!dP, partido: dP,
       mu, mu0: prior0, racha, nPart, suplente, forma, avg, fXg, fPts, nR, fCtx, xgf, xgc, pj, fuente, tasa, rota, confirmado, ffP: ffm ? capFF(p.id, g.gw).p : null, ffConf: ffm ? capFF(p.id, g.gw).conf : false, esp, ys, sigEf, sdAlto, sdBajo, pAlto, pNeg, m, extra, score, conf,
       rango: [(m - 1) * Math.max(0, esp - sigEf), (m - 1) * (esp + sigEf)]
     });
