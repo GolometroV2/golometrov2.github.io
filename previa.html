@@ -2745,18 +2745,19 @@ function bloqueRivalesEq(m) {
   const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
   const nombre = {}; CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
   // dificultad 1 (fácil) a 5 (difícil): defensas y porteros miran cuánto marca el rival; medios y delanteros, cuánto encaja
-  const dif = (rival, pos, casa) => {
-    const e = eq[rival]; if (!e || !e.n) return 3;
-    const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg;
+  const dif = (rival, pos, casa, g) => {
+    const ep = g && extPartido(g.id);     // goles esperados del partido (cuotas o modelo de mercado): mandan sobre lo ya jugado
+    const e = eq[rival]; if (!ep && (!e || !e.n)) return 3;
+    const f = ep ? (casa ? ep.la : ep.lh) / lg : (e.f + 2 * lg) / (e.n + 2) / lg, c = ep ? (casa ? ep.lh : ep.la) / lg : (e.c + 2 * lg) / (e.n + 2) / lg;
     const w = { PT: 1, DF: 0.8, MC: 0.35, DL: 0.1 }[pos] ?? 0.5;
-    const x = w * (f - 1) - (1 - w) * (c - 1) + (casa ? -0.06 : 0.06);
+    const x = w * (f - 1) - (1 - w) * (c - 1) + (ep ? 0 : casa ? -0.06 : 0.06);   // con goles esperados la ventaja de casa ya va dentro
     return Math.max(1, Math.min(5, Math.round(3 + x * 5)));
   };
   const filas = m.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos) || b.value - a.value).map(p => {
     const celdas = gws.map(gw => {
       const g = pend.find(x => x.gw === gw && (x.home === p.teamId || x.away === p.teamId));
       if (!g) return `<td class="rv0">—</td>`;
-      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = dif(r, p.pos, casa);
+      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = dif(r, p.pos, casa, g);
       return `<td class="rv${d}" title="${esc(nombre[r] || "")} ${casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(r), "shield")}<span>${casa ? "C" : "F"}</span></td>`;
     }).join("");
     return `<tr><th><span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span> ${esc(p.short || p.name)}</th>${celdas}</tr>`;
