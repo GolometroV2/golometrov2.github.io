@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "06/11/2026 23:35",
-  "updatedAt": "2026-11-06T22:35:18Z",
+  "lastUpdated": "06/11/2026 23:51",
+  "updatedAt": "2026-11-06T22:51:33Z",
   "managers": [
     {
       "id": "8663482",
@@ -17790,8 +17790,8 @@
         ]
       },
       "8663482": {
-        "points": 7,
-        "totalPoints": 630,
+        "points": 8,
+        "totalPoints": 631,
         "position": 2,
         "playersPlayed": 1,
         "squadValue": 83892000,
@@ -17893,11 +17893,11 @@
             "name": "Félix Correia",
             "teamId": 17,
             "pos": "MC",
-            "points": 7,
+            "points": 8,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 7,
+            "basePoints": 8,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
