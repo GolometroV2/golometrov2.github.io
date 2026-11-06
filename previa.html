@@ -895,6 +895,8 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 ::selection{background:#2fd46e55}
 :focus-visible{outline:2px solid var(--accFg);outline-offset:2px;box-shadow:0 0 0 4px #2fd46e33}
 input[type=range]{accent-color:var(--acc)}
+.tab.bloq .ti{position:relative}
+.tab.bloq .ti::after{content:"";position:absolute;right:-7px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:var(--panel2,#1b2620) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='7' width='10' height='7' rx='1.5' fill='%2394a39a'/%3E%3Cpath d='M5 7V5a3 3 0 0 1 6 0v2' fill='none' stroke='%2394a39a' stroke-width='1.8'/%3E%3C/svg%3E") center/9px no-repeat;box-shadow:0 0 0 1.5px var(--bg,#08100c)}
 </style>
 </head>
 <body>
@@ -927,7 +929,9 @@ const POS = ["PT", "DF", "MC", "DL"];
 //   "total" -> todos los puntos del capitán (ya multiplicados)
 const MODO_CAP = "extra";
 
-// PIN de la pestaña Equipos. Es solo una barrera visual: el hash se ve en el código de la página.
+// PIN de las funciones de IA (Capitán, Mercado y las previsiones y consejos de las demás pestañas): decisión del dueño
+// del 06/11/2026, solo él las ve; sus amigos ven lo estadístico. Es solo una barrera visual: el hash se ve en el código.
+// En el móvil del dueño se recuerda (localStorage), así no tiene que repetirlo.
 // Genera el hash de tu contraseña con:
 //   python -c "import hashlib;print(hashlib.sha256('TU_PIN'.encode()).hexdigest())"
 // Si CLAVE_HASH está vacío, la pestaña queda bloqueada para todo el mundo.
@@ -938,7 +942,10 @@ let jselAbierto = false;
 let D = null, vista = "General", orden = { k: "points", asc: false }, abierto = null;
 let visibles = new Set(), modoG = "acum", G = null;
 let E = null, seccion = "clas", eqSel = "resumen", eqOrden = "delta";
-let eqOk = true;   // sin PIN: el dueño decidió abrir Equipos, Capitán y Mercado a todos
+let eqOk = true;   // Equipos está abierto a todos (lo estadístico)
+let iaOk = false;  // Capitán, Mercado y las previsiones: con PIN
+try { iaOk = localStorage.getItem("iaOk") === CLAVE_HASH; } catch (e) {}
+const soloIA = html => iaOk ? html : "";   // bloques de previsión o consejo: solo con PIN
 let CAL = null, PAR = null, capMan = null, capTodos = false, capGw = null;
 
 const $ = s => document.querySelector(s);
@@ -980,7 +987,7 @@ function cargarEquipos() {
 
 function pintarNav() {
   $("#nav").innerHTML = [["clas", "🏆 Clasificación"], ["eq", "💰 Equipos"], ["cap", "🎯 Capitán"], ["mer", "💸 Mercado"]]
-    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}" data-s="${k}" ${seccion === k ? 'aria-current="page"' : ""} aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
+    .map(([k, t]) => { const [ic, ...r] = t.split(" "); return `<button class="tab ${seccion === k ? "on" : ""}${!iaOk && (k === "cap" || k === "mer") ? " bloq" : ""}" data-s="${k}" ${seccion === k ? 'aria-current="page"' : ""} aria-label="${r.join(" ")}"><span class="ti">${ic}</span><span class="tl">${r.join(" ")}</span></button>`; }).join("");
   // En móvil la barra se desplaza: dejar visible la pestaña activa
   const nav = $("#nav"), on = nav.querySelector(".tab.on");
   if (on) nav.scrollLeft = Math.max(0, on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2);
@@ -1691,14 +1698,14 @@ function pintarTuJornada() {
   cont.hidden = false;
   const yo = YO && Q.orden.find(f => String(f.m.id) === String(YO));
   if (!yo) {
-    cont.innerHTML = `<div class="gh"><h2>Tu jornada ${Q.gw}</h2></div><p class="note" style="margin:0 0 10px">¿Cuál es tu equipo? Toca tu escudo y aquí verás tu capitán, tus opciones y lo que tienes que revisar antes de la jornada.</p>
+    cont.innerHTML = `<div class="gh"><h2>Tu jornada ${Q.gw}</h2></div><p class="note" style="margin:0 0 10px">¿Cuál es tu equipo? Toca tu escudo y aquí verás ${iaOk ? "tu capitán, tus opciones y lo que tienes que revisar antes de la jornada" : "tus opciones de ganar la jornada"}.</p>
       <div class="tuj-yo">${Q.orden.map(f => `<button data-yo="${esc(f.m.id)}" aria-label="${esc(f.m.name)}" title="${esc(f.m.name)}">${avatar(f.m, f.i)}</button>`).join("")}</div>`;
     return;
   }
   const filas = [];
   const fila = (ico, tit, txt, sec) => `<li><button class="tuj-f" ${sec ? `data-s="${sec}"` : ""}><span class="tuj-i">${ico}</span><span class="tuj-x"><small>${tit}</small><b>${txt}</b></span>${sec ? `<span class="tuj-a" aria-hidden="true">›</span>` : ""}</button></li>`;
   // capitán
-  let rc = null; try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: yo.m.id }); } catch (e) {}
+  let rc = null; if (iaOk) try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: yo.m.id }); } catch (e) {}
   const cap = rc && (rc.candidatos || []).find(c => c.score > -Infinity);
   if (cap) filas.push(fila("🎖️", "Capitán recomendado", `${esc(cap.p.short || cap.p.name)} · ≈ ${nf1.format(cap.esp)} pts${cap.m > 1 ? ` (×${coma(cap.m)})` : ""}`, "cap"));
   // opciones
@@ -1707,11 +1714,11 @@ function pintarTuJornada() {
   // alertas del once
   const once = [...yo.o.PT, ...yo.o.DF, ...yo.o.MC, ...yo.o.DL];
   const duda = once.filter(c => c.pj < 0.6).sort((a, b) => a.pj - b.pj);
-  if (yo.o.faltan) filas.push(fila("⚠️", "Tu plantilla no da para 11", `Te ${yo.o.faltan === 1 ? "falta 1 jugador" : `faltan ${yo.o.faltan}`}: mira los libres que cubren el hueco`, "cap"));
-  if (duda.length) filas.push(fila("🩹", "En tu mejor once, con dudas", duda.slice(0, 3).map(c => `${esc(apellido(c.p.short || c.p.name))} ${pc(c.pj)}`).join(" · "), "cap"));
+  if (iaOk && yo.o.faltan) filas.push(fila("⚠️", "Tu plantilla no da para 11", `Te ${yo.o.faltan === 1 ? "falta 1 jugador" : `faltan ${yo.o.faltan}`}: mira los libres que cubren el hueco`, "cap"));
+  if (iaOk && duda.length) filas.push(fila("🩹", "En tu mejor once, con dudas", duda.slice(0, 3).map(c => `${esc(apellido(c.p.short || c.p.name))} ${pc(c.pj)}`).join(" · "), "cap"));
   // valor de mañana
   const mg = (E.managers || []).find(m => String(m.id) === String(yo.m.id));
-  if (mg && LIGA && LIGA.valorDin) {
+  if (iaOk && mg && LIGA && LIGA.valorDin) {
     const L = mg.players.map(p => ({ p, g: capCrecModelo({ ...p, owner: 1 }) })).filter(x => x.g && !x.g.bajo).map(x => ({ ...x, e: x.p.value * x.g.g }));
     if (L.length >= 3) {
       const tot = L.reduce((t, x) => t + x.e, 0), peor = L.slice().sort((a, b) => a.e - b.e)[0];
@@ -1719,9 +1726,9 @@ function pintarTuJornada() {
     }
   }
   // mercado
-  if (!MER_DATA && !merError && !merPedidoTuj) { merPedidoTuj = true; cargarMercado(); }
-  cargarPujas(); cargarMerHist();
-  if (MER_DATA && CAL) { try {
+  if (iaOk && !MER_DATA && !merError && !merPedidoTuj) { merPedidoTuj = true; cargarMercado(); }
+  if (iaOk) { cargarPujas(); cargarMerHist(); }
+  if (iaOk && MER_DATA && CAL) { try {
     const r = recomendarMercado({ M: MER_DATA, cal: CAL, D, E });
     const m = (r.lista || []).filter(x => !["normal", "evitar"].includes(x.prio)).sort((a, b) => b.score - a.score)[0];
     filas.push(m ? fila("💸", "Lo mejor del mercado hoy", `${esc(m.j.name)} · puja ${merEur(m.puja)}${m.pl ? ` (te lo llevas ${pc(m.pl.p)})` : ""}`, "mer")
@@ -2644,9 +2651,9 @@ function resumenEq(ms, hp) {
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
     ${bloqueRadar(ms)}
-    ${bloqueValor7(ms)}
+    ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
-    ${bloqueClausulas(ms)}
+    ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
@@ -2756,7 +2763,7 @@ function detalleEq(m, hp) {
       </div>
       <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
     </div>
-    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
+    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${iaOk && t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
   return `<section class="card eqhead"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
@@ -2767,8 +2774,8 @@ function detalleEq(m, hp) {
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
     ${bloqueExpuestos(m)}
-    ${bloqueVender(m)}
-    ${bloquePrevision(m)}
+    ${soloIA(bloqueVender(m))}
+    ${soloIA(bloquePrevision(m))}
     ${bloqueRivalesEq(m)}`;
 }
 
@@ -2786,7 +2793,7 @@ function pintarPin() {
 }
 
 async function teclaPin(k) {
-  if (eqOk) return;
+  if (iaOk) return;
   if (k === "del") pin = pin.slice(0, -1);
   else if (pin.length < PIN_LEN) pin += k;
   pintarPin();
@@ -2801,13 +2808,13 @@ async function teclaPin(k) {
     setTimeout(() => { pin = ""; d.classList.remove("err"); pintarPin(); }, 400);
     return;
   }
-  eqOk = true; pin = "";
-  try { sessionStorage.setItem("eqOk", CLAVE_HASH); } catch (err) {}
+  iaOk = true; pin = "";
+  try { localStorage.setItem("iaOk", CLAVE_HASH); } catch (err) {}
   pintarNav();
-  $("#eq").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
   $("#cap").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
   $("#mer").innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`;
-  cargarEquipos(); cargarCalendario(); if (seccion === "mer") cargarMercado();
+  cargarEquipos(); cargarCalendario();
+  if (seccion === "mer") { cargarMercado(); pintarMercado(); } else if (seccion === "cap") pintarCapitan();
 }
 
 document.addEventListener("click", e => { if (e.target.closest("[data-cswap]") && comp) { comp.reverse(); pintarComparador(); } });
@@ -2821,7 +2828,7 @@ document.addEventListener("change", e => {
 
 document.addEventListener("click", e => { const b = e.target.closest("[data-pin]"); if (b) teclaPin(b.dataset.pin); });
 document.addEventListener("keydown", e => {
-  if (eqOk || (seccion !== "eq" && seccion !== "cap" && seccion !== "mer")) return;
+  if (iaOk || (seccion !== "cap" && seccion !== "mer")) return;
   if (/^[0-9]$/.test(e.key)) teclaPin(e.key);
   else if (e.key === "Backspace") teclaPin("del");
 });
@@ -3925,7 +3932,7 @@ function bloqueMercadoAyer(M) {
 
 function pintarMercado() {
   const cont = $("#mer");
-  if (!eqOk) { cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el mercado."); pin = ""; pintarPin(); return; }
+  if (!iaOk) { cont.innerHTML = htmlBloqueo("Las pujas y recomendaciones del mercado son solo para el dueño de la web."); pin = ""; pintarPin(); return; }
   if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
@@ -4322,8 +4329,8 @@ function htmlHorario(r) {
 
 function pintarCapitan() {
   const cont = $("#cap");
-  if (!eqOk) {
-    cont.innerHTML = htmlBloqueo("Introduce el PIN para ver el recomendador de capitán.");
+  if (!iaOk) {
+    cont.innerHTML = htmlBloqueo("El recomendador de capitán es solo para el dueño de la web.");
     pin = ""; pintarPin();
     return;
   }
