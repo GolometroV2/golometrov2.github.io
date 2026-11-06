@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "06/11/2026 22:56",
-  "updatedAt": "2026-11-06T21:56:27Z",
+  "lastUpdated": "06/11/2026 23:02",
+  "updatedAt": "2026-11-06T22:02:53Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "8663482": {
-        "points": 10,
-        "totalPoints": 633,
+        "points": 7,
+        "totalPoints": 630,
         "position": 1,
         "playersPlayed": 1,
         "squadValue": 83892000,
@@ -17666,17 +17666,17 @@
             "name": "Félix Correia",
             "teamId": 17,
             "pos": "MC",
-            "points": null,
+            "points": 7,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 7,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 85,
             "goalsConceded": 0
           },
           {
@@ -17790,8 +17790,8 @@
         ]
       },
       "8664919": {
-        "points": 10,
-        "totalPoints": 601,
+        "points": 7,
+        "totalPoints": 598,
         "position": 2,
         "playersPlayed": 2,
         "squadValue": 86397000,
@@ -17821,17 +17821,17 @@
             "name": "Odysseas Vlachodimos",
             "teamId": 17,
             "pos": "PT",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 95,
             "goalsConceded": 0
           },
           {
@@ -17857,17 +17857,17 @@
             "name": "Kike Salas",
             "teamId": 17,
             "pos": "DF",
-            "points": null,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 95,
             "goalsConceded": 0
           },
           {
