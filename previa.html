@@ -851,6 +851,24 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .sp-r:active::-webkit-slider-thumb{transform:scale(1.12)}
 .sp-r:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--accFg)}
 .sp-ejes{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:-6px}
+.rv-reg{position:relative;height:14px;margin:0 0 4px 46px;font-size:9.5px;color:var(--mut)}
+.rv-reg span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.rv-reg span:first-child{transform:none}
+.rvl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rv{display:flex;gap:10px;align-items:flex-start;background:none!important;padding:0!important}.rv .av{width:36px;height:36px;font-size:12px;flex:none}
+.rv-c{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.rv-t{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.rv-t b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-t>span{font-family:var(--f-disp);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.rv-c small{font-size:11px;color:var(--mut);line-height:1.35}
+.rv-eje{position:relative;height:16px;border-radius:8px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel2) 90%,transparent),color-mix(in srgb,#ff9f43 14%,var(--panel2)))}
+.rv-eje i{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:1.5px solid var(--acc);background:var(--panel);opacity:.9}
+.rv-eje i.g{background:var(--acc);box-shadow:0 0 8px -1px #2fd46e99}
+.rv.yo .rv-eje{outline:1px solid color-mix(in srgb,var(--acc) 50%,transparent)}
+.sp-riv{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);min-height:52px}
+.sp-riv>small{display:block;font-size:11px;color:var(--mut);margin-bottom:6px}
+.sp-riv>div{display:flex;gap:6px;flex-wrap:wrap}
+.sp-rc{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 10px 3px 3px;border-radius:999px;background:color-mix(in srgb,var(--panel2) 80%,transparent);border:1px solid var(--line);font-size:12px}
+.sp-rc .av{width:24px;height:24px;font-size:9px;flex:none}.sp-rc b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.sp-rc em{font-style:normal;font-weight:800;color:#ff9f43;font-variant-numeric:tabular-nums}
 .sp-bot{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .sp-bot button{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 80%,transparent);font-size:12.5px;font-weight:600;color:var(--txt);font-family:var(--f-disp)}
 .sp-bot button[data-spb="ideal"]{border-color:#2fd46e66;color:var(--accFg)}
@@ -3345,6 +3363,8 @@ function cargarPujas() {
   if (PUJAS) return; PUJAS = { compras: [] };
   fetch("pujas_ff.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS_FF = j && j.jugadores ? j : null; if (PUJAS_FF && seccion === "mer") pintarMercado(); if (PUJAS_FF && seccion === "clas" && D) pintarTuJornada(); });
+  fetch("pujas_mister.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(j => { PUJAS_M = j && j.compras ? j : null; RIVALES = null; if (PUJAS_M && seccion === "mer") pintarMercado(); });
   fetch("pujas.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) pintarTuJornada(); });
 }
@@ -3357,7 +3377,55 @@ function obsPujas() {
 // función de distribución normal (aproximación de Abramowitz y Stegun)
 function capPhi(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2);
   const q = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - q : q; }
+// ---------- Cómo puja cada rival (pujas_mister.json: TODAS las pujas de cada fichaje, de las noticias de Mister) ----------
+// Con todas las pujas, la probabilidad de llevártelo se cuenta rival a rival:
+//   P(s) = Π por rival [ (1 − a) + a · F(s) ]
+//   a = probabilidad de que ese rival puje por él: la q de siempre (que alguien puje) repartida según lo que puja cada uno,
+//   F(s) = parte de sus pujas por jugadores de precio parecido que quedaron por debajo de s (mezclada con las de toda la
+//          liga mientras tenga pocas, para no fiarse de dos o tres pujas sueltas).
+let PUJAS_M = null, RIVALES = null;
+const RIV = { MIN_PUJAS: 25, PRIOR: 3, DIAS: 30 };
+function rivalesPuja() {
+  if (RIVALES !== null) return RIVALES || null;
+  if (!PUJAS_M || !E) return null;
+  RIVALES = false;
+  const mk = (PUJAS_M.compras || []).filter(c => c.tipo === "mercado" && c.ts && c.pujas && c.pujas.length);
+  if (!mk.length) return null;
+  const fin = Math.max(...mk.map(c => Date.parse(c.ts))), desde = fin - RIV.DIAS * 86400e3;
+  const porId = {}, todas = [];
+  E.managers.forEach((m, i) => { porId[String(m.id)] = { m, i, id: String(m.id), n: 0, ganadas: 0, contra: 0, obs: [] }; });
+  mk.forEach(c => {
+    const t = Date.parse(c.ts), reciente = t >= desde;
+    c.pujas.forEach((p, k) => {
+      const r = p.id && porId[String(p.id)]; if (!r) return;
+      if (reciente) { r.n++; if (k === 0) { r.ganadas++; if (c.pujas.length > 1) r.contra++; } }
+      if (c.valor && p.cantidad >= c.valor * 0.98) { const o = { V: c.valor, s: p.cantidad / c.valor - 1, id: r.id, ts: c.ts, gana: k === 0, jugador: c.jugador, playerId: c.playerId }; r.obs.push(o); todas.push(o); }
+    });
+  });
+  if (todas.length < RIV.MIN_PUJAS) return null;
+  RIVALES = { porId, todas, n: mk.filter(c => Date.parse(c.ts) >= desde).length, varias: mk.filter(c => c.pujas.length > 1 && Date.parse(c.ts) >= desde).length };
+  return RIVALES;
+}
+// parte de las pujas (de un rival o de la liga) que quedan por debajo de s, para un jugador de valor V; y su peso
+function cdfPujas(L, V, s) {
+  let w = 0, ok = 0;
+  L.forEach(o => { const d = Math.log(V / o.V) / PUJA.ANCHO, wi = Math.exp(-d * d / 2); w += wi; ok += wi * capPhi((Math.log(1 + s) - Math.log(1 + o.s)) / PUJA.SUAVE); });
+  return { F: w > 0 ? ok / w : 1, w };
+}
+// a de cada rival (probabilidad de que puje por este jugador) y su F(s)
+function rivalesDe(R, V, s, q) {
+  const L = Object.values(R.porId).filter(r => r.id !== String(YO || ""));
+  const act = L.map(r => r.n + 1), tot = act.reduce((a, b) => a + b, 0) || 1;
+  const liga = cdfPujas(R.todas, V, s).F;
+  return L.map((r, k) => {
+    const a = 1 - Math.pow(1 - q, act[k] / tot), c = cdfPujas(r.obs, V, s);
+    const F = (c.w * c.F + RIV.PRIOR * liga) / (c.w + RIV.PRIOR);
+    return { r, a, F, gana: a * (1 - F) };      // gana = probabilidad de que puje y te supere
+  });
+}
 function pGanarPuja(V, s, q, obs) {
+  const R = rivalesPuja();
+  if (R) return rivalesDe(R, V, s, q).reduce((p, x) => p * (1 - x.gana), 1);
   let w = 0, ok = 0;
   // cada compra cuenta más cuanto más se parece su precio; su sobrepuja se suaviza un poco (nadie puja exactamente igual)
   obs.forEach(o => { const d = Math.log(V / o.V) / PUJA.ANCHO, wi = Math.exp(-d * d / 2); w += wi; ok += wi * capPhi((Math.log(1 + s) - Math.log(1 + o.s)) / PUJA.SUAVE); });
@@ -3441,10 +3509,18 @@ function htmlCuerpoSim() {
       <div class="sp-gauge"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" class="sp-g0"/><circle cx="32" cy="32" r="27" class="sp-g1"/></svg><span><b class="sp-p"></b><small>te lo llevas</small></span></div></div>
     <div class="sp-fila"><button class="sp-mas" data-spb="-1" aria-label="Bajar la puja">−</button>
       <div class="sp-pista">${curvaSim(d)}
-        <input class="sp-r" type="range" min="${d.V}" max="${d.max}" step="${d.paso}" value="${d.ideal}" data-sp="1" aria-label="Puja por ${esc(d.nombre)}">
+        <input class="sp-r" type="range" min="${d.V}" max="${d.max}" step="1000" value="${d.ideal}" data-sp="1" aria-label="Puja por ${esc(d.nombre)}">
         <div class="sp-ejes"><span>Valor ${merEur(d.V)}</span><span>${merEur(d.max)}</span></div></div>
       <button class="sp-mas" data-spb="1" aria-label="Subir la puja">+</button></div>
-    <div class="sp-bot"><button data-spb="ideal">Ideal · ${merEur(d.ideal)}</button>${d.ff && Math.abs(d.ff - d.ideal) > 0.02 * d.V ? `<button data-spb="ff">Futbol Fantasy · ${merEur(d.ff)}</button>` : ""}${d.seguro > d.ideal * 1.02 ? `<button data-spb="seg">Segura · ${merEur(d.seguro)}</button>` : ""}</div>`;
+    <div class="sp-bot"><button data-spb="ideal">Ideal · ${merEur(d.ideal)}</button>${d.ff && Math.abs(d.ff - d.ideal) > 0.02 * d.V ? `<button data-spb="ff">Futbol Fantasy · ${merEur(d.ff)}</button>` : ""}${d.seguro > d.ideal * 1.02 ? `<button data-spb="seg">Segura · ${merEur(d.seguro)}</button>` : ""}</div>
+    ${rivalesPuja() ? `<div class="sp-riv" aria-live="polite"></div>` : ""}`;
+}
+// Con esa cifra, quién te lo puede quitar: probabilidad de que cada rival puje por él y ponga más que tú
+function htmlRivalesSim(d, s) {
+  const R = rivalesPuja(); if (!R) return "";
+  const L = rivalesDe(R, d.V, s, d.q).filter(x => x.gana >= 0.01).sort((a, b) => b.gana - a.gana).slice(0, 3);
+  if (!L.length) return `<small>A esta cifra ningún rival suele pujar más.</small>`;
+  return `<small>Quién te lo puede quitar a esta cifra</small><div>${L.map(x => `<span class="sp-rc">${avatar(x.r.m, x.r.i)}<b>${esc(x.r.m.name)}</b><em>${pc(x.gana)}</em></span>`).join("")}</div>`;
 }
 function moverSim() {
   const c = $("#spCuerpo"), d = SIM.datos[SIM.id]; if (!c || !d) return;
@@ -3460,6 +3536,7 @@ function moverSim() {
   const dot = c.querySelector(".sp-dot"); if (dot) { dot.style.left = (x / W * 100).toFixed(2) + "%"; dot.style.top = y.toFixed(1) + "px"; }
   inp.style.setProperty("--pos", ((b - d.V) / (d.max - d.V) * 100).toFixed(2) + "%");
   inp.setAttribute("aria-valuetext", `${merPuja(b)}, te lo llevas ${pc(p)}`);
+  const rv = c.querySelector(".sp-riv"); if (rv) rv.innerHTML = htmlRivalesSim(d, s);
 }
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-sp]")) moverSim(); });
 document.addEventListener("click", e => {
@@ -3481,6 +3558,29 @@ document.addEventListener("click", e => {
     moverSim();
   }
 });
+// Tarjeta «Así pujan tus rivales»: cada puja de los últimos 30 días (ganadora o no) como un punto sobre una regla de
+// sobrepuja, y debajo su estilo. Es lo que usa la probabilidad de llevártelo, rival a rival.
+function bloquePujanRivales() {
+  const R = rivalesPuja(); if (!R) return "";
+  const med = a => { const b = a.slice().sort((x, y) => x - y); return b.length ? b[Math.floor((b.length - 1) / 2)] : 0; };
+  const cuant = (a, q) => { const b = a.slice().sort((x, y) => x - y); return b.length ? b[Math.min(b.length - 1, Math.floor(q * b.length))] : 0; };
+  const X = s => Math.min(97, 2 + Math.sqrt(Math.max(0, s) / 1.2) * 95);   // regla: 0 % a +120 % (raíz: se ven bien las pequeñas)
+  const pcS = x => "+" + (x >= 0.1 ? Math.round(x * 100) : nf1.format(x * 100)) + " %";
+  const L = Object.values(R.porId).filter(r => r.n || r.obs.length).sort((a, b) => b.n - a.n);
+  const estilo = (m, alta) => m <= 0.03 ? (alta > 0.2 ? "Ajusta, pero a veces se dispara" : "Puja casi al valor") : m <= 0.1 ? "Pone algo de más" : "Puja fuerte";
+  const fil = L.map(r => {
+    const ss = r.obs.map(o => o.s), m = med(ss), alta = cuant(ss, 0.85), Vm = med(r.obs.map(o => o.V));
+    const yo = String(r.id) === String(YO || "");
+    return `<li class="rv${yo ? " yo" : ""}">${avatar(r.m, r.i)}<div class="rv-c"><div class="rv-t"><b>${esc(r.m.name)}${yo ? ` <span class="tu">tú</span>` : ""}</b><span>${r.obs.length >= 3 ? pcS(m) : "—"}</span></div>
+      <div class="rv-eje" aria-hidden="true">${r.obs.map(o => `<i class="${o.gana ? "g" : ""}" style="left:${X(o.s).toFixed(1)}%" title="${esc(o.jugador || "")}: ${pcS(o.s)}"></i>`).join("")}</div>
+      <small>${r.n} ${r.n === 1 ? "puja" : "pujas"} en 30 días · ${r.ganadas} ${r.ganadas === 1 ? "ganada" : "ganadas"}${r.contra ? ` (${r.contra} ante otras pujas)` : ""}${r.obs.length >= 3 ? ` · ${estilo(m, alta)}${alta > 0.2 ? `, hasta ${pcS(alta)}` : ""}${Vm ? ` · suele ir a por jugadores de ${merEur(Vm)}` : ""}` : ""}</small></div></li>`;
+  }).join("");
+  return `<section class="card"><div class="gh"><h2>Así pujan tus rivales</h2></div>
+    <p class="note" style="margin:0 0 10px">${R.n} fichajes del mercado en los últimos 30 días, ${R.varias} con varias pujas (las noticias de Mister enseñan también las que perdieron). Cada punto es una puja según cuánto pagó por encima del valor; los rellenos, las que ganó. A la derecha, su sobrepuja típica.</p>
+    <div class="rv-reg" aria-hidden="true"><span style="left:0">valor</span><span style="left:${X(0.05)}%">+5 %</span><span style="left:${X(0.2)}%">+20 %</span><span style="left:${X(0.5)}%">+50 %</span><span style="left:${X(1)}%">+100 %</span></div>
+    <ul class="rvl">${fil}</ul>
+    <p class="note">La probabilidad de llevártelo (en las tarjetas y en el simulador) se calcula rival a rival con estas pujas: lo que suele pujar cada uno por jugadores de precio parecido y lo a menudo que entra al mercado. Probado sobre las subastas reales con varias pujas, acierta más que contar solo las pujas ganadoras.</p></section>`;
+}
 // Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
 function bloquePujasLiga() {
   const O = obsPujas();
@@ -3559,7 +3659,7 @@ function merTarjeta(r) {
     ${c ? `<p><b>Partido:</b> ${esc(c.rivalNombre || "?")} ${c.casa ? "en casa" : "fuera"}. Efecto en sus puntos ${signoPct(r.fProx - 1)} (el equipo espera ${nf1.format(c.xgf)} goles y el rival ${nf1.format(c.xgc)}${c.nR ? `; los ${POSN[r.pos]} han hecho ${c.fPts >= 1 ? "más" : "menos"} contra él` : ""}).</p>` : ""}
     <p><b>Valor:</b> ${r.cr.fuente === "modelo" && r.cr.phi ? `mañana se espera que cambie ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %${r.cr.ayer != null ? ` (ayer ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %)` : ""}: en Mister el valor tiene mucha inercia, lo que cambia un día se repite casi igual al siguiente y se va frenando poco a poco hacia lo típico de un jugador como él (${r.cr.gm >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día)` : r.cr.fuente === "modelo" ? `un jugador como este suele cambiar ${pctS}${nf1.format(Math.abs(r.cr.gm) * 100)} % al día (según su media, su última jornada y su valor)${r.cr.ayer != null ? `; ayer cambió ${r.cr.ayer >= 0 ? "+" : "−"}${nf1.format(Math.abs(r.cr.ayer) * 100)} %` : ""}` : r.cr.fuente === "bajo" ? "por debajo de 1 M el valor se mueve al azar y no se puede prever" : r.cr.fuente === "ayer" ? `ayer cambió un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} %` : r.cr.fuente === "historial" ? `ha cambiado un ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día en los últimos días` : r.cr.fuente === "flecha" ? `la flecha del mercado es ${j.arrow > 0 ? "verde" : "roja"}; se supone ${pctS}${nf1.format(Math.abs(r.cr.g) * 100)} % al día` : "sin datos de tendencia"}. Quedan ${nf1.format(r.horizonte)} días hasta que pueda puntuar: se espera que su valor ${r.apre >= 0 ? "suba" : "baje"} un ${nf1.format(Math.abs(r.apre) * 100)} % hasta entonces.</p>
     ${r.pct != null ? `<p><b>Nivel:</b> entre el ${Math.max(1, Math.round((1 - r.pct) * 100))} % mejor de los ${POSN[r.pos]} de la liga por puntos esperados.</p>` : ""}
-    ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> habrías superado a la mayoría de los que ganaron jugadores de su precio: te lo llevas un <b>${pc(r.pl.p)}</b>${r.sFF > 0 && r.s <= r.sFF + 1e-9 ? ` (aquí manda la puja máxima rentable de Futbol Fantasy, +${nf1.format(r.sFF * 100)} %: pagar hasta ahí no hace perder dinero)` : ""}${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
+    ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> ${rivalesPuja() ? "y viendo lo que suele pujar cada rival por jugadores de su precio" : "habrías superado a la mayoría de los que ganaron jugadores de su precio"}: te lo llevas un <b>${pc(r.pl.p)}</b>${r.sFF > 0 && r.s <= r.sFF + 1e-9 ? ` (aquí manda la puja máxima rentable de Futbol Fantasy, +${nf1.format(r.sFF * 100)} %: pagar hasta ahí no hace perder dinero)` : ""}${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
       <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
@@ -3753,6 +3853,7 @@ function pintarMercado() {
     ${bloqueSubidas(MER_DATA)}
     ${bloqueCalendario()}
     ${bloqueRacha(MER_DATA)}
+    ${bloquePujanRivales()}
     ${bloquePujasLiga()}
     <p class="note">La puja ideal sale de lo que de verdad se paga en esta liga por jugadores de precio parecido (el precio de cada compra se deduce de su cláusula, que es 1,5 veces lo pagado). El % junto a la puja es la probabilidad de llevártelo. Cuanto mejor es el jugador, más alta la probabilidad que se busca.</p>`;
   moverSim();
