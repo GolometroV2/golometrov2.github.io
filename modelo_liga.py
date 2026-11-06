@@ -211,7 +211,11 @@ def ajustar(H, J, D=None):
     except Exception as e:      # el análisis de factores nunca debe romper el modelo
         out["factores"] = None
         print(f"[!] Análisis de factores no disponible: {e}")
-    # efecto de la portería a cero en porteros y defensas (se mide con los partidos jugados)
+    try:
+        out["partido"] = modelo_partido(H, J, cargar(os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendario.json")))
+    except Exception as e:      # tampoco el modelo de partido
+        out["partido"] = None
+        print(f"[!] Modelo de partido no disponible: {e}")
     return out
 
 
@@ -442,6 +446,94 @@ def factores(H, J, D, C):
                       "parteGoles": round(max(0.0, w[1] * gpp) / mp, 3) if mp > 0 else None, "r2": round(max(0.0, r2), 3), "n": len(L)}
     return {"n": len(niv_y), "jornadas": prueba, "nivelCorr": round(_corr(niv_p, niv_y), 3),
             "golesPrevistosCorr": round(_corr(lam_p, lam_y), 3), "correlacion": corr, "goles": goles}
+
+# ---------------------------------------------------------------------------------------------
+# Modelo de partido: cómo puntúa cada posición según los goles que marca y encaja su equipo
+# ---------------------------------------------------------------------------------------------
+GOLES_MAX = 4      # 0, 1, 2, 3 y «4 o más»
+TRAMOS = {"0-1": (0, 1), "2": (2, 2), "3+": (3, 99)}
+N_CUANTILES = 24
+
+
+def modelo_partido(H, J, C, lam=8.0):
+    """Con TODOS los jugadores de LaLiga que juegan, mide para cada posición:
+         · efecto de los goles encajados por su equipo (0, 1, 2, 3, 4+) y de los marcados, en puntos por encima de su nivel
+           (su media encogida hacia lo que se espera por su valor, calculada solo con jornadas anteriores),
+         · cómo se reparten los puntos alrededor de eso (24 cuantiles del residuo), aparte cuando su equipo encaja 3 o más.
+       La web lo combina con los goles esperados del partido (Poisson) para dar la media y el riesgo de cada jugador:
+       un defensa que juega contra el Madrid tiene muchas más papeletas de encajar 3 y de acabar en negativo."""
+    jug = {p["id"]: p for p in (J or {}).get("jugadores", [])}
+    ult = (J or {}).get("ultimaJornada") or 99
+    porgw = collections.defaultdict(list)
+    for g in (C or {}).get("games") or []:
+        if isinstance(g.get("gh"), (int, float)) and isinstance(g.get("ga"), (int, float)):
+            porgw[g["gw"]].append(g)
+    num = lambda x: isinstance(x, (int, float))
+    pts = collections.defaultdict(dict)
+    for pid, v in (H or {}).get("puntos", {}).items():
+        for g, x in v.items():
+            pts[pid][int(g)] = x
+    filas = []
+    for pid, h in pts.items():
+        p = jug.get(pid)
+        if not p:
+            continue
+        for gw, x in h.items():
+            if not num(x) or gw > ult:
+                continue
+            g = next((q for q in porgw[gw] if p["teamId"] in (q["home"], q["away"])), None)
+            if g:
+                casa = g["home"] == p["teamId"]
+                filas.append({"pid": pid, "gw": gw, "pos": p["pos"], "pts": x, "valor": p["value"] or 1e5,
+                              "gf": g["gh"] if casa else g["ga"], "gc": g["ga"] if casa else g["gh"]})
+    if len(filas) < 600:
+        return None
+
+    def media_antes(pid, g):
+        p = jug[pid]
+        tot, avg = float(p.get("points") or 0), float(p.get("avg") or 0)
+        n = round(tot / avg) if avg > 0 else 0
+        for gw, x in pts[pid].items():
+            if gw >= g and gw <= ult and num(x):
+                tot -= x
+                n -= 1
+        return (tot / n if n > 0 else None), max(n, 0)
+
+    # nivel de cada jugador ANTES de cada jornada (como lo vería la web)
+    for g in sorted({f["gw"] for f in filas}):
+        tr = [f for f in filas if f["gw"] < g] or [f for f in filas if f["gw"] == g]
+        pri = {pos: recta([math.log10(max(f["valor"], 1e5)) for f in tr if f["pos"] == pos], [f["pts"] for f in tr if f["pos"] == pos]) for pos in POS}
+        for f in (x for x in filas if x["gw"] == g):
+            r = pri[f["pos"]]
+            prior = r[0] * math.log10(max(f["valor"], 1e5)) + r[1] if r else 4.0
+            avg, n = media_antes(f["pid"], g)
+            f["mu"] = prior if avg is None else (n * avg + 20 * prior) / (n + 20)
+
+    out = {}
+    for pos in POS:
+        L = [f for f in filas if f["pos"] == pos]
+        if len(L) < 100:
+            continue
+        cat = lambda x: min(int(x), GOLES_MAX)
+        X = [[1.0] + [1.0 if cat(f["gc"]) == k else 0.0 for k in range(1, GOLES_MAX + 1)]
+             + [1.0 if cat(f["gf"]) == j else 0.0 for j in range(1, GOLES_MAX + 1)] for f in L]
+        y = [f["pts"] - f["mu"] for f in L]
+        n = len(X[0])
+        A = [[sum(r[i] * r[j] for r in X) + (lam if i == j and i > 0 else 0.0) for j in range(n)] for i in range(n)]
+        b = [sum(r[i] * t for r, t in zip(X, y)) for i in range(n)]
+        w = resolver(A, b)
+        efc = [0.0] + w[1:GOLES_MAX + 1]
+        eff = [0.0] + w[GOLES_MAX + 1:]
+        res = [(t - (w[0] + efc[cat(f["gc"])] + eff[cat(f["gf"])]), f["gc"]) for f, t in zip(L, y)]
+        cuant = lambda r: [round(r[min(len(r) - 1, int((i + 0.5) / N_CUANTILES * len(r)))], 2) for i in range(N_CUANTILES)]
+        todos = sorted(r for r, _ in res)
+        q = {}
+        for nombre, (lo, hi) in TRAMOS.items():
+            r = sorted(x for x, k in res if lo <= k <= hi)
+            q[nombre] = cuant(r if len(r) >= 60 else todos)
+        out[pos] = {"encajados": [round(x, 2) for x in efc], "marcados": [round(x, 2) for x in eff], "residuo": q, "n": len(L)}
+    return out or None
+
 
 def cargar(ruta, defecto=None):
     try:
