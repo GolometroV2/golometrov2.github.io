@@ -8,15 +8,16 @@ predecir esa nota hace falta saber lo que hace cada jugador en el campo y cómo 
 Este script reúne, sin credenciales y con pausa entre peticiones (y solo si el robots.txt de cada web lo permite):
 
   · SofaScore: por partido, la nota y las estadísticas de cada jugador (minutos, xG, xA, tiros, pases clave,
-    entradas, despejes, paradas...) y las cuotas de los partidos que faltan.
-  · Understat: xG y xA de cada jugador y de cada equipo, partido a partido.
+    entradas, despejes, paradas...) y las cuotas de los partidos que faltan. Se conecta presentándose como Safari
+    (curl_cffi), porque su cortafuegos rechaza a los programas que se presentan como Chrome (idea de LanusStats).
   · football-data.co.uk: resultados y cuotas de cierre (Pinnacle / Bet365 / media) de toda la temporada y de los
     próximos partidos.
+  · Understat (solo si se pide): xG y xA partido a partido. SofaScore ya los trae, así que no se descarga por defecto.
 
 Cada fuente es independiente: si una falla, las demás se guardan igual. Lo ya descargado se guarda en externo/
 y solo se piden los partidos nuevos.
 
-Uso:  python estadisticas_externas.py            (todo)
+Uso:  python estadisticas_externas.py            (SofaScore y cuotas)
       python estadisticas_externas.py sofascore  (solo una fuente: sofascore, understat o cuotas)
 """
 import csv
@@ -30,6 +31,11 @@ import urllib.robotparser
 from datetime import datetime, timezone
 
 import requests
+
+try:            # SofaScore bloquea a los programas que se presentan como Chrome, pero no como Safari (idea de LanusStats)
+    from curl_cffi import requests as cffi
+except ImportError:
+    cffi = None
 
 CARPETA = os.path.dirname(os.path.abspath(__file__))
 EXT = os.path.join(CARPETA, "externo")
@@ -49,6 +55,35 @@ def log(*a):
     print(*a, flush=True)
 
 
+_sofa = {"sesion": None, "modo": None}
+SOFA_MODOS = ["safari184", "safari18_4", "safari180", "safari"]   # se prueba en orden hasta que uno responda
+
+
+def sesion_de(url):
+    """La sesión con la que se pide cada URL: SofaScore va con la de Safari si está disponible."""
+    if "sofascore.com" in url and _sofa["sesion"] is not None:
+        return _sofa["sesion"]
+    return sesion
+
+
+def abrir_sofascore(prueba):
+    """Busca una forma de conectarse que SofaScore acepte. Devuelve el JSON de la URL de prueba o None."""
+    modos = (SOFA_MODOS if cffi else []) + ["requests"]
+    for modo in modos:
+        try:
+            s = sesion if modo == "requests" else cffi.Session(impersonate=modo)
+        except Exception as e:          # ese modo no existe en esta versión de curl_cffi
+            log(f"  SofaScore con {modo}: no disponible ({type(e).__name__})")
+            continue
+        _sofa.update(sesion=None if modo == "requests" else s, modo=modo)
+        datos = pedir(prueba, intentos=1)
+        log(f"  SofaScore con {modo}: {'responde' if datos else 'bloqueado'}")
+        if datos:
+            return datos
+    _sofa.update(sesion=None, modo=None)
+    return None
+
+
 def permitido(url):
     """Respeta el robots.txt de cada web (si no se puede leer, se asume permitido, como hacen los navegadores)."""
     m = re.match(r"(https?://[^/]+)", url)
@@ -56,12 +91,12 @@ def permitido(url):
     if base not in _robots:
         rp = urllib.robotparser.RobotFileParser()
         try:
-            r = sesion.get(base + "/robots.txt", timeout=20)
+            r = sesion_de(base).get(base + "/robots.txt", timeout=20)
             if r.status_code == 200:
                 rp.parse(r.text.splitlines())
             else:
                 rp.parse([])
-        except requests.RequestException:
+        except Exception:
             rp.parse([])
         _robots[base] = rp
     return _robots[base].can_fetch(UA_BOT, url)
@@ -73,14 +108,14 @@ def pedir(url, json_=True, cab=None, intentos=2):
         return None
     for i in range(intentos):
         try:
-            r = sesion.get(url, timeout=30, headers=cab or {})
+            r = sesion_de(url).get(url, timeout=30, headers=cab or {})
             time.sleep(PAUSA)
             if r.status_code == 200:
                 return r.json() if json_ else r.text
             log(f"  HTTP {r.status_code} en {url}")
             if r.status_code in (403, 404, 429):
                 return None
-        except (requests.RequestException, ValueError) as e:
+        except Exception as e:          # requests y curl_cffi lanzan errores distintos
             log(f"  error en {url}: {type(e).__name__}")
             time.sleep(PAUSA * 2)
     return None
@@ -95,13 +130,14 @@ def cargar(nombre, defecto):
 
 
 def guardar(nombre, datos):
-    os.makedirs(EXT, exist_ok=True)
-    with open(os.path.join(EXT, nombre), "w", encoding="utf-8") as f:
+    ruta = os.path.join(EXT, nombre)
+    os.makedirs(os.path.dirname(ruta), exist_ok=True)
+    with open(ruta, "w", encoding="utf-8") as f:
         json.dump(datos, f, ensure_ascii=False, separators=(",", ":"))
 
 
 # ------------------------------------------------------------------ SofaScore
-SOFA = "https://api.sofascore.com/api/v1"
+SOFA = "https://www.sofascore.com/api/v1"     # la misma dirección que usa la web (su robots.txt no la prohíbe)
 SOFA_TORNEO = 8      # LaLiga
 SOFA_CAMPOS = ["rating", "minutesPlayed", "goals", "goalAssist", "expectedGoals", "expectedAssists", "totalShots",
                "onTargetScoringAttempt", "keyPass", "bigChanceCreated", "bigChanceMissed", "totalPass", "accuratePass",
@@ -112,26 +148,32 @@ SOFA_CAMPOS = ["rating", "minutesPlayed", "goals", "goalAssist", "expectedGoals"
 
 
 def sofascore():
-    cache = cargar("sofascore.json", {"temporada": None, "partidos": {}, "proximos": {}})
-    t = pedir(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/seasons")
+    """Guarda un fichero por jornada (externo/sofascore/<temporada>/ronda_NN.json): las jornadas terminadas no se vuelven
+       a pedir ni a reescribir, así el repositorio no crece cada día. Los próximos partidos (con cuotas) van aparte."""
+    t = abrir_sofascore(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/seasons")
     if not t or not t.get("seasons"):
         estado["sofascore"] = "sin acceso"
         return
     temp = t["seasons"][0]
     sid = temp["id"]
-    if cache.get("temporada") != sid:
-        cache = {"temporada": sid, "nombre": temp.get("name"), "partidos": {}, "proximos": {}}
+    guardar("sofascore/actual.json", {"temporada": sid, "nombre": temp.get("name")})
     rondas = pedir(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/season/{sid}/rounds") or {}
     actual = (rondas.get("currentRound") or {}).get("round") or 1
-    nuevos, proximos = 0, {}
+    nuevos, proximos, total = 0, {}, 0
     for rnd in range(1, actual + 2):
+        ruta = f"sofascore/{sid}/ronda_{rnd:02d}.json"
+        guardados = cargar(ruta, {})
+        total += len(guardados)
+        if len(guardados) >= 10 and rnd < actual:     # jornada completa: no hace falta pedirla otra vez
+            continue
         ev = pedir(f"{SOFA}/unique-tournament/{SOFA_TORNEO}/season/{sid}/events/round/{rnd}")
+        antes = len(guardados)
         for e in (ev or {}).get("events", []):
             eid = str(e["id"])
             fin = (e.get("status") or {}).get("type") == "finished"
             info = {"ronda": rnd, "ts": e.get("startTimestamp"), "local": e["homeTeam"]["name"], "visitante": e["awayTeam"]["name"],
                     "localId": e["homeTeam"]["id"], "visitanteId": e["awayTeam"]["id"]}
-            if fin and eid not in cache["partidos"]:
+            if fin and eid not in guardados:
                 lu = pedir(f"{SOFA}/event/{eid}/lineups")
                 if not lu:
                     continue
@@ -147,16 +189,17 @@ def sofascore():
                         jug.append(fila)
                 info.update({"gl": (e.get("homeScore") or {}).get("current"), "gv": (e.get("awayScore") or {}).get("current"),
                              "jugadores": jug})
-                cache["partidos"][eid] = info
+                guardados[eid] = info
                 nuevos += 1
+                total += 1
             elif not fin and (e.get("status") or {}).get("type") == "notstarted":
                 od = pedir(f"{SOFA}/event/{eid}/odds/1/all")
                 info["cuotas"] = resumen_cuotas_sofa(od)
                 proximos[eid] = info
-    cache["proximos"] = proximos
-    cache["actualizado"] = ahora()
-    guardar("sofascore.json", cache)
-    estado["sofascore"] = f"ok: {len(cache['partidos'])} partidos con notas ({nuevos} nuevos), {len(proximos)} próximos"
+        if len(guardados) > antes:
+            guardar(ruta, guardados)
+    guardar(f"sofascore/{sid}/proximos.json", {"actualizado": ahora(), "partidos": proximos})
+    estado["sofascore"] = f"ok ({_sofa['modo']}): {total} partidos con notas ({nuevos} nuevos), {len(proximos)} próximos"
 
 
 def fraccion(x):
@@ -250,7 +293,7 @@ def cuotas():
     if not jugados and not proximos:
         estado["cuotas"] = "sin acceso"
         return
-    guardar("cuotas.json", {"actualizado": ahora(), "jugados": jugados, "proximos": proximos})
+    guardar("cuotas.json", {"jugados": jugados, "proximos": proximos})   # sin fecha: solo cambia si cambian los datos
     estado["cuotas"] = f"ok: {len(jugados)} partidos jugados y {len(proximos)} próximos con cuotas"
 
 
@@ -260,7 +303,8 @@ def ahora():
 
 def main():
     fuentes = {"sofascore": sofascore, "understat": understat, "cuotas": cuotas}
-    pedidas = [a for a in sys.argv[1:] if a in fuentes] or list(fuentes)
+    # Understat solo si se pide expresamente: SofaScore ya trae xG y xA, y el modelo no lo usa
+    pedidas = [a for a in sys.argv[1:] if a in fuentes] or ["sofascore", "cuotas"]
     for nombre in pedidas:
         log(f"== {nombre}")
         try:

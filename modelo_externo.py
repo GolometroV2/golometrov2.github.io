@@ -18,6 +18,7 @@ de Mister, para que la página lo use en el capitán, el mercado y la predicció
 
 Sin datos externos no hace nada (y la página sigue con su modelo propio).
 """
+import glob
 import json
 import math
 import os
@@ -136,14 +137,27 @@ def lambdas(c1, cx, c2, over=None, under=None):
     return mejor
 
 
-def cuotas_por_partido(cal):
+def cargar_sofa():
+    """Lo descargado de SofaScore: un fichero por jornada en externo/sofascore/<temporada>/ (o el formato antiguo)."""
+    act = cargar(os.path.join(EXT, "sofascore", "actual.json"), {})
+    sid = act.get("temporada")
+    if not sid:
+        return cargar(os.path.join(EXT, "sofascore.json"), {})
+    base = os.path.join(EXT, "sofascore", str(sid))
+    partidos = {}
+    for f in sorted(glob.glob(os.path.join(base, "ronda_*.json"))):
+        partidos.update(cargar(f, {}))
+    proximos = cargar(os.path.join(base, "proximos.json"), {}).get("partidos") or {}
+    return {"temporada": sid, "partidos": partidos, "proximos": proximos}
+
+
+def cuotas_por_partido(cal, sofa):
     """Para cada partido del calendario de Mister: goles esperados según las cuotas (SofaScore o football-data)."""
     out = {}
     juegos = cal.get("games") or []
     clave = {}
     for g in juegos:
         clave[(g["home"], g["away"])] = g
-    sofa = cargar(os.path.join(EXT, "sofascore.json"), {})
     for e in list((sofa.get("proximos") or {}).values()):
         c = e.get("cuotas") or {}
         x = c.get("1x2") or [None] * 3
@@ -307,8 +321,8 @@ def main():
     cal = cargar(os.path.join(CARPETA, "calendario.json"), {})
     J = cargar(os.path.join(CARPETA, "jugadores.json"), {})
     H = cargar(os.path.join(CARPETA, "jugadores_historial.json"), {})
-    sofa = cargar(os.path.join(EXT, "sofascore.json"), {})
-    partidos = cuotas_por_partido(cal)
+    sofa = cargar_sofa()
+    partidos = cuotas_por_partido(cal, sofa)
     jug, conv, val = {}, {}, None
     if sofa.get("partidos") and J.get("jugadores"):
         mapa = emparejar_jugadores(sofa, J)
