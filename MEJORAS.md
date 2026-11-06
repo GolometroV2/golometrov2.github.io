@@ -78,7 +78,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 ## Ideas pendientes (de más a menos valor)
 1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. (Hecho el 05/11 con `pujas.json`.) Cuando haya más compras: recalibrar `PUJA.RIVAL` (interés de los demás según prioridad) comparando qué libres se fichan frente a su prioridad del día.
-3. Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
-5. Gráfico de la evolución del valor de plantilla de cada manager.
+3. (Hecho: ya existe como «Crónica» de la jornada, `pintarCronica`.) Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
+5. (Hecho: tarjeta «Evolución del valor» en Equipos, `graficaValor`.) Gráfico de la evolución del valor de plantilla de cada manager.
 6. (Pendiente de que el dueño lo apruebe) Bajar el corte de «valor impredecible» de 1 M a 300 k: medido el 05/11, entre 300 k y 1 M el cambio diario se parece un 91-95 % al del día anterior (como en los caros); solo por debajo de 300 k es azar (correlación −0,35).
 7. (Pendiente de que el dueño lo apruebe, choca con la regla «en Mercado solo libres») El mercado de hoy tenía 19 jugadores puestos a la venta por managers que `mercado_mister.py` descarta: se podrían guardar y mostrar aparte con su valor previsto.
