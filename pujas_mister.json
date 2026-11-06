@@ -1,0 +1,5159 @@
+{
+"compras": [
+{
+"feed": "963298493",
+"playerId": "14379",
+"jugador": "Aitor Fernández",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 2651220,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2651220
+}
+],
+"ts": "2026-11-05T18:56:21Z"
+},
+{
+"feed": "963260885",
+"playerId": "28395",
+"jugador": "Matías Dituro",
+"de": "Sr. X",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": "10303392",
+"precio": 6500000,
+"tipo": "traspaso",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 6500000
+}
+],
+"ts": "2026-11-05T11:54:43Z",
+"exacta": true
+},
+{
+"feed": "963252449",
+"playerId": "55966",
+"jugador": "Adrià Altimira",
+"de": "edu Hard 304",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": "8658507",
+"precio": 1000000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 1000000
+}
+],
+"ts": "2026-11-05T09:03:28Z",
+"exacta": true
+},
+{
+"feed": "963246746",
+"playerId": "17453",
+"jugador": "Frenkie De Jong",
+"de": "Make Madrid Great Again",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": "13179902",
+"precio": 12892500,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 12892500
+}
+],
+"ts": "2026-11-05T07:04:29Z",
+"exacta": true
+},
+{
+"feed": "963218525",
+"playerId": "70918",
+"jugador": "Bernardo Silva",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 8333000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 8333000
+}
+],
+"ts": "2026-11-05T04:03:02Z",
+"exacta": true,
+"valor": 7739000
+},
+{
+"feed": "963218525",
+"playerId": "65111",
+"jugador": "Odysseas Vlachodimos",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 6060600,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 6060600
+}
+],
+"ts": "2026-11-05T04:03:02Z",
+"exacta": true,
+"valor": 6000000
+},
+{
+"feed": "963218525",
+"playerId": "432",
+"jugador": "José Luis Gayà",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 2698000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 2698000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 2685000
+}
+],
+"ts": "2026-11-05T04:03:02Z",
+"exacta": true,
+"valor": 2469000
+},
+{
+"feed": "963204939",
+"playerId": "27516",
+"jugador": "Andrés Martín",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 3276480,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3276480
+}
+],
+"ts": "2026-11-04T23:56:21Z"
+},
+{
+"feed": "963174297",
+"playerId": "27518",
+"jugador": "Óscar Valentín",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 557940,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 557940
+}
+],
+"ts": "2026-11-04T23:56:21Z"
+},
+{
+"feed": "963203486",
+"playerId": "17450",
+"jugador": "Aitor Ruibal",
+"de": "Sr. X",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": "10303392",
+"precio": 1000000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 1000000
+}
+],
+"ts": "2026-11-04T21:37:54Z",
+"exacta": true
+},
+{
+"feed": "963110141",
+"playerId": "28395",
+"jugador": "Matías Dituro",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 5850000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 5850000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 5599000
+}
+],
+"ts": "2026-11-04T04:02:40Z",
+"exacta": true,
+"valor": 5474000
+},
+{
+"feed": "963110141",
+"playerId": "3060",
+"jugador": "Mariano Díaz",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 4768000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 4768000
+}
+],
+"ts": "2026-11-04T04:02:40Z",
+"exacta": true,
+"valor": 4684000
+},
+{
+"feed": "963110141",
+"playerId": "4947929",
+"jugador": "Emil Audero",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 3980000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3980000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 3881300
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 3799000
+}
+],
+"ts": "2026-11-04T04:02:40Z",
+"exacta": true,
+"valor": 3627000
+},
+{
+"feed": "963110141",
+"playerId": "58438",
+"jugador": "Flavien Boyomo",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 1825000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1825000
+}
+],
+"ts": "2026-11-04T04:02:40Z",
+"exacta": true,
+"valor": 1788000
+},
+{
+"feed": "963064017",
+"playerId": "33726",
+"jugador": "Hugo Álvarez",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 1284720,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1284720
+}
+],
+"ts": "2026-11-03T23:56:21Z"
+},
+{
+"feed": "962980227",
+"playerId": "60919",
+"jugador": "Yoel Lago",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 6480000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 6480000
+}
+],
+"ts": "2026-11-03T04:00:54Z",
+"exacta": true,
+"valor": 6465000
+},
+{
+"feed": "962980227",
+"playerId": "24789",
+"jugador": "Nico Williams",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 11999000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 11999000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 10834000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 10580000
+}
+],
+"ts": "2026-11-03T04:00:54Z",
+"exacta": true,
+"valor": 10434000
+},
+{
+"feed": "962980227",
+"playerId": "36334",
+"jugador": "Adama Traoré",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 3199000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 3199000
+}
+],
+"ts": "2026-11-03T04:00:54Z",
+"exacta": true,
+"valor": 3047000
+},
+{
+"feed": "962980227",
+"playerId": "60927",
+"jugador": "Adrián Niño",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 6125000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 6125000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 5740000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 3650000
+}
+],
+"ts": "2026-11-03T04:00:54Z",
+"exacta": true,
+"valor": 2906000
+},
+{
+"feed": "963014339",
+"playerId": "52189",
+"jugador": "Ayoze Pérez",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 9404930,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9404930
+}
+],
+"ts": "2026-11-02T23:56:21Z"
+},
+{
+"feed": "963008313",
+"playerId": "70950",
+"jugador": "Giacomo Quagliata",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 4317600,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4317600
+}
+],
+"ts": "2026-11-02T23:56:21Z"
+},
+{
+"feed": "962936437",
+"playerId": "22604",
+"jugador": "Iñigo Vicente",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 11521120,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 11521120
+}
+],
+"ts": "2026-11-02T23:56:21Z"
+},
+{
+"feed": "962965778",
+"playerId": "49424",
+"jugador": "Kike Salas",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": "8663482",
+"precio": 9172500,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 9172500
+}
+],
+"ts": "2026-11-02T22:18:39Z",
+"exacta": true
+},
+{
+"feed": "962867818",
+"playerId": "58820",
+"jugador": "Marc Casadó",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 385000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 385000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 315000
+}
+],
+"ts": "2026-11-02T04:03:21Z",
+"exacta": true,
+"valor": 305000
+},
+{
+"feed": "962867818",
+"playerId": "29222",
+"jugador": "Giuliano Simeone",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 11992000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 11992000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 11876000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 11799000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 11599000
+}
+],
+"ts": "2026-11-02T04:03:21Z",
+"exacta": true,
+"valor": 11592000
+},
+{
+"feed": "962764961",
+"playerId": "70953",
+"jugador": "Miguel Loureiro",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 450000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 450000
+}
+],
+"ts": "2026-11-01T04:03:57Z",
+"exacta": true,
+"valor": 331000
+},
+{
+"feed": "962764961",
+"playerId": "52189",
+"jugador": "Ayoze Pérez",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 9289000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 9289000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 9289000
+}
+],
+"ts": "2026-11-01T04:03:57Z",
+"exacta": true,
+"valor": 9276000
+},
+{
+"feed": "962760188",
+"playerId": "71574",
+"jugador": "Karim Adeyemi",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 14625520,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 14625520
+}
+],
+"ts": "2026-10-31T23:56:21Z"
+},
+{
+"feed": "962732348",
+"playerId": "2720265",
+"jugador": "Troy Parrott",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 6997200,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6997200
+}
+],
+"ts": "2026-10-31T23:56:21Z"
+},
+{
+"feed": "962722130",
+"playerId": "70941",
+"jugador": "Bil Nsongo",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 8645820,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 8645820
+}
+],
+"ts": "2026-10-31T23:56:21Z"
+},
+{
+"feed": "962716349",
+"playerId": "3317698",
+"jugador": "Ifeanyi Ndukwe",
+"de": "Sr. X",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": "10303392",
+"precio": 2242000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 2242000
+}
+],
+"ts": "2026-10-31T15:08:27Z",
+"exacta": true
+},
+{
+"feed": "962677558",
+"playerId": "65179",
+"jugador": "Andrés Castrín",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 4150000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 4150000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 4059000
+}
+],
+"ts": "2026-10-31T04:04:57Z",
+"exacta": true,
+"valor": 4042000
+},
+{
+"feed": "962677558",
+"playerId": "328",
+"jugador": "Dani Carvajal",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 2158000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 2158000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 2122000
+}
+],
+"ts": "2026-10-31T04:04:57Z",
+"exacta": true,
+"valor": 2107000
+},
+{
+"feed": "962677558",
+"playerId": "29",
+"jugador": "Iñaki Williams",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 4799000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 4799000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 4725000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 4702000
+}
+],
+"ts": "2026-10-31T04:04:57Z",
+"exacta": true,
+"valor": 4574000
+},
+{
+"feed": "962699559",
+"playerId": "6032",
+"jugador": "Alex Remiro",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 10377480,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10377480
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962699312",
+"playerId": "60888",
+"jugador": "Roberto Fernández",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 13197780,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 13197780
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962653241",
+"playerId": "4775",
+"jugador": "Aarón Martín",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 204750,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 204750
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962647500",
+"playerId": "64562",
+"jugador": "Nelson Deossa",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 5095410,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5095410
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962641173",
+"playerId": "4836242",
+"jugador": "Sebastián Cáceres",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 953000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 953000
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962641146",
+"playerId": "29205",
+"jugador": "Alejandro Balde",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 1189760,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1189760
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962640958",
+"playerId": "7024",
+"jugador": "Fede Valverde",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 13517760,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 13517760
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962635855",
+"playerId": "52189",
+"jugador": "Ayoze Pérez",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 9521200,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9521200
+}
+],
+"ts": "2026-10-30T23:56:21Z"
+},
+{
+"feed": "962668002",
+"playerId": "29167",
+"jugador": "Ángel Fortuño",
+"de": "Maricarmen 🌹",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": "8664919",
+"precio": 11130000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 11130000
+}
+],
+"ts": "2026-10-30T21:57:10Z",
+"exacta": true
+},
+{
+"feed": "962589537",
+"playerId": "29205",
+"jugador": "Alejandro Balde",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 1802000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 1802000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1556000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 1408000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 1299000
+}
+],
+"ts": "2026-10-30T04:03:58Z",
+"exacta": true,
+"valor": 1098000
+},
+{
+"feed": "962613350",
+"playerId": "23369",
+"jugador": "Juan Foyth",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 6233220,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6233220
+}
+],
+"ts": "2026-10-29T23:56:21Z"
+},
+{
+"feed": "962613326",
+"playerId": "33896",
+"jugador": "Ilias Akhomach",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 3739050,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3739050
+}
+],
+"ts": "2026-10-29T23:56:21Z"
+},
+{
+"feed": "962609850",
+"playerId": "3845074",
+"jugador": "Nathan Saliba",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 3094350,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3094350
+}
+],
+"ts": "2026-10-29T23:56:21Z"
+},
+{
+"feed": "962543153",
+"playerId": "1396108",
+"jugador": "Arnau Ortiz",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 191900,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 191900
+}
+],
+"ts": "2026-10-29T23:56:21Z"
+},
+{
+"feed": "962543104",
+"playerId": "48554",
+"jugador": "Luiz Felipe",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 167440,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 167440
+}
+],
+"ts": "2026-10-29T23:56:21Z"
+},
+{
+"feed": "962550952",
+"playerId": "22547",
+"jugador": "Pedri",
+"de": "Maricarmen 🌹",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": "8664919",
+"precio": 36363636,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 36363636
+}
+],
+"ts": "2026-10-29T18:13:43Z",
+"exacta": true
+},
+{
+"feed": "962550713",
+"playerId": "53114",
+"jugador": "Jude Bellingham",
+"de": "Sr. X",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": "10303392",
+"precio": 39451500,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 39451500
+}
+],
+"ts": "2026-10-29T18:08:33Z",
+"exacta": true
+},
+{
+"feed": "962514494",
+"playerId": "48657",
+"jugador": "Raphinha",
+"de": "edu Hard 304",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": "8658507",
+"precio": 43268092,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 43268092
+}
+],
+"ts": "2026-10-29T08:43:32Z",
+"exacta": true
+},
+{
+"feed": "962514131",
+"playerId": "62904",
+"jugador": "Yan Diomande",
+"de": "Make Madrid Great Again",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": "13179902",
+"precio": 27216000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 27216000
+}
+],
+"ts": "2026-10-29T08:27:35Z",
+"exacta": true
+},
+{
+"feed": "962486883",
+"playerId": "71574",
+"jugador": "Karim Adeyemi",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 14099000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 14099000
+}
+],
+"ts": "2026-10-29T04:03:15Z",
+"exacta": true,
+"valor": 14068000
+},
+{
+"feed": "962486883",
+"playerId": "24778",
+"jugador": "Robert Navarro",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 7965555,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 7965555
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 7501000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 7466000
+}
+],
+"ts": "2026-10-29T04:03:15Z",
+"exacta": true,
+"valor": 7426000
+},
+{
+"feed": "962486883",
+"playerId": "59789",
+"jugador": "Orri Óskarsson",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 2895555,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 2895555
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 2756000
+}
+],
+"ts": "2026-10-29T04:03:15Z",
+"exacta": true,
+"valor": 2530000
+},
+{
+"feed": "962514070",
+"playerId": "17290",
+"jugador": "Sergio Camello",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 14150850,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 14150850
+}
+],
+"ts": "2026-10-28T23:56:21Z"
+},
+{
+"feed": "962513965",
+"playerId": "1713",
+"jugador": "Florian Lejeune",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 5316860,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5316860
+}
+],
+"ts": "2026-10-28T23:56:21Z"
+},
+{
+"feed": "962510162",
+"playerId": "27520",
+"jugador": "Fran García",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 7941630,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 7941630
+}
+],
+"ts": "2026-10-28T23:56:21Z"
+},
+{
+"feed": "962447187",
+"playerId": "64382",
+"jugador": "Gabriel Suazo",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 7168800,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 7168800
+}
+],
+"ts": "2026-10-28T23:56:21Z"
+},
+{
+"feed": "962444544",
+"playerId": "70996",
+"jugador": "David Larrubia",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 7562880,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 7562880
+}
+],
+"ts": "2026-10-28T23:56:21Z"
+},
+{
+"feed": "962387320",
+"playerId": "52189",
+"jugador": "Ayoze Pérez",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 9080000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 9080000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 8999000
+}
+],
+"ts": "2026-10-28T04:01:28Z",
+"exacta": true,
+"valor": 8867000
+},
+{
+"feed": "962387320",
+"playerId": "64382",
+"jugador": "Gabriel Suazo",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 6940000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 6940000
+}
+],
+"ts": "2026-10-28T04:01:28Z",
+"exacta": true,
+"valor": 6855000
+},
+{
+"feed": "962387320",
+"playerId": "70941",
+"jugador": "Bil Nsongo",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 8039000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 8039000
+}
+],
+"ts": "2026-10-28T04:01:28Z",
+"exacta": true,
+"valor": 7935000
+},
+{
+"feed": "962387320",
+"playerId": "58986",
+"jugador": "Abel Bretones",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 1736000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 1736000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1710000
+}
+],
+"ts": "2026-10-28T04:01:28Z",
+"exacta": true,
+"valor": 1629000
+},
+{
+"feed": "962397832",
+"playerId": "56926",
+"jugador": "Pau Cubarsi",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 15866120,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 15866120
+}
+],
+"ts": "2026-10-27T23:56:21Z"
+},
+{
+"feed": "962334647",
+"playerId": "27517",
+"jugador": "Isi Palazón",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 5057160,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5057160
+}
+],
+"ts": "2026-10-27T23:56:21Z"
+},
+{
+"feed": "962347872",
+"playerId": "208",
+"jugador": "Moi Gómez",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": "8663482",
+"precio": 2499999,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 2499999
+}
+],
+"ts": "2026-10-27T19:39:37Z",
+"exacta": true
+},
+{
+"feed": "962345856",
+"playerId": "68383",
+"jugador": "Thiago Fernández",
+"de": "Sr. X",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": "10303392",
+"precio": 2262000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 2262000
+}
+],
+"ts": "2026-10-27T18:58:02Z",
+"exacta": true
+},
+{
+"feed": "962262038",
+"playerId": "6032",
+"jugador": "Alex Remiro",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 10111000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 10111000
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 10111000
+},
+{
+"feed": "962262038",
+"playerId": "17453",
+"jugador": "Frenkie De Jong",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 5157000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 5157000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 4999000
+},
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 4565265
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 3312800
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 2257000
+},
+{
+"feed": "962262038",
+"playerId": "1256139",
+"jugador": "Vanja Drkušić",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 796000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 796000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 759000
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 396000
+},
+{
+"feed": "962262038",
+"playerId": "4775",
+"jugador": "Aarón Martín",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 161000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 161000
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 160000
+},
+{
+"feed": "962262038",
+"playerId": "34",
+"jugador": "José Giménez",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 6425353,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 6425353
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 6120000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 5999000
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 5954000
+},
+{
+"feed": "962262038",
+"playerId": "64468",
+"jugador": "Tyrhys Dolan",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 1652252,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 1652252
+}
+],
+"ts": "2026-10-27T04:03:27Z",
+"exacta": true,
+"valor": 1435000
+},
+{
+"feed": "962304143",
+"playerId": "29223",
+"jugador": "Mario Soriano",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 10407060,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10407060
+}
+],
+"ts": "2026-10-26T23:56:21Z"
+},
+{
+"feed": "962288398",
+"playerId": "69889",
+"jugador": "Xavi Espart",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 9198000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9198000
+}
+],
+"ts": "2026-10-26T23:56:21Z"
+},
+{
+"feed": "962281152",
+"playerId": "59534",
+"jugador": "David Otorbi",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 2512650,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2512650
+}
+],
+"ts": "2026-10-26T23:56:21Z"
+},
+{
+"feed": "962219910",
+"playerId": "36048",
+"jugador": "Nahuel Tenaglia",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 10116750,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10116750
+}
+],
+"ts": "2026-10-26T23:56:21Z"
+},
+{
+"feed": "962246818",
+"playerId": "70150",
+"jugador": "Javi Morcillo",
+"de": "edu Hard 304",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": "8658507",
+"precio": 2148000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2148000
+}
+],
+"ts": "2026-10-26T21:55:56Z",
+"exacta": true
+},
+{
+"feed": "962246542",
+"playerId": "4836173",
+"jugador": "Félix Correia",
+"de": "Make Madrid Great Again",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": "13179902",
+"precio": 5502000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 5502000
+}
+],
+"ts": "2026-10-26T21:55:56Z",
+"exacta": true
+},
+{
+"feed": "962177484",
+"playerId": "70939",
+"jugador": "Yeremay Hernández",
+"de": "Maricarmen 🌹",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": "8664919",
+"precio": 11554500,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 11554500
+}
+],
+"ts": "2026-10-26T08:54:13Z",
+"exacta": true
+},
+{
+"feed": "962144697",
+"playerId": "55738",
+"jugador": "César Tárrega",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 2177000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2177000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 1240000
+}
+],
+"ts": "2026-10-26T04:05:09Z",
+"exacta": true,
+"valor": 1177000
+},
+{
+"feed": "962144697",
+"playerId": "70950",
+"jugador": "Giacomo Quagliata",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 3610000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3610000
+}
+],
+"ts": "2026-10-26T04:05:09Z",
+"exacta": true,
+"valor": 3587000
+},
+{
+"feed": "962144697",
+"playerId": "56926",
+"jugador": "Pau Cubarsi",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 15473000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 15473000
+}
+],
+"ts": "2026-10-26T04:05:09Z",
+"exacta": true,
+"valor": 15451000
+},
+{
+"feed": "962144697",
+"playerId": "29223",
+"jugador": "Mario Soriano",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 10181100,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 10181100
+}
+],
+"ts": "2026-10-26T04:05:09Z",
+"exacta": true,
+"valor": 10181000
+},
+{
+"feed": "962144697",
+"playerId": "70996",
+"jugador": "David Larrubia",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 7338010,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 7338010
+}
+],
+"ts": "2026-10-26T04:05:09Z",
+"exacta": true,
+"valor": 7338000
+},
+{
+"feed": "962180476",
+"playerId": "56502",
+"jugador": "Mikel Jauregizar",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 1442480,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1442480
+}
+],
+"ts": "2026-10-25T23:56:21Z"
+},
+{
+"feed": "962179386",
+"playerId": "24778",
+"jugador": "Robert Navarro",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 7423210,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 7423210
+}
+],
+"ts": "2026-10-25T23:56:21Z"
+},
+{
+"feed": "962135561",
+"playerId": "54900",
+"jugador": "Carlos Dotor",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 3142650,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3142650
+}
+],
+"ts": "2026-10-25T23:56:21Z"
+},
+{
+"feed": "962108000",
+"playerId": "28774",
+"jugador": "Julen Agirrezabala",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 5706900,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5706900
+}
+],
+"ts": "2026-10-25T23:56:21Z"
+},
+{
+"feed": "962100538",
+"playerId": "3848780",
+"jugador": "Johaneko Louis-Jean",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 464530,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 464530
+}
+],
+"ts": "2026-10-25T23:56:21Z"
+},
+{
+"feed": "962108011",
+"playerId": "29167",
+"jugador": "Ángel Fortuño",
+"de": "Make Madrid Great Again",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": "13179902",
+"precio": 7420000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 7420000
+}
+],
+"ts": "2026-10-25T19:56:26Z",
+"exacta": true
+},
+{
+"feed": "962038848",
+"playerId": "36048",
+"jugador": "Nahuel Tenaglia",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 9480000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 9480000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 9469000
+}
+],
+"ts": "2026-10-25T04:02:08Z",
+"exacta": true
+},
+{
+"feed": "962038848",
+"playerId": "6034",
+"jugador": "Edu Expósito",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 10080000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 10080000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 10011100
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 10010000
+}
+],
+"ts": "2026-10-25T04:02:08Z",
+"exacta": true
+},
+{
+"feed": "962038848",
+"playerId": "14432",
+"jugador": "Javi Puado",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 1955236,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 1955236
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 1870000
+},
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 1589900
+}
+],
+"ts": "2026-10-25T04:02:08Z",
+"exacta": true
+},
+{
+"feed": "962038848",
+"playerId": "306",
+"jugador": "Diego Llorente",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 2789900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 2789900
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2669000
+}
+],
+"ts": "2026-10-25T04:02:08Z",
+"exacta": true
+},
+{
+"feed": "962065801",
+"playerId": "71639",
+"jugador": "Beñat Gerenabarrena",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 2882880,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2882880
+}
+],
+"ts": "2026-10-24T23:56:21Z"
+},
+{
+"feed": "962059225",
+"playerId": "4947932",
+"jugador": "Mujaid Sadick",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 1072620,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1072620
+}
+],
+"ts": "2026-10-24T23:56:21Z"
+},
+{
+"feed": "962028195",
+"playerId": "71640",
+"jugador": "Miguel Sierra",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 5909110,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5909110
+}
+],
+"ts": "2026-10-24T23:56:21Z"
+},
+{
+"feed": "961949791",
+"playerId": "59534",
+"jugador": "David Otorbi",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 3278099,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3278099
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2888000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 2423000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 2299000
+}
+],
+"ts": "2026-10-24T03:00:53Z",
+"exacta": true
+},
+{
+"feed": "961949791",
+"playerId": "12946",
+"jugador": "Santi Comesaña",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 3801000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 3801000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3090888
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 3004000
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961949791",
+"playerId": "61009",
+"jugador": "Ángel Ortiz",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 258000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 258000
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961939024",
+"playerId": "13011",
+"jugador": "Fernando Calero",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 587600,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 587600
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961936581",
+"playerId": "78394",
+"jugador": "Nicolás Valentini",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 1785680,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1785680
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961919733",
+"playerId": "19168",
+"jugador": "Nemanja Gudelj",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 1048320,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1048320
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961919322",
+"playerId": "3849388",
+"jugador": "Mamadou Sarr",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 2719530,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2719530
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961919312",
+"playerId": "70999",
+"jugador": "Dani Lorenzo",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 4127940,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4127940
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961918408",
+"playerId": "68498",
+"jugador": "Zaid Romero",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 4075760,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4075760
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961917157",
+"playerId": "14791",
+"jugador": "Gorka Guruzeta",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 1109990,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1109990
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961914448",
+"playerId": "557",
+"jugador": "Pablo Fornals",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 12089040,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 12089040
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961912976",
+"playerId": "29223",
+"jugador": "Mario Soriano",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 10339740,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10339740
+}
+],
+"ts": "2026-10-23T23:56:21Z"
+},
+{
+"feed": "961895403",
+"playerId": "4836153",
+"jugador": "Jonathan David",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 11830350,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 11830350
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961883348",
+"playerId": "4764213",
+"jugador": "Gabriel Jesus",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 9196870,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9196870
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961847447",
+"playerId": "40166",
+"jugador": "Aurélien Tchouaméni",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 9850000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 9850000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 9526000
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961847447",
+"playerId": "68498",
+"jugador": "Zaid Romero",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 4119000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 4119000
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961847447",
+"playerId": "60888",
+"jugador": "Roberto Fernández",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 13122222,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 13122222
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961847447",
+"playerId": "10967",
+"jugador": "Gonçalo Guedes",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 6582000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 6582000
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961797450",
+"playerId": "61013",
+"jugador": "Antony Santos",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 14090960,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 14090960
+}
+],
+"ts": "2026-10-22T23:56:21Z"
+},
+{
+"feed": "961749052",
+"playerId": "24792",
+"jugador": "Juan Iglesias",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 9559200,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9559200
+}
+],
+"ts": "2026-10-21T23:56:21Z"
+},
+{
+"feed": "961724367",
+"playerId": "2720265",
+"jugador": "Troy Parrott",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 6401000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 6401000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 6338020
+}
+],
+"ts": "2026-10-21T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "70999",
+"jugador": "Dani Lorenzo",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 3999000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3999000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 3946000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 3940010
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "19168",
+"jugador": "Nemanja Gudelj",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 1147000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 1147000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1046000
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "68383",
+"jugador": "Thiago Fernández",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 820000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 820000
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "557",
+"jugador": "Pablo Fornals",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 11817000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 11817000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 11799000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 11781100
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "27518",
+"jugador": "Óscar Valentín",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 749000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 749000
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961606336",
+"playerId": "3848780",
+"jugador": "Johaneko Louis-Jean",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 399000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 399000
+}
+],
+"ts": "2026-10-20T23:56:21Z"
+},
+{
+"feed": "961514251",
+"playerId": "55439",
+"jugador": "Hugo González",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 2481440,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2481440
+}
+],
+"ts": "2026-10-19T23:56:21Z"
+},
+{
+"feed": "961479932",
+"playerId": "61013",
+"jugador": "Antony Santos",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 14069000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 14069000
+}
+],
+"ts": "2026-10-19T23:56:21Z"
+},
+{
+"feed": "961479932",
+"playerId": "4836173",
+"jugador": "Félix Correia",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 3668000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 3668000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3147000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 3104000
+}
+],
+"ts": "2026-10-19T23:56:21Z"
+},
+{
+"feed": "961432508",
+"playerId": "34",
+"jugador": "José Giménez",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 5718960,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5718960
+}
+],
+"ts": "2026-10-19T23:56:21Z"
+},
+{
+"feed": "961430583",
+"playerId": "60919",
+"jugador": "Yoel Lago",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 5387930,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5387930
+}
+],
+"ts": "2026-10-19T23:56:21Z"
+},
+{
+"feed": "961401258",
+"playerId": "56628",
+"jugador": "Lucien Agoumé",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 9005360,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9005360
+}
+],
+"ts": "2026-10-18T23:56:21Z"
+},
+{
+"feed": "961359481",
+"playerId": "24792",
+"jugador": "Juan Iglesias",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 8779000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 8779000
+}
+],
+"ts": "2026-10-18T23:56:21Z"
+},
+{
+"feed": "961359481",
+"playerId": "70638",
+"jugador": "Anthony Gordon",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 15209001,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 15209001
+}
+],
+"ts": "2026-10-18T23:56:21Z"
+},
+{
+"feed": "961305103",
+"playerId": "1762",
+"jugador": "Álex Berenguer",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 5310900,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5310900
+}
+],
+"ts": "2026-10-18T23:56:21Z"
+},
+{
+"feed": "961292922",
+"playerId": "208",
+"jugador": "Moi Gómez",
+"de": "Sr. X",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": "10303392",
+"precio": 1666666,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1666666
+}
+],
+"ts": "2026-10-18T23:56:21Z"
+},
+{
+"feed": "961189356",
+"playerId": "71623",
+"jugador": "Roger Hinojo",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 1787000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1787000
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961166297",
+"playerId": "3849388",
+"jugador": "Mamadou Sarr",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 2302999,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 2302999
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961166297",
+"playerId": "22547",
+"jugador": "Pedri",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 24242424,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 24242424
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 21800000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 21398000
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961154848",
+"playerId": "4836189",
+"jugador": "Harvey Elliott",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 1647300,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1647300
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961137617",
+"playerId": "68593",
+"jugador": "Lucas Cepeda",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 4579120,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4579120
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961118730",
+"playerId": "4888",
+"jugador": "Carlos Soler",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 10232020,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10232020
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961126364",
+"playerId": "15342",
+"jugador": "Ander Barrenetxea",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 9943450,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9943450
+}
+],
+"ts": "2026-10-16T23:56:21Z"
+},
+{
+"feed": "961096499",
+"playerId": "28773",
+"jugador": "Aitor Paredes",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 6998290,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6998290
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961096492",
+"playerId": "68465",
+"jugador": "Abiel Osorio",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 1099280,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1099280
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961086497",
+"playerId": "29163",
+"jugador": "Omar El Hilali",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 5478900,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5478900
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961086480",
+"playerId": "6034",
+"jugador": "Edu Expósito",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 10414330,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10414330
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961062633",
+"playerId": "70939",
+"jugador": "Yeremay Hernández",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 6799000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 6799000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 6392010
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961062633",
+"playerId": "15342",
+"jugador": "Ander Barrenetxea",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 9754000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 9754000
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961062633",
+"playerId": "19527",
+"jugador": "Jon Moncayola",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 1889900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 1889900
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961062633",
+"playerId": "71000",
+"jugador": "Rafa Rodriguez",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 689900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 689900
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961062633",
+"playerId": "3848674",
+"jugador": "Matteo Prati",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 459900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 459900
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 312121
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961054262",
+"playerId": "20141",
+"jugador": "Germán Valera",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 8927010,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 8927010
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961050117",
+"playerId": "36334",
+"jugador": "Adama Traoré",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 3617120,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3617120
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961045145",
+"playerId": "31484",
+"jugador": "Eduardo Camavinga",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 3430960,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3430960
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961027870",
+"playerId": "4947932",
+"jugador": "Mujaid Sadick",
+"de": "edu Hard 304",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": "8658507",
+"precio": 1507500,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 1507500
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "961022572",
+"playerId": "11697",
+"jugador": "Lucas Boyé",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 10498950,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10498950
+}
+],
+"ts": "2026-10-15T23:56:21Z"
+},
+{
+"feed": "960976409",
+"playerId": "53107",
+"jugador": "Sergi Cardona",
+"de": "Julian FICHADO y GAFADO",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": "8663449",
+"precio": 2102000,
+"tipo": "clausula",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2102000
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960976244",
+"playerId": "59499",
+"jugador": "Natan Souza",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 10932480,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10932480
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960972061",
+"playerId": "64033",
+"jugador": "Jon Gorrotxategi",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 778000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 778000
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "31484",
+"jugador": "Eduardo Camavinga",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 3447000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 3447000
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "1713",
+"jugador": "Florian Lejeune",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 5350000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 5350000
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "64562",
+"jugador": "Nelson Deossa",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 4050255,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 4050255
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "71010",
+"jugador": "Ángel Recio",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 2935333,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 2935333
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 2706000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 2706000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 2665000
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "56502",
+"jugador": "Mikel Jauregizar",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 2050655,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 2050655
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "14791",
+"jugador": "Gorka Guruzeta",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 1690888,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 1690888
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960944224",
+"playerId": "28773",
+"jugador": "Aitor Paredes",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 6860300,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 6860300
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 6847040
+}
+],
+"ts": "2026-10-14T23:56:21Z"
+},
+{
+"feed": "960873430",
+"playerId": "59382",
+"jugador": "Nicolas Pépé",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 13607360,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 13607360
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960837450",
+"playerId": "62904",
+"jugador": "Yan Diomande",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 18144000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 18144000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 17850000
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960837450",
+"playerId": "7024",
+"jugador": "Fede Valverde",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 14889888,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 14889888
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 14559000
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960837450",
+"playerId": "59623",
+"jugador": "Jon Martin",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 4856000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 4856000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 4633000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 4444000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 4433000
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960837450",
+"playerId": "22604",
+"jugador": "Iñigo Vicente",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 10273050,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 10273050
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960837450",
+"playerId": "270",
+"jugador": "Rubén García",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 2105000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 2105000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 2038000
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960793488",
+"playerId": "63727",
+"jugador": "Marcos Fernández",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 2624000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2624000
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960793480",
+"playerId": "61012",
+"jugador": "Pablo García",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 5026320,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5026320
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960782913",
+"playerId": "59415",
+"jugador": "Dani Olmo",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 15612480,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 15612480
+}
+],
+"ts": "2026-10-13T23:56:21Z"
+},
+{
+"feed": "960752357",
+"playerId": "28395",
+"jugador": "Matías Dituro",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 3443720,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3443720
+}
+],
+"ts": "2026-10-12T23:56:21Z"
+},
+{
+"feed": "960723168",
+"playerId": "11697",
+"jugador": "Lucas Boyé",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 9658000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 9658000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 9599000
+}
+],
+"ts": "2026-10-12T23:56:21Z"
+},
+{
+"feed": "960723168",
+"playerId": "4836242",
+"jugador": "Sebastián Cáceres",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 671000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 671000
+}
+],
+"ts": "2026-10-12T23:56:21Z"
+},
+{
+"feed": "960723168",
+"playerId": "29163",
+"jugador": "Omar El Hilali",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 5099900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 5099900
+}
+],
+"ts": "2026-10-12T23:56:21Z"
+},
+{
+"feed": "960723168",
+"playerId": "27517",
+"jugador": "Isi Palazón",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 5214000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 5214000
+},
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 5139900
+}
+],
+"ts": "2026-10-12T23:56:21Z"
+},
+{
+"feed": "960637546",
+"playerId": "3117",
+"jugador": "Diego Rico",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 516880,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 516880
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960636430",
+"playerId": "71138",
+"jugador": "Ryunosuke Sato",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 1002980,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1002980
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960630983",
+"playerId": "5340038",
+"jugador": "Aaron Mayol",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 1560000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1560000
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960630968",
+"playerId": "68606",
+"jugador": "Ángel Pérez",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 9269400,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9269400
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960609507",
+"playerId": "24778",
+"jugador": "Robert Navarro",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 6617000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 6617000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 6101000
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960609507",
+"playerId": "29167",
+"jugador": "Ángel Fortuño",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 1855000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 1855000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 799000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 402111
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960609507",
+"playerId": "59415",
+"jugador": "Dani Olmo",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 15200000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 15200000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 15069000
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960586017",
+"playerId": "22956",
+"jugador": "Sergio Gómez",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 5939460,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5939460
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960564088",
+"playerId": "24792",
+"jugador": "Juan Iglesias",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 8386560,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 8386560
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960564049",
+"playerId": "64411",
+"jugador": "Youssef Enríquez",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 1130160,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1130160
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960560141",
+"playerId": "4947926",
+"jugador": "Kevin Lomónaco",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 187860,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 187860
+}
+],
+"ts": "2026-10-11T23:56:21Z"
+},
+{
+"feed": "960541359",
+"playerId": "476",
+"jugador": "Gerard Moreno",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 13043680,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 13043680
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960535081",
+"playerId": "53143",
+"jugador": "Abde Rebbach",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 1489280,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1489280
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960535079",
+"playerId": "25621",
+"jugador": "Andrei Rațiu",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 9145370,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9145370
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960518300",
+"playerId": "208",
+"jugador": "Moi Gómez",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 274000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 274000
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960518300",
+"playerId": "60210",
+"jugador": "Pau Navarro",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 1932000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 1932000
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 1701000
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960518300",
+"playerId": "54817",
+"jugador": "Arda Güler",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 18620000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 18620000
+},
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 17154000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 16365440
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 16010880
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960518300",
+"playerId": "35434",
+"jugador": "Marc Pubill",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 10182010,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 10182010
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960489900",
+"playerId": "28773",
+"jugador": "Aitor Paredes",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 6732960,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6732960
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960487934",
+"playerId": "15338",
+"jugador": "Robin Le Normand",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 3564080,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 3564080
+}
+],
+"ts": "2026-10-10T23:56:21Z"
+},
+{
+"feed": "960470467",
+"playerId": "14789",
+"jugador": "Oihan Sancet",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 9718800,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9718800
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960464313",
+"playerId": "71149",
+"jugador": "Gabriel Moscardo",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 181300,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 181300
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960464311",
+"playerId": "27869",
+"jugador": "Juan Berrocal",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 226000,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 226000
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960449641",
+"playerId": "25621",
+"jugador": "Andrei Rațiu",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 9234000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 9234000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 8889000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 8858000
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960449641",
+"playerId": "60919",
+"jugador": "Yoel Lago",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 4336000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 4336000
+},
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 4123600
+},
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 4000000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 3902000
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960449641",
+"playerId": "3845074",
+"jugador": "Nathan Saliba",
+"de": "Mister",
+"a": "La Banda de Don Gato",
+"aId": "8664914",
+"deId": null,
+"precio": 5123622,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "La Banda de Don Gato",
+"id": "8664914",
+"cantidad": 5123622
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960428451",
+"playerId": "54817",
+"jugador": "Arda Güler",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 16365440,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 16365440
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960419193",
+"playerId": "60927",
+"jugador": "Adrián Niño",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 1008960,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1008960
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960413825",
+"playerId": "64160",
+"jugador": "Javi Rueda",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 4841550,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4841550
+}
+],
+"ts": "2026-10-09T23:56:21Z"
+},
+{
+"feed": "960387983",
+"playerId": "55666",
+"jugador": "Álvaro Carreras",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 4267250,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4267250
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960387853",
+"playerId": "14911",
+"jugador": "Álvaro García",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 10523100,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10523100
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960378425",
+"playerId": "64382",
+"jugador": "Gabriel Suazo",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 6058800,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6058800
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960359303",
+"playerId": "4764213",
+"jugador": "Gabriel Jesus",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 8060000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 8060000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 6999900
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960359303",
+"playerId": "20141",
+"jugador": "Germán Valera",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 8739000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 8739000
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960359303",
+"playerId": "27516",
+"jugador": "Andrés Martín",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 4889900,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 4889900
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 2713000
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960359303",
+"playerId": "55966",
+"jugador": "Adrià Altimira",
+"de": "Mister",
+"a": "edu Hard 304",
+"aId": "8658507",
+"deId": null,
+"precio": 400000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "edu Hard 304",
+"id": "8658507",
+"cantidad": 400000
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960351827",
+"playerId": "65347",
+"jugador": "Renato Veiga",
+"de": "Make Madrid Great Again",
+"a": "Mister",
+"aId": null,
+"deId": "13179902",
+"precio": 9878400,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 9878400
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960328209",
+"playerId": "18109",
+"jugador": "Luis Rioja",
+"de": "Mediocentro inofensivo 🧙‍♂️🪄",
+"a": "Mister",
+"aId": null,
+"deId": "8663482",
+"precio": 2795100,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2795100
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960323263",
+"playerId": "8171",
+"jugador": "Dakonam Djené",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 4828950,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 4828950
+}
+],
+"ts": "2026-10-08T23:56:21Z"
+},
+{
+"feed": "960293184",
+"playerId": "70918",
+"jugador": "Bernardo Silva",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 10166100,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10166100
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960292308",
+"playerId": "71010",
+"jugador": "Ángel Recio",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 2241750,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 2241750
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960274832",
+"playerId": "3117",
+"jugador": "Diego Rico",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 451111,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 451111
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960274832",
+"playerId": "6034",
+"jugador": "Edu Expósito",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 9979000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 9979000
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960274832",
+"playerId": "31355",
+"jugador": "Alexander Sørloth",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 3315000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 3315000
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960274832",
+"playerId": "71138",
+"jugador": "Ryunosuke Sato",
+"de": "Mister",
+"a": "Julian FICHADO y GAFADO",
+"aId": "8663449",
+"deId": null,
+"precio": 1195010,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 1195010
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960266929",
+"playerId": "22604",
+"jugador": "Iñigo Vicente",
+"de": "edu Hard 304",
+"a": "Mister",
+"aId": null,
+"deId": "8658507",
+"precio": 10149620,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 10149620
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960240947",
+"playerId": "59534",
+"jugador": "David Otorbi",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 1358240,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1358240
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960240943",
+"playerId": "31226",
+"jugador": "Arnaut Danjuma",
+"de": "Maricarmen 🌹",
+"a": "Mister",
+"aId": null,
+"deId": "8664919",
+"precio": 6292270,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6292270
+}
+],
+"ts": "2026-10-07T23:56:21Z"
+},
+{
+"feed": "960211609",
+"playerId": "27425",
+"jugador": "Iñigo Ruiz De Galarreta",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 6623400,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 6623400
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960191735",
+"playerId": "25630",
+"jugador": "Victor Chust",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 1624009,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 1624009
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960191735",
+"playerId": "71149",
+"jugador": "Gabriel Moscardo",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 278099,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 278099
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960191735",
+"playerId": "71010",
+"jugador": "Ángel Recio",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 2125000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 2125000
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960147929",
+"playerId": "308",
+"jugador": "Johan Mojica",
+"de": "Julian FICHADO y GAFADO",
+"a": "Mister",
+"aId": null,
+"deId": "8663449",
+"precio": 5971350,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5971350
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960139036",
+"playerId": "19168",
+"jugador": "Nemanja Gudelj",
+"de": "Sr. X",
+"a": "Mister",
+"aId": null,
+"deId": "10303392",
+"precio": 1100880,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 1100880
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960132914",
+"playerId": "15566",
+"jugador": "Yangel Herrera",
+"de": "La Banda de Don Gato",
+"a": "Mister",
+"aId": null,
+"deId": "8664914",
+"precio": 5467280,
+"tipo": "venta",
+"pujas": [
+{
+"manager": "Mister",
+"id": null,
+"cantidad": 5467280
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "340",
+"jugador": "Isco",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 13515000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 13515000
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "28395",
+"jugador": "Matías Dituro",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 4009000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 4009000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 4001000
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "4947926",
+"jugador": "Kevin Lomónaco",
+"de": "Mister",
+"a": "Make Madrid Great Again",
+"aId": "13179902",
+"deId": null,
+"precio": 250000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Make Madrid Great Again",
+"id": "13179902",
+"cantidad": 250000
+},
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 230000
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "17989",
+"jugador": "Jorge de Frutos",
+"de": "Mister",
+"a": "Sr. X",
+"aId": "10303392",
+"deId": null,
+"precio": 5580000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Sr. X",
+"id": "10303392",
+"cantidad": 5580000
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "24792",
+"jugador": "Juan Iglesias",
+"de": "Mister",
+"a": "Maricarmen 🌹",
+"aId": "8664919",
+"deId": null,
+"precio": 7786000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 7786000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 7642010
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+},
+{
+"feed": "960112577",
+"playerId": "14911",
+"jugador": "Álvaro García",
+"de": "Mister",
+"a": "Mediocentro inofensivo 🧙‍♂️🪄",
+"aId": "8663482",
+"deId": null,
+"precio": 10123000,
+"tipo": "mercado",
+"pujas": [
+{
+"manager": "Mediocentro inofensivo 🧙‍♂️🪄",
+"id": "8663482",
+"cantidad": 10123000
+},
+{
+"manager": "Maricarmen 🌹",
+"id": "8664919",
+"cantidad": 10050000
+},
+{
+"manager": "Julian FICHADO y GAFADO",
+"id": "8663449",
+"cantidad": 10007040
+}
+],
+"ts": "2026-10-06T23:56:21Z"
+}
+],
+"updatedAt": "2026-11-05T23:56:22Z",
+"nota": "Fichajes leídos de las noticias de Mister. pujas = todas las pujas del fichaje (la primera es la ganadora). tipo: mercado (de Mister), clausula, traspaso (entre managers) o venta (a Mister)."
+}
