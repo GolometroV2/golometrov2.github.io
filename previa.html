@@ -4038,15 +4038,18 @@ function bloqueCalendario() {
   const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
   // facilidad del partido: cuánto encaja el rival (bueno para atacar) y lo poco que marca (bueno para defender), +/− por jugar en casa
   const facil = (r, casa) => { const e = eq[r]; if (!e || !e.n) return 0; const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg; return 0.5 * (c - 1) - 0.5 * (f - 1) + (casa ? 0.06 : -0.06); };
+  const exs = pend.map(g => extPartido(g.id)).filter(Boolean), lgx = exs.length ? exs.reduce((t, e) => t + e.lh + e.la, 0) / (2 * exs.length) : lg;
   const equipos = Object.keys(nombre).map(Number).map(t => {
-    const cel = gws.map(gw => { const g = pend.find(x => x.gw === gw && (x.home === t || x.away === t)); if (!g) return null; const casa = g.home === t, r = casa ? g.away : g.home; return { r, casa, f: facil(r, casa) }; });
+    const cel = gws.map(gw => { const g = pend.find(x => x.gw === gw && (x.home === t || x.away === t)); if (!g) return null; const casa = g.home === t, r = casa ? g.away : g.home; const ep = extPartido(g.id), gf = ep ? (casa ? ep.lh : ep.la) : null, gc = ep ? (casa ? ep.la : ep.lh) : null;
+      // con goles esperados del partido (cuotas o mercado) mandan ellos; si no, los goles de lo jugado
+      return { r, casa, f: ep && capNum(gf) && capNum(gc) ? 0.5 * (gf / lgx - 1) - 0.5 * (gc / lgx - 1) : facil(r, casa) }; });
     const val = cel.filter(Boolean), media = val.length ? val.reduce((s, x) => s + x.f, 0) / val.length : -9;
     return { t, cel, media };
   }).filter(x => x.media > -9).sort((a, b) => b.media - a.media);
   const color = f => f >= 0.18 ? "rv1" : f >= 0.06 ? "rv2" : f > -0.06 ? "rv3" : f > -0.18 ? "rv4" : "rv5";
   const fila = x => `<tr><th>${img(merUrlEscudo(x.t), "shield")} ${esc(nombre[x.t] || "")}</th>${x.cel.map(c => c ? `<td class="${color(c.f)}" title="${esc(nombre[c.r] || "")} ${c.casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(c.r), "shield")}<span>${c.casa ? "C" : "F"}</span></td>` : `<td class="rv0">—</td>`).join("")}</tr>`;
   return `<details class="card cdet-card"><summary class="sumh">Calendario de los equipos</summary>
-    <p class="note" style="margin:6px 0 8px">Los 20 equipos ordenados por lo fáciles que son sus próximos partidos (arriba, los mejores para fichar). Verde: rival flojo; rojo: rival duro.</p>
+    <p class="note" style="margin:6px 0 8px">Los 20 equipos ordenados por lo fáciles que son sus próximos partidos (arriba, los mejores para fichar). Verde: rival flojo; rojo: rival duro. Se mide con los goles que se esperan en cada partido (cuotas o modelo de mercado).</p>
     <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${equipos.map(fila).join("")}</tbody></table></div></details>`;
 }
 
