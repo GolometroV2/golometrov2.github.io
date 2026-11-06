@@ -206,6 +206,18 @@ def ajustar(H, J, D=None):
         prior[pos] = [round(r[0], 4), round(r[1], 4)] if r else None
     out["priorValor"] = prior
     out["valorDin"] = valor_dinamica(J, H)
+    carpeta = os.path.dirname(os.path.abspath(__file__))
+    try:
+        out["valorPersist"] = persistencia_valor(H, cargar(os.path.join(carpeta, "equipos.json")))
+    except Exception as e:      # nunca debe romper el modelo
+        out["valorPersist"] = None
+        print(f"[!] Inercia del valor no disponible: {e}")
+    try:
+        out["pujas"] = modelo_pujas(H, J, cargar(os.path.join(carpeta, "mercado_historial.json")), cargar(os.path.join(carpeta, "pujas_mister.json")),
+                                    cargar(os.path.join(carpeta, "equipos.json")))
+    except Exception as e:
+        out["pujas"] = None
+        print(f"[!] Modelo de pujas no disponible: {e}")
     try:
         out["factores"] = factores(H, J, D, cargar(os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendario.json")))
     except Exception as e:      # el análisis de factores nunca debe romper el modelo
@@ -446,6 +458,161 @@ def factores(H, J, D, C):
                       "parteGoles": round(max(0.0, w[1] * gpp) / mp, 3) if mp > 0 else None, "r2": round(max(0.0, r2), 3), "n": len(L)}
     return {"n": len(niv_y), "jornadas": prueba, "nivelCorr": round(_corr(niv_p, niv_y), 3),
             "golesPrevistosCorr": round(_corr(lam_p, lam_y), 3), "correlacion": corr, "goles": goles}
+
+# ---------------------------------------------------------------------------------------------
+# Inercia del valor a varios días (para el planificador del parón)
+# ---------------------------------------------------------------------------------------------
+def _series_valor(H, E):
+    from datetime import date
+    serie = collections.defaultdict(dict)
+    for pid, L in ((E or {}).get("history") or {}).items():
+        for f, v, _ in L:
+            serie[str(pid)][f] = v
+    for pid, x in ((H or {}).get("valor") or {}).items():
+        for f, v in x.items():
+            serie[str(pid)].setdefault(f, v)
+    cambios = {}
+    for pid, s in serie.items():
+        fs = sorted(s)
+        c = {}
+        for a, b in zip(fs[:-1], fs[1:]):
+            try:
+                if (date.fromisoformat(b) - date.fromisoformat(a)).days == 1 and s[a] >= V_CORTE:
+                    c[b] = s[b] / s[a] - 1
+            except ValueError:
+                pass
+        cambios[pid] = c
+    return serie, cambios
+
+
+def persistencia_valor(H, E, kmax=14):
+    """Cuánto del cambio de valor de hoy se repite k días después (pendiente medida con todos los jugadores de más de 1 M).
+       El valor de Mister tiene mucha inercia: lo que sube hoy sigue subiendo días después, aunque no haya partidos.
+       Valida la previsión a 7 y 10 días (con la curva medida solo con días anteriores) y da la curva hasta 14 días
+       (más allá de lo medido, se alarga con la caída de los últimos días medidos)."""
+    from datetime import date, timedelta
+    serie, cambios = _series_valor(H, E)
+
+    def curva(hasta=None):
+        out = {}
+        for k in range(1, kmax + 1):
+            L = []
+            for c in cambios.values():
+                for f, y in c.items():
+                    f2 = (date.fromisoformat(f) + timedelta(days=k)).isoformat()
+                    if f2 in c and (hasta is None or f2 < hasta):
+                        L.append((y, c[f2]))
+            if len(L) >= 150:
+                mx, my = media([a for a, _ in L]), media([b for _, b in L])
+                den = sum((a - mx) ** 2 for a, _ in L)
+                if den > 0:
+                    out[k] = max(0.0, sum((a - mx) * (b - my) for a, b in L) / den)
+        if not out:
+            return [0.95 ** k for k in range(1, kmax + 1)]
+        ks = sorted(out)
+        res, prev = [], 1.0
+        for k in range(1, kmax + 1):
+            v = out.get(k, out[ks[-1]] * 0.85 ** (k - ks[-1]) if k > ks[-1] else 0.95 ** k)
+            v = min(v, prev)           # nunca más inercia a más días
+            res.append(round(v, 4))
+            prev = v
+        return res
+
+    def prever(v, g, h, s):
+        x = v
+        for k in range(1, h + 1):
+            x *= 1 + g * s[k - 1]
+        return x
+    fechas = sorted({f for s in serie.values() for f in s})
+    val = {}
+    for h in (7, 10):
+        pred, real = [], []
+        for f0 in fechas:
+            f1 = (date.fromisoformat(f0) + timedelta(days=h)).isoformat()
+            if f1 > fechas[-1]:
+                break
+            s = curva(f0)
+            for pid, ser in serie.items():
+                g = cambios[pid].get(f0)
+                if g is not None and f1 in ser and ser.get(f0, 0) >= V_CORTE:
+                    pred.append(prever(ser[f0], g, h, s) / ser[f0] - 1)
+                    real.append(ser[f1] / ser[f0] - 1)
+        if len(real) >= 100:
+            my = media(real)
+            sst = sum((a - my) ** 2 for a in real)
+            val[str(h)] = {"n": len(real), "r2": round(1 - sum((a - b) ** 2 for a, b in zip(real, pred)) / sst, 3) if sst else None,
+                           "acierta": round(media([1.0 if (a > 0) == (b > 0) else 0.0 for a, b in zip(real, pred) if abs(b) > 0.02]), 3)}
+    return {"s": curva(), "validacion": val, "dias": len(fechas)}
+
+
+# ---------------------------------------------------------------------------------------------
+# Quién puja por cada libre (para la puja ideal y para «Tus rivales»)
+# ---------------------------------------------------------------------------------------------
+def modelo_pujas(H, J, MH, PM, E, lam=2.0):
+    """Probabilidad de que cada manager puje por un libre: regresión logística con lo que sube su valor ese día, su media,
+       su precio y lo activo que es cada manager (y si le falta portero). Se valida dejando fuera cada día de mercado."""
+    from datetime import datetime, timedelta, timezone
+    if not MH or not PM:
+        return None
+    mad = timezone(timedelta(hours=1))
+    serie, cambios = _series_valor(H, E)
+    pts = (H or {}).get("puntos", {})
+    jug = {p["id"]: p for p in (J or {}).get("jugadores", [])}
+    mans = [str(m["id"]) for m in (E or {}).get("managers", [])]
+    pt = {str(m["id"]): sum(1 for p in m["players"] if p.get("pos") == "PT") for m in (E or {}).get("managers", [])}
+    pujas = collections.defaultdict(set)
+    for c in PM.get("compras", []):
+        if c.get("tipo") != "mercado" or not c.get("ts"):
+            continue
+        t = datetime.fromisoformat(c["ts"].replace("Z", "+00:00")).astimezone(mad)
+        dia = (t.date() - timedelta(days=1)).isoformat() if t.hour < 12 else t.date().isoformat()
+        for b in c.get("pujas", []):
+            if b.get("id"):
+                pujas[(dia, str(c["playerId"]))].add(str(b["id"]))
+    filas = []
+    for dia, libres in sorted(MH.items()):
+        for pid, precio in libres.items():
+            p = jug.get(str(pid))
+            if not p or not precio:
+                continue
+            g = cambios.get(str(pid), {}).get(dia, 0.0)
+            ps = [v for v in pts.get(str(pid), {}).values() if isinstance(v, (int, float))]
+            x0 = [max(-3.0, min(5.0, g * 100)), min(media(ps) if ps else 0.0, 9.0), math.log10(max(precio, 1e5)) - 6]
+            for m in mans:
+                filas.append((dia, m, x0 + [1.0 if p.get("pos") == "PT" and pt.get(m, 2) <= 1 else 0.0], 1 if m in pujas.get((dia, str(pid)), set()) else 0))
+    if sum(f[3] for f in filas) < 25:
+        return None
+
+    def X(f):
+        return [1.0] + f[2] + [1.0 if f[1] == m else 0.0 for m in mans]
+
+    def ajustar(L, it=500, lr=0.1):
+        Z = [X(f) for f in L]
+        y = [f[3] for f in L]
+        w = [0.0] * len(Z[0])
+        w[0] = math.log(max(sum(y), 1) / len(y))
+        for _ in range(it):
+            gr = [0.0] * len(w)
+            for z, t in zip(Z, y):
+                pr = sigmoide(sum(a * b for a, b in zip(w, z)))
+                for j in range(len(w)):
+                    gr[j] += (pr - t) * z[j]
+            for j in range(len(w)):
+                w[j] -= lr * (gr[j] / len(y) + (lam * w[j] / len(y) if j else 0.0))
+        return w
+    dias = sorted({f[0] for f in filas})
+    ps_ = []
+    for d in dias:
+        w = ajustar([f for f in filas if f[0] != d])
+        ps_ += [(sigmoide(sum(a * b for a, b in zip(w, X(f)))), f[3]) for f in filas if f[0] == d]
+    pos = [a for a, y in ps_ if y]
+    neg = [a for a, y in ps_ if not y]
+    auc = sum((a > b) + 0.5 * (a == b) for a in pos for b in neg) / (len(pos) * len(neg)) if pos and neg else None
+    w = ajustar(filas)
+    return {"nombres": ["const", "sube_pct_dia", "media", "log_precio", "falta_portero"], "pesos": [round(a, 4) for a in w[:5]],
+            "manager": {m: round(a, 4) for m, a in zip(mans, w[5:])}, "auc": round(auc, 3) if auc else None,
+            "n": len(filas), "pujas": sum(f[3] for f in filas), "dias": len(dias)}
+
 
 # ---------------------------------------------------------------------------------------------
 # Modelo de partido: cómo puntúa cada posición según los goles que marca y encaja su equipo
