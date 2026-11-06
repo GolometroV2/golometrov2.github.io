@@ -1,6 +1,6 @@
 # Golómetro V2 · reglas para el agente
 
-Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`, sin librerías externas de datos) que lee los JSON que generan los scripts de Python y GitHub Actions. Idioma de la página y de los textos: **español de España**. Pestañas: Clasificación, Equipos, Capitán y Mercado, todas abiertas (el dueño quitó el PIN el 04/11/2026: no lo vuelvas a poner).
+Proyecto: página de una liga de Mister Fantasy. Una sola página (`index.html`, sin librerías externas de datos) que lee los JSON que generan los scripts de Python y GitHub Actions. Idioma de la página y de los textos: **español de España**. Pestañas: Clasificación, Equipos, Capitán y Mercado. **PIN (decisión del dueño, 06/11/2026): las funciones de IA son solo para él**; sus amigos ven solo lo estadístico. Capitán y Mercado piden el PIN (variable `iaOk`, se recuerda en el móvil con localStorage) y en las demás pestañas las previsiones y consejos van envueltos en `soloIA(...)` («Tu jornada» salvo la predicción, «Cláusulas que merecen la pena», «Valor dentro de una semana», «Candidatos a vender», la previsión de mañana). No quites el PIN ni lo pongas en lo estadístico (clasificación, predicción, previa, marcador, fichajes, ¿Quién clausula mejor?). Cualquier herramienta nueva de previsión o recomendación va con `soloIA`.
 
 **Paleta: verde «Carbón y verde»** (la de la primera versión). El dueño no quiere amarillo como acento: no lo cambies.
 
