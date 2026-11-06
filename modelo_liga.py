@@ -206,6 +206,11 @@ def ajustar(H, J, D=None):
         prior[pos] = [round(r[0], 4), round(r[1], 4)] if r else None
     out["priorValor"] = prior
     out["valorDin"] = valor_dinamica(J, H)
+    try:
+        out["factores"] = factores(H, J, D, cargar(os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendario.json")))
+    except Exception as e:      # el análisis de factores nunca debe romper el modelo
+        out["factores"] = None
+        print(f"[!] Análisis de factores no disponible: {e}")
     # efecto de la portería a cero en porteros y defensas (se mide con los partidos jugados)
     return out
 
@@ -313,6 +318,130 @@ def valor_dinamica(J, H):
         out["inercia"] = {str(k): round(v, 3) for k, v in pend.items()}
     return out
 
+
+
+# ---------------------------------------------------------------------------------------------
+# Qué decide los puntos (análisis de factores) y cómo se mueven juntos los jugadores de un mismo partido
+# ---------------------------------------------------------------------------------------------
+def _ols(X, y):
+    """Mínimos cuadrados con constante: devuelve (pesos, R²)."""
+    k = len(X[0]) + 1
+    Z = [[1.0] + r for r in X]
+    A = [[sum(z[i] * z[j] for z in Z) for j in range(k)] for i in range(k)]
+    b = [sum(z[i] * t for z, t in zip(Z, y)) for i in range(k)]
+    w = resolver(A, b)
+    my = media(y)
+    pred = [sum(a * c for a, c in zip(w, z)) for z in Z]
+    sst = sum((v - my) ** 2 for v in y)
+    sse = sum((v - q) ** 2 for v, q in zip(y, pred))
+    return w, (1 - sse / sst) if sst else 0.0
+
+
+def _corr(a, b):
+    ma, mb = media(a), media(b)
+    sa = sum((x - ma) ** 2 for x in a) ** 0.5
+    sb = sum((x - mb) ** 2 for x in b) ** 0.5
+    return sum((x - ma) * (y - mb) for x, y in zip(a, b)) / (sa * sb) if sa and sb else 0.0
+
+
+def factores(H, J, D, C):
+    """Mide, solo con datos anteriores a cada jornada, cuánto explica cada factor de los puntos de un jugador que juega:
+       · su nivel (media de la temporada encogida hacia lo que se espera por su valor),
+       · el partido (goles a favor y en contra: después del partido, cuánto explicaría saberlos; antes, cuánto se pueden prever),
+       · los goles del propio jugador (puntos por gol y parte de sus puntos que vienen de goles, con vuestros onces).
+       Devuelve también la «correlación de partido» por posición que usa la simulación de la jornada: cuántos puntos sube o
+       baja un jugador por cada gol de su equipo o del rival por encima de lo esperado."""
+    jug = {p["id"]: p for p in (J or {}).get("jugadores", [])}
+    ult = (J or {}).get("ultimaJornada") or 99
+    games = (C or {}).get("games") or []
+    porgw = collections.defaultdict(list)
+    for g in games:
+        porgw[g["gw"]].append(g)
+    pts = collections.defaultdict(dict)
+    for pid, v in (H or {}).get("puntos", {}).items():
+        for g, x in v.items():
+            pts[pid][int(g)] = x
+    num = lambda x: isinstance(x, (int, float))
+    filas = []
+    for pid, h in pts.items():
+        p = jug.get(pid)
+        if not p:
+            continue
+        for gw, x in h.items():
+            if not num(x) or gw > ult:
+                continue
+            g = next((q for q in porgw[gw] if p["teamId"] in (q["home"], q["away"]) and num(q.get("gh"))), None)
+            if not g:
+                continue
+            casa = g["home"] == p["teamId"]
+            filas.append({"pid": pid, "gw": gw, "pos": p["pos"], "team": p["teamId"], "riv": g["away"] if casa else g["home"],
+                          "casa": casa, "pts": x, "valor": p["value"] or 1e5, "gf": g["gh"] if casa else g["ga"], "gc": g["ga"] if casa else g["gh"]})
+    gws = sorted({f["gw"] for f in filas})
+    prueba = [g for g in gws if g >= (gws[0] + 2 if gws else 99)]
+    if len(filas) < 600 or len(prueba) < 2:
+        return None
+
+    def media_antes(pid, g):
+        p = jug[pid]
+        tot, avg = float(p.get("points") or 0), float(p.get("avg") or 0)
+        n = round(tot / avg) if avg > 0 else 0
+        for gw, x in pts[pid].items():
+            if gw >= g and gw <= ult and num(x):
+                tot -= x
+                n -= 1
+        return (tot / n if n > 0 else None), max(n, 0)
+
+    res = collections.defaultdict(list)      # pos -> [(residuo, gf - λf, gc - λc)]
+    niv_p, niv_y, lam_p, lam_y = [], [], [], []
+    for g in prueba:
+        tr = [f for f in filas if f["gw"] < g]
+        pri = {}
+        for pos in POS:
+            jt = [f for f in tr if f["pos"] == pos]
+            pri[pos] = recta([math.log10(max(f["valor"], 1e5)) for f in jt], [f["pts"] for f in jt])
+        gs = [q for q in games if q["gw"] < g and num(q.get("gh"))]
+        lg = media([q["gh"] + q["ga"] for q in gs]) / 2 if gs else 1.3
+        gf_, ga_ = collections.defaultdict(list), collections.defaultdict(list)
+        for q in gs:
+            gf_[q["home"]].append(q["gh"]); ga_[q["home"]].append(q["ga"]); gf_[q["away"]].append(q["ga"]); ga_[q["away"]].append(q["gh"])
+        att = lambda t: (sum(gf_[t]) + 4 * lg) / (len(gf_[t]) + 4) / lg
+        dfn = lambda t: (sum(ga_[t]) + 4 * lg) / (len(ga_[t]) + 4) / lg
+        for f in (x for x in filas if x["gw"] == g):
+            r = pri[f["pos"]]
+            prior = r[0] * math.log10(max(f["valor"], 1e5)) + r[1] if r else 4.0
+            avg, n = media_antes(f["pid"], g)
+            mu = prior if avg is None else (n * avg + 20 * prior) / (n + 20)
+            lf = lg * att(f["team"]) * dfn(f["riv"]) * (1.1 if f["casa"] else 0.9)
+            lc = lg * att(f["riv"]) * dfn(f["team"]) * (0.9 if f["casa"] else 1.1)
+            niv_p.append(mu); niv_y.append(f["pts"]); lam_p.append(lf); lam_y.append(f["gf"])
+            res[f["pos"]].append((f["pts"] - mu, f["gf"] - lf, f["gc"] - lc))
+    corr = {}
+    for pos in POS:
+        L = res[pos]
+        if len(L) < 60:
+            continue
+        w, r2 = _ols([[a[1], a[2]] for a in L], [a[0] for a in L])
+        corr[pos] = {"gf": round(w[1], 3), "gc": round(w[2], 3), "r2": round(max(0.0, r2), 3), "n": len(L)}
+    # goles del propio jugador (vuestros onces: Mister da goles y asistencias de cada actuación)
+    goles = {}
+    obs = []
+    for j, us in ((D or {}).get("matchdays") or {}).items():
+        for u in us.values():
+            for p in u.get("players", []):
+                b = p["basePoints"] if p.get("captain") and p.get("basePoints") is not None else p.get("points")
+                if p.get("played") and num(b):
+                    obs.append((p.get("pos"), b, p.get("goals") or 0, p.get("assists") or 0))
+    for pos in POS:
+        L = [o for o in obs if o[0] == pos]
+        if len(L) < 40:
+            continue
+        w, r2 = _ols([[o[2], o[3]] for o in L], [o[1] for o in L])
+        mp = media([o[1] for o in L])
+        gpp = media([o[2] for o in L])
+        goles[pos] = {"ptsGol": round(w[1], 2), "ptsAsist": round(w[2], 2), "golesPartido": round(gpp, 3),
+                      "parteGoles": round(max(0.0, w[1] * gpp) / mp, 3) if mp > 0 else None, "r2": round(max(0.0, r2), 3), "n": len(L)}
+    return {"n": len(niv_y), "jornadas": prueba, "nivelCorr": round(_corr(niv_p, niv_y), 3),
+            "golesPrevistosCorr": round(_corr(lam_p, lam_y), 3), "correlacion": corr, "goles": goles}
 
 def cargar(ruta, defecto=None):
     try:

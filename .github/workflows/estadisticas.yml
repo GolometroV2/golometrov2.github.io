@@ -1,0 +1,53 @@
+name: Estadísticas externas
+
+# Lee estadísticas públicas de LaLiga (notas, xG y cuotas de SofaScore; cuotas de football-data.co.uk) para el modelo
+# de puntos. No usa secretos ni credenciales: solo datos públicos, respetando su robots.txt y con pausa entre peticiones.
+# Añadido con permiso expreso del dueño (06/11/2026).
+on:
+  schedule:
+    - cron: '17 6 * * *'      # cada mañana, con la jornada anterior ya puntuada
+    - cron: '43 16 * * 5'     # viernes por la tarde: cuotas frescas antes de la jornada
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: estadisticas
+  cancel-in-progress: false
+
+jobs:
+  estadisticas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests "curl_cffi>=0.14"
+
+      - name: Leer estadísticas externas
+        run: python estadisticas_externas.py || echo "Aviso - ninguna fuente respondió"
+
+      - name: Preparar las estadísticas para la web
+        run: python modelo_externo.py || echo "Aviso - no se pudo preparar estadisticas.json"
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "Bot Mister"
+          git config user.email "bot@users.noreply.github.com"
+          if [ -d externo ]; then git add externo; fi
+          if [ -f estadisticas.json ]; then git add estadisticas.json; fi
+          if ! git diff --staged --quiet; then
+            git commit -m "Estadísticas externas actualizadas"
+            for i in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              sleep 5
+            done
+          fi
