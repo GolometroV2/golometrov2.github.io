@@ -2837,7 +2837,7 @@ function detalleEq(m, hp) {
       </div>
       <div class="jp-right"><b class="${cl(t.d)}">${sig(t.d)}</b><small>${(t.pct > 0 ? "+" : "") + nf.format(t.pct * 100)} %</small>${spark(h, t.k)}</div>
     </div>
-    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${iaOk && t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
+    <div class="tendline">${chipTit(p)}<span class="tend t-${t.k}">${ETIQ[t.k]}${eta}${t.n > 0 && t.n < 3 ? " · pocos datos" : ""}</span>${iaOk && t.n >= 2 && t.k !== "nd" ? `<span class="proj" title="Cambio esperado mañana (fiabilidad ${["muy baja", "baja", "media", "alta"][t.conf]})">mañana ≈ ${sig(Math.round(t.proj / 1e3) * 1e3)} ${"●".repeat(t.conf + 0)}${"○".repeat(3 - t.conf)}</span>` : ""}${iaOk && t.senal ? `<div class="senal">${esc(t.senal)}</div>` : ""}</div></li>`;
   }).join("");
   const sube = L.filter(x => x.t.k.startsWith("sube")).length, baja = L.filter(x => x.t.k.startsWith("baja")).length;
   return `<section class="card eqhead"><div style="display:flex;align-items:center;gap:12px">${avatar(m, m.i)}
