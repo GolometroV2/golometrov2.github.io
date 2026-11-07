@@ -503,9 +503,10 @@ code{color:var(--accFg)}
 .esq i{display:block;height:64px;border-radius:var(--r-m);background:linear-gradient(90deg,var(--panel) 25%,var(--line) 50%,var(--panel) 75%);background-size:200% 100%;animation:esq 1.3s linear infinite}
 .esq i:nth-child(2){height:48px}.esq i:nth-child(3){height:80px}
 @keyframes esq{to{background-position:-200% 0}}
-.msel{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;margin:0 0 2px}
+.msel{display:grid;grid-template-columns:repeat(var(--n),minmax(44px,1fr));gap:4px;margin:0 0 2px;overflow-x:auto;scrollbar-width:none}
+.msel::-webkit-scrollbar{display:none}
 .msel-b{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:var(--tap);padding:6px 0 4px;border-radius:var(--r-m);min-width:0}
-.msel-b .av{width:min(40px,calc((min(100vw,680px) - 32px) / var(--n) - 8px));height:auto;aspect-ratio:1;font-size:13px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s,opacity .15s;opacity:.55}
+.msel-b .av{width:max(32px,min(40px,calc((min(100vw,680px) - 32px) / var(--n) - 8px)));height:auto;aspect-ratio:1;font-size:13px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s,opacity .15s;opacity:.55}
 .msel-t{font-size:11px;font-weight:600;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .msel-b:hover .av{opacity:.85}
 .msel-b.on .av{opacity:1;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--acc);transform:scale(1.06)}
@@ -779,7 +780,7 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .mpuja{background:color-mix(in srgb,var(--bg) 55%,var(--panel2));border:1px solid var(--line)}
 .mpuja b{font-family:var(--f-disp);font-stretch:85%;font-size:17px}
 @media (max-width:420px){.acciones{gap:6px}.busc{width:40px!important;height:40px!important}.refresh{padding:7px 11px}.logo{font-size:17px}}
-@media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px}}
+@media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px;min-width:44px;justify-content:center}}
 .comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
 /* ---- el once sobre un campo con sus líneas ---- */
 .pitch,.oi{position:relative;isolation:isolate;background:repeating-linear-gradient(180deg,#1f6b3c 0 52px,#1c6337 52px 104px);box-shadow:inset 0 0 40px #0008,inset 0 1px 0 #ffffff14;border:1px solid #2fd46e33}
@@ -1507,7 +1508,7 @@ function abrirFicha(id) {
     <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
       <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
-    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
+    ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
     ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
@@ -1716,7 +1717,7 @@ function pintarTuJornadaVivo(cont) {
   }
   const ahora = L.slice().sort((a, b) => b.pts - a.pts), fin = L.slice().sort((a, b) => (b.pts + b.v.esp) - (a.pts + a.v.esp));
   const filas = [filaTuj("⏱️", `Jornada ${n} en juego`, `Llevas ${yo.pts} pts · ${ahora.indexOf(yo) + 1}.º de la jornada`, null)];
-  if (yo.v.n) filas.push(filaTuj("⏳", `Te ${yo.v.n === 1 ? "falta 1 jugador" : `faltan ${yo.v.n} jugadores`} por jugar`, `Acabarías con ≈ ${Math.round(yo.pts + yo.v.esp)} pts · ${fin.indexOf(yo) + 1}.º previsto`, null));
+  if (yo.v.n) filas.push(filaTuj("⏳", `Te ${yo.v.n === 1 ? "falta 1 jugador" : `faltan ${yo.v.n} jugadores`} por jugar`, (iaOk ? `Acabarías con ≈ ${Math.round(yo.pts + yo.v.esp)} pts · ${fin.indexOf(yo) + 1}.º previsto` : `Aún no ha jugado ${yo.v.n === 1 ? "1 alineado" : yo.v.n + " alineados"}`), null));
   else filas.push(filaTuj("✅", "Ya han jugado todos tus alineados", `Te quedas en ${yo.pts} pts`, null));
   try { const PJ = probJornada(n), r = PJ.res[yo.m.id]; if (r) filas.push(filaTuj("🔮", "Lo que te daba la previa", `${pctQ(r.pGana)} de ganar la jornada`, null)); } catch (e) {}
   cont.innerHTML = `<div class="gh"><h2>Tu jornada ${n}</h2><button class="tuj-cambia" data-yo="${esc(yo.m.id)}" aria-label="Dejar de ser ${esc(yo.m.name)}">${avatar(yo.m, yo.i)}</button></div>
@@ -2077,7 +2078,7 @@ function pintarComparador() {
     return +(mu * pjConTitular(p, p.status === "injury" ? 0 : pjM).pj).toFixed(1);
   };
   let esp = [];
-  try { esp = [["Puntos esperados", espJ(A), espJ(B)]]; } catch (e) {}
+  if (iaOk) try { esp = [["Puntos esperados", espJ(A), espJ(B)]]; } catch (e) {}   // previsión: solo con PIN
   const est = [
     ["Puntos", A.points, B.points], ["Media", A.avg, B.avg], ["Media últimas 5", +media5(A).toFixed(1), +media5(B).toFixed(1)],
     ["Valor (M)", +(A.value / 1e6).toFixed(2), +(B.value / 1e6).toFixed(2)],
@@ -2095,7 +2096,7 @@ function pintarComparador() {
     const fe = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], fk = fe && Object.keys(fe).sort()[0], ff = fk ? fe[fk] : null;
     if (!g) return "Sin partido próximo";
     const casa = g.home === p.teamId;
-    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;
+    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff && iaOk ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;   // probabilidad de titular = previsión: solo con PIN
   };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
@@ -2103,9 +2104,9 @@ function pintarComparador() {
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
     <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
-    <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
+    <p class="note">${iaOk ? "Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF)." : "Próximo partido de cada jugador."}</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
-    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones. «Puntos esperados» = lo que se espera que sume en su próximo partido (su nivel por su probabilidad de jugar).</p>`;
+    <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones. ${iaOk ? "«Puntos esperados» = lo que se espera que sume en su próximo partido (su nivel por su probabilidad de jugar)." : ""}</p>`;
 }
 // Cuántas jornadas le ha ganado cada manager (fila) a cada rival (columna) y su balance total
 function tablaDuelos(S, orden) {
@@ -2745,18 +2746,19 @@ function bloqueRivalesEq(m) {
   const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
   const nombre = {}; CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
   // dificultad 1 (fácil) a 5 (difícil): defensas y porteros miran cuánto marca el rival; medios y delanteros, cuánto encaja
-  const dif = (rival, pos, casa) => {
-    const e = eq[rival]; if (!e || !e.n) return 3;
-    const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg;
+  const dif = (rival, pos, casa, g) => {
+    const ep = g && extPartido(g.id);     // goles esperados del partido (cuotas o modelo de mercado): mandan sobre lo ya jugado
+    const e = eq[rival]; if (!ep && (!e || !e.n)) return 3;
+    const f = ep ? (casa ? ep.la : ep.lh) / lg : (e.f + 2 * lg) / (e.n + 2) / lg, c = ep ? (casa ? ep.lh : ep.la) / lg : (e.c + 2 * lg) / (e.n + 2) / lg;
     const w = { PT: 1, DF: 0.8, MC: 0.35, DL: 0.1 }[pos] ?? 0.5;
-    const x = w * (f - 1) - (1 - w) * (c - 1) + (casa ? -0.06 : 0.06);
+    const x = w * (f - 1) - (1 - w) * (c - 1) + (ep ? 0 : casa ? -0.06 : 0.06);   // con goles esperados la ventaja de casa ya va dentro
     return Math.max(1, Math.min(5, Math.round(3 + x * 5)));
   };
   const filas = m.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos) || b.value - a.value).map(p => {
     const celdas = gws.map(gw => {
       const g = pend.find(x => x.gw === gw && (x.home === p.teamId || x.away === p.teamId));
       if (!g) return `<td class="rv0">—</td>`;
-      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = dif(r, p.pos, casa);
+      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = dif(r, p.pos, casa, g);
       return `<td class="rv${d}" title="${esc(nombre[r] || "")} ${casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(r), "shield")}<span>${casa ? "C" : "F"}</span></td>`;
     }).join("");
     return `<tr><th><span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span> ${esc(p.short || p.name)}</th>${celdas}</tr>`;
@@ -2814,16 +2816,16 @@ function detalleEq(m, hp) {
   const dM = m.squadValue - m.squadPrev;
   // titularidad en su próximo partido (mezcla de Futbol Fantasy y Analítica Fantasy, alineaciones.json)
   const titDe = p => { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort((a, b) => a - b)[0]; return k ? { gw: k, ff: e[k] } : null; };
-  const chipTit = p => { const x = titDe(p); if (!x) return "";
+  const chipTit = p => { const x = titDe(p); if (!x || (!iaOk && !x.ff.conf)) return "";   // el % de titular es previsión: solo con PIN (el once confirmado es un hecho)
     const v = x.ff.p, nv = v >= 0.7 ? "ok" : v >= 0.4 ? "duda" : "no";
     return `<span class="titc titc-${nv}" title="${esc(textoTit(x.ff))}">J${esc(x.gw)} · ${x.ff.conf ? (v >= 0.5 ? "titular ✔" : "suplente") : Math.round(v * 100) + " % titular"}</span>`; };
-  const enDuda = m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
+  const enDuda = !iaOk ? 0 : m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
   const ord = { delta: (a, b) => b.t.d - a.t.d, valor: (a, b) => b.p.value - a.p.value,
     alerta: (a, b) => RANGO[a.t.k] - RANGO[b.t.k] || b.p.value - a.p.value }[eqOrden];
   const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
     .map(([k, t]) => `<button class="pill ${eqOrden === k ? "on" : ""}" data-es="${k}">${t}</button>`).join("");
   const filas = L.sort(ord).map(({ p, t, h }) => {
-    const eta = t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
+    const eta = iaOk && t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
     const est = ESTADO(p.status), dl = p.value - p.prev;
     return `<li class="jp"><div class="jp-main">
       <div class="jp-side">${img(p.teamLogo, "shield")}<span class="jp-pos" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span><span class="jp-pts" title="Puntos de la temporada">${esc(p.points ?? 0)}</span></div>
@@ -2845,10 +2847,10 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
-    ${bloqueExpuestos(m)}
+    ${soloIA(bloqueExpuestos(m))}
     ${soloIA(bloqueVender(m))}
     ${soloIA(bloquePrevision(m))}
-    ${bloqueRivalesEq(m)}`;
+    ${soloIA(bloqueRivalesEq(m))}`;
 }
 
 async function sha256(t) {
@@ -4038,15 +4040,18 @@ function bloqueCalendario() {
   const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
   // facilidad del partido: cuánto encaja el rival (bueno para atacar) y lo poco que marca (bueno para defender), +/− por jugar en casa
   const facil = (r, casa) => { const e = eq[r]; if (!e || !e.n) return 0; const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg; return 0.5 * (c - 1) - 0.5 * (f - 1) + (casa ? 0.06 : -0.06); };
+  const exs = pend.map(g => extPartido(g.id)).filter(Boolean), lgx = exs.length ? exs.reduce((t, e) => t + e.lh + e.la, 0) / (2 * exs.length) : lg;
   const equipos = Object.keys(nombre).map(Number).map(t => {
-    const cel = gws.map(gw => { const g = pend.find(x => x.gw === gw && (x.home === t || x.away === t)); if (!g) return null; const casa = g.home === t, r = casa ? g.away : g.home; return { r, casa, f: facil(r, casa) }; });
+    const cel = gws.map(gw => { const g = pend.find(x => x.gw === gw && (x.home === t || x.away === t)); if (!g) return null; const casa = g.home === t, r = casa ? g.away : g.home; const ep = extPartido(g.id), gf = ep ? (casa ? ep.lh : ep.la) : null, gc = ep ? (casa ? ep.la : ep.lh) : null;
+      // con goles esperados del partido (cuotas o mercado) mandan ellos; si no, los goles de lo jugado
+      return { r, casa, f: ep && capNum(gf) && capNum(gc) ? 0.5 * (gf / lgx - 1) - 0.5 * (gc / lgx - 1) : facil(r, casa) }; });
     const val = cel.filter(Boolean), media = val.length ? val.reduce((s, x) => s + x.f, 0) / val.length : -9;
     return { t, cel, media };
   }).filter(x => x.media > -9).sort((a, b) => b.media - a.media);
   const color = f => f >= 0.18 ? "rv1" : f >= 0.06 ? "rv2" : f > -0.06 ? "rv3" : f > -0.18 ? "rv4" : "rv5";
   const fila = x => `<tr><th>${img(merUrlEscudo(x.t), "shield")} ${esc(nombre[x.t] || "")}</th>${x.cel.map(c => c ? `<td class="${color(c.f)}" title="${esc(nombre[c.r] || "")} ${c.casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(c.r), "shield")}<span>${c.casa ? "C" : "F"}</span></td>` : `<td class="rv0">—</td>`).join("")}</tr>`;
   return `<details class="card cdet-card"><summary class="sumh">Calendario de los equipos</summary>
-    <p class="note" style="margin:6px 0 8px">Los 20 equipos ordenados por lo fáciles que son sus próximos partidos (arriba, los mejores para fichar). Verde: rival flojo; rojo: rival duro.</p>
+    <p class="note" style="margin:6px 0 8px">Los 20 equipos ordenados por lo fáciles que son sus próximos partidos (arriba, los mejores para fichar). Verde: rival flojo; rojo: rival duro. Se mide con los goles que se esperan en cada partido (cuotas o modelo de mercado).</p>
     <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${equipos.map(fila).join("")}</tbody></table></div></details>`;
 }
 
@@ -5027,8 +5032,8 @@ function pintarTV() {
     estado = termin ? `<span class="tv-st">Jornada ${n} · <b>final</b></span>` : `<span class="tv-st tv-vivo"><i aria-hidden="true"></i>En directo · jornada ${n}</span>`;
     const genOrd = L.slice().sort((a, b) => b.gen - a.gen);
     cuerpo = `<p class="tv-sub">${termin ? "Puntos de la jornada" : "Puntos de la jornada. Debajo, en verde, con cuántos acabaría cada uno y lo que le queda por sumar"}</p>
-      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><span class="tv-meta">${x.cap ? chipCapTV(x.cap.id, x.cap.name, x.capTeam, x.capPend ? `×${coma(x.cap.multiplier || 1)}` : x.cap.points ?? "", x.capPend, "Capitán") : ""}${termin ? `<span class="tv-proy"><small>en la general</small><b>${genOrd.indexOf(x) + 1}.º</b></span>` : ""}</span>${termin ? `<i class="tv-b"></i>` : puntosOnce(x.jugados, x.alin)}</span><span class="tv-vw"><span class="tv-v">${x.pts}</span>${!termin && x.v.n ? `<span class="tv-pr" title="Previsión al final de la jornada" aria-label="Previsión al final: ${Math.round(x.pts + x.v.esp)} puntos"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4.5-4.5 3 3L14 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 6h4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${Math.round(x.pts + x.v.esp)}</b><em>+${Math.round(x.v.esp)}</em></span>` : ""}</span></li>`).join("")}</ol>`;
-    IMG_DATOS.tv = { titulo: `Jornada ${n} · ${termin ? "resultado" : "en directo"}`, sub: termin ? "Puntos de la jornada" : `Actualizado a las ${hora}`, filas: L.map(x => ({ m: x.m, i: x.i, valor: String(x.pts), det: !termin && x.v.n ? `${x.v.n} por jugar · ≈ ${Math.round(x.pts + x.v.esp)}` : `${genOrd.indexOf(x) + 1}.º en la general`, w: x.pts / Math.max(1, L[0].pts) })), pie: "" };
+      <ol class="tv-l" style="--fil:${Math.ceil(L.length / 2)}">${L.map((x, k) => `<li style="--c:${col(x.i)};--w:${(x.pts / Math.max(1, L[0].pts) * 100).toFixed(1)}%"><span class="tv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="tv-n"><b>${esc(x.m.name)}</b><span class="tv-meta">${x.cap ? chipCapTV(x.cap.id, x.cap.name, x.capTeam, x.capPend ? `×${coma(x.cap.multiplier || 1)}` : x.cap.points ?? "", x.capPend, "Capitán") : ""}${termin ? `<span class="tv-proy"><small>en la general</small><b>${genOrd.indexOf(x) + 1}.º</b></span>` : ""}</span>${termin ? `<i class="tv-b"></i>` : puntosOnce(x.jugados, x.alin)}</span><span class="tv-vw"><span class="tv-v">${x.pts}</span>${!termin && iaOk && x.v.n ? `<span class="tv-pr" title="Previsión al final de la jornada" aria-label="Previsión al final: ${Math.round(x.pts + x.v.esp)} puntos"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 12l4.5-4.5 3 3L14 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 6h4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${Math.round(x.pts + x.v.esp)}</b><em>+${Math.round(x.v.esp)}</em></span>` : ""}</span></li>`).join("")}</ol>`;
+    IMG_DATOS.tv = { titulo: `Jornada ${n} · ${termin ? "resultado" : "en directo"}`, sub: termin ? "Puntos de la jornada" : `Actualizado a las ${hora}`, filas: L.map(x => ({ m: x.m, i: x.i, valor: String(x.pts), det: !termin && x.v.n ? `${x.v.n} por jugar${iaOk ? ` · ≈ ${Math.round(x.pts + x.v.esp)}` : ""}` : `${genOrd.indexOf(x) + 1}.º en la general`, w: x.pts / Math.max(1, L[0].pts) })), pie: "" };
     const jug = []; Object.values(md).forEach(x => (x.players || []).forEach(p => { if (p.played !== false && capNum(p.points)) jug.push(p); }));
     const vistos = new Set();
     ticker = jug.sort((a, b) => b.points - a.points).filter(p => !vistos.has(p.id) && vistos.add(p.id)).slice(0, 14).map(p => `${p.name} ${p.points}${p.captain ? " ©" : ""}`);
@@ -5094,7 +5099,7 @@ function pintar() {
         <span class="posw"><span class="pos">${i + 1}</span>${flecha(m.id)}</span>
         ${avatar(m, m.idx)}
         <span class="info"><span class="nm">${esc(m.name)}${YO === m.id ? ` <span class="tu">tú</span>` : ""}</span>
-          ${vivo && vivo[m.id] && vivo[m.id].n ? `<span class="sub vivo-p">⏳ ${vivo[m.id].n} por jugar · ≈ <b>${Math.round(m.points + vivo[m.id].esp)}</b></span>` : ""}
+          ${vivo && vivo[m.id] && vivo[m.id].n ? `<span class="sub vivo-p">⏳ ${vivo[m.id].n} por jugar${iaOk ? ` · ≈ <b>${Math.round(m.points + vivo[m.id].esp)}</b>` : ""}</span>` : ""}
           ${forma[m.id] ? `<span class="sub forma" aria-label="Puesto en las últimas jornadas">${forma[m.id]}<em>${m.goals ? `⚽${m.goals}` : ""}</em></span>` : `<span class="sub">${z("⚽", m.goals)}${z("👟", m.assists)}${z("🟨", m.yellow)}${z("🟥", m.redCards)}${z("🥅", m.goalsConceded)}</span>`}
           ${!orden.asc && lider > 0 ? `<span class="rbar" aria-hidden="true"><i style="width:${Math.max(0, Math.min(100, m[orden.k] / lider * 100)).toFixed(1)}%"></i></span>` : ""}</span>
         <span class="pts"><b>${m[orden.k]}</b><small>${meta[2]}</small>${["points", "sinCap", "cap"].includes(orden.k) && !orden.asc && m[orden.k] !== lider ? `<em>${m[orden.k] - lider}</em>` : ""}</span>
@@ -5107,7 +5112,7 @@ function pintar() {
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
     ${!D.hayCap && ["cap", "sinCap"].includes(orden.k) ? `<p class="note">El JSON todavía no incluye datos de capitán: ejecuta de nuevo el extractor.</p>` : ""}
-    ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar y con cuántos puntos acabaría (≈, estimación del Golómetro).</p>` : ""}
+    ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
