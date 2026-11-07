@@ -1,7 +1,67 @@
 {
-"updatedAt": "2026-11-06T04:01:17Z",
+"updatedAt": "2026-11-07T04:03:26Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-07T04:03:26Z",
+"playerId": "59415",
+"name": "Dani Olmo",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 13326000,
+"listado": 13398000,
+"precio": 13712333,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-07T04:03:26Z",
+"playerId": "52117",
+"name": "Jon Ander Olasagasti",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 4626000,
+"listado": 4609000,
+"precio": 4626000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-07T04:03:26Z",
+"playerId": "4888",
+"name": "Carlos Soler",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 10068000,
+"listado": 10055000,
+"precio": 10147000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-07T04:03:26Z",
+"playerId": "27333",
+"name": "Eric García",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 11485000,
+"listado": 11479000,
+"precio": 11590000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-07T04:03:26Z",
+"playerId": "42",
+"name": "Koke",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 9056000,
+"listado": 8931000,
+"precio": 9356000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-06T04:01:17Z",
 "playerId": "59484",
