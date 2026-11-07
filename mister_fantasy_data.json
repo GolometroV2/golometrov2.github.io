@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 16:06",
-  "updatedAt": "2026-11-07T15:06:11Z",
+  "lastUpdated": "07/11/2026 16:22",
+  "updatedAt": "2026-11-07T15:22:35Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,10 +17563,10 @@
     },
     "J12": {
       "8664919": {
-        "points": 18,
-        "totalPoints": 609,
+        "points": 19,
+        "totalPoints": 610,
         "position": 1,
-        "playersPlayed": 3,
+        "playersPlayed": 4,
         "squadValue": 86397000,
         "formation": "1-3-4-3",
         "goals": 1,
@@ -17738,17 +17738,17 @@
             "name": "Yassir Zabiri",
             "teamId": 1490,
             "pos": "DL",
-            "points": 8,
+            "points": 9,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 8,
+            "basePoints": 9,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 95,
+            "minutes": 90,
             "goalsConceded": 1
           },
           {
@@ -17790,8 +17790,8 @@
         ]
       },
       "8663482": {
-        "points": 14,
-        "totalPoints": 637,
+        "points": 17,
+        "totalPoints": 640,
         "position": 2,
         "playersPlayed": 2,
         "squadValue": 83892000,
@@ -17811,9 +17811,9 @@
           "pos": "DL",
           "multiplier": 3,
           "played": true,
-          "points": 6,
-          "basePoints": 2,
-          "bonus": 4
+          "points": 9,
+          "basePoints": 3,
+          "bonus": 6
         },
         "players": [
           {
@@ -18001,17 +18001,17 @@
             "name": "Adrián Niño",
             "teamId": 13,
             "pos": "DL",
-            "points": 6,
+            "points": 9,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 1,
-            "yellowCards": 0,
+            "yellowCards": 1,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 95,
+            "minutes": 90,
             "goalsConceded": 2
           }
         ]
@@ -18020,7 +18020,7 @@
         "points": 0,
         "totalPoints": 459,
         "position": 3,
-        "playersPlayed": 0,
+        "playersPlayed": 2,
         "squadValue": 55122000,
         "formation": "1-4-3-3",
         "goals": 0,
@@ -18247,7 +18247,7 @@
         "points": 0,
         "totalPoints": 660,
         "position": 4,
-        "playersPlayed": 0,
+        "playersPlayed": 2,
         "squadValue": 86982000,
         "formation": "1-3-5-2",
         "goals": 0,
@@ -18701,7 +18701,7 @@
         "points": 0,
         "totalPoints": 672,
         "position": 6,
-        "playersPlayed": 0,
+        "playersPlayed": 2,
         "squadValue": 104495000,
         "formation": "1-3-5-2",
         "goals": 0,
@@ -18925,8 +18925,8 @@
         ]
       },
       "8658507": {
-        "points": -4,
-        "totalPoints": 515,
+        "points": -3,
+        "totalPoints": 516,
         "position": 7,
         "playersPlayed": 2,
         "squadValue": 63462000,
@@ -19028,11 +19028,11 @@
             "name": "Iván Martín",
             "teamId": 1490,
             "pos": "MC",
-            "points": 0,
+            "points": 1,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 0,
+            "basePoints": 1,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
