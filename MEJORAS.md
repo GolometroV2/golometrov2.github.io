@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-07 (agente, PIN): en la ficha de jugador (`abrirFicha`) la probabilidad de ser titular en el próximo partido es previsión y ahora solo se ve con PIN; el próximo rival se mantiene. Con esto quedan cubiertas las pantallas pendientes del PIN. Comprobada la sintaxis con `node --check`; vista con PIN no comprobada.
 - 2026-11-07 (agente, PIN): en Equipos, el «% titular» de cada jugador y el aviso «N jugadores con menos de un 50 % de ser titular» son previsión y ahora solo se ven con PIN (el once confirmado se sigue viendo). Probado con Playwright a 420 px sin PIN: 0 chips y sin errores de consola (vista con PIN no comprobada). Queda por revisar la ficha de jugador (`abrirFicha`).
 - 2026-11-07 (agente, PIN): en el Comparador de jugadores la probabilidad de ser titular (Futbol Fantasy) es una previsión y ahora solo se ve con PIN; sin PIN queda el próximo rival. Probado con Playwright a 420 px sin PIN: sin errores de consola (vista con PIN no comprobada).
 - 2026-11-07 (agente, PIN): **«≈ puntos finales» de la jornada a medias** (Clasificación: fila de cada manager y nota, «Tu jornada» y modo marcador) es una previsión y ahora solo se ve con PIN; sin PIN queda «N por jugar». Cálculo intacto. Probado con Playwright a 420 px sin PIN: «⏳ 11 por jugar», sin errores de consola (vista con PIN no comprobada).
