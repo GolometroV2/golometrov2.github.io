@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 20:29",
-  "updatedAt": "2026-11-07T19:29:18Z",
+  "lastUpdated": "07/11/2026 20:45",
+  "updatedAt": "2026-11-07T19:45:52Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "8664919": {
-        "points": 33,
-        "totalPoints": 624,
+        "points": 35,
+        "totalPoints": 626,
         "position": 1,
         "playersPlayed": 6,
         "squadValue": 86397000,
@@ -17720,11 +17720,11 @@
             "name": "Peio Canales",
             "teamId": 1,
             "pos": "MC",
-            "points": 2,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -17756,11 +17756,11 @@
             "name": "Nico Williams",
             "teamId": 1,
             "pos": "DL",
-            "points": 6,
+            "points": 7,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 6,
+            "basePoints": 7,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 23,
-        "totalPoints": 646,
+        "points": 25,
+        "totalPoints": 648,
         "position": 3,
         "playersPlayed": 4,
         "squadValue": 83892000,
@@ -18084,17 +18084,17 @@
             "name": "Valentin Rosier",
             "teamId": 50,
             "pos": "DF",
-            "points": 3,
+            "points": 5,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 5,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 94,
+            "minutes": 90,
             "goalsConceded": 1
           },
           {
@@ -18244,8 +18244,8 @@
         ]
       },
       "10303392": {
-        "points": 15,
-        "totalPoints": 687,
+        "points": 18,
+        "totalPoints": 690,
         "position": 4,
         "playersPlayed": 3,
         "squadValue": 104495000,
@@ -18265,9 +18265,9 @@
           "pos": "MC",
           "multiplier": 3,
           "played": true,
-          "points": 6,
-          "basePoints": 2,
-          "bonus": 4
+          "points": 9,
+          "basePoints": 3,
+          "bonus": 6
         },
         "players": [
           {
@@ -18347,11 +18347,11 @@
             "name": "Moi Gómez",
             "teamId": 50,
             "pos": "MC",
-            "points": 6,
+            "points": 9,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18698,8 +18698,8 @@
         ]
       },
       "8663449": {
-        "points": 9,
-        "totalPoints": 572,
+        "points": 12,
+        "totalPoints": 575,
         "position": 6,
         "playersPlayed": 1,
         "squadValue": 93208000,
@@ -18719,9 +18719,9 @@
           "pos": "MC",
           "multiplier": 3,
           "played": true,
-          "points": 9,
-          "basePoints": 3,
-          "bonus": 6
+          "points": 12,
+          "basePoints": 4,
+          "bonus": 8
         },
         "players": [
           {
@@ -18819,11 +18819,11 @@
             "name": "Rubén García",
             "teamId": 50,
             "pos": "MC",
-            "points": 9,
+            "points": 12,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18925,8 +18925,8 @@
         ]
       },
       "8658507": {
-        "points": 4,
-        "totalPoints": 523,
+        "points": 6,
+        "totalPoints": 525,
         "position": 7,
         "playersPlayed": 5,
         "squadValue": 63462000,
@@ -19002,7 +19002,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 94,
+            "minutes": 90,
             "goalsConceded": 1
           },
           {
@@ -19100,11 +19100,11 @@
             "name": "Jon Moncayola",
             "teamId": 50,
             "pos": "MC",
-            "points": 2,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -19118,11 +19118,11 @@
             "name": "Ante Budimir",
             "teamId": 50,
             "pos": "DL",
-            "points": 0,
+            "points": 1,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 0,
+            "basePoints": 1,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
