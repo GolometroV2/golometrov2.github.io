@@ -2846,7 +2846,7 @@ function detalleEq(m, hp) {
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
-    ${bloqueExpuestos(m)}
+    ${soloIA(bloqueExpuestos(m))}
     ${soloIA(bloqueVender(m))}
     ${soloIA(bloquePrevision(m))}
     ${bloqueRivalesEq(m)}`;
