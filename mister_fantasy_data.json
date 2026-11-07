@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 18:08",
-  "updatedAt": "2026-11-07T17:08:48Z",
+  "lastUpdated": "07/11/2026 18:10",
+  "updatedAt": "2026-11-07T17:10:08Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "13179902": {
-        "points": 33,
-        "totalPoints": 693,
+        "points": 36,
+        "totalPoints": 696,
         "position": 1,
         "playersPlayed": 3,
         "squadValue": 86982000,
@@ -17598,13 +17598,13 @@
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 5,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 92,
+            "minutes": 93,
             "goalsConceded": 0
           },
           {
@@ -17658,7 +17658,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 92,
+            "minutes": 93,
             "goalsConceded": 0
           },
           {
@@ -17893,7 +17893,7 @@
             "name": "Edu Expósito",
             "teamId": 8,
             "pos": "MC",
-            "points": null,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
@@ -18174,7 +18174,7 @@
             "name": "Javi Hernandez",
             "teamId": 8,
             "pos": "MC",
-            "points": null,
+            "points": 1,
             "captain": false,
             "captainMultiplier": null,
             "played": false,
@@ -18293,7 +18293,7 @@
             "name": "José Giménez",
             "teamId": 6,
             "pos": "DF",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
@@ -18303,7 +18303,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 92,
+            "minutes": 93,
             "goalsConceded": 0
           },
           {
@@ -18365,7 +18365,7 @@
             "name": "Tyrhys Dolan",
             "teamId": 8,
             "pos": "MC",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
@@ -18556,7 +18556,7 @@
             "name": "Miguel Loureiro",
             "teamId": 6,
             "pos": "DF",
-            "points": null,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
@@ -18566,7 +18566,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 92,
+            "minutes": 93,
             "goalsConceded": 0
           },
           {
@@ -18682,7 +18682,7 @@
             "name": "Yeremay Hernández",
             "teamId": 6,
             "pos": "DL",
-            "points": null,
+            "points": 1,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
