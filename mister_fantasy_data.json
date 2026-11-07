@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 04:56",
-  "updatedAt": "2026-11-07T03:56:33Z",
+  "lastUpdated": "07/11/2026 14:03",
+  "updatedAt": "2026-11-07T13:03:56Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "8664919": {
-        "points": 9,
-        "totalPoints": 600,
+        "points": 10,
+        "totalPoints": 601,
         "position": 1,
         "playersPlayed": 2,
         "squadValue": 86397000,
@@ -17630,11 +17630,11 @@
             "name": "Kike Salas",
             "teamId": 17,
             "pos": "DF",
-            "points": 5,
+            "points": 6,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 5,
+            "basePoints": 6,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
