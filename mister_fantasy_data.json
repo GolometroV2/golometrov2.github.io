@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 22:27",
-  "updatedAt": "2026-11-07T21:27:32Z",
+  "lastUpdated": "07/11/2026 22:29",
+  "updatedAt": "2026-11-07T21:29:08Z",
   "managers": [
     {
       "id": "8663482",
@@ -17712,7 +17712,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           },
           {
@@ -17784,7 +17784,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           }
         ]
@@ -17939,7 +17939,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           },
           {
@@ -18166,7 +18166,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           },
           {
@@ -18238,7 +18238,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           }
         ]
@@ -18285,7 +18285,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           },
           {
@@ -18614,13 +18614,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 0
           },
           {
@@ -18865,7 +18865,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 2
           },
           {
@@ -19038,7 +19038,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 61,
+            "minutes": 63,
             "goalsConceded": 2
           },
           {
