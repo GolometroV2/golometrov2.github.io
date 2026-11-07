@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 20:45",
-  "updatedAt": "2026-11-07T19:45:52Z",
+  "lastUpdated": "07/11/2026 20:47",
+  "updatedAt": "2026-11-07T19:47:15Z",
   "managers": [
     {
       "id": "8663482",
@@ -18244,8 +18244,8 @@
         ]
       },
       "10303392": {
-        "points": 18,
-        "totalPoints": 690,
+        "points": 21,
+        "totalPoints": 693,
         "position": 4,
         "playersPlayed": 3,
         "squadValue": 104495000,
@@ -18265,9 +18265,9 @@
           "pos": "MC",
           "multiplier": 3,
           "played": true,
-          "points": 9,
-          "basePoints": 3,
-          "bonus": 6
+          "points": 12,
+          "basePoints": 4,
+          "bonus": 8
         },
         "players": [
           {
@@ -18347,11 +18347,11 @@
             "name": "Moi Gómez",
             "teamId": 50,
             "pos": "MC",
-            "points": 9,
+            "points": 12,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
