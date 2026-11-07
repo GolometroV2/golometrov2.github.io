@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "07/11/2026 19:49",
-  "updatedAt": "2026-11-07T18:49:24Z",
+  "lastUpdated": "07/11/2026 19:56",
+  "updatedAt": "2026-11-07T18:56:05Z",
   "managers": [
     {
       "id": "8663482",
@@ -17730,7 +17730,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -17766,7 +17766,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -18088,13 +18088,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -18357,7 +18357,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -18620,7 +18620,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -18829,7 +18829,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -18925,8 +18925,8 @@
         ]
       },
       "8658507": {
-        "points": 8,
-        "totalPoints": 527,
+        "points": 11,
+        "totalPoints": 530,
         "position": 7,
         "playersPlayed": 5,
         "squadValue": 63462000,
@@ -18996,13 +18996,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 4,
+            "basePoints": 5,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -19110,7 +19110,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
@@ -19128,7 +19128,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 58,
+            "minutes": 64,
             "goalsConceded": 0
           },
           {
