@@ -2816,10 +2816,10 @@ function detalleEq(m, hp) {
   const dM = m.squadValue - m.squadPrev;
   // titularidad en su próximo partido (mezcla de Futbol Fantasy y Analítica Fantasy, alineaciones.json)
   const titDe = p => { const e = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], k = e && Object.keys(e).sort((a, b) => a - b)[0]; return k ? { gw: k, ff: e[k] } : null; };
-  const chipTit = p => { const x = titDe(p); if (!x) return "";
+  const chipTit = p => { const x = titDe(p); if (!x || (!iaOk && !x.ff.conf)) return "";   // el % de titular es previsión: solo con PIN (el once confirmado es un hecho)
     const v = x.ff.p, nv = v >= 0.7 ? "ok" : v >= 0.4 ? "duda" : "no";
     return `<span class="titc titc-${nv}" title="${esc(textoTit(x.ff))}">J${esc(x.gw)} · ${x.ff.conf ? (v >= 0.5 ? "titular ✔" : "suplente") : Math.round(v * 100) + " % titular"}</span>`; };
-  const enDuda = m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
+  const enDuda = !iaOk ? 0 : m.players.filter(p => { const x = titDe(p); return x && x.ff.p < 0.5; }).length;
   const ord = { delta: (a, b) => b.t.d - a.t.d, valor: (a, b) => b.p.value - a.p.value,
     alerta: (a, b) => RANGO[a.t.k] - RANGO[b.t.k] || b.p.value - a.p.value }[eqOrden];
   const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
