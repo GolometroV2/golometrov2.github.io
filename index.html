@@ -503,9 +503,10 @@ code{color:var(--accFg)}
 .esq i{display:block;height:64px;border-radius:var(--r-m);background:linear-gradient(90deg,var(--panel) 25%,var(--line) 50%,var(--panel) 75%);background-size:200% 100%;animation:esq 1.3s linear infinite}
 .esq i:nth-child(2){height:48px}.esq i:nth-child(3){height:80px}
 @keyframes esq{to{background-position:-200% 0}}
-.msel{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;margin:0 0 2px}
+.msel{display:grid;grid-template-columns:repeat(var(--n),minmax(44px,1fr));gap:4px;margin:0 0 2px;overflow-x:auto;scrollbar-width:none}
+.msel::-webkit-scrollbar{display:none}
 .msel-b{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:var(--tap);padding:6px 0 4px;border-radius:var(--r-m);min-width:0}
-.msel-b .av{width:min(40px,calc((min(100vw,680px) - 32px) / var(--n) - 8px));height:auto;aspect-ratio:1;font-size:13px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s,opacity .15s;opacity:.55}
+.msel-b .av{width:max(32px,min(40px,calc((min(100vw,680px) - 32px) / var(--n) - 8px)));height:auto;aspect-ratio:1;font-size:13px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s,opacity .15s;opacity:.55}
 .msel-t{font-size:11px;font-weight:600;color:var(--mut);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .msel-b:hover .av{opacity:.85}
 .msel-b.on .av{opacity:1;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--acc);transform:scale(1.06)}
