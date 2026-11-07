@@ -2096,7 +2096,7 @@ function pintarComparador() {
     const fe = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], fk = fe && Object.keys(fe).sort()[0], ff = fk ? fe[fk] : null;
     if (!g) return "Sin partido próximo";
     const casa = g.home === p.teamId;
-    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;
+    return `${casa ? "vs" : "@"} <b>${esc(nomEq[casa ? g.away : g.home] || "")}</b>${ff && iaOk ? `<br><small>${textoTit(ff, true)}</small>` : ""}`;   // probabilidad de titular = previsión: solo con PIN
   };
   cont.innerHTML = `<div class="gh"><h2>Comparador de jugadores</h2></div>
     <datalist id="cp-lista">${todos.sort((a, b) => b.points - a.points).map(p => `<option value="${esc(p.name)}"></option>`).join("")}</datalist>
@@ -2104,7 +2104,7 @@ function pintarComparador() {
     <div class="du-head">${cab(A)}<div class="du-mc"><small>Valen</small><small><b style="font-size:15px">${merEur(A.value)} · ${merEur(B.value)}</b></small><small>Cláusulas ${A.clause ? merEur(A.clause) : "—"} · ${B.clause ? merEur(B.clause) : "—"}</small></div>${cab(B)}</div>
     <div class="du-est">${est}</div>
     <div class="du-est"><div class="du-e" style="grid-template-columns:1fr 1fr;text-align:center;gap:8px"><span>${sig(A)}</span><span>${sig(B)}</span></div></div>
-    <p class="note">Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF).</p>
+    <p class="note">${iaOk ? "Próximo partido y probabilidad de ser titular: media de Futbol Fantasy (FF) y Analítica Fantasy (AF)." : "Próximo partido de cada jugador."}</p>
     <p class="note">Últimas 5 jornadas · ${esc(A.name)}: ${rac(A)}<br>${esc(B.name)}: ${rac(B)}</p>
     <p class="note">Escribe o elige otro nombre en cada casilla. «Puntos por M» = puntos de la temporada dividido entre el valor en millones. ${iaOk ? "«Puntos esperados» = lo que se espera que sume en su próximo partido (su nivel por su probabilidad de jugar)." : ""}</p>`;
 }
