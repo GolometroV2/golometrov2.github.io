@@ -2825,7 +2825,7 @@ function detalleEq(m, hp) {
   const sorts = [["delta", "Cambio diario"], ["valor", "Valor"], ["alerta", "Alertas primero"]]
     .map(([k, t]) => `<button class="pill ${eqOrden === k ? "on" : ""}" data-es="${k}">${t}</button>`).join("");
   const filas = L.sort(ord).map(({ p, t, h }) => {
-    const eta = t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
+    const eta = iaOk && t.eta && t.eta <= 30 ? (t.k === "sube_frena" ? ` · empezará a bajar en ~${t.eta} d` : ` · podría recuperarse en ~${t.eta} d`) : "";
     const est = ESTADO(p.status), dl = p.value - p.prev;
     return `<li class="jp"><div class="jp-main">
       <div class="jp-side">${img(p.teamLogo, "shield")}<span class="jp-pos" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span><span class="jp-pts" title="Puntos de la temporada">${esc(p.points ?? 0)}</span></div>
