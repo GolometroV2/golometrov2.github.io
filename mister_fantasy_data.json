@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 20:30",
-  "updatedAt": "2026-11-08T19:30:51Z",
+  "lastUpdated": "08/11/2026 20:32",
+  "updatedAt": "2026-11-08T19:32:43Z",
   "managers": [
     {
       "id": "8663482",
@@ -17790,8 +17790,8 @@
         ]
       },
       "13179902": {
-        "points": 62,
-        "totalPoints": 722,
+        "points": 63,
+        "totalPoints": 723,
         "position": 2,
         "playersPlayed": 9,
         "squadValue": 86982000,
@@ -17911,11 +17911,11 @@
             "name": "Ilaix Moriba",
             "teamId": 5,
             "pos": "MC",
-            "points": 3,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 56,
-        "totalPoints": 679,
+        "points": 57,
+        "totalPoints": 680,
         "position": 3,
         "playersPlayed": 10,
         "squadValue": 83892000,
@@ -18066,11 +18066,11 @@
             "name": "Ifeanyi Ndukwe",
             "teamId": 12,
             "pos": "DF",
-            "points": 2,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18244,8 +18244,8 @@
         ]
       },
       "8664914": {
-        "points": 41,
-        "totalPoints": 500,
+        "points": 42,
+        "totalPoints": 501,
         "position": 4,
         "playersPlayed": 8,
         "squadValue": 55122000,
@@ -18698,8 +18698,8 @@
         ]
       },
       "8658507": {
-        "points": 36,
-        "totalPoints": 555,
+        "points": 35,
+        "totalPoints": 554,
         "position": 6,
         "playersPlayed": 9,
         "squadValue": 63462000,
