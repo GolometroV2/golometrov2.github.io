@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 17:05",
-  "updatedAt": "2026-11-08T16:05:16Z",
+  "lastUpdated": "08/11/2026 17:21",
+  "updatedAt": "2026-11-08T16:21:53Z",
   "managers": [
     {
       "id": "8663482",
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 53,
-        "totalPoints": 676,
+        "points": 52,
+        "totalPoints": 675,
         "position": 3,
         "playersPlayed": 8,
         "squadValue": 83892000,
@@ -18112,7 +18112,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
@@ -18148,7 +18148,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
@@ -18602,7 +18602,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
