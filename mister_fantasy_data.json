@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 19:21",
-  "updatedAt": "2026-11-08T18:21:46Z",
+  "lastUpdated": "08/11/2026 19:40",
+  "updatedAt": "2026-11-08T18:40:16Z",
   "managers": [
     {
       "id": "8663482",
@@ -17622,7 +17622,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 48,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
@@ -17921,7 +17921,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 45,
             "goalsConceded": 0
           },
           {
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 56,
-        "totalPoints": 679,
+        "points": 57,
+        "totalPoints": 680,
         "position": 3,
         "playersPlayed": 9,
         "squadValue": 83892000,
@@ -18076,7 +18076,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 45,
             "goalsConceded": 0
           },
           {
@@ -18102,11 +18102,11 @@
             "name": "Jon Martin",
             "teamId": 16,
             "pos": "DF",
-            "points": 3,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18244,10 +18244,10 @@
         ]
       },
       "8664914": {
-        "points": 41,
-        "totalPoints": 500,
+        "points": 43,
+        "totalPoints": 502,
         "position": 4,
-        "playersPlayed": 7,
+        "playersPlayed": 8,
         "squadValue": 55122000,
         "formation": "1-4-3-3",
         "goals": 1,
@@ -18265,9 +18265,9 @@
           "pos": "DL",
           "multiplier": 3,
           "played": true,
-          "points": 24,
-          "basePoints": 8,
-          "bonus": 16
+          "points": 27,
+          "basePoints": 9,
+          "bonus": 18
         },
         "players": [
           {
@@ -18279,13 +18279,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 45,
             "goalsConceded": 0
           },
           {
@@ -18455,11 +18455,11 @@
             "name": "Orri Óskarsson",
             "teamId": 16,
             "pos": "DL",
-            "points": 24,
+            "points": 27,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 8,
+            "basePoints": 9,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
@@ -18471,8 +18471,8 @@
         ]
       },
       "10303392": {
-        "points": 41,
-        "totalPoints": 713,
+        "points": 42,
+        "totalPoints": 714,
         "position": 5,
         "playersPlayed": 7,
         "squadValue": 104495000,
@@ -18548,7 +18548,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 48,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
@@ -18592,11 +18592,11 @@
             "name": "Jorge de Frutos",
             "teamId": 14,
             "pos": "MC",
-            "points": 4,
+            "points": 5,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 4,
+            "basePoints": 5,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18698,8 +18698,8 @@
         ]
       },
       "8658507": {
-        "points": 36,
-        "totalPoints": 555,
+        "points": 37,
+        "totalPoints": 556,
         "position": 6,
         "playersPlayed": 9,
         "squadValue": 63462000,
@@ -18859,13 +18859,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 1,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 44,
+            "minutes": 45,
             "goalsConceded": 0
           },
           {
@@ -18966,7 +18966,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 48,
+            "minutes": 47,
             "goalsConceded": 0
           },
           {
