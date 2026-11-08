@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-08T04:04:00Z",
+"updatedAt": "2026-11-08T19:24:16Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-08T19:24:16Z",
+"playerId": "58980",
+"name": "Valentin Rosier",
+"from": "8663482",
+"to": "10303392",
+"tipo": "clausula",
+"valor": 1164000,
+"listado": null,
+"precio": 2227500,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-08T04:04:00Z",
 "playerId": "71639",
