@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 20:32",
-  "updatedAt": "2026-11-08T19:32:43Z",
+  "lastUpdated": "08/11/2026 20:49",
+  "updatedAt": "2026-11-08T19:49:30Z",
   "managers": [
     {
       "id": "8663482",
@@ -17790,8 +17790,8 @@
         ]
       },
       "13179902": {
-        "points": 63,
-        "totalPoints": 723,
+        "points": 64,
+        "totalPoints": 724,
         "position": 2,
         "playersPlayed": 9,
         "squadValue": 86982000,
@@ -17911,17 +17911,17 @@
             "name": "Ilaix Moriba",
             "teamId": 5,
             "pos": "MC",
-            "points": 4,
+            "points": 5,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 4,
+            "basePoints": 5,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 93,
+            "minutes": 90,
             "goalsConceded": 0
           },
           {
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 57,
-        "totalPoints": 680,
+        "points": 58,
+        "totalPoints": 681,
         "position": 3,
         "playersPlayed": 10,
         "squadValue": 83892000,
@@ -18066,11 +18066,11 @@
             "name": "Ifeanyi Ndukwe",
             "teamId": 12,
             "pos": "DF",
-            "points": 3,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18220,7 +18220,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 48,
+            "minutes": 45,
             "goalsConceded": 0
           },
           {
@@ -18285,7 +18285,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 93,
+            "minutes": 90,
             "goalsConceded": 0
           },
           {
@@ -18698,8 +18698,8 @@
         ]
       },
       "8658507": {
-        "points": 35,
-        "totalPoints": 554,
+        "points": 36,
+        "totalPoints": 555,
         "position": 6,
         "playersPlayed": 9,
         "squadValue": 63462000,
@@ -18855,11 +18855,11 @@
             "name": "Thiago Fernández",
             "teamId": 12,
             "pos": "MC",
-            "points": 1,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 1,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18925,8 +18925,8 @@
         ]
       },
       "8663449": {
-        "points": 23,
-        "totalPoints": 586,
+        "points": 24,
+        "totalPoints": 587,
         "position": 7,
         "playersPlayed": 5,
         "squadValue": 93208000,
@@ -18956,11 +18956,11 @@
             "name": "Péter Gulácsi",
             "teamId": 20,
             "pos": "PT",
-            "points": 2,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
