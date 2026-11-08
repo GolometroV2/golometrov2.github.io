@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 19:05",
-  "updatedAt": "2026-11-08T18:05:05Z",
+  "lastUpdated": "08/11/2026 19:21",
+  "updatedAt": "2026-11-08T18:21:46Z",
   "managers": [
     {
       "id": "8663482",
@@ -17615,14 +17615,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 48,
             "goalsConceded": 0
           },
           {
@@ -17790,8 +17790,8 @@
         ]
       },
       "13179902": {
-        "points": 60,
-        "totalPoints": 720,
+        "points": 61,
+        "totalPoints": 721,
         "position": 2,
         "playersPlayed": 8,
         "squadValue": 86982000,
@@ -17914,14 +17914,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 44,
             "goalsConceded": 0
           },
           {
@@ -18017,8 +18017,8 @@
         ]
       },
       "8663482": {
-        "points": 55,
-        "totalPoints": 678,
+        "points": 56,
+        "totalPoints": 679,
         "position": 3,
         "playersPlayed": 9,
         "squadValue": 83892000,
@@ -18069,14 +18069,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 44,
             "goalsConceded": 0
           },
           {
@@ -18244,8 +18244,8 @@
         ]
       },
       "8664914": {
-        "points": 40,
-        "totalPoints": 499,
+        "points": 41,
+        "totalPoints": 500,
         "position": 4,
         "playersPlayed": 7,
         "squadValue": 55122000,
@@ -18278,14 +18278,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 44,
             "goalsConceded": 0
           },
           {
@@ -18471,8 +18471,8 @@
         ]
       },
       "10303392": {
-        "points": 39,
-        "totalPoints": 711,
+        "points": 41,
+        "totalPoints": 713,
         "position": 5,
         "playersPlayed": 7,
         "squadValue": 104495000,
@@ -18541,14 +18541,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 48,
             "goalsConceded": 0
           },
           {
@@ -18858,14 +18858,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 1,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 44,
             "goalsConceded": 0
           },
           {
@@ -18959,14 +18959,14 @@
             "points": null,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 1,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
+            "minutes": 48,
             "goalsConceded": 0
           },
           {
