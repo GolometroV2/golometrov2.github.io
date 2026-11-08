@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "08/11/2026 21:24",
-  "updatedAt": "2026-11-08T20:24:49Z",
+  "lastUpdated": "08/11/2026 21:41",
+  "updatedAt": "2026-11-08T20:41:29Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "8664919": {
-        "points": 71,
-        "totalPoints": 662,
+        "points": 75,
+        "totalPoints": 666,
         "position": 1,
         "playersPlayed": 11,
         "squadValue": 86397000,
@@ -17790,8 +17790,8 @@
         ]
       },
       "13179902": {
-        "points": 67,
-        "totalPoints": 727,
+        "points": 66,
+        "totalPoints": 726,
         "position": 2,
         "playersPlayed": 10,
         "squadValue": 86982000,
@@ -18244,8 +18244,8 @@
         ]
       },
       "10303392": {
-        "points": 49,
-        "totalPoints": 721,
+        "points": 55,
+        "totalPoints": 727,
         "position": 4,
         "playersPlayed": 11,
         "squadValue": 104495000,
@@ -18471,8 +18471,8 @@
         ]
       },
       "8663449": {
-        "points": 47,
-        "totalPoints": 610,
+        "points": 52,
+        "totalPoints": 615,
         "position": 5,
         "playersPlayed": 10,
         "squadValue": 93208000,
@@ -18698,8 +18698,8 @@
         ]
       },
       "8664914": {
-        "points": 43,
-        "totalPoints": 502,
+        "points": 44,
+        "totalPoints": 503,
         "position": 6,
         "playersPlayed": 8,
         "squadValue": 55122000,
