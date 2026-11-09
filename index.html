@@ -1329,6 +1329,7 @@ function ir(sec) {
   $("#eq").hidden = sec !== "eq";
   $("#cap").hidden = sec !== "cap";
   $("#mer").hidden = sec !== "mer";
+  if (sec !== "eq") EQ_CUENTA = 0;   // la cuenta de Equipos vuelve a empezar al entrar otra vez
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
   pintarAviso();
@@ -5429,6 +5430,23 @@ function pintarEquipos() {
   const sel = ms.find(x => x.id === eqSel);
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
     ${pills}${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
+  if (!sel) cuentaEquipos(ms);
+}
+// el valor de plantilla de cada equipo sube desde 0 al abrir el resumen de la liga (el valor final no cambia; respeta prefers-reduced-motion)
+let EQ_CUENTA = 0;   // instante en que empezó la cuenta (0 = aún no); si algo repinta a mitad, continúa desde el mismo punto
+function cuentaEquipos(ms) {
+  const dur = 800, ahora0 = performance.now();
+  if (seccion !== "eq" || (EQ_CUENTA && ahora0 - EQ_CUENTA > dur)) return;
+  if (!EQ_CUENTA) EQ_CUENTA = ahora0;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const t0 = EQ_CUENTA, orden = ms.slice().sort((a, b) => b.squadValue - a.squadValue);
+  document.querySelectorAll("#eq .rank .pts b").forEach((el, k) => {
+    const m = orden[k], fin = m && m.squadValue, txt = el.textContent;
+    if (!fin || fin < 1e5 || txt !== eur(fin)) return;
+    const paso = ahora => { if (!el.isConnected) return; const q = Math.min(1, (ahora - t0) / dur), e = 1 - Math.pow(1 - q, 3);
+      el.textContent = q < 1 ? eur(fin * e) : txt; if (q < 1) requestAnimationFrame(paso); };
+    paso(ahora0);
+  });
 }
 
 /* ---------- Lista principal ---------- */
