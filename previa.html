@@ -1341,6 +1341,7 @@ function ir(sec) {
   const elT = document.getElementById(sec === "clas" ? "app" : sec);   // transición suave entre pestañas
   if (elT) { elT.classList.remove("tab-entra"); void elT.offsetWidth; elT.classList.add("tab-entra"); }
   if (sec !== "eq") EQ_CUENTA = 0;   // la cuenta de Equipos vuelve a empezar al entrar otra vez
+  KPI_T0 = 0;   // las cifras de Capitán y Mercado vuelven a contar al entrar
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
   pintarAviso();
@@ -5443,6 +5444,28 @@ function pintarEquipos() {
     ${pills}${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
   if (!sel) cuentaEquipos(ms);
 }
+// las cifras grandes de Capitán y Mercado (+2,4 puntos extra, 85 %, ×1,5…) suben desde 0 al entrar en la pestaña;
+// el valor final es el mismo texto de siempre (solo se anima el contenido de números sencillos; respeta prefers-reduced-motion)
+let KPI_T0 = 0;
+function cuentaKpi(sec) {
+  const dur = 700, ahora0 = performance.now();
+  if (seccion !== sec || (KPI_T0 && ahora0 - KPI_T0 > dur)) return;
+  if (!KPI_T0) KPI_T0 = ahora0;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const t0 = KPI_T0;
+  document.querySelectorAll(`#${sec} .ch-kpi b, #${sec} .jp-right b`).forEach(el => {
+    const txt = el.textContent, m = /^([+\u2212×-]?)(\d+(?:,(\d+))?)([ \u00a0]?%)?$/.exec(txt);
+    if (!m) return;
+    const dec = m[3] ? m[3].length : 0, fin = parseFloat(m[2].replace(",", "."));
+    if (!(fin > 0)) return;
+    const paso = ahora => { if (!el.isConnected) return; const q = Math.min(1, (ahora - t0) / dur), e = 1 - Math.pow(1 - q, 3);
+      el.textContent = q < 1 ? m[1] + (fin * e).toFixed(dec).replace(".", ",") + (m[4] || "") : txt; if (q < 1) requestAnimationFrame(paso); };
+    paso(ahora0);
+  });
+}
+{ const pc0 = pintarCapitan, pm0 = pintarMercado;
+  pintarCapitan = function () { pc0.apply(this, arguments); cuentaKpi("cap"); };
+  pintarMercado = function () { pm0.apply(this, arguments); cuentaKpi("mer"); }; }
 // el valor de plantilla de cada equipo sube desde 0 al abrir el resumen de la liga (el valor final no cambia; respeta prefers-reduced-motion)
 let EQ_CUENTA = 0;   // instante en que empezó la cuenta (0 = aún no); si algo repinta a mitad, continúa desde el mismo punto
 function cuentaEquipos(ms) {
