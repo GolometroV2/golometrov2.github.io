@@ -43,6 +43,7 @@ El dueño quiere herramientas «que sean una locura estéticamente», al nivel d
 - Solo HTML, CSS, SVG y Canvas propios: sin librerías, sin fuentes ni imágenes de internet. Fotos y escudos de `fotos/`; si falta una foto, iniciales o camiseta del color del equipo (`esCamiseta`).
 - Mobile-first (360/390/420 px y escritorio) y fluido en el móvil: anima `transform` y `opacity`, para lo que no se ve y respeta siempre `prefers-reduced-motion`. Sin scroll horizontal de la página.
 - Paleta verde del sistema de diseño, sin amarillo de acento. Lo estadístico, para todos; previsiones y consejos, con `soloIA`.
+- Las alineaciones se ven siempre en el campo 3D (`htmlCampo3D`, decisión del dueño 09/11): no vuelvas a poner selector Plano/3D, ni giro ni diagonal. Los puntos de una jornada (y los esperados) llevan los colores de Mister (`tramoPts`, `colPts`, clases `mp-*`); no inventes otra escala.
 - Reutiliza lo que ya existe en vez de duplicarlo: `htmlCampo3D` (campo en 3D), el estudio de imágenes (`ES_*`, `abrirEstudio`, láminas de 1080×1350; para una lámina nueva añade su lista a `ES_SETS` y su dato a `EST_DAT`), las historias (`wrTodos`, `abrirWrapped`), el cromo (`cromoDatos`, `abrirCromo`), `cara()`, `fotoDe()`.
 - Mismos números que la vista normal: compruébalo con capturas antes y después.
 
