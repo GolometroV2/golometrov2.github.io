@@ -358,7 +358,14 @@ code{color:var(--accFg)}
 .ct-nav button{width:44px;height:44px;border-radius:50%;background:var(--panel2);font-size:22px;line-height:1;color:var(--txt)}
 .ct-nav button:disabled{opacity:.3;cursor:default}
 .ct-hero{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r-l);background:linear-gradient(120deg,var(--accBg),transparent 75%);box-shadow:inset 0 0 0 1px var(--acc)}
+.ct-hero{position:relative;overflow:hidden}
 .ct-hero .av{width:52px;height:52px;font-size:17px}
+.ct-copa{flex:none;width:34px;height:40px;transform-origin:50% 100%;animation:copaEnt .7s cubic-bezier(.2,1.4,.4,1) .15s both}
+.ct-copa .brillo{animation:copaBrillo 3.2s ease-in-out 1s infinite}
+.ct-hero::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,#ffffff2e,transparent);transform:translateX(-120%) skewX(-18deg);animation:heroBrillo 3.2s ease-in-out .9s infinite;pointer-events:none}
+@keyframes copaEnt{from{transform:translateY(14px) scale(.3) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes copaBrillo{0%,70%,100%{opacity:.35}85%{opacity:1}}
+@keyframes heroBrillo{0%{transform:translateX(-120%) skewX(-18deg)}45%,100%{transform:translateX(380%) skewX(-18deg)}}
 .ct-x{flex:1;min-width:0;display:flex;flex-direction:column}
 .ct-x small{font-size:11.5px;color:var(--mut);font-weight:600}
 .ct-x b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -2349,7 +2356,7 @@ function pintarCronica() {
       return `${S.rank[k][x]}. ${o.m.name} · *${S.cum[x][k]}* (+${S.pts[x][k]})${dl > 0 ? ` ▲${dl}` : dl < 0 ? ` ▼${-dl}` : ""}`; }),
     "_golometrov2.github.io_"].filter(l => l !== "").join("\n").replace("*📊 Clasificación*", "\n*📊 Clasificación*").replace("\n_golometrov2", "\n\n_golometrov2");
   cont.innerHTML = `${nav}
-    <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
+    <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button></div>
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
