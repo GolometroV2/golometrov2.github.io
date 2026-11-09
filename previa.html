@@ -952,77 +952,75 @@ button.lg{min-height:44px}
 .est-b .btn-comp{margin-top:0;color:var(--txt)}
 .est-b .btn-wa,.est-b .btn-comp{min-height:48px;font-size:15px;border:0;cursor:pointer}
 body.est-abierto{overflow:hidden}
-/* Alineación en 3D: estadio en CSS 3D (sin librerías) */
-@property --rz{syntax:"<angle>";inherits:true;initial-value:0deg}
-@property --rx{syntax:"<angle>";inherits:true;initial-value:50deg}
+/* Alineación en 3D: césped en perspectiva (CSS 3D) y jugadores nítidos encima */
+@property --ax{syntax:"<angle>";inherits:true;initial-value:34deg}
 .v3d-t{display:inline-flex;gap:4px;padding:3px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);margin:0 0 10px}
 .v3d-t button{min-height:38px;min-width:68px;padding:0 14px;border-radius:999px;font-weight:800;font-size:13px;color:var(--mut);background:transparent;border:0;cursor:pointer}
 .v3d-t button.on{background:var(--acc);color:var(--accTxt)}
-.c3d{position:relative;width:100%;max-width:470px;margin:0 auto;aspect-ratio:3/4.3;border-radius:var(--r-l);overflow:hidden;isolation:isolate;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;border:1px solid #2fd46e40;
-  background:radial-gradient(60% 30% at 50% 0%,#2c5a3e 0%,#10261a 55%,#050b08 100%) #050b08}
-.c3d img{-webkit-user-drag:none;pointer-events:none}
-.c3d.girando{cursor:grabbing}
-.c3d::after{content:"";position:absolute;inset:auto 0 0;height:22%;z-index:2;pointer-events:none;background:linear-gradient(#0000,#030806e6)}
-.c3d-luz{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
-  background:radial-gradient(5px 5px at 8% 3%,#fff,#0000),radial-gradient(5px 5px at 92% 3%,#fff,#0000),radial-gradient(40px 30px at 8% 3%,#dfffe955,#0000),radial-gradient(40px 30px at 92% 3%,#dfffe955,#0000),
-  linear-gradient(152deg,#0000 6%,#dfffe91c 14%,#0000 34%),linear-gradient(208deg,#0000 6%,#dfffe91c 14%,#0000 34%),radial-gradient(30% 9% at 50% 0%,#ffffff1f,#0000)}
-.c3d-esc{position:absolute;inset:0;perspective:760px;perspective-origin:50% 8%}
-.c3d-campo{position:absolute;left:6%;right:6%;top:11%;height:82%;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateZ(var(--rz));animation:c3dVaiven 12s ease-in-out infinite alternate}
-.c3d.tocado .c3d-campo{animation:none}
-@keyframes c3dVaiven{from{--rz:-9deg}to{--rz:9deg}}
-.c3d-hierba{position:absolute;inset:0;overflow:hidden;
-  background:radial-gradient(60% 45% at 50% 55%,#ffffff14,#0000),repeating-linear-gradient(90deg,#0000 0 12.5%,#00000010 12.5% 25%),repeating-linear-gradient(180deg,#2a8a43 0 7.7%,#227a3b 7.7% 15.4%);
-  box-shadow:inset 0 0 0 2.5px #ffffffc8,0 0 0 16px #1b5c31,0 0 0 17px #2fd46e40}
-.c3d-hierba i{position:absolute;border:2.5px solid #ffffffb8}
-.c3d-area{left:20.4%;right:20.4%;bottom:-2.5px;height:31.4%;border-bottom:0!important}
-.c3d-area2{left:36.5%;right:36.5%;bottom:-2.5px;height:10.5%;border-bottom:0!important}
+.c3d{container-type:inline-size;position:relative;width:100%;max-width:520px;margin:0 auto;aspect-ratio:4/5;border-radius:var(--r-l);overflow:hidden;isolation:isolate;user-select:none;-webkit-user-select:none;color-scheme:dark;
+  background:#030a06;box-shadow:inset 0 0 0 1px #2fd46e33}
+.c3d img{-webkit-user-drag:none}
+/* cielo de noche, dos focos y la grada al fondo, desenfocada como en una foto de estadio */
+.c3d-cielo{position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%,#0f3020 0%,#06140c 45%,#030a06 75%)}
+.c3d-foco{position:absolute;top:-14cqw;width:60cqw;height:60cqw;border-radius:50%;background:radial-gradient(closest-side,#e6fff0 0%,#b8ffd455 8%,#7ee6a522 30%,#0000 70%)}
+.c3d-foco.iz{left:-26cqw}.c3d-foco.de{right:-26cqw}
+.c3d-grada{position:absolute;left:-5cqw;right:-5cqw;top:8cqw;height:22cqw;filter:blur(1.2cqw);opacity:.9;
+  background:radial-gradient(1.4cqw 1.4cqw at 12% 30%,#d9ffe8aa,#0000),radial-gradient(1.2cqw 1.2cqw at 31% 22%,#ffffff88,#0000),radial-gradient(1.6cqw 1.6cqw at 52% 34%,#c6ffdd99,#0000),
+  radial-gradient(1.2cqw 1.2cqw at 70% 24%,#ffffff88,#0000),radial-gradient(1.4cqw 1.4cqw at 88% 32%,#d9ffe8aa,#0000),
+  linear-gradient(180deg,#0000 0%,#0b2116 35%,#0a1b12 70%,#07130d 100%)}
+/* el césped: una sola pieza inclinada, con franjas de corte, líneas reglamentarias y luz de focos */
+.c3d-esc{position:absolute;inset:0;perspective:180cqw;perspective-origin:50% -20cqw}
+.c3d-campo{position:absolute;left:4cqw;width:92cqw;top:24cqw;height:86cqw;transform:rotateX(var(--ax,34deg)) rotateY(var(--ay,0deg));
+  background:repeating-linear-gradient(180deg,#2f9a4c 0 8.333%,#28893f 8.333% 16.666%);
+  box-shadow:0 0 0 2.6cqw #1d6b36,0 0 0 2.9cqw #2fd46e40,0 0 12cqw 2cqw #2fd46e2a}
+.c3d-campo::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,#ffffff07 0 12.5%,#0000 12.5% 25%)}
+.c3d-campo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#02100799 0%,#0000 38%),radial-gradient(70% 55% at 50% 62%,#ffffff1e,#0000 70%);
+  box-shadow:inset 0 0 0 .55cqw #ffffffd0}
+.c3d-campo i{position:absolute;border:.55cqw solid #ffffffc8}
+.c3d-area{left:20.35%;right:20.35%;bottom:0;height:31.4%;border-bottom:0!important}
+.c3d-area2{left:36.5%;right:36.5%;bottom:0;height:10.5%;border-bottom:0!important}
 .c3d-arco{left:36.5%;width:27%;height:34.9%;bottom:3.55%;border-radius:50%;clip-path:inset(0 0 79.8% 0)}
 .c3d-circ{left:36.5%;width:27%;height:34.9%;top:-17.45%;border-radius:50%}
-.c3d-hierba .c3d-pto{border:0;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#ffffffd0;left:50%}
-.c3d-led{position:absolute;left:0;right:0;bottom:calc(100% + 16px);height:5.5%;transform-origin:50% 100%;transform:rotateX(-90deg);overflow:hidden;display:flex;align-items:center;
-  background:linear-gradient(#061209,#0b1f12);border-top:1px solid #2fd46e66;box-shadow:0 0 18px #2fd46e55}
-.c3d-led span{display:block;white-space:nowrap;font-family:var(--f-disp);font-weight:800;font-size:12px;letter-spacing:.06em;color:#5cf096;text-shadow:0 0 8px #2fd46ecc;animation:c3dLed 22s linear infinite}
-@keyframes c3dLed{to{transform:translateX(-50%)}}
-.c3d-grada{position:absolute;left:-8%;right:-8%;bottom:calc(100% + 16px);height:48%;transform-origin:50% 100%;transform:rotateX(-58deg);
-  background:radial-gradient(circle at 2px 2px,#d7e6dc55 1px,#0000 1.6px) 0 0/7px 6px,radial-gradient(circle at 2px 2px,#2fd46e70 1px,#0000 1.6px) 3px 1px/13px 9px,radial-gradient(circle at 2px 2px,#9aa8a040 1px,#0000 1.6px) 1px 3px/9px 8px,
-  repeating-linear-gradient(180deg,#0000 0 13px,#000000a0 13px 15px),linear-gradient(#08120d,#132219 60%,#1a2c21)}
-.c3d-grada::after{content:"";position:absolute;inset:0;background:linear-gradient(#050b08 0%,#050b0800 55%)}
-.c3d-lado{position:absolute;top:-6%;height:106%;width:34%;--g:90deg;
-  background:radial-gradient(circle at 2px 2px,#c8d6cd4a 1px,#0000 1.6px) 0 0/7px 6px,radial-gradient(circle at 2px 2px,#2fd46e66 1px,#0000 1.6px) 3px 1px/13px 9px,repeating-linear-gradient(var(--g),#0000 0 13px,#000000a0 13px 15px),linear-gradient(var(--g),#050b08,#16271d)}
-.c3d-lado.iz{right:calc(100% + 16px);transform-origin:100% 50%;transform:rotateY(60deg)}
-.c3d-lado.de{left:calc(100% + 16px);transform-origin:0 50%;transform:rotateY(-60deg);--g:270deg}
-.c3d-j{position:absolute;width:0;height:0;transform-style:preserve-3d}
-.c3d-s{position:absolute;left:-26px;top:-9px;width:52px;height:18px;border-radius:50%;background:radial-gradient(closest-side,#000b,#0000)}
-.c3d-j.cap .c3d-s{left:-30px;top:-12px;width:60px;height:24px;background:radial-gradient(closest-side,#0000 55%,#5cf096 62%,#2fd46e55 75%,#0000);animation:c3dAro 1.8s ease-out infinite}
-@keyframes c3dAro{from{transform:scale(.6);opacity:1}to{transform:scale(1.5);opacity:0}}
-.c3d-b{position:absolute;left:-44px;bottom:0;width:88px;transform-origin:50% 100%;transform:rotateZ(calc(var(--rz) * -1)) rotateX(calc(var(--rx) * -1))}
-.c3d-in{display:flex;flex-direction:column;align-items:center;position:relative;padding-top:11px;animation:c3dSale .7s cubic-bezier(.2,1.5,.4,1) both;animation-delay:var(--d,0s)}
-@keyframes c3dSale{from{transform:translateY(40px) scale(.2);opacity:0}to{transform:none;opacity:1}}
-.c3d-f{position:relative;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#2f5241,#0c1712);box-shadow:0 0 0 2px #ffffffd8,0 10px 18px #000b}
-.c3d-f i{font-style:normal;font-weight:800;color:#dfeee5;font-size:15px}
-.c3d-im{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 20%}
-.c3d-e{position:absolute;right:-6px;bottom:-4px;width:19px;height:19px;z-index:2;filter:drop-shadow(0 1px 2px #000)}
-.c3d-n{position:relative;z-index:2;margin-top:-7px;max-width:88px;padding:2px 7px;border-radius:7px;background:#04100bed;color:#f2fbf5;font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 3px 8px #0009}
-.c3d-x{margin-top:2px;max-width:88px;font-size:9.5px;color:#d8ecdf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px #000,0 0 6px #000}
-.c3d-p{position:absolute;top:0;right:6px;z-index:3;min-width:21px;height:19px;padding:0 5px;border-radius:999px;background:var(--acc);color:var(--accTxt);font-size:11.5px;font-weight:900;display:grid;place-items:center;box-shadow:0 0 12px #2fd46e88}
-.c3d-p.fuego{background:#eafff1;color:#06331a;box-shadow:0 0 0 2px var(--acc),0 0 18px 4px #2fd46ecc}
-.c3d-p.neg{background:#ff6b6b;color:#2a0606;box-shadow:0 0 12px #ff6b6b88}
-.c3d-c{position:absolute;top:0;left:6px;z-index:3;height:19px;padding:0 5px;border-radius:999px;background:#f2fbf5;color:#08100c;font-size:11px;font-weight:900;display:grid;place-items:center}
-.c3d-j.cap .c3d-f{box-shadow:0 0 0 3px var(--acc),0 0 24px 6px #2fd46eaa,0 10px 18px #000b}
-.c3d-j.off .c3d-f{filter:grayscale(1) brightness(.7)}
-.c3d-j.vac .c3d-f{background:#04100b80;box-shadow:none;outline:2px dashed #ffffffa0;outline-offset:-2px}
-.c3d-j.vac .c3d-f i{font-size:24px;color:#ffffffc0}
-.c3d-j.vac .c3d-n{background:#04100b99;color:#d8ecdf}
-.oi-vac{opacity:.75}.oi-hueco{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:2px dashed currentColor;font-weight:800;font-size:20px}
-.c3d-j.off .c3d-p{background:#3a4a42;color:#d6e6dc;box-shadow:none}
+.c3d-campo .c3d-pto{border:0;width:1.4cqw;height:1.4cqw;margin:-.7cqw 0 0 -.7cqw;border-radius:50%;background:#ffffffd8;left:50%;bottom:21%}
+.c3d-campo .c3d-pto-c{bottom:auto;top:0}
+.c3d-campo .c3d-brillo{border:0;inset:0;background:linear-gradient(100deg,#0000 30%,#ffffff2a 45%,#0000 60%);background-size:250% 100%;background-position:150% 0;opacity:0}
+.c3d.entra .c3d-campo{animation:c3dInclina 1s cubic-bezier(.2,.8,.2,1) backwards}
+.c3d.entra .c3d-brillo{animation:c3dBarre 1.6s .7s ease-out both}
+@keyframes c3dInclina{from{--ax:72deg;opacity:0}to{--ax:34deg;opacity:1}}
+@keyframes c3dBarre{0%{opacity:1;background-position:150% 0}100%{opacity:1;background-position:-60% 0}}
+/* jugadores: en el sitio exacto (left/top en cqw) y escalados por la distancia (--s) */
+.c3d-j{position:absolute;width:0;height:0;--k:calc(1cqw * var(--s))}
+.c3d-base{position:absolute;left:calc(var(--k) * -8);top:calc(var(--k) * -1.7);width:calc(var(--k) * 16);height:calc(var(--k) * 3.4);border-radius:50%;background:radial-gradient(closest-side,#000a 30%,#0000)}
+.c3d-j.cap .c3d-base{background:radial-gradient(closest-side,#0000 52%,#7dffb5 60%,#2fd46e66 72%,#0000)}
+.c3d-tk{position:absolute;left:0;top:0;width:calc(var(--k) * 20);display:flex;flex-direction:column;align-items:center;transform:translate(-50%,calc(var(--k) * -19.6))}
+.c3d.entra .c3d-tk{animation:c3dCae .7s cubic-bezier(.2,1.3,.4,1) both;animation-delay:var(--d)}
+@keyframes c3dCae{from{opacity:0;translate:0 calc(var(--k) * -7)}to{opacity:1;translate:0 0}}
+.c3d-bu{position:relative;width:calc(var(--k) * 17.5);height:calc(var(--k) * 17.5);display:grid;place-items:end center}
+.c3d-im{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 calc(var(--k) * .8) calc(var(--k) * 1.2) #000c);
+  -webkit-mask-image:linear-gradient(#000 80%,#0000 99%);mask-image:linear-gradient(#000 80%,#0000 99%)}
+.c3d-cam,.c3d-ini{display:none}
+.c3d-j.sin .c3d-cam,.c3d-j.vac .c3d-cam{display:block;position:absolute;left:8%;bottom:0;width:84%;height:84%}
+.c3d-cam path{fill:#1f3a2b;stroke:#ffffffb0;stroke-width:3;stroke-linejoin:round}
+.c3d-j.vac .c3d-cam path{fill:#04100b80;stroke-dasharray:6 5}
+.c3d-j.sin .c3d-ini{display:block;position:absolute;left:0;right:0;bottom:30%;text-align:center;font-style:normal;font-family:var(--f-disp);font-weight:900;font-size:calc(var(--k) * 4.2);color:#eafff2}
+.c3d-e{position:absolute;right:2%;bottom:8%;width:calc(var(--k) * 5.4);height:calc(var(--k) * 5.4);filter:drop-shadow(0 1px 2px #000b)}
+.c3d-c{position:absolute;left:2%;top:4%;padding:0 calc(var(--k) * 1.1);height:calc(var(--k) * 3.6);border-radius:999px;display:grid;place-items:center;background:#f2fbf5;color:#06331a;font-size:calc(var(--k) * 2.3);font-weight:900;box-shadow:0 0 calc(var(--k) * 2) #2fd46ecc}
+.c3d-np{position:relative;display:flex;align-items:stretch;max-width:calc(var(--k) * 21);margin-top:calc(var(--k) * -1.2);border-radius:calc(var(--k) * 1.2);overflow:hidden;background:#04110bd9;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 0 0 1px #ffffff26,0 calc(var(--k) * .6) calc(var(--k) * 1.6) #0009}
+.c3d-n{min-width:0;padding:calc(var(--k) * .55) calc(var(--k) * 1.3);font-size:calc(var(--k) * 2.8);font-weight:800;color:#f2fbf5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.c3d-p{position:absolute;right:-2%;top:6%;z-index:2;display:grid;place-items:center;min-width:calc(var(--k) * 5.2);height:calc(var(--k) * 5.2);padding:0 calc(var(--k) * 1);border-radius:999px;
+  font-size:calc(var(--k) * 2.9);font-weight:900;background:#2fd46e;color:#03200e;box-shadow:0 0 0 calc(var(--k) * .4) #03100a,0 calc(var(--k) * .5) calc(var(--k) * 1.4) #000a}
+.c3d-p.fuego{background:#eafff1;color:#06331a;box-shadow:0 0 0 calc(var(--k) * .4) #2fd46e,0 0 calc(var(--k) * 3) #2fd46ecc}
+.c3d-p.neg{background:#ff6b6b;color:#2a0606}
+.c3d-x{margin-top:calc(var(--k) * .5);max-width:100%;font-size:calc(var(--k) * 2.2);font-weight:700;color:#d8ecdf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px #000,0 0 6px #000}
+.c3d-j.cap .c3d-np{box-shadow:0 0 0 calc(var(--k) * .35) #2fd46e,0 0 calc(var(--k) * 3) #2fd46e88}
+.c3d-j.off .c3d-im{filter:grayscale(1) brightness(.75) drop-shadow(0 calc(var(--k) * .8) calc(var(--k) * 1.2) #000c)}
+.c3d-j.off .c3d-p{background:#3a4a42;color:#d6e6dc}
 .c3d-j[data-ficha]{cursor:pointer}
-.c3d-pie{position:absolute;left:50%;bottom:12px;z-index:3;margin:0;transform:translateX(-50%);padding:5px 14px;border-radius:999px;white-space:nowrap;background:#04100bd9;border:1px solid #2fd46e55;
-  font-family:var(--f-disp);font-weight:800;font-size:14px;color:#e8f6ee;box-shadow:0 0 20px #2fd46e33}
-.c3d-ay{position:absolute;top:10px;right:12px;z-index:3;padding:3px 9px;border-radius:999px;background:#04100bc0;font-size:11px;color:#d8ecdf;pointer-events:none;transition:opacity .4s}
-.c3d.tocado .c3d-ay{opacity:0}
-@media (prefers-reduced-motion:reduce){.c3d-campo,.c3d-in,.c3d-led span,.c3d-j.cap .c3d-s{animation:none}}
-@media (min-width:480px){.c3d-b{scale:1.18}}
-@media (min-width:560px){.c3d-b{scale:1.38}}
+.c3d-j[data-ficha]:hover .c3d-np,.c3d-j[data-ficha]:focus-visible .c3d-np{box-shadow:0 0 0 calc(var(--k) * .35) #fff}
+.c3d-pie{position:absolute;left:50%;bottom:3cqw;z-index:200;margin:0;transform:translateX(-50%);padding:1.2cqw 3.6cqw;border-radius:999px;white-space:nowrap;background:#04100bd9;border:1px solid #2fd46e55;
+  font-family:var(--f-disp);font-weight:800;font-size:max(12px,3.6cqw);color:#e8f6ee}
+@media (prefers-reduced-motion:reduce){.c3d.entra .c3d-campo,.c3d.entra .c3d-tk,.c3d.entra .c3d-brillo{animation:none}}
+.oi-vac{opacity:.75}.oi-hueco{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:2px dashed currentColor;font-weight:800;font-size:20px}
 /* La temporada de cada manager: historias a pantalla completa */
 .wr-lanza{margin:0 0 14px;padding:14px;border-radius:var(--r-l);background:linear-gradient(135deg,#2fd46e26,#2fd46e08 60%),var(--panel2);border:1px solid #2fd46e40}
 .wr-lanza p{margin:0 0 10px;display:flex;flex-direction:column;gap:2px}
@@ -1895,59 +1893,84 @@ function htmlOnceIdeal(gw) {
   return nota + botonesVista3D() + `<div class="oi">${filas}</div>`;
 }
 
-/* ---------- Alineación en 3D: el campo en perspectiva, con los jugadores de pie; se gira con el dedo ---------- */
-// Solo CSS 3D (sin librerías): el césped se inclina (rotateX) y gira (rotateZ) y cada jugador hace el giro contrario
-// para mirar siempre a la cámara. Con «reducir movimiento» no se balancea ni hay entrada animada.
+/* ---------- Alineación en 3D: el campo en perspectiva de cámara de televisión, con los jugadores de pie ---------- */
+// Solo el césped está en 3D (CSS, inclinado como una cámara alta detrás de la portería, sin girar). Los jugadores se
+// dibujan en plano encima, en el punto exacto donde cae su sitio del campo con la misma perspectiva: así la foto y el
+// texto se ven nítidos y nunca se cortan. Todo se mide en anchos del recuadro (cqw), así escala igual en móvil y escritorio.
 let V3D = false;
 try { V3D = localStorage.getItem("v3d") === "1"; } catch (e) {}
-const FILAS_3D = { DL: 0.07, MC: 0.36, DF: 0.645, PT: 0.9 };
-// js: [{ id, name, teamId, pos, pts, cap, mult, off, sub, ev }]
+const C3G = { ar: 1.25, pl: 0.04, pw: 0.92, pt: 0.24, ph: 0.86, P: 1.8, oy: -0.2, ax: 34 };   // geometría (en anchos)
+const FILAS_3D = { DL: 0.13, MC: 0.4, DF: 0.66, PT: 0.9 };
+// punto del césped (u de izquierda a derecha, v del medio campo a la portería) -> punto en pantalla y escala
+function c3dProy(u, v, ax = C3G.ax, ay = 0) {
+  const x = (u - 0.5) * C3G.pw, y = (v - 0.5) * C3G.ph, a = ax * Math.PI / 180, b = ay * Math.PI / 180;
+  const x1 = x * Math.cos(b), z1 = -x * Math.sin(b);
+  const y2 = y * Math.cos(a) - z1 * Math.sin(a), z2 = y * Math.sin(a) + z1 * Math.cos(a);
+  const s = C3G.P / (C3G.P - z2), cx = C3G.pl + C3G.pw / 2, cy = C3G.pt + C3G.ph / 2;
+  return [0.5 + (cx + x1 - 0.5) * s, C3G.oy + (cy + y2 - C3G.oy) * s, s];
+}
+const C3D_VISTOS = new Set();     // la entrada animada solo la primera vez que se ve cada campo
+const C3D_CAMISETA = `<svg class="c3d-cam" viewBox="0 0 100 100" aria-hidden="true"><path d="M33 10q17 10 34 0l26 13-9 22-10-5v52H26V40l-10 5-9-22z"/></svg>`;
+// js: [{ id, name, teamId, pos, pts, cap, mult, off, sub, vacio }]
 function htmlCampo3D(js, opts = {}) {
   const por = { PT: [], DF: [], MC: [], DL: [] };
   js.forEach(j => (por[j.pos] || por.MC).push(j));
   const jug = [];
-  // con 5 en una línea se escalonan un poco para que no se tapen
-  Object.entries(por).forEach(([pos, L]) => L.forEach((j, k) => jug.push({ ...j, u: (k + 1) / (L.length + 1), v: FILAS_3D[pos] + (L.length >= 5 ? (k % 2 ? 0.035 : -0.015) : 0) })));
+  Object.entries(por).forEach(([pos, L]) => {
+    const n = L.length, gap = n <= 1 ? 0 : n === 2 ? 0.3 : Math.min(0.21, 0.86 / n);
+    L.forEach((j, k) => jug.push({ ...j, u: 0.5 + (k - (n - 1) / 2) * gap, v: FILAS_3D[pos] + (n >= 5 ? (k % 2 ? 0.03 : -0.02) : 0) }));
+  });
   // en una jornada brilla quien hace 10 o más; con puntos de toda la temporada, solo el que más lleva
   const nums = js.map(j => j.pts).filter(capNum), tope = opts.fuego === "max" && nums.length ? Math.max(...nums) : null;
-  const fila = jug.sort((a, b) => a.v - b.v).map((j, k) => j.vacio ? `<div class="c3d-j vac" style="left:${(j.u * 100).toFixed(1)}%;top:${(j.v * 100).toFixed(1)}%;--d:${(k * 0.045).toFixed(3)}s">
-      <span class="c3d-s"></span><span class="c3d-b"><span class="c3d-in"><span class="c3d-f"><i>+</i></span><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>` : `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}" style="left:${(j.u * 100).toFixed(1)}%;top:${(j.v * 100).toFixed(1)}%;--d:${(k * 0.045).toFixed(3)}s"${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
-      <span class="c3d-s"></span>
-      <span class="c3d-b"><span class="c3d-in">
-        ${j.pts != null ? `<b class="c3d-p${capNum(j.pts) && (tope != null ? j.pts === tope : j.pts >= 10) ? " fuego" : capNum(j.pts) && j.pts < 0 ? " neg" : ""}">${esc(j.pts)}</b>` : ""}${j.cap ? `<b class="c3d-c">${j.mult ? "×" + esc(coma(j.mult)) : "C"}</b>` : ""}
-        <span class="c3d-f">${j.teamId ? `<img class="c3d-e" src="fotos/escudos/${esc(j.teamId)}.png" alt="" loading="lazy" onerror="this.remove()">` : ""}<i>${esc(iniciales(j.name))}</i><img class="c3d-im" src="${esc(fotoDe(j.id))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-        <span class="c3d-n">${esc(apellido(j.name))}</span>${j.sub ? `<small class="c3d-x">${esc(j.sub)}</small>` : ""}
-      </span></span></div>`).join("");
-  const led = `<span>${esc(opts.led || "GOLÓMETRO V2 · MONEYBALL").concat(" · ").repeat(8)}</span>`;
-  return `<div class="c3d" data-c3d style="--rx:50deg;--rz:0deg" role="group" aria-label="${esc(opts.titulo || "Alineación en 3D")}: ${esc(js.map(j => j.name).join(", "))}">
-    <div class="c3d-luz"></div><div class="c3d-esc"><div class="c3d-campo"><div class="c3d-grada"></div><div class="c3d-lado iz"></div><div class="c3d-lado de"></div><div class="c3d-led">${led}</div>
-      <div class="c3d-hierba"><i class="c3d-area"></i><i class="c3d-area2"></i><i class="c3d-arco"></i><i class="c3d-circ"></i><i class="c3d-pto" style="bottom:21%"></i><i class="c3d-pto" style="top:0;margin-top:-3px"></i></div>${fila}</div></div>
-    ${opts.pie ? `<p class="c3d-pie">${opts.pie}</p>` : ""}<span class="c3d-ay" aria-hidden="true">↔ desliza para girar</span></div>`;
+  const clave = opts.titulo || "", anima = !C3D_VISTOS.has(clave); C3D_VISTOS.add(clave);
+  const fila = jug.sort((a, b) => a.v - b.v).map((j, k) => {
+    const [X, Y, s] = c3dProy(j.u, j.v), pos = `left:${(X * 100).toFixed(2)}cqw;top:${(Y * 100).toFixed(2)}cqw;--s:${s.toFixed(3)};z-index:${Math.round(Y * 100)};--d:${(0.55 + k * 0.05).toFixed(2)}s`;
+    const datos = `data-u="${j.u.toFixed(3)}" data-v="${j.v.toFixed(3)}"`;
+    if (j.vacio) return `<div class="c3d-j vac" style="${pos}" ${datos}><span class="c3d-base"></span><span class="c3d-tk"><span class="c3d-bu">${C3D_CAMISETA}</span><span class="c3d-np"><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>`;
+    const pc = j.pts != null ? `<b class="c3d-p${capNum(j.pts) && (tope != null ? j.pts === tope : j.pts >= 10) ? " fuego" : capNum(j.pts) && j.pts < 0 ? " neg" : ""}">${esc(j.pts)}</b>` : "";
+    const foto = (FOTOS && j.id && FOTOS[String(j.id)]) || (j.id ? fotoDe(j.id) : "");
+    return `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}${foto ? "" : " sin"}" style="${pos}" ${datos}${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
+      <span class="c3d-base"></span>
+      <span class="c3d-tk"><span class="c3d-bu">${C3D_CAMISETA}<i class="c3d-ini">${esc(iniciales(j.name))}</i>${foto ? `<img class="c3d-im" src="${esc(foto)}" alt="" loading="lazy" draggable="false" referrerpolicy="no-referrer" onerror="this.closest('.c3d-j').classList.add('sin');this.remove()">` : ""}
+        ${j.teamId ? `<img class="c3d-e" src="fotos/escudos/${esc(j.teamId)}.png" alt="" loading="lazy" draggable="false" onerror="this.remove()">` : ""}${j.cap ? `<b class="c3d-c">C${j.mult ? " ×" + esc(coma(j.mult)) : ""}</b>` : ""}${pc}</span>
+        <span class="c3d-np"><span class="c3d-n">${esc(apellido(j.name))}</span></span>${j.sub ? `<small class="c3d-x">${esc(j.sub)}</small>` : ""}</span></div>`;
+  }).join("");
+  return `<div class="c3d${anima ? " entra" : ""}" data-c3d role="group" aria-label="${esc(opts.titulo || "Alineación en 3D")}: ${esc(js.map(j => j.name).join(", "))}">
+    <div class="c3d-cielo" aria-hidden="true"><i class="c3d-foco iz"></i><i class="c3d-foco de"></i><i class="c3d-grada"></i></div>
+    <div class="c3d-esc" aria-hidden="true"><div class="c3d-campo"><i class="c3d-area"></i><i class="c3d-area2"></i><i class="c3d-arco"></i><i class="c3d-circ"></i><i class="c3d-pto"></i><i class="c3d-pto c3d-pto-c"></i><i class="c3d-brillo"></i></div></div>
+    ${fila}${opts.pie ? `<p class="c3d-pie">${opts.pie}</p>` : ""}</div>`;
 }
 const botonesVista3D = () => `<div class="v3d-t" role="group" aria-label="Vista del campo"><button data-v3d="0" class="${V3D ? "" : "on"}" aria-pressed="${!V3D}">Plano</button><button data-v3d="1" class="${V3D ? "on" : ""}" aria-pressed="${V3D}">3D</button></div>`;
-// arrastrar para girar (horizontal) e inclinar (vertical); un toque sin arrastre abre la ficha del jugador
-let C3D = null;
-document.addEventListener("pointerdown", e => {
-  const c = e.target.closest && e.target.closest("[data-c3d]"); if (!c) return;
-  const cs = getComputedStyle(c.querySelector(".c3d-campo") || c);     // el balanceo mueve el ángulo del césped
-  C3D = { c, x: e.clientX, y: e.clientY, rz: parseFloat(cs.getPropertyValue("--rz")) || 0, rx: parseFloat(cs.getPropertyValue("--rx")) || 50, mov: false, id: e.pointerId };
-});
+// paralaje suave: el campo se inclina un poco hacia donde está el dedo o el ratón (sin girar) y vuelve a su sitio al soltar
+const C3P = new Map();
+function c3dColoca(c, ax, ay) {
+  const campo = c.querySelector(".c3d-campo"); if (campo) { campo.style.setProperty("--ax", ax.toFixed(2) + "deg"); campo.style.setProperty("--ay", ay.toFixed(2) + "deg"); }
+  c.querySelectorAll(".c3d-j").forEach(el => {
+    const [X, Y, s] = c3dProy(+el.dataset.u, +el.dataset.v, ax, ay);
+    el.style.left = (X * 100).toFixed(2) + "cqw"; el.style.top = (Y * 100).toFixed(2) + "cqw"; el.style.setProperty("--s", s.toFixed(3));
+  });
+}
+function c3dAnima(c) {
+  const e = C3P.get(c); if (!e) return;
+  e.ax += (e.tx - e.ax) * 0.14; e.ay += (e.ty - e.ay) * 0.14;
+  c3dColoca(c, e.ax, e.ay);
+  if (Math.abs(e.tx - e.ax) + Math.abs(e.ty - e.ay) > 0.02 && c.isConnected) e.raf = requestAnimationFrame(() => c3dAnima(c));
+  else { e.raf = 0; if (e.tx === C3G.ax && e.ty === 0) C3P.delete(c); }
+}
+function c3dObjetivo(c, tx, ty) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let e = C3P.get(c); if (!e) { e = { ax: C3G.ax, ay: 0, raf: 0 }; C3P.set(c, e); }
+  e.tx = tx; e.ty = ty; if (!e.raf) e.raf = requestAnimationFrame(() => c3dAnima(c));
+}
 document.addEventListener("pointermove", e => {
-  if (!C3D || e.pointerId !== C3D.id) return;
-  const dx = e.clientX - C3D.x, dy = e.clientY - C3D.y;
-  if (!C3D.mov && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-  if (!C3D.mov && Math.abs(dy) > Math.abs(dx) * 1.4 && e.pointerType === "touch") { C3D = null; return; }   // gesto vertical: deja hacer scroll
-  if (!C3D.mov) { C3D.mov = true; C3D.c.style.setProperty("--rz", C3D.rz + "deg"); C3D.c.classList.add("girando", "tocado"); try { C3D.c.setPointerCapture(e.pointerId); } catch (err) {} }
-  C3D.c.style.setProperty("--rz", (C3D.rz + dx * 0.35).toFixed(1) + "deg");
-  C3D.c.style.setProperty("--rx", capClamp(C3D.rx - dy * 0.2, [28, 70]).toFixed(1) + "deg");
+  const c = e.target.closest && e.target.closest("[data-c3d]"); if (!c) return;
+  const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+  c3dObjetivo(c, C3G.ax - y * 7, x * 12);
 });
-const finGiro = e => { if (!C3D) return; if (C3D.mov) { C3D.c.classList.remove("girando"); const c = C3D.c; setTimeout(() => c.dataset.arr = "", 0); c.dataset.arr = "1"; } C3D = null; };
-document.addEventListener("pointerup", finGiro);
-document.addEventListener("pointercancel", finGiro);
-// el clic que termina un arrastre no abre la ficha
-document.addEventListener("click", e => { const c = e.target.closest && e.target.closest("[data-c3d]"); if (c && c.dataset.arr === "1") { e.stopPropagation(); e.preventDefault(); c.dataset.arr = ""; } }, true);
-document.addEventListener("dragstart", e => { if (e.target.closest && e.target.closest("[data-c3d]")) e.preventDefault(); });   // si no, arrastrar una foto cancela el giro
-document.addEventListener("dblclick", e => { const c = e.target.closest && e.target.closest("[data-c3d]"); if (c) { c.style.setProperty("--rz", "0deg"); c.style.setProperty("--rx", "50deg"); } });
+const c3dSuelta = e => { const c = e.target.closest && e.target.closest("[data-c3d]"); if (c && C3P.has(c) && (e.type !== "pointerleave" || e.target === c)) c3dObjetivo(c, C3G.ax, 0); };
+document.addEventListener("pointerleave", c3dSuelta, true);
+document.addEventListener("pointerup", e => { if (e.pointerType !== "mouse") c3dSuelta(e); });
+document.addEventListener("pointercancel", c3dSuelta);
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-v3d]"); if (!b) return;
   V3D = b.dataset.v3d === "1";
