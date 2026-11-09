@@ -1017,6 +1017,119 @@ body.est-abierto{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.c3d-campo,.c3d-in,.c3d-led span,.c3d-j.cap .c3d-s{animation:none}}
 @media (min-width:480px){.c3d-b{scale:1.18}}
 @media (min-width:560px){.c3d-b{scale:1.38}}
+/* La temporada de cada manager: historias a pantalla completa */
+.wr-lanza{margin:0 0 14px;padding:14px;border-radius:var(--r-l);background:linear-gradient(135deg,#2fd46e26,#2fd46e08 60%),var(--panel2);border:1px solid #2fd46e40}
+.wr-lanza p{margin:0 0 10px;display:flex;flex-direction:column;gap:2px}
+.wr-lanza p b{font-family:var(--f-disp);font-size:18px;font-weight:800}
+.wr-lanza p span{font-size:13px;color:var(--mut)}
+.wr-avs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:2px 4px 4px}
+.wr-avs::-webkit-scrollbar{display:none}
+.wr-av-b{flex:0 0 auto;width:64px;min-height:72px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0;border:0;background:none;color:var(--txt);cursor:pointer;border-radius:var(--r-m)}
+.wr-av-b .av{width:48px;height:48px;box-shadow:0 0 0 2px var(--panel2),0 0 0 4px #2fd46e99;transition:transform .2s}
+.wr-av-b.yo .av{box-shadow:0 0 0 2px var(--panel2),0 0 0 4px var(--acc),0 0 16px #2fd46e88}
+.wr-av-b:hover .av,.wr-av-b:focus-visible .av{transform:scale(1.07)}
+.wr-av-b small{max-width:62px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.wr-abierto{overflow:hidden}
+.wr{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:#010402;color:#eef8f2;color-scheme:dark;--wr-c:#2fd46e}
+.wr[hidden]{display:none}
+.wr-marco{position:relative;width:min(100vw,480px);height:100dvh;overflow:hidden;isolation:isolate;background:#03100a}
+@media (min-width:540px){.wr-marco{height:min(calc(100dvh - 40px),880px);border-radius:28px;box-shadow:0 0 0 1px #2fd46e33,0 40px 100px #000}}
+.wr-marco::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wr-aurora{position:absolute;inset:-25%;z-index:0;filter:blur(46px)}
+.wr-aurora i{position:absolute;width:62%;aspect-ratio:1;border-radius:50%;opacity:.6;animation:wrFlota 14s ease-in-out infinite alternate;transition:background .8s}
+.wr-aurora i:nth-child(1){left:2%;top:4%;background:radial-gradient(closest-side,var(--wr-c),transparent)}
+.wr-aurora i:nth-child(2){right:0;top:34%;background:radial-gradient(closest-side,#2fd46e,transparent);animation-duration:19s;animation-delay:-7s}
+.wr-aurora i:nth-child(3){left:18%;bottom:2%;background:radial-gradient(closest-side,#0b6b3a,transparent);animation-duration:23s;animation-delay:-3s}
+@keyframes wrFlota{from{transform:translate(0,0) scale(1)}to{transform:translate(14%,10%) scale(1.3)}}
+.wr-barras{position:absolute;z-index:4;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;display:flex;gap:4px}
+.wr-barras span{flex:1;height:3px;border-radius:2px;background:#ffffff38;overflow:hidden}
+.wr-barras i{display:block;height:100%;background:#fff;transform-origin:0 50%;transform:scaleX(0)}
+.wr-barras .hecha i{transform:none}
+.wr-barras .activa i{animation:wrBarra 7.5s linear forwards}
+@keyframes wrBarra{to{transform:none}}
+.wr.pausa .wr-barras .activa i,.wr.pausa .wr-a,.wr.pausa .wr-a *{animation-play-state:paused}
+.wr-cab{position:absolute;z-index:4;top:calc(22px + env(safe-area-inset-top));left:12px;right:6px;display:flex;align-items:center;gap:10px}
+.wr-cab .av{width:32px;height:32px;font-size:12px}
+.wr-cab b{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wr-x{width:44px;height:44px;border:0;border-radius:50%;background:#00000040;color:#fff;font-size:18px;cursor:pointer}
+.wr-zona{position:absolute;z-index:2;top:80px;bottom:0;border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.wr-zona.izq{left:0;width:32%}.wr-zona.der{right:0;width:68%}
+.wr-zona:focus-visible{outline:2px solid #fff;outline-offset:-6px}
+.wr-escena{position:absolute;inset:0;z-index:3;pointer-events:none;padding:calc(88px + env(safe-area-inset-top)) 26px calc(34px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center}
+.wr-s{display:flex;flex-direction:column;gap:10px}
+.wr-k{margin:0;font-size:15px;font-weight:700;color:#a5ecc2}
+.wr-big{display:block;font-family:var(--f-disp);font-weight:900;font-stretch:60%;font-size:clamp(100px,33vw,168px);line-height:.84;letter-spacing:-.01em;margin:0 0 4px;
+  background:linear-gradient(180deg,#fff 25%,#6ff3a3 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 28px #2fd46e66)}
+.wr-nom{margin:0;font-family:var(--f-disp);font-weight:800;font-stretch:72%;font-size:clamp(42px,13vw,64px);line-height:.95;overflow-wrap:anywhere}
+.wr-adn{margin:0;font-family:var(--f-disp);font-weight:900;font-stretch:64%;font-size:clamp(52px,17vw,84px);line-height:.9;background:linear-gradient(100deg,#fff,#6ff3a3 60%,#fff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wrBrillo 4s ease-in-out infinite}
+@keyframes wrBrillo{50%{background-position:100% 0}}
+.wr-t{margin:0;font-size:19px;font-weight:700}
+.wr-p{margin:0;font-size:16px;line-height:1.45;color:#cfe3d7;max-width:34ch}
+.wr-a{animation:wrEntra .75s cubic-bezier(.2,.9,.25,1.1) both;animation-delay:var(--d,0s)}
+@keyframes wrEntra{from{opacity:0;transform:translateY(28px) scale(.96);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+.wr-big.wr-a{animation-name:wrGolpe;animation-duration:.9s}
+@keyframes wrGolpe{0%{opacity:0;transform:scale(1.7);filter:blur(12px) drop-shadow(0 0 28px #2fd46e66)}55%{opacity:1;transform:scale(.97)}100%{transform:none;filter:drop-shadow(0 0 28px #2fd46e66)}}
+/* portada */
+.wr-portada{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.wr-eco{position:absolute;left:-4%;top:14%;z-index:-1;font-family:var(--f-disp);font-weight:900;font-stretch:55%;font-size:44vh;line-height:.8;color:transparent;-webkit-text-stroke:1.5px #ffffff1c;white-space:nowrap;pointer-events:none;writing-mode:vertical-rl;transform:rotate(180deg)}
+.wr-anillo{position:relative;width:132px;height:132px;display:grid;place-items:center;margin-bottom:8px}
+.wr-anillo::before{content:"";position:absolute;inset:-8px;border-radius:50%;background:conic-gradient(from 0deg,var(--wr-c),#2fd46e,#ffffff,var(--wr-c));animation:wrGira 6s linear infinite;
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))}
+.wr-anillo .av{width:112px;height:112px;font-size:36px;box-shadow:0 0 40px #2fd46e66}
+@keyframes wrGira{to{transform:rotate(1turn)}}
+/* gráficas */
+.wr-g{width:100%;max-width:360px;height:auto;margin:8px 0 6px;overflow:visible}
+.wr-g text{fill:#a5ecc2;font-size:11px;font-weight:700}
+.wr-g-l{stroke:#ffffff26;stroke-dasharray:3 5}
+.wr-g-p{fill:none;stroke:#6ff3a3;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px #2fd46e);animation:wrTraza 1.6s .9s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes wrTraza{to{stroke-dashoffset:0}}
+.wr-g-a{opacity:0;animation:wrAparece .8s 1.8s forwards}
+@keyframes wrAparece{to{opacity:1}}
+.wr-g-d{fill:#03100a;stroke:#fff;stroke-width:2}
+.wr-g-f{fill:#6ff3a3;stroke:#03100a;stroke-width:3;filter:drop-shadow(0 0 8px #2fd46e)}
+.wr-barrasj{display:flex;align-items:flex-end;gap:4px;height:130px;margin:10px 0 4px}
+.wr-barrasj i{position:relative;flex:1;height:var(--h);border-radius:5px 5px 2px 2px;background:linear-gradient(#ffffff70,#ffffff26);transform-origin:50% 100%;animation:wrCrece .7s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:var(--d)}
+.wr-barrasj i.rec{background:linear-gradient(#b6ffd3,#2fd46e);box-shadow:0 0 18px #2fd46ecc}
+.wr-barrasj i.peor{background:linear-gradient(#ff9b9b,#ff6b6b55)}
+.wr-barrasj small{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:3px;font-size:10px;font-weight:800;color:#d8f3e3}
+@keyframes wrCrece{from{transform:scaleY(0)}to{transform:none}}
+/* jugador estrella */
+.wr-foto{position:relative;width:min(62vw,250px);aspect-ratio:1;margin:0 auto -6px;display:grid;place-items:end center}
+.wr-foto::before{content:"";position:absolute;inset:8% 4% 0;border-radius:50%;background:radial-gradient(closest-side,#2fd46e88,#2fd46e00);filter:blur(6px)}
+.wr-foto img{position:relative;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 20px 30px #000c)}
+.wr-foto.sin::after{content:attr(data-ini);position:relative;align-self:center;width:62%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-weight:900;font-size:64px;color:#eafff2;background:radial-gradient(circle at 50% 30%,#2f6a49,#0c1712);box-shadow:0 0 0 3px #ffffffcc,0 20px 40px #000a}
+.wr-foto .wr-esc{position:absolute;right:4%;bottom:6%;width:54px;height:54px;filter:drop-shadow(0 2px 6px #000)}
+.wr-lista{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.wr-lista li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:#ffffff12;border:1px solid #ffffff1c;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.wr-lista b{flex:1;min-width:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wr-lista span{font-weight:800;color:#a5ecc2}.wr-lista small{font-size:12px;color:#cfe3d7}
+/* capitanes y rivales */
+.wr-duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.wr-caja{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:18px;background:#ffffff12;border:1px solid #2fd46e55;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.wr-caja.mala{border-color:#ff6b6b55}
+.wr-caja small{font-size:12px;color:#a5ecc2;margin-top:6px}.wr-caja.mala small{color:#ffb3b3}
+.wr-caja b{font-size:18px;line-height:1.1;overflow-wrap:anywhere}.wr-caja span{font-size:13px;color:#cfe3d7}
+.wr-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:6px;margin-top:12px}
+.wr-vs-x{align-self:center}
+.wr-rival{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;padding:14px 8px;border-radius:20px;background:#ffffff10;border:1px solid #2fd46e55}
+.wr-rival.mala{border-color:#ff6b6b66}
+.wr-rival small{font-size:12px;font-weight:700;color:#a5ecc2}.wr-rival.mala small{color:#ffb3b3}
+.wr-rival .av{width:64px;height:64px;font-size:22px}
+.wr-rival b{font-size:15px;line-height:1.15;overflow-wrap:anywhere}
+.wr-mar{font-family:var(--f-disp);font-weight:900;font-stretch:62%;font-size:46px;line-height:1}
+.wr-rival em{font-style:normal;font-size:11.5px;color:#cfe3d7}
+.wr-vs-x{font-family:var(--f-disp);font-weight:900;font-size:22px;color:#6ff3a3;text-shadow:0 0 14px #2fd46e}
+/* cierre */
+.wr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.wr-grid div{padding:12px 14px;border-radius:16px;background:#ffffff12;border:1px solid #ffffff1f}
+.wr-grid b{display:block;font-family:var(--f-disp);font-weight:900;font-stretch:64%;font-size:40px;line-height:1}
+.wr-grid small{font-size:12.5px;color:#cfe3d7}
+.wr-comp{pointer-events:auto;margin-top:14px;min-height:52px;border:0;border-radius:999px;background:#2fd46e;color:#03200e;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 10px 30px #2fd46e55}
+.wr-comp:active{transform:scale(.98)}
+@media (max-height:640px){.wr-big{font-size:min(28vw,110px)}.wr-foto{width:min(46vw,170px)}.wr-barrasj{height:90px}.wr-escena{padding-top:78px}}
+@media (prefers-reduced-motion:reduce){.wr-a,.wr-big.wr-a,.wr-aurora i,.wr-anillo::before,.wr-adn,.wr-barrasj i{animation:none}
+  .wr-g-p{animation:none;stroke-dashoffset:0}.wr-g-a{animation:none;opacity:1}.wr-barras .activa i{animation:none;transform:scaleX(.5)}}
 </style>
 </head>
 <body>
@@ -2380,6 +2493,7 @@ function pintarPremios() {
     ["🎢", "Montaña rusa", mejor(s => s.desv), s => `sus jornadas varían ±${nf1c(s.desv)} puntos`]
   ];
   cont.innerHTML = `<div class="gh"><h2>Premios de la temporada</h2></div>
+    ${htmlLanzaWrapped()}
     <div class="pr-grid">${p.map(([ico, t, s, txt]) => `<div class="pr"><span class="pr-i">${ico}</span><small>${t}</small><span class="pr-q">${avatar(s.m, s.i)}<b>${esc(s.m.name)}</b></span><span class="pr-t">${txt(s)}</span></div>`).join("")}</div>
     <p class="note">Tras ${js.length} jornadas. Se recalculan solos cada jornada.</p>
     <details class="cdet" data-ots="1" ${otsAbierto ? "open" : ""}><summary>Once ideal de la temporada</summary>${otsAbierto ? htmlOnceTemporada() : ""}</details>`;
@@ -5558,8 +5672,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -5584,6 +5698,263 @@ document.addEventListener("click", e => {
   else esCompartir(b.dataset.est === "todas");
 });
 document.addEventListener("keydown", e => { const d = $("#estudio"); if (e.key === "Escape" && d && !d.hidden) { d.hidden = true; document.body.classList.remove("est-abierto"); } });
+
+/* ---------- La temporada de cada manager: historias a pantalla completa (tipo «Wrapped») ---------- */
+// Todo sale de las jornadas ya jugadas (mister_fantasy_data.json): puntos, puestos, capitanes, jugadores y valor de
+// la plantilla al cierre de cada jornada. Nada de previsiones: es lo estadístico, para todos.
+function wrTodos() {
+  if (!D || !D.managers) return null;
+  const S = serieLiga(), { js, pts, cum, rank } = S, n = js.length, N = D.managers.length;
+  if (n < 2) return null;
+  const suma = a => a.reduce((s, v) => s + v, 0), maxDia = js.map((_, k) => Math.max(...pts.map(a => a[k])));
+  const T = D.managers.map((m, i) => {
+    const P = pts[i], md = j => (D.matchdays[j] || {})[m.id] || null, posS = rank.map(r => r[i]);
+    const puestoDia = k => 1 + pts.filter((a, y) => y !== i && a[k] > P[k]).length;
+    const kR = P.indexOf(Math.max(...P)), kP = P.indexOf(Math.min(...P));
+    // jugadores que más puntos le dieron (con lo que sumaron de capitán)
+    const ap = {};
+    js.forEach(j => ((md(j) || {}).players || []).forEach(p => {
+      const a = ap[p.id] || (ap[p.id] = { id: p.id, name: p.name, teamId: p.teamId, pos: p.pos, pts: 0, pj: 0, goles: 0 });
+      a.pts += p.points || 0; a.pj += p.played ? 1 : 0; a.goles += p.goals || 0;
+    }));
+    const caps = js.map(j => { const c = (md(j) || {}).captain; return c ? { ...c, j, bonus: c.bonus || 0 } : null; }).filter(Boolean);
+    const val = js.map(j => (md(j) || {}).squadValue).filter(v => capNum(v) && v > 0);
+    const media = suma(P) / n;
+    return { m, i, n, N, js, P, total: cum[i][n - 1], pos: posS[n - 1], posS, mejorPos: Math.min(...posS), peorPos: Math.max(...posS),
+      lider: posS.filter(p => p === 1).length, victorias: js.filter((_, k) => P[k] === maxDia[k]).length,
+      rec: { j: js[kR], p: P[kR], puesto: puestoDia(kR) }, peor: { j: js[kP], p: P[kP], puesto: puestoDia(kP) },
+      top: Object.values(ap).sort((a, b) => b.pts - a.pts), caps, extra: suma(caps.map(c => c.bonus)),
+      capMejor: caps.slice().sort((a, b) => b.bonus - a.bonus)[0], capPeor: caps.slice().sort((a, b) => a.bonus - b.bonus || a.points - b.points)[0],
+      goles: js.reduce((t, j) => t + ((md(j) || {}).goals || 0), 0), val, crece: val.length > 1 ? val[val.length - 1] / val[0] - 1 : null,
+      media, desv: Math.sqrt(suma(P.map(v => (v - media) ** 2)) / n) };
+  });
+  const mediaLiga = suma(T.map(t => t.total)) / (N * n);
+  // puesto de cada uno en cada cosa (1 = el mejor de la liga) y su «ADN»: aquello en lo que destaca más
+  const puesto = (f, menor) => { const v = T.map(f); return T.map((_, i) => v[i] == null ? null : 1 + v.filter(x => x != null && (menor ? x < v[i] : x > v[i])).length); };
+  const R = { victorias: puesto(t => t.victorias), regular: puesto(t => t.desv, true), loco: puesto(t => t.desv), extra: puesto(t => t.extra),
+    crece: puesto(t => t.crece), media: puesto(t => t.media), goles: puesto(t => t.goles), record: puesto(t => t.rec.p) };
+  // el texto dice la verdad del puesto: «nadie…» solo si es el 1.º de la liga en eso
+  const yo = (r, uno, otro) => r === 1 ? uno : `${otro.replace("{r}", wrOrd(r))}`;
+  const ADN = [
+    ["media", "La apisonadora", (t, r) => yo(r, `Nadie suma más por jornada: ${nf1c(t.media)} de media.`, `El {r} que más suma por jornada: ${nf1c(t.media)} de media.`)],
+    ["victorias", "Cazador de jornadas", (t, r) => yo(r, `Nadie ha ganado más jornadas: ${t.victorias}.`, `Has ganado ${t.victorias} ${t.victorias === 1 ? "jornada" : "jornadas"}: el {r} de la liga.`)],
+    ["extra", "Rey del brazalete", (t, r) => yo(r, `Nadie saca más a sus capitanes: +${t.extra} puntos extra.`, `Tus capitanes te han dado +${t.extra} puntos extra: el {r} de la liga.`)],
+    ["crece", "El inversor", (t, r) => yo(r, `Nadie ha hecho crecer más su plantilla: ${t.crece >= 0 ? "+" : "−"}${nf1c(Math.abs(t.crece * 100))} % desde la ${t.js[0]}.`, `Tu plantilla ha crecido un ${nf1c(t.crece * 100)} % desde la ${t.js[0]}: el {r} que más.`)],
+    ["regular", "El metrónomo", (t, r) => yo(r, `Nadie es tan regular: tus jornadas varían solo ±${nf1c(t.desv)} puntos.`, `El {r} más regular: tus jornadas varían ±${nf1c(t.desv)} puntos.`)],
+    ["record", "Golpe de efecto", (t, r) => yo(r, `Tienes la mejor jornada de la liga: ${t.rec.p} puntos en la ${t.rec.j}.`, `Tu mejor jornada, ${t.rec.p} puntos en la ${t.rec.j}, es la ${r}.ª mejor de la liga.`)],
+    ["goles", "Dinamita", (t, r) => yo(r, `Nadie tiene más goles: ${t.goles} de tus jugadores.`, `Tus jugadores han marcado ${t.goles} goles: el {r} de la liga.`)],
+    ["loco", "Montaña rusa", (t, r) => yo(r, `Lo tuyo es emoción: nadie varía tanto (±${nf1c(t.desv)} puntos por jornada).`, `Lo tuyo es emoción: tus jornadas varían ±${nf1c(t.desv)} puntos.`)]
+  ];
+  // cada uno, una etiqueta distinta si está en el podio de esa cosa; si no, la suya mejor aunque se repita
+  const cand = [];
+  T.forEach((t, i) => ADN.forEach(([k, nom, txt], o) => { if (R[k][i] != null) cand.push({ i, k, nom, txt, r: R[k][i], o }); }));
+  cand.sort((a, b) => a.r - b.r || a.o - b.o);
+  const usada = new Set();
+  cand.forEach(c => { if (c.r > 3 || T[c.i].adn || usada.has(c.k)) return; usada.add(c.k); T[c.i].adn = { nom: c.nom, txt: c.txt(T[c.i], c.r), r: c.r }; });
+  T.forEach((t, i) => {
+    t.mediaLiga = mediaLiga; t.R = Object.fromEntries(Object.entries(R).map(([k, v]) => [k, v[i]]));
+    if (!t.adn) { const c = cand.find(x => x.i === i); t.adn = c ? { nom: c.nom, txt: c.txt(t, c.r), r: c.r } : { nom: "Manager", txt: "", r: 99 }; }
+    // cara a cara, jornada a jornada
+    const du = T.filter(o => o !== t).map(o => ({ o, g: t.js.filter((_, k) => t.P[k] > o.P[k]).length, p: t.js.filter((_, k) => t.P[k] < o.P[k]).length }));
+    t.victima = du.slice().sort((a, b) => (b.g - b.p) - (a.g - a.p) || b.g - a.g)[0];
+    t.bestia = du.slice().sort((a, b) => (b.p - b.g) - (a.p - a.g) || b.p - a.p)[0];
+  });
+  return T;
+}
+const wrOrd = n => `${n}.º`;
+const wrFoto = id => { id = String(id); return (FOTOS && FOTOS[id]) || fotoDe(id); };
+// gráfica del puesto jornada a jornada (arriba el 1.º); se dibuja sola al entrar
+function wrSvgPuesto(t) {
+  const W = 320, H = 130, n = t.posS.length, X = k => 36 + k * (W - 46) / Math.max(1, n - 1), Y = p => 14 + (p - 1) * (H - 28) / Math.max(1, t.N - 1);
+  const pts = t.posS.map((p, k) => [X(k), Y(p)]), kM = t.posS.indexOf(t.mejorPos);
+  return `<svg class="wr-g wr-a" style="--d:.9s" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tu puesto jornada a jornada: del ${wrOrd(t.posS[0])} al ${wrOrd(t.pos)}">
+    ${[1, t.N].map(p => `<text x="0" y="${Y(p) + 4}">${wrOrd(p)}</text>`).join("")}
+    <line x1="36" x2="${W - 10}" y1="${Y(1)}" y2="${Y(1)}" class="wr-g-l"/>
+    <path d="${curva(pts)}" pathLength="1" class="wr-g-p"/>
+    <circle cx="${pts[kM][0]}" cy="${pts[kM][1]}" r="5" class="wr-g-d"/><circle cx="${pts[n - 1][0]}" cy="${pts[n - 1][1]}" r="7" class="wr-g-f"/>
+  </svg>`;
+}
+function wrDiapos(t) {
+  const m = t.m, liga = ($("#titulo") && $("#titulo").textContent) || "la liga", e1 = t.top[0], e2 = t.top.slice(1, 3);
+  const cara_ = (id, nom, team, tam) => cara(id, nom, team, tam);
+  const maxP = Math.max(...t.P, 1), S = [];
+  S.push({ color: col(t.i), html: `<div class="wr-portada">
+      <span class="wr-eco" aria-hidden="true">${esc(String(D.season || "TEMPORADA")).toUpperCase()}</span>
+      <div class="wr-anillo wr-a" style="--d:.05s">${avatar(m, t.i)}</div>
+      <p class="wr-k wr-a" style="--d:.35s">La temporada de</p>
+      <h2 class="wr-nom wr-a" style="--d:.5s">${esc(m.name)}</h2>
+      <p class="wr-p wr-a" style="--d:.8s">${t.n} jornadas en ${esc(liga)}. Esto es lo que ha pasado.</p></div>` });
+  S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Has sumado</p>
+      <b class="wr-big wr-a" style="--d:.2s" data-cuenta="${t.total}">${nf0.format(t.total)}</b>
+      <p class="wr-t wr-a" style="--d:.5s">puntos · vas ${wrOrd(t.pos)} de ${t.N}</p>
+      ${wrSvgPuesto(t)}
+      <p class="wr-p wr-a" style="--d:1.3s">${t.lider ? `Has sido líder ${t.lider === 1 ? "una jornada" : `${t.lider} jornadas`}.` : `Tu mejor puesto: ${wrOrd(t.mejorPos)}.`} Haces ${nf1c(t.media)} puntos por jornada; la media de la liga, ${nf1c(t.mediaLiga)}.</p>` });
+  S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Tu mejor jornada</p>
+      <b class="wr-big wr-a" style="--d:.2s">${esc(t.rec.j)}</b>
+      <p class="wr-t wr-a" style="--d:.5s"><span data-cuenta="${t.rec.p}">${t.rec.p}</span> puntos · ${t.rec.puesto === 1 ? "la ganaste" : `${wrOrd(t.rec.puesto)} del día`}</p>
+      <div class="wr-barrasj wr-a" style="--d:.7s" role="img" aria-label="Tus puntos en cada jornada">${t.P.map((v, k) => `<i class="${t.js[k] === t.rec.j ? "rec" : t.js[k] === t.peor.j ? "peor" : ""}" style="--h:${Math.max(3, v / maxP * 100).toFixed(1)}%;--d:${(0.8 + k * 0.06).toFixed(2)}s"><small>${v}</small></i>`).join("")}</div>
+      <p class="wr-p wr-a" style="--d:1.5s">${t.victorias ? `Has ganado ${t.victorias === 1 ? "una jornada" : `${t.victorias} jornadas`}.` : "Aún no has ganado ninguna jornada."} La que mejor olvidar: la ${esc(t.peor.j)}, con ${t.peor.p}.</p>` });
+  if (e1) S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Tu jugador estrella</p>
+      <div class="wr-foto wr-a" style="--d:.25s" data-ini="${esc(iniciales(e1.name))}"><img src="${esc(wrFoto(e1.id))}" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('sin');this.remove()">${e1.teamId ? `<img class="wr-esc" src="fotos/escudos/${esc(e1.teamId)}.png" alt="" onerror="this.remove()">` : ""}</div>
+      <h2 class="wr-nom wr-a" style="--d:.55s">${esc(apellido(e1.name))}</h2>
+      <p class="wr-t wr-a" style="--d:.7s"><span data-cuenta="${e1.pts}">${e1.pts}</span> puntos para ti en ${e1.pj} ${e1.pj === 1 ? "partido" : "partidos"}${e1.goles ? ` · ${e1.goles} ${e1.goles === 1 ? "gol" : "goles"}` : ""}</p>
+      ${e2.length ? `<ol class="wr-lista wr-a" style="--d:1s">${e2.map((p, k) => `<li>${cara_(p.id, p.name, p.teamId, 36)}<b>${esc(apellido(p.name))}</b><span>${p.pts} pts</span><small>${k + 2}.º</small></li>`).join("")}</ol>` : ""}` });
+  if (t.caps.length) S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">El brazalete</p>
+      <b class="wr-big wr-a" style="--d:.2s">+<span data-cuenta="${t.extra}">${t.extra}</span></b>
+      <p class="wr-t wr-a" style="--d:.5s">puntos extra de capitán · ${wrOrd(t.R.extra)} de la liga</p>
+      <div class="wr-duo">
+        <div class="wr-caja wr-a" style="--d:.8s">${cara_(t.capMejor.id, t.capMejor.name, null, 48)}<small>Tu mejor elección</small><b>${esc(apellido(t.capMejor.name))}</b><span>+${t.capMejor.bonus} en la ${esc(t.capMejor.j)} (×${coma(t.capMejor.multiplier || 1)})</span></div>
+        ${t.capPeor && t.capPeor !== t.capMejor ? `<div class="wr-caja mala wr-a" style="--d:1s">${cara_(t.capPeor.id, t.capPeor.name, null, 48)}<small>La que menos rindió</small><b>${esc(apellido(t.capPeor.name))}</b><span>${t.capPeor.played === false ? "no jugó" : `+${t.capPeor.bonus}`} en la ${esc(t.capPeor.j)}</span></div>` : ""}
+      </div>` });
+  if (t.victima && t.bestia) S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Cara a cara, jornada a jornada</p>
+      <div class="wr-vs">
+        <div class="wr-rival wr-a" style="--d:.3s"><small>Tu víctima favorita</small>${avatar(t.victima.o.m, t.victima.o.i)}<b>${esc(t.victima.o.m.name)}</b><span class="wr-mar"><span data-cuenta="${t.victima.g}">${t.victima.g}</span>–${t.victima.p}</span><em>le has ganado ${t.victima.g} de ${t.n} jornadas</em></div>
+        <span class="wr-vs-x wr-a" style="--d:.6s" aria-hidden="true">VS</span>
+        <div class="wr-rival mala wr-a" style="--d:.8s"><small>Tu bestia negra</small>${avatar(t.bestia.o.m, t.bestia.o.i)}<b>${esc(t.bestia.o.m.name)}</b><span class="wr-mar">${t.bestia.g}–<span data-cuenta="${t.bestia.p}">${t.bestia.p}</span></span><em>te ha ganado ${t.bestia.p} de ${t.n}</em></div>
+      </div>` });
+  if (t.val.length > 1) {
+    const v0 = t.val[0], v1 = t.val[t.val.length - 1], mn = Math.min(...t.val), mx = Math.max(...t.val), W = 320, H = 110;
+    const p = t.val.map((v, k) => [k * W / (t.val.length - 1), H - 8 - (v - mn) / Math.max(1, mx - mn) * (H - 24)]);
+    S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Tu plantilla vale</p>
+      <b class="wr-big wr-a" style="--d:.2s">${esc(eur(v1))}</b>
+      <p class="wr-t wr-a" style="--d:.5s">${v1 >= v0 ? "+" : "−"}${esc(eur(Math.abs(v1 - v0)))} desde la ${esc(t.js[0])} (${v1 >= v0 ? "+" : "−"}${nf1c(Math.abs(t.crece * 100))} %)</p>
+      <svg class="wr-g wr-a" style="--d:.8s" viewBox="0 0 ${W} ${H}" role="img" aria-label="Valor de tu plantilla jornada a jornada"><defs><linearGradient id="wrArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2fd46e" stop-opacity=".45"/><stop offset="1" stop-color="#2fd46e" stop-opacity="0"/></linearGradient></defs>
+        <path d="${curva(p)} L${W},${H} L0,${H} Z" fill="url(#wrArea)" class="wr-g-a"/><path d="${curva(p)}" pathLength="1" class="wr-g-p"/></svg>
+      <p class="wr-p wr-a" style="--d:1.2s">${t.R.crece === 1 ? "Nadie ha hecho crecer tanto su plantilla." : `Eres el ${wrOrd(t.R.crece)} que más ha hecho crecer su plantilla.`}</p>` });
+  }
+  S.push({ color: col(t.i), html: `<p class="wr-k wr-a" style="--d:.1s">Tu ADN de manager</p>
+      <h2 class="wr-adn wr-a" style="--d:.25s">${esc(t.adn.nom)}</h2>
+      <p class="wr-p wr-a" style="--d:.5s">${esc(t.adn.txt)}</p>
+      <div class="wr-grid">${[[nf0.format(t.total), "puntos"], [wrOrd(t.pos), `de ${t.N}`], [t.victorias, t.victorias === 1 ? "jornada ganada" : "jornadas ganadas"], ["+" + t.extra, "de capitán"]]
+        .map(([v, l], k) => `<div class="wr-a" style="--d:${(0.7 + k * 0.12).toFixed(2)}s"><b>${esc(v)}</b><small>${esc(l)}</small></div>`).join("")}</div>
+      <button class="wr-comp wr-a" style="--d:1.3s" data-wr="comp">📤 Compartir mi temporada</button>` });
+  return S;
+}
+// números que cuentan desde 0 al entrar la diapositiva
+function wrCuentas(raiz) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  raiz.querySelectorAll("[data-cuenta]").forEach(el => {
+    const fin = Number(el.dataset.cuenta); if (!isFinite(fin) || !fin) return;
+    const txt = el.textContent, t0 = performance.now() + 250, dur = 1100;
+    const paso = ahora => { if (!el.isConnected) return; const k = Math.max(0, Math.min(1, (ahora - t0) / dur)), e = 1 - Math.pow(1 - k, 4);
+      el.textContent = k < 1 ? nf0.format(Math.round(fin * e)) : txt; if (k < 1) requestAnimationFrame(paso); };
+    el.textContent = "0"; requestAnimationFrame(paso);
+  });
+}
+let WR = null;
+function abrirWrapped(i) {
+  const T = wrTodos(), t = T && T[i]; if (!t) return;
+  let el = $("#wr");
+  if (!el) { el = document.createElement("div"); el.id = "wr"; el.className = "wr"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); document.body.appendChild(el); }
+  const S = wrDiapos(t);
+  WR = { t, S, k: 0, el, volver: document.activeElement };
+  el.setAttribute("aria-label", `La temporada de ${t.m.name}`);
+  el.innerHTML = `<div class="wr-marco">
+      <div class="wr-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="wr-barras" aria-hidden="true">${S.map(() => `<span><i></i></span>`).join("")}</div>
+      <div class="wr-cab">${avatar(t.m, t.i)}<b>${esc(t.m.name)}</b><button class="wr-x" data-wr="cerrar" aria-label="Cerrar">✕</button></div>
+      <button class="wr-zona izq" data-wr="ant" aria-label="Anterior"></button><button class="wr-zona der" data-wr="sig" aria-label="Siguiente"></button>
+      <div class="wr-escena"></div></div>`;
+  el.hidden = false; document.body.classList.add("wr-abierto");
+  wrIr(0);
+  el.querySelector(".wr-x").focus({ preventScroll: true });
+}
+function cerrarWrapped() {
+  if (!WR) return;
+  WR.el.hidden = true; WR.el.innerHTML = ""; document.body.classList.remove("wr-abierto");
+  const v = WR.volver; WR = null; if (v && v.focus) v.focus({ preventScroll: true });
+}
+function wrIr(k) {
+  if (!WR) return;
+  if (k >= WR.S.length) return cerrarWrapped();
+  WR.k = k = Math.max(0, k);
+  const d = WR.S[k], esc_ = WR.el.querySelector(".wr-escena");
+  WR.el.style.setProperty("--wr-c", d.color || "#2fd46e");
+  esc_.innerHTML = `<section class="wr-s" aria-roledescription="diapositiva" aria-label="${k + 1} de ${WR.S.length}">${d.html}</section>`;
+  WR.el.querySelectorAll(".wr-barras span").forEach((s, j) => { s.className = j < k ? "hecha" : ""; });
+  const b = WR.el.querySelectorAll(".wr-barras span")[k]; void b.offsetWidth; b.className = "activa";   // reinicia el temporizador
+  WR.el.classList.remove("pausa");
+  wrCuentas(esc_);
+}
+// la barra activa marca el tiempo: al acabar pasa sola (salvo en la última y con «reducir movimiento»)
+document.addEventListener("animationend", e => { if (WR && e.animationName === "wrBarra" && WR.k < WR.S.length - 1) wrIr(WR.k + 1); });
+// mantener pulsado pausa; deslizar hacia abajo cierra
+document.addEventListener("pointerdown", e => {
+  if (!WR || !e.target.closest || !e.target.closest("#wr .wr-zona")) return;
+  WR.y0 = e.clientY; WR.hold = false; clearTimeout(WR.hT);
+  WR.hT = setTimeout(() => { if (WR) { WR.hold = true; WR.el.classList.add("pausa"); } }, 240);
+});
+const wrSuelta = e => {
+  if (!WR || WR.y0 == null) return;
+  clearTimeout(WR.hT); WR.el.classList.remove("pausa");
+  if (e.type === "pointerup" && e.clientY - WR.y0 > 90) { WR.y0 = null; WR.hold = true; setTimeout(cerrarWrapped, 0); return; }
+  WR.y0 = null;
+};
+document.addEventListener("pointerup", wrSuelta);
+document.addEventListener("pointercancel", wrSuelta);
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("[data-wr-abre]");
+  if (a) { abrirWrapped(Number(a.dataset.wrAbre)); return; }
+  const b = e.target.closest && e.target.closest("[data-wr]"); if (!b || !WR) return;
+  if (WR.hold) { WR.hold = false; return; }        // fue una pausa, no un toque
+  const q = b.dataset.wr;
+  if (q === "cerrar") cerrarWrapped();
+  else if (q === "ant") wrIr(WR.k - 1);
+  else if (q === "sig") wrIr(WR.k + 1);
+  else if (q === "comp") { EST_DAT.wr = WR.t; WR.el.classList.add("pausa"); abrirEstudio("wr", b); }
+});
+document.addEventListener("keydown", e => {        // en captura: si el estudio está abierto, Escape solo cierra el estudio
+  if (!WR || ($("#estudio") && !$("#estudio").hidden)) return;
+  if (e.key === "Escape") cerrarWrapped();
+  else if (e.key === "ArrowRight") wrIr(WR.k + 1);
+  else if (e.key === "ArrowLeft") wrIr(WR.k - 1);
+}, true);
+// el lanzador: una fila con todos los managers en la tarjeta de Premios (tú primero si te has marcado)
+function htmlLanzaWrapped() {
+  const L = D.managers.map((m, i) => ({ m, i })).sort((a, b) => (String(b.m.id) === String(YO)) - (String(a.m.id) === String(YO)));
+  return `<div class="wr-lanza"><p><b>La temporada de cada uno</b><span>En historias a pantalla completa: toca a un manager.</span></p>
+    <div class="wr-avs">${L.map(({ m, i }) => `<button class="wr-av-b${String(m.id) === String(YO) ? " yo" : ""}" data-wr-abre="${i}" aria-label="Ver la temporada de ${esc(m.name)}">${avatar(m, i)}<small>${esc(m.name)}</small></button>`).join("")}</div></div>`;
+}
+
+/* láminas para compartir (estudio de imágenes): resumen y jugador estrella */
+async function esWrResumen(t, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const im = await esImg(t.m.avatarUrl);
+  esFondo(x, col(t.i));
+  esCabecera(x, { titulo: "MI TEMPORADA", kicker: `${t.m.name} · ${t.n} jornadas`, pag, total });
+  esAvatar(x, t.m, t.i, im, W / 2, 520, 120, ES.luz);
+  x.textAlign = "center"; x.fillStyle = ES.luz; x.fillText(esAjusta(x, t.adn.nom.toUpperCase(), W - 2 * M, 800, 84, 50, "condensed"), W / 2, 740);
+  x.fillStyle = ES.mut; x.fillText(esAjusta(x, t.adn.txt, W - 2 * M, 500, 32, 22), W / 2, 790); x.textAlign = "left";
+  const tiles = [[nf0.format(t.total), "puntos"], [wrOrd(t.pos), `de ${t.N} en la liga`], [String(t.victorias), t.victorias === 1 ? "jornada ganada" : "jornadas ganadas"], ["+" + t.extra, "puntos de capitán"]];
+  const tw = (W - 2 * M - 24) / 2, th = 150;
+  tiles.forEach(([v, l], k) => {
+    const X = M + (k % 2) * (tw + 24), Y = 840 + Math.floor(k / 2) * (th + 20);
+    esPanel(x, X, Y, tw, th, k === 0 ? "rgba(47,212,110,.6)" : ES.linea, 26);
+    x.fillStyle = k === 0 ? ES.luz : ES.txt; x.font = esF(800, 84, "condensed"); x.fillText(v, X + 28, Y + 92);
+    x.fillStyle = ES.mut; x.font = esS(500, 26); x.fillText(esCorta(x, l, tw - 56), X + 30, Y + 130);
+  });
+  const e1 = t.top[0];
+  esPie(x, `Mejor jornada: ${t.rec.j}, ${t.rec.p} pts${e1 ? ` · estrella: ${apellido(e1.name)}` : ""}`);
+  return c;
+}
+async function esWrEstrella(t, pag, total) {
+  const e1 = t.top[0]; if (!e1) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M, H } = ES;
+  const [im, esc_] = await Promise.all([esImg(esFoto(e1.id)), esImg(esEscudo(e1.teamId))]);
+  const color = esColor(esc_, "e" + e1.teamId);
+  esFondo(x, color);
+  esCabecera(x, { titulo: "MI ESTRELLA", kicker: `${t.m.name} · la temporada`, pag, total });
+  if (im) esJugador(x, im, e1.name, color, W / 2, 1010, 620, esc_);
+  else esCamiseta(x, color, esc_, e1.name, W / 2, 1000, 520);
+  const fu = x.createLinearGradient(0, 860, 0, 1030); fu.addColorStop(0, "rgba(4,10,7,0)"); fu.addColorStop(1, "rgba(4,10,7,.96)");   // la foto se funde con el nombre
+  x.fillStyle = fu; x.fillRect(0, 860, W, 172);
+  x.textAlign = "center"; x.fillStyle = ES.txt; x.fillText(esAjusta(x, apellido(e1.name).toUpperCase(), W - 2 * M, 800, 110, 60, "condensed"), W / 2, 1110);
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 30; x.fillStyle = ES.luz; x.font = esF(800, 54); x.fillText(`${e1.pts} puntos para mí`, W / 2, 1178); x.restore();
+  x.fillStyle = ES.mut; x.font = esS(400, 28); x.fillText(`en ${e1.pj} partidos${e1.goles ? ` · ${e1.goles} goles` : ""}`, W / 2, 1222); x.textAlign = "left";
+  esPie(x, t.top[1] ? `Le siguen ${apellido(t.top[1].name)} (${t.top[1].pts})${t.top[2] ? ` y ${apellido(t.top[2].name)} (${t.top[2].pts})` : ""}` : "");
+  return c;
+}
+ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella]];
 
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
