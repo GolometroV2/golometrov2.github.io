@@ -6710,6 +6710,23 @@ function htmlPodio(rank, valor, unidad, titulo) {
         <div class="po-ped"><span class="po-tapa"></span><span class="po-num">${i + 1}</span></div></div>`; }).join("")}</div></div>`;
 }
 // cifras del podio que suben desde 0 (solo en la entrada; respeta «reducir movimiento»)
+// Los puntos de la clasificación suben contando desde 0, solo la primera vez que se pinta
+let CUENTA_FILAS_HECHA = false;
+function cuentaPuntosFilas() {
+  if (CUENTA_FILAS_HECHA) return;
+  CUENTA_FILAS_HECHA = true;
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const els = [...document.querySelectorAll("#app .rank .pts b")];
+  const fin = els.map(e => e.textContent.trim());
+  if (!fin.every(t => /^-?\d+$/.test(t))) return;
+  const t0 = performance.now(), dur = 700;
+  const paso = t => {
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    els.forEach((el, i) => { el.textContent = k >= 1 ? fin[i] : Math.round(+fin[i] * e); });
+    if (k < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+}
 function cuentaPodio() {
   const p = $(".pdx.entra"); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   p.querySelectorAll("[data-po]").forEach((el, k) => {
@@ -7253,7 +7270,7 @@ function pintar() {
     <section class="card" id="mat"></section>
     <section class="card" id="rach"></section>
     <section class="card" id="premios"></section>`;
-  cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
+  cuentaPuntosFilas(); cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
   pintarQuiniela();
   pintarTuJornada();

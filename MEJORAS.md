@@ -134,6 +134,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - 2026-11-05 (agente, herramienta): el Comparador añade la fila «Puntos esperados» (nivel del jugador × probabilidad de jugar con Futbol Fantasy/AF; misma fórmula que «Cláusulas que merecen la pena»). Probado con Playwright a 360 px: sin errores ni desborde. Cierra la idea 4.
 - 2026-11-05 (agente, textos): dos notas decían «amarillo» (mapa de calor y once recomendado) pero el color es el acento verde; corregidas. Solo texto.
 - 2026-11-05 (agente, herramienta): en el Comparador de jugadores, tocar un jugador abre su ficha y el «vs» central es ahora un botón ⇄ que intercambia A y B (44 px táctiles). Solo interfaz; datos intactos. Probado a 360 px con Playwright: sin errores ni desborde. Idea: puntos esperados del modelo en el comparador.
+- 2026-11-09 (agente, microinteracción): los puntos de la clasificación suben contando desde 0 la primera vez que se pinta (`cuentaPuntosFilas`, 0,7 s, respeta `prefers-reduced-motion`; los valores finales no cambian). Probado a 390 px: totales 749…503 correctos, sin errores ni desborde. Queda del punto 8: cifras que cuentan en otras pestañas.
 
 ## Ideas del dueño (máxima prioridad, léelas siempre)
 - Capitán con un solo algoritmo de riesgo (sin pestañas de modo): ya implementado en main; el rediseño de Capitán debe partir de esa lista única. Ver CLAUDE.md.
