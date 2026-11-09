@@ -22,12 +22,12 @@ Ya no existen las tres pestañas «Seguro / Equilibrado / Arriesgado»: **no las
 
 ## Qué tienes que hacer en cada ejecución
 1. Lee `MEJORAS.md` (lo hecho y las ideas pendientes) y los datos de los JSON.
-2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioridad: errores graves de datos > **rediseño por fases (sección DISEÑO; mientras queden fases por hacer, es lo que toca)** > precisión del modelo (capitán y mercado) > herramientas nuevas (comparadores, histórico de pujas, resumen de jornada). Los arreglos pequeños (una fuente, una barra) no cuentan como fase: cada ejecución debe avanzar una fase entera del rediseño, con cambios visibles.
+2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioridad: errores graves de datos > **hoja de ruta del parón (sección PARÓN, hasta el 20/11)** > precisión del modelo (capitán y mercado) > otras herramientas nuevas. Las 8 fases del rediseño ya están hechas (04-08/11): no las repitas. Los arreglos pequeños (una fuente, una barra) no cuentan: cada ejecución debe dejar algo nuevo y visible.
 3. Impleméntala en una rama nueva `agente/AAAA-MM-DD`, probándola de verdad (ver abajo).
 4. Anota en `MEJORAS.md` qué hiciste, por qué y qué ideas nuevas has visto. Mantén la lista de ideas pendientes ordenada.
 5. Abre una Pull Request con `gh pr create` explicando en 5 líneas qué cambia y cómo lo has probado. **Nunca subas directo a `main`.**
 
-## MODO INTENSIVO (hasta el 11/11/2026)
+## MODO INTENSIVO (hasta el 20/11/2026, fin del parón de selecciones; el dueño lo amplió el 09/11 y autorizó cambiar esa fecha en `agente.yml`)
 Se te ejecuta cada hora. Para no llenar el repositorio de ramas y no crear conflictos:
 - Trabaja siempre en la rama `agente/semana`. Si no existe, créala desde `main`. Si existe: `git fetch origin` y `git checkout agente/semana && git pull --rebase origin agente/semana`; para traer cambios de `main`, usa `git merge origin/main` (nunca `rebase` sobre main).
 - **Claude también sube commits a esta rama a mano.** Nunca reescribas su historia: prohibido `git push --force`, `--force-with-lease`, `reset` o rebase de commits ya subidos. Sube con `git pull --rebase origin agente/semana && git push origin agente/semana`; si falla, repite el pull y vuelve a subir.
@@ -36,6 +36,26 @@ Se te ejecuta cada hora. Para no llenar el repositorio de ramas y no crear confl
 - Si la PR ya fue aceptada y la rama quedo vieja, empieza una `agente/semana` nueva desde `main`.
 - Prioriza variedad: no repitas el mismo tipo de mejora dos veces seguidas y revisa `MEJORAS.md` antes de elegir. Si algo se rompe en una prueba, revierte tu cambio y apunta el motivo en `MEJORAS.md`.
 - Las ideas pendientes de `MEJORAS.md` son un punto de partida, no un limite: investiga los datos y propon tus propias herramientas (comparadores, resumenes, graficos, calendario de fichajes, alertas de clausulas, etc.).
+
+## PARÓN (09-20/11/2026): herramientas visuales muy avanzadas (pedido del dueño, 09/11)
+El dueño quiere herramientas «que sean una locura estéticamente», al nivel de las mejores apps deportivas, para enseñarlas y compartirlas en los grupos de WhatsApp. Tienes mano libre; estas reglas no se saltan:
+- Una herramienta (o una parte entera de una grande) por ejecución, terminada y probada. Nada a medias a la vista.
+- Solo HTML, CSS, SVG y Canvas propios: sin librerías, sin fuentes ni imágenes de internet. Fotos y escudos de `fotos/`; si falta una foto, iniciales o camiseta del color del equipo (`esCamiseta`).
+- Mobile-first (360/390/420 px y escritorio) y fluido en el móvil: anima `transform` y `opacity`, para lo que no se ve y respeta siempre `prefers-reduced-motion`. Sin scroll horizontal de la página.
+- Paleta verde del sistema de diseño, sin amarillo de acento. Lo estadístico, para todos; previsiones y consejos, con `soloIA`.
+- Las alineaciones se ven siempre en el campo 3D (`htmlCampo3D`, decisión del dueño 09/11): no vuelvas a poner selector Plano/3D, ni giro ni diagonal. Los puntos de una jornada (y los esperados) llevan los colores de Mister (`tramoPts`, `colPts`, clases `mp-*`); no inventes otra escala.
+- Reutiliza lo que ya existe en vez de duplicarlo: `htmlCampo3D` (campo en 3D), el estudio de imágenes (`ES_*`, `abrirEstudio`, láminas de 1080×1350; para una lámina nueva añade su lista a `ES_SETS` y su dato a `EST_DAT`), las historias (`wrTodos`, `abrirWrapped`), el cromo (`cromoDatos`, `abrirCromo`), `cara()`, `fotoDe()`.
+- Mismos números que la vista normal: compruébalo con capturas antes y después.
+
+Orden (de más a menos valor; anota en `MEJORAS.md` lo que hagas). Si se te ocurre algo mejor, adelante, pero mira antes que no exista:
+1. Campo 3D en más sitios: once ideal de la temporada, plantilla de cada manager en Equipos (once probable con su valor) y once recomendado del Capitán (con PIN).
+2. «Wrapped» de cada manager: historias a pantalla completa que se pasan con el dedo (mejor jornada, peor capitán, fichaje estrella, dinero ganado con ventas, rival al que más ganó…), con transiciones y botón para compartirlas como imágenes del estudio.
+3. Cromo del jugador en su ficha: carta con brillo metálico verde que se inclina siguiendo el dedo (sin giroscopio), puntos por jornada en minigráfica, valor y próximo rival; compartible.
+4. Repetición de la liga: carrera de barras animada jornada a jornada (avatares que se adelantan, botón ▶ y barra de tiempo). Es distinta de «La carrera», que es una gráfica de líneas.
+5. Red de traspasos: managers en círculo y arcos animados de fichajes y cláusulas entre ellos (grosor = dinero); tocar un manager deja solo sus movimientos.
+6. Línea del tiempo de la temporada: hitos de cada jornada (líder, récord, fichaje más caro, goleada) con desplazamiento horizontal.
+7. Más láminas en el estudio de imágenes: el campo 3D dibujado en canvas para la previa y la crónica, el cromo del MVP, el «Wrapped».
+8. Microinteracciones en toda la web: transición suave entre pestañas, cifras que cuentan al aparecer, estados vacíos con dibujos SVG propios.
 
 ## DISEÑO: libertad total (el dueño lo pide expresamente)
 El diseño actual se considera poco profesional. Tienes libertad completa para rehacerlo: paleta, tipografía, espaciados, iconos (SVG propios), tarjetas, tablas, gráficos, animaciones suaves, estados vacíos y de carga, navegación, cabecera, todo. Objetivo: que parezca una app deportiva moderna y cuidada (nivel producto), no una página casera.

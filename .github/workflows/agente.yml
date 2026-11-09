@@ -1,6 +1,6 @@
 name: Agente de mejoras
 
-# MODO INTENSIVO hasta el 11/11/2026: una ejecucion cada hora (se encolan, nunca van dos a la vez).
+# MODO INTENSIVO hasta el 20/11/2026: una ejecucion cada hora (se encolan, nunca van dos a la vez).
 # Despues vuelve solo al ritmo normal: una vez a la semana (martes).
 # Todo el trabajo va a UNA rama (agente/semana) y UNA Pull Request abierta; tu la aceptas cuando quieras.
 on:
@@ -29,7 +29,7 @@ jobs:
           HOY=$(TZ=Europe/Madrid date +%F)
           DIA=$(TZ=Europe/Madrid date +%u)
           HORA=$(TZ=Europe/Madrid date +%H)
-          if [ "${{ github.event_name }}" = "schedule" ] && [[ "$HOY" > "2026-11-11" ]] && { [ "$DIA" != "2" ] || [ "$((10#$HORA))" -ne 8 ]; }; then
+          if [ "${{ github.event_name }}" = "schedule" ] && [[ "$HOY" > "2026-11-20" ]] && { [ "$DIA" != "2" ] || [ "$((10#$HORA))" -ne 8 ]; }; then
             echo "Fuera del modo intensivo: solo martes a las 08 de Madrid."
             echo "seguir=no" >> "$GITHUB_OUTPUT"
           else
@@ -74,8 +74,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # GitHub retrasa mucho el cron horario: al terminar, esta ejecucion lanza la siguiente.
-          # Solo durante el modo intensivo (hasta el 11/11/2026) y con una pausa de 2 minutos.
+          # Solo durante el modo intensivo (hasta el 20/11/2026) y con una pausa de 2 minutos.
           HOY=$(TZ=Europe/Madrid date +%F)
-          if [[ "$HOY" > "2026-11-11" ]]; then echo "Fin del modo intensivo."; exit 0; fi
+          if [[ "$HOY" > "2026-11-20" ]]; then echo "Fin del modo intensivo."; exit 0; fi
           sleep 120
           gh workflow run agente.yml --repo "${{ github.repository }}" --ref main
