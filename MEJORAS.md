@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-10 (agente, parón idea propia) · **«Altibajos»** (Clasificación, índice «🎢 Altibajos», para todos: estadístico): una fila por manager con un punto por jornada sobre la misma escala, la mediana marcada, mejor y peor jornada y el «±» de cuánto varía; ordenados del más regular al más irregular (`pintarAltibajos`, clase `.al`). Solo lee `D.matchdays`. Probado a 360 px con Playwright: sin errores ni desborde.
 - 2026-11-10 (a mano por Claude, el dueño: «modernizar toda la web, herramientas futuristas y de vanguardia») · **Podio, cinta, Bolsa y mapa de la conquista**:
   - **Podio** (Clasificación, encima de la tabla): los tres primeros sobre pedestales iluminados con foco en el líder; sale de la misma lista que la tabla (vista y orden elegidos) y la entrada solo se repite si cambia el podio (`htmlPodio`, `PODIO_K`, clase `.pdx`; ojo, `.podio` ya era el podio de capitanes).
   - **Cinta «Ahora»** bajo la cabecera, en todas las pestañas, como en las retransmisiones: cuenta atrás de la jornada, líder, ganador de la última jornada, lo que más sube y baja hoy, el jugador en racha y los últimos fichajes (`itemsCinta`, `pintarCinta`; la cuenta atrás se actualiza sola sin reiniciar el desplazamiento). Clase `.cin-i` (`.ci` ya existía).
