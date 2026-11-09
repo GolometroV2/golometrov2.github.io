@@ -1018,6 +1018,23 @@ body.est-abierto{overflow:hidden}
 @media (min-width:480px){.c3d-b{scale:1.18}}
 @media (min-width:560px){.c3d-b{scale:1.38}}
 
+/* Red de traspasos */
+.red-svg{display:block;width:100%;max-width:420px;margin:0 auto;height:auto;touch-action:manipulation}
+.red-arco{fill:none;stroke-linecap:round;stroke-dasharray:6 8;animation:redFlujo 1.4s linear infinite;transition:opacity .25s}
+.red-arco.mer{stroke:var(--mut)}
+.red-arco.dim{opacity:.08}
+.red-nodo{cursor:pointer;outline:none}.red-nodo circle.fd{transition:opacity .25s}
+.red-nodo.dim{opacity:.3}
+.red-nodo:focus-visible circle.fd{stroke:var(--acc);stroke-width:3}
+.red-nodo text{font-size:11px;font-weight:700;fill:var(--txt);text-anchor:middle;pointer-events:none}
+.red-nodo text.ini{font-size:13px;fill:#fff}
+.red-pie{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--mut);margin:6px 0 10px}
+.red-pie i{display:inline-block;width:18px;height:0;border-top:3px dashed var(--acc);vertical-align:middle;margin-right:5px}.red-pie i.m{border-color:var(--mut)}
+.red-l{list-style:none;margin:0;padding:0}.red-l li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.red-l li span:first-child{min-width:0}.red-l b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.red-bt{min-height:44px;padding:0 14px;border-radius:var(--r-m);border:1px solid var(--line);background:none;color:var(--txt);cursor:pointer;margin-bottom:8px}
+@keyframes redFlujo{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){.red-arco{animation:none}}
 /* Repetición de la liga */
 .rep-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .rep-play{width:48px;height:48px;border-radius:50%;border:0;background:var(--acc);color:var(--accTxt);font-size:17px;font-weight:800;flex:none;cursor:pointer;box-shadow:0 0 18px color-mix(in srgb,var(--acc) 45%,transparent)}
@@ -1120,7 +1137,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarRed(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -2410,6 +2427,52 @@ document.addEventListener("click", e => {
   REP.timer = setInterval(() => { if (!document.contains(b) || REP.k >= n - 1) return repParar(); repPoner(REP.k + 1); if (REP.k >= n - 1) repParar(); }, 1300);
 });
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches(".rep-r")) { repParar(); repPoner(+e.target.value); } });
+
+/* ---------- Red de traspasos: managers en círculo y arcos de dinero entre ellos ---------- */
+// Lee los últimos movimientos guardados (equipos.json -> transfers). Centro = Mister (mercado libre). Grosor = dinero.
+let REDSEL = null;
+function pintarRed() {
+  const c = $("#red"); if (!c) return;
+  const T = (E && E.transfers) || [];
+  const ms = (D && D.managers) || [];
+  const idx = {}; ms.forEach((m, i) => idx[String(m.id)] = i);
+  const mov = T.filter(t => (t.from == null || String(t.from) in idx) && (t.to == null || String(t.to) in idx) && !(t.from == null && t.to == null));
+  if (!mov.length || ms.length < 2) { c.hidden = true; return; }
+  c.hidden = false;
+  const n = ms.length, W = 360, cx = 180, cy = 180, R = 125;
+  const pos = ms.map((_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+  const nodo = k => k == null ? "M" : idx[String(k)];
+  const xy = k => k === "M" ? [cx, cy] : pos[k];
+  const agg = {};
+  mov.forEach(t => { const a = nodo(t.from), b = nodo(t.to), key = a + ">" + b; const o = agg[key] = agg[key] || { a, b, v: 0, n: 0 }; o.v += t.value || 0; o.n++; });
+  const arcos = Object.values(agg), maxV = Math.max(...arcos.map(o => o.v), 1);
+  const sel = REDSEL != null && REDSEL < n ? REDSEL : null;
+  const svgArcos = arcos.map(o => {
+    const [x1, y1] = xy(o.a), [x2, y2] = xy(o.b), mx = (x1 + x2) / 2 + (cx - (x1 + x2) / 2) * .45, my = (y1 + y2) / 2 + (cy - (y1 + y2) / 2) * .45;
+    const mer = o.a === "M" || o.b === "M", on = sel == null || o.a === sel || o.b === sel;
+    const w = (1.5 + 5 * Math.sqrt(o.v / maxV)).toFixed(1);
+    return `<path class="red-arco${mer ? " mer" : ""}${on ? "" : " dim"}" d="M${x1.toFixed(1)} ${y1.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${mer ? "" : "var(--acc)"}" stroke-width="${w}"><title>${esc(o.a === "M" ? "Mister" : ms[o.a].name)} → ${esc(o.b === "M" ? "Mister" : ms[o.b].name)}: ${o.n} mov., ${eur(o.v)}</title></path>`;
+  }).join("");
+  const svgNodos = ms.map((m, i) => {
+    const [x, y] = pos[i], dim = sel != null && sel !== i && !arcos.some(o => (o.a === sel && o.b === i) || (o.b === sel && o.a === i));
+    return `<g class="red-nodo${dim ? " dim" : ""}" data-red="${i}" role="button" tabindex="0" aria-pressed="${sel === i}" aria-label="${esc(m.name)}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="26" fill="transparent"/>
+      <circle class="fd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="19" fill="${col(i)}" stroke="${sel === i ? "var(--acc)" : "var(--panel)"}" stroke-width="3"/>
+      <text class="ini" x="${x.toFixed(1)}" y="${(y + 4.5).toFixed(1)}">${esc(m.avatar || "MF")}</text><text x="${x.toFixed(1)}" y="${(y + 35).toFixed(1)}">${esc(String(m.name).slice(0, 10))}</text></g>`;
+  }).join("");
+  const centro = `<g><circle cx="${cx}" cy="${cy}" r="25" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><text x="${cx}" y="${cy + 4}" style="font-size:11px;font-weight:700;fill:var(--mut);text-anchor:middle">Mister</text></g>`;
+  const mios = sel == null ? mov : mov.filter(t => nodo(t.from) === sel || nodo(t.to) === sel);
+  const nom = k => k == null ? "Mister" : ms[idx[String(k)]].name;
+  const lista = mios.slice().sort((a, b) => (b.value || 0) - (a.value || 0)).slice(0, 8).map(t => `<li><span>${esc(t.name)}<br><small class="note">${esc(nom(t.from))} → ${esc(nom(t.to))}</small></span><b>${eur(t.value || 0)}</b></li>`).join("");
+  const gastado = sel == null ? null : mov.filter(t => nodo(t.to) === sel).reduce((q, t) => q + (t.value || 0), 0), cobrado = sel == null ? null : mov.filter(t => nodo(t.from) === sel).reduce((q, t) => q + (t.value || 0), 0);
+  c.innerHTML = `<div class="gh"><h2>Red de traspasos</h2></div>
+    <p class="note" style="margin:0 0 6px">Quién fichó a quién en los últimos ${mov.length} movimientos. Los trazos van de quien vende a quien compra y son más gruesos cuanto más dinero. Toca un manager para ver solo lo suyo.</p>
+    <svg class="red-svg" viewBox="0 0 ${W} ${W}" role="img" aria-label="Red de traspasos entre managers">${svgArcos}${centro}${svgNodos}</svg>
+    <div class="red-pie"><span><i></i>entre managers (cláusulas y traspasos)</span><span><i class="m"></i>con Mister (mercado)</span></div>
+    ${sel != null ? `<button class="red-bt" data-red="-1">✕ Ver a todos</button> <p class="note" style="margin:0 0 6px"><b>${esc(ms[sel].name)}</b>: ha gastado ${eur(gastado)} y ha cobrado ${eur(cobrado)} en estos movimientos.</p>` : ""}
+    <ul class="red-l">${lista}</ul>`;
+}
+document.addEventListener("click", e => { const g = e.target.closest && e.target.closest("[data-red]"); if (!g || !D) return; const i = +g.dataset.red; REDSEL = i < 0 || REDSEL === i ? null : i; pintarRed(); });
+document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".red-nodo")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); } });
 
 function pintarPremios() {
   const cont = $("#premios");
@@ -5811,12 +5874,13 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["red", "🕸 Traspasos"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="rep"></section>
+    <section class="card" id="red"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="comp"></section>
@@ -5831,6 +5895,7 @@ function pintar() {
   pintarCronica();
   pintarGrafico();
   pintarRepeticion();
+  pintarRed();
   pintarPronostico();
   pintarDuelo();
   pintarComparador();
