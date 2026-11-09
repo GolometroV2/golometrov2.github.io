@@ -1184,6 +1184,13 @@ body.wr-abierto{overflow:hidden}
 @property --cy{syntax:"<angle>";inherits:true;initial-value:0deg}
 @property --gx{syntax:"<percentage>";inherits:true;initial-value:30%}
 @property --gy{syntax:"<percentage>";inherits:true;initial-value:20%}
+.cm-cab{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:4px 0 12px;text-align:center}
+.cm-cab em{font-style:normal;font-weight:800;color:var(--mut);font-size:13px}
+.cm-j{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}
+.cm-j b{font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cm-j small{color:var(--mut);font-size:12px}
+.cm-f{display:grid;grid-template-columns:1fr 1.3fr 1fr;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);text-align:center}
+.cm-f span{font-size:12px;color:var(--mut)}.cm-f b{font-size:18px;font-variant-numeric:tabular-nums;opacity:.7}.cm-f b.gana{color:var(--acc);opacity:1}
+.cm-v{margin-top:12px}
 .btn-cromo{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:12px 0 2px;padding:0 16px;border-radius:999px;border:1px solid #2fd46e66;background:linear-gradient(120deg,#2fd46e26,#2fd46e0a);color:var(--txt);font-weight:800;cursor:pointer}
 .crv{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px calc(20px + env(safe-area-inset-bottom));color-scheme:dark;
   background:radial-gradient(60% 45% at 50% 40%,#0f3a24 0%,#03100a 70%,#010402 100%);color:#eaf4ee;overflow:hidden}
@@ -1771,11 +1778,13 @@ function cargarLigaJ() {
 /* ---------- Buscador y ficha de jugador ---------- */
 const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 let buscQ = "";
-function abrirBuscador() {
+let buscCmp = null;     // id del jugador con el que se elige rival para comparar (null = búsqueda normal)
+function abrirBuscador(cmp) {
+  buscCmp = typeof cmp === "string" ? cmp : null; if (buscCmp) buscQ = "";
   cargarLigaJ();
   let ov = $("#ovBusc");
   if (!ov) { ov = document.createElement("div"); ov.id = "ovBusc"; ov.className = "ov"; document.body.appendChild(ov); }
-  ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Buscar jugador"><div class="ov-h"><input id="buscIn" type="search" placeholder="Busca un jugador de la liga" autocomplete="off" value="${esc(buscQ)}"><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div><ul class="clist" id="buscRes"></ul></div>`;
+  ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Buscar jugador"><div class="ov-h"><input id="buscIn" type="search" placeholder="${buscCmp ? "Elige con quién compararlo" : "Busca un jugador de la liga"}" autocomplete="off" value="${esc(buscQ)}"><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div><ul class="clist" id="buscRes"></ul></div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
   const i = $("#buscIn"); i.focus(); i.oninput = () => { buscQ = i.value; pintarBusqueda(); };
   pintarBusqueda();
@@ -1785,9 +1794,10 @@ function pintarBusqueda() {
   if (!LIGAJ || LIGAJ.cargando) { ul.innerHTML = `<li class="note" style="padding:12px">Cargando jugadores…</li>`; return; }
   const q = sinTilde(buscQ.trim());
   const nombreEq = {}; (CAL && CAL.games || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
-  const L = Object.values(LIGAJ.jug).filter(p => p.name && (!q || sinTilde(p.name).includes(q) || sinTilde(nombreEq[p.teamId]).includes(q)))
+  const L = Object.values(LIGAJ.jug).filter(p => p.name && String(p.id) !== String(buscCmp) && (!q || sinTilde(p.name).includes(q) || sinTilde(nombreEq[p.teamId]).includes(q)))
     .sort((a, b) => (q && sinTilde(a.name).startsWith(q) ? 0 : 1) - (q && sinTilde(b.name).startsWith(q) ? 0 : 1) || (b.points || 0) - (a.points || 0)).slice(0, 12);
-  ul.innerHTML = L.length ? L.map(p => `<li><button class="crow b-res" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 38)}<span class="cq"><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span></b><span>${esc(nombreEq[p.teamId] || "")} · ${p.owner ? esc(p.ownerName || "") : "sin dueño"}</span></span><span class="cr"><b>${p.points ?? 0}</b><small>${merEur(p.value || 0)}</small></span></button></li>`).join("")
+  const atr = p => buscCmp ? `data-cmp="${esc(p.id)}"` : `data-ficha="${esc(p.id)}"`;
+  ul.innerHTML = L.length ? L.map(p => `<li><button class="crow b-res" ${atr(p)}>${cara(p.id, p.name, p.teamId, 38)}<span class="cq"><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span></b><span>${esc(nombreEq[p.teamId] || "")} · ${p.owner ? esc(p.ownerName || "") : "sin dueño"}</span></span><span class="cr"><b>${p.points ?? 0}</b><small>${merEur(p.value || 0)}</small></span></button></li>`).join("")
     : `<li class="note" style="padding:12px">Ningún jugador coincide con «${esc(buscQ)}».</li>`;
 }
 let fichaPendiente = null;
@@ -1819,7 +1829,7 @@ function abrirFicha(id) {
     <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
     <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
       <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
-    ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button>` : ""}
+    ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
@@ -1828,7 +1838,7 @@ function abrirFicha(id) {
       return mv.length ? `<h3 class="sec">Sus últimos movimientos en la liga</h3><ul class="clist">${mv.map(t => `<li class="mv mv2" style="padding:6px 0"><span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>` : ""; })()}</div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
 }
-function cerrarOv() { ["#ovBusc", "#ovFicha"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
+function cerrarOv() { ["#ovBusc", "#ovFicha", "#ovCmp"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
 document.addEventListener("click", e => {
   const f = e.target.closest("[data-ficha]"); if (f) { const b = $("#ovBusc"); if (b) b.hidden = true; abrirFicha(f.dataset.ficha); return; }
   if (e.target.closest("[data-cerrar]") || e.target.classList.contains("ov")) { cerrarOv(); return; }
@@ -6235,6 +6245,36 @@ function htmlCromo(d) {
       <div class="cr-holo"></div>
     </div></div></div>`;
 }
+/* ---------- Comparador de jugadores cara a cara (estadístico, para todos): mismas cifras que el cromo ---------- */
+function abrirComparador(idA, idB) {
+  const a = cromoDatos(idA), b = cromoDatos(idB); if (!a || !b) return;
+  const num = v => capNum(v) ? v : null;
+  const filas = [["Media del cromo", a.nota, b.nota, v => v, true], ["Puntos", a.p.points, b.p.points, v => v, true], ["Puntos por partido", a.p.avg, b.p.avg, v => nf1.format(v), true],
+    ["Partidos con nota", a.pj, b.pj, v => v, true], ["Forma (últimos partidos)", a.forma, b.forma, v => nf1.format(v), true], ["Mejor jornada", a.rec && a.rec.v, b.rec && b.rec.v, v => v, true],
+    ["Valor", a.p.value, b.p.value, v => merEur(v), false]];
+  let ga = 0, gb = 0;
+  const html = filas.map(([t, x, y, fmt, cuenta]) => {
+    const X = num(x), Y = num(y), gx = cuenta && X != null && Y != null && X > Y, gy = cuenta && X != null && Y != null && Y > X;
+    if (gx) ga++; if (gy) gb++;
+    return `<div class="cm-f"><b class="${gx ? "gana" : ""}">${X != null ? esc(fmt(X)) : "–"}</b><span>${esc(t)}</span><b class="${gy ? "gana" : ""}">${Y != null ? esc(fmt(Y)) : "–"}</b></div>`; }).join("");
+  const cab = d => `<div class="cm-j" data-ficha="${esc(d.p.id)}">${cara(d.p.id, d.p.name, d.p.teamId, 60)}<b>${esc(apellido(d.p.name))}</b><small>${esc(d.p.pos)} · ${esc(d.p.ownerName || "sin dueño")}</small></div>`;
+  const veredicto = ga === gb ? "Empate técnico: se reparten las ventajas." : `${esc(apellido((ga > gb ? a : b).p.name))} gana en ${Math.max(ga, gb)} de ${filas.filter(f => f[4]).length} apartados.`;
+  let ov = $("#ovCmp");
+  if (!ov) { ov = document.createElement("div"); ov.id = "ovCmp"; ov.className = "ov"; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Comparar ${esc(a.p.name)} y ${esc(b.p.name)}">
+    <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
+    <div class="cm-cab">${cab(a)}<em>VS</em>${cab(b)}</div>${html}
+    <p class="note cm-v"><b>${veredicto}</b> Solo cuenta lo ya jugado (puntos de Mister), sin previsiones.</p>
+    <button class="btn-cromo" data-comparar="${esc(idA)}">⚔️ Cambiar de rival</button></div>`;
+  const f = $("#ovFicha"); if (f) f.hidden = true;
+  ov.hidden = false; document.body.classList.add("sin-scroll");
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("[data-comparar]");
+  if (c) { const ofi = $("#ovFicha"); if (ofi) ofi.hidden = true; const oc = $("#ovCmp"); if (oc) oc.hidden = true; abrirBuscador(String(c.dataset.comparar)); return; }
+  const r = e.target.closest && e.target.closest("[data-cmp]");
+  if (r) { const a = buscCmp, ob = $("#ovBusc"); if (ob) ob.hidden = true; buscCmp = null; abrirComparador(a, r.dataset.cmp); }
+});
 let CROMO = null;
 function abrirCromo(id) {
   const d = cromoDatos(id); if (!d) return;
