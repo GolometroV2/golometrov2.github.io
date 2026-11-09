@@ -1,7 +1,91 @@
 {
-"updatedAt": "2026-11-08T19:24:16Z",
+"updatedAt": "2026-11-09T04:05:15Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "60858",
+"name": "Pablo Ramón",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 1155000,
+"listado": 1128000,
+"precio": 1450333,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "25621",
+"name": "Andrei Rațiu",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 6857000,
+"listado": 6745000,
+"precio": 7580900,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "55088",
+"name": "Carl Starfelt",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 585000,
+"listado": 629000,
+"precio": 695000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "15107",
+"name": "Marc Cucurella",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 10250000,
+"listado": 10194000,
+"precio": 10299000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "71176",
+"name": "Morten Hjulmand",
+"from": null,
+"to": "8663449",
+"tipo": "mercado",
+"valor": 5405000,
+"listado": 5401000,
+"precio": 5451000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "64459",
+"name": "Dávid Hancko",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 10954000,
+"listado": 10887000,
+"precio": 10999000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-09T04:05:15Z",
+"playerId": "59581",
+"name": "Luiz Júnior",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 160000,
+"listado": 175000,
+"precio": null,
+"clausulaMinima": true
+},
 {
 "ts": "2026-11-08T19:24:16Z",
 "playerId": "58980",
