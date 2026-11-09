@@ -1715,6 +1715,7 @@ document.addEventListener("click", e => {
   V3D = b.dataset.v3d === "1";
   try { localStorage.setItem("v3d", V3D ? "1" : "0"); } catch (err) {}
   if (seccion === "clas") { pintar(); pintarCronica(); }
+  if (seccion === "cap") pintarCapitan();
 });
 
 /* ---------- Previa de la jornada: en cuanto arranca y se ven los onces de todos ---------- */
@@ -4879,7 +4880,7 @@ function htmlOnceRec(r) {
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
     <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
-    <div class="oi">${filas}</div>
+    ${botonesVista3D()}${V3D ? htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(pos => o[pos].map(c => ({ id: c.p.id, name: c.p.short || c.p.name, teamId: c.p.teamId, pos, pts: nf1.format(c.esp), cap: c === o.cap, mult: c === o.cap ? c.m : null, sub: c.pj < 0.7 ? "juega " + pc(c.pj) : goleada(c) ? "⚠ goleada" : "" }))), { titulo: "Tu once recomendado", pie: `${o.form} · ${nf1.format(o.total)} puntos esperados` }) : `<div class="oi">${filas}</div>`}
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}
     ${riesgo.length ? `<p class="note">⚠ ${riesgo.map(c => `${esc(c.p.short || c.p.name)}: ${pc(c.p3)} de que su equipo encaje 3 o más contra ${esc(c.rivalNombre || "su rival")}`).join(" · ")}. En lo que va de liga, con 3 o más encajados un defensa hace de media 2 pts y acaba con 0 o menos casi 1 de cada 5 veces. Sigue en el once porque, aun así, sus puntos esperados superan a los del banquillo.</p>` : ""}</details>`;
 }
