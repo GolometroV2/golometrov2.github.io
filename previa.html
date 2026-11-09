@@ -1237,6 +1237,107 @@ body.wr-abierto{overflow:hidden}
 .mp-poor.mp-poor{background:var(--mp-poor);color:#2b2000}.mp-fair.mp-fair{background:var(--mp-fair);color:#142400}.mp-good.mp-good{background:var(--mp-good);color:#03200e}
 .mp-excellent.mp-excellent{background:var(--mp-excellent);color:#032532}.mp-outstanding.mp-outstanding{background:var(--mp-outstanding);color:#fff}
 .rac-n{display:inline-block;min-width:20px;padding:1px 4px;border-radius:5px;text-align:center;font-weight:800}
+/* Cinta de última hora bajo la cabecera */
+.cinta{position:relative;display:flex;align-items:stretch;height:34px;overflow:hidden;background:#03100a;color:#e6f4ec;border-bottom:1px solid #2fd46e33;font-size:13px;color-scheme:dark}
+.cinta[hidden]{display:none}
+.ci-et{flex:none;display:flex;align-items:center;gap:7px;padding:0 12px 0 14px;font-family:var(--f-disp);font-weight:800;font-size:12.5px;color:#03200e;background:#2fd46e;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);padding-right:20px}
+.ci-pt{width:7px;height:7px;border-radius:50%;background:#03200e;animation:ciLate 1.4s ease-in-out infinite}
+@keyframes ciLate{50%{opacity:.25}}
+.ci-v{position:relative;flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#0000,#000 18px,#000 calc(100% - 24px),#0000);mask-image:linear-gradient(90deg,#0000,#000 18px,#000 calc(100% - 24px),#0000)}
+.ci-pista{display:flex;width:max-content;height:100%;align-items:center;animation:ciPasa var(--dur,40s) linear infinite}
+.ci-dup{display:flex;align-items:center}
+.cinta:hover .ci-pista,.cinta:focus-within .ci-pista{animation-play-state:paused}
+@keyframes ciPasa{to{transform:translateX(-50%)}}
+.cin-i{display:inline-flex;align-items:center;gap:6px;padding:0 22px 0 4px;white-space:nowrap}
+.cin-i i{font-style:normal}.cin-i b{color:#fff}
+.cin-i::after{content:"";width:5px;height:5px;margin-left:18px;border-radius:50%;background:#2fd46e66}
+.ci-up{color:#5cf096;font-weight:800}.ci-dn{color:#ff8a8a;font-weight:800}
+@media (prefers-reduced-motion:reduce){.ci-pista{animation:none}.ci-v{overflow-x:auto;scrollbar-width:none}.ci-dup{display:none}}
+/* Podio: tres pedestales cilíndricos con luz de foco sobre el primero */
+.pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
+  background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
+.pdx::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 1px 1px,#ffffff14 1px,#0000 1.5px) 0 0/14px 14px;-webkit-mask-image:linear-gradient(#000,#0000 80%);mask-image:linear-gradient(#000,#0000 80%)}
+.po-t{margin:0 0 4px;text-align:center;font-size:12.5px;font-weight:700;color:#a5ecc2}
+.po-esc{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:6px}
+.po-c{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;--h:62px;--tono:#9fb2a8}
+.po-1{--h:96px;--tono:#2fd46e}.po-2{--h:70px;--tono:#c9d6cf}.po-3{--h:52px;--tono:#c98a5b}
+.po-1::before{content:"";position:absolute;left:50%;bottom:calc(var(--h) - 10px);width:170%;height:260px;transform:translateX(-50%);z-index:-1;pointer-events:none;
+  background:linear-gradient(#e9fff200,#bfffd826 40%,#2fd46e2e 100%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.po-av{position:relative;display:grid;place-items:center;margin-bottom:6px}
+.po-av .av{width:56px;height:56px;font-size:20px;box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 10px 22px #000a}
+.po-1 .po-av .av{width:72px;height:72px;font-size:26px;box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 0 30px #2fd46e88,0 12px 26px #000a}
+.po-cor{position:absolute;top:-17px;width:30px;height:18px;fill:#5cf096;filter:drop-shadow(0 0 8px #2fd46e);z-index:2}
+.po-n{max-width:100%;padding:0 2px;font-size:12.5px;line-height:1.2;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-v{margin:1px 0 8px;font-size:11px;color:#b9d6c5}
+.po-v b{font-family:var(--f-disp);font-weight:900;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
+.po-1 .po-v b{font-size:28px;color:#6ff3a3;text-shadow:0 0 18px #2fd46e88}
+.po-ped{position:relative;width:100%;height:var(--h);transform-origin:50% 100%}
+.po-ped::before{content:"";position:absolute;inset:9px 0 0;border-radius:0 0 6px 6px;
+  background:linear-gradient(90deg,#00000070,#0000 30%,#ffffff12 50%,#0000 70%,#00000070),linear-gradient(color-mix(in srgb,var(--tono) 55%,#04100a),#04100a)}
+.po-tapa{position:absolute;left:0;right:0;top:0;height:18px;border-radius:50%;background:radial-gradient(60% 70% at 50% 40%,color-mix(in srgb,var(--tono) 90%,#fff),color-mix(in srgb,var(--tono) 55%,#04100a));
+  box-shadow:0 0 18px color-mix(in srgb,var(--tono) 60%,transparent),inset 0 -2px 0 #0004}
+.po-num{position:absolute;left:0;right:0;top:22px;text-align:center;font-family:var(--f-disp);font-weight:900;font-size:30px;line-height:1;color:color-mix(in srgb,var(--tono) 70%,#fff);opacity:.9;text-shadow:0 2px 10px #000}
+.po-1 .po-num{font-size:40px}
+.pdx.entra .po-ped{animation:poSube .8s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:var(--d)}
+.pdx.entra .po-av,.pdx.entra .po-n,.pdx.entra .po-v{animation:poCae .7s cubic-bezier(.2,1.2,.4,1) both;animation-delay:calc(var(--d) + .45s)}
+.pdx.entra .po-1::before{animation:poLuz 1.2s ease-out .9s both}
+@keyframes poSube{from{transform:scaleY(0)}to{transform:none}}
+@keyframes poCae{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:none}}
+@keyframes poLuz{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.pdx.entra .po-ped,.pdx.entra .po-av,.pdx.entra .po-n,.pdx.entra .po-v,.pdx.entra .po-1::before,.ci-pt{animation:none}}
+/* La Bolsa de LaLiga: mapa del mercado */
+.bo-cab{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 0 10px}
+.bo-cab small{display:block;font-size:12px;font-weight:700;color:var(--mut)}
+.bo-cab b{font-family:var(--f-disp);font-weight:900;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;margin-right:8px}
+.bo-cab span{font-weight:800;font-size:14px}.bo-cab .up{color:var(--pos)}.bo-cab .dn{color:var(--red)}
+.bo-cab em{display:block;margin-top:3px;font-style:normal;font-size:12px;color:var(--mut)}
+.bo-sp{flex:none;width:120px;height:36px}
+.bo-spa{fill:color-mix(in srgb,var(--pos) 22%,transparent)}.bo-spl{fill:none;stroke:var(--pos);stroke-width:2;stroke-linejoin:round}
+.bo-mapa{position:relative;margin:10px 0 8px;border-radius:12px;overflow:hidden;background:#0b120e;box-shadow:0 0 0 1px #ffffff14 inset;color-scheme:dark}
+.bo-eq{position:absolute;border:1px solid #0b120e;box-sizing:border-box;pointer-events:none;z-index:2}
+.bo-et{position:absolute;left:0;right:0;top:0;height:15px;display:flex;align-items:center;gap:3px;padding:0 4px;font-size:9.5px;font-weight:800;color:#e9f5ee;background:#0b120ed9;white-space:nowrap;overflow:hidden}
+.bo-et img{width:11px;height:11px}.bo-et em{margin-left:auto;font-style:normal;color:#a9c7b6;padding-left:4px}
+.bo-c{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:1px;border:0;border-radius:2px;color:#f4fbf6;cursor:pointer;overflow:hidden;line-height:1.05;transition:filter .15s}
+.bo-c:hover{filter:brightness(1.25);z-index:3;box-shadow:0 0 0 1.5px #fff}
+.bo-c b{max-width:100%;font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0008}
+.bo-c small{font-size:9.5px;font-weight:700;opacity:.9}
+.bo-ley{display:flex;gap:2px;margin:0 0 12px}
+.bo-ley i{flex:1;padding:3px 0;border-radius:3px;text-align:center;font-style:normal;font-size:10px;font-weight:800;color:#f4fbf6}
+.bo-top{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.bo-top small{display:block;margin-bottom:4px;font-size:12px;font-weight:700;color:var(--mut)}
+.bo-mv{display:flex;align-items:center;gap:7px;width:100%;min-height:40px;margin:0 0 4px;padding:4px 8px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--txt);cursor:pointer;text-align:left}
+.bo-mv b{flex:1;min-width:0;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bo-mv span{display:flex;flex-direction:column;align-items:flex-end;font-size:12px;font-weight:800;line-height:1.1}.bo-mv span small{font-size:10.5px;font-weight:700;opacity:.8}.bo-mv .up{color:var(--pos)}.bo-mv .dn{color:var(--red)}
+.bo.entra .bo-c{animation:boEntra .5s ease-out both}
+@keyframes boEntra{from{opacity:0;transform:scale(.6)}}
+@media (prefers-reduced-motion:reduce){.bo-c{transition:none}}
+/* El mapa de la conquista */
+.cq-mapa{margin:0 0 10px;border-radius:14px;overflow:hidden;background:radial-gradient(80% 70% at 45% 40%,#0f2a1c,#050d09 75%);box-shadow:inset 0 0 0 1px #2fd46e2e;color-scheme:dark}
+.cq-mapa svg{display:block;width:100%;height:auto}
+.cq-halo{fill:#2fd46e;opacity:.18}
+.cq-sil{fill:none;stroke:#7dffb5;stroke-width:2;stroke-linejoin:round;filter:drop-shadow(0 0 4px #2fd46e)}
+.cq-t{fill:color-mix(in srgb,var(--c) 52%,#061109);stroke:#061109;stroke-width:2.5;cursor:pointer;transition:fill .25s}
+.cq-t.libre{fill:#18241d}
+.cq-t:hover,.cq-t.on{fill:color-mix(in srgb,var(--c) 85%,#fff)}
+.cq-l{stroke:#ffffff70;stroke-width:1.4;stroke-dasharray:3 3}
+.cq-p{fill:#fff}
+.cq-e{cursor:pointer}
+.cq-a{fill:#061109;stroke:var(--c);stroke-width:4}
+.cq-e.on .cq-a{stroke-width:6;filter:drop-shadow(0 0 8px var(--c))}
+#conq.entra .cq-t{animation:cqAparece .6s ease-out both;animation-delay:var(--d)}
+#conq.entra .cq-e{animation:cqAparece .5s ease-out both;animation-delay:var(--d)}
+@keyframes cqAparece{from{opacity:0}}
+.cq-info{display:flex;gap:10px;align-items:flex-start;margin:0 0 10px;padding:10px 12px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}
+.cq-info img{width:40px;height:40px;flex:none}
+.cq-info b{font-size:15px}.cq-info small{display:block;margin-top:2px;color:var(--mut);font-size:12.5px}
+.cq-info ul{margin:6px 0 0;padding:0 0 0 16px;font-size:12.5px}
+.cq-info li b{font-size:12.5px}
+.cq-ley{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cq-ley li{display:flex;align-items:center;gap:7px;min-width:0;padding:5px 8px;border-radius:12px;background:var(--panel2);border-left:4px solid var(--c)}
+.cq-ley .av{width:26px;height:26px;font-size:10px}
+.cq-ley b{flex:1;min-width:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cq-ley span{flex:none;min-width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-family:var(--f-disp);font-size:15px;font-weight:900;color:#06110a;background:var(--c)}
+@media (prefers-reduced-motion:reduce){#conq.entra .cq-t,#conq.entra .cq-e{animation:none}.cq-t{transition:none}}
 </style>
 </head>
 <body>
@@ -1251,6 +1352,7 @@ body.wr-abierto{overflow:hidden}
     <button class="refresh" id="btnAct" onclick="recargarTodo(true)" aria-label="Recargar los datos"><span class="ra-i" aria-hidden="true">↻</span><span id="btnActT">Actualizar</span></button>
   </span>
 </div></header>
+<div id="cinta" class="cinta" role="marquee" aria-label="Lo último de la liga" hidden></div>
 <div id="tv" class="tv" role="dialog" aria-modal="true" aria-label="Modo marcador" hidden></div>
 <a class="salta" href="#contenido">Saltar al contenido</a>
 <main id="contenido" tabindex="-1">
@@ -1765,7 +1867,7 @@ function cargarLigaJ() {
   if (LIGAJ) return;
   LIGAJ = { cargando: true };
   Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
-    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); pintarCinta(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
 }
 /* ---------- Buscador y ficha de jugador ---------- */
 const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -3298,6 +3400,8 @@ function resumenEq(ms, hp) {
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
     ${graficaValor(ms)}
+    ${bloqueBolsa()}
+    ${bloqueConquista()}
     ${bloqueRadar(ms)}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
@@ -5032,7 +5136,7 @@ function cargarCalendario() {
   cargarExternas();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
@@ -5460,6 +5564,7 @@ function pintarEquipos() {
   cont.innerHTML = `<p class="note" style="margin:0 0 10px">Último cambio: ${esc((E.updatedAt ? fechaMadrid(E.updatedAt) : E.updated) || "—")} (hora de Madrid) · se actualiza cuando cambian las plantillas o los valores.</p>
     ${pills}${sel ? detalleEq(sel, hp) : resumenEq(ms, hp)}`;
   if (!sel) cuentaEquipos(ms);
+  pintarCinta();
 }
 // las cifras grandes de Capitán y Mercado (+2,4 puntos extra, 85 %, ×1,5…) suben desde 0 al entrar en la pestaña;
 // el valor final es el mismo texto de siempre (solo se anima el contenido de números sencillos; respeta prefers-reduced-motion)
@@ -6460,6 +6565,245 @@ async function esCromoMvp(d) {
 }
 ES_SETS.cron.splice(3, 0, ["Jugador de la jornada", esCromoMvp]);
 
+/* ---------- Podio de la clasificación: los tres primeros sobre pedestales iluminados ---------- */
+// Sale de la misma lista que la tabla (la vista y el orden que estén elegidos), así que nunca dice otra cosa.
+// La entrada animada solo se repite si cambia quién está en el podio o sus puntos (abrir un manager no la repite).
+let PODIO_K = "";
+function htmlPodio(rank, valor, unidad, titulo) {
+  const t = rank.slice(0, 3); if (t.length < 3) return "";
+  const k = titulo + "|" + t.map(m => m.id + ":" + valor(m)).join("|"), anima = k !== PODIO_K; PODIO_K = k;
+  const corona = `<svg class="po-cor" viewBox="0 0 40 24" aria-hidden="true"><path d="M3 21 6 6l8 7 6-11 6 11 8-7 3 15z"/></svg>`;
+  return `<div class="pdx${anima ? " entra" : ""}" role="img" aria-label="${esc(titulo)}: ${t.map((m, i) => `${i + 1}.º ${esc(m.name)} con ${valor(m)} ${unidad}`).join("; ")}">
+    <p class="po-t">${esc(titulo)}</p>
+    <div class="po-esc" aria-hidden="true">${[1, 0, 2].map(i => { const m = t[i];
+      return `<div class="po-c po-${i + 1}" style="--d:${[0.35, 0.15, 0.5][i]}s">
+        <div class="po-av">${i === 0 ? corona : ""}${avatar(m, m.idx)}</div>
+        <b class="po-n">${esc(m.name)}</b>
+        <span class="po-v"><b data-po="${valor(m)}">${valor(m)}</b> ${esc(unidad)}</span>
+        <div class="po-ped"><span class="po-tapa"></span><span class="po-num">${i + 1}</span></div></div>`; }).join("")}</div></div>`;
+}
+// cifras del podio que suben desde 0 (solo en la entrada; respeta «reducir movimiento»)
+function cuentaPodio() {
+  const p = $(".pdx.entra"); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  p.querySelectorAll("[data-po]").forEach((el, k) => {
+    const fin = Number(el.dataset.po); if (!isFinite(fin) || fin <= 0) return;
+    const t0 = performance.now() + 450 + k * 120, dur = 900;
+    const paso = ahora => { if (!el.isConnected) return; const q = Math.max(0, Math.min(1, (ahora - t0) / dur)), e = 1 - Math.pow(1 - q, 3);
+      el.textContent = q < 1 ? Math.round(fin * e) : el.dataset.po; if (q < 1) requestAnimationFrame(paso); };
+    el.textContent = "0"; requestAnimationFrame(paso);
+  });
+}
+
+/* ---------- La cinta: lo último de la liga pasando bajo la cabecera, como en las retransmisiones ---------- */
+// Solo datos ya ocurridos (líder, última jornada, valores de hoy, fichajes, rachas): es lo estadístico, para todos.
+let CINTA_K = "";
+function itemsCinta() {
+  const it = [], ic = (e, h) => it.push(`<span class="cin-i"><i aria-hidden="true">${e}</i>${h}</span>`);
+  const ahora = Date.now() / 1000;
+  if (CAL && CAL.games) {
+    const fut = CAL.games.filter(g => g.ts && g.ts > ahora && g.status !== "played").sort((a, b) => a.ts - b.ts)[0];
+    if (fut) ic("⏱", `La <b>jornada ${fut.gw}</b> empieza en <b class="ci-cta" data-ts="${fut.ts}"></b>`);
+  }
+  if (D && D.managers && jornadas().length) {
+    const S = serieLiga(), n = S.js.length;
+    if (n) {
+      const ord = D.managers.map((m, i) => ({ m, i, t: S.cum[i][n - 1], p: S.pts[i][n - 1] }));
+      const lid = ord.slice().sort((a, b) => b.t - a.t);
+      if (lid[1]) ic("🏆", `Líder: <b>${esc(lid[0].m.name)}</b> con ${lid[0].t} pts, ${lid[0].t - lid[1].t} más que ${esc(lid[1].m.name)}`);
+      const gan = ord.slice().sort((a, b) => b.p - a.p)[0];
+      if (gan) ic("🥇", `La <b>${S.js[n - 1]}</b> la ganó <b>${esc(gan.m.name)}</b> con ${gan.p} pts`);
+    }
+  }
+  if (LIGAJ && LIGAJ.val && LIGAJ.jug) {
+    const dias = [...new Set(Object.values(LIGAJ.val).flatMap(o => Object.keys(o)))].sort(), d1 = dias[dias.length - 1], d0 = dias[dias.length - 2];
+    if (d0) {
+      const L = Object.entries(LIGAJ.val).map(([id, o]) => ({ p: LIGAJ.jug[id], d: (o[d1] || 0) - (o[d0] || 0), b: o[d0] })).filter(x => x.p && x.b > 0 && x.d);
+      const sube = L.slice().sort((a, b) => b.d - a.d)[0], baja = L.slice().sort((a, b) => a.d - b.d)[0];
+      if (sube) ic("📈", `Más sube hoy: <b>${esc(sube.p.name)}</b> <span class="ci-up">+${eur(sube.d)}</span>`);
+      if (baja) ic("📉", `Más baja hoy: <b>${esc(baja.p.name)}</b> <span class="ci-dn">−${eur(-baja.d)}</span>`);
+    }
+    const ult = Object.entries(LIGAJ.pts).map(([id, o]) => { const g = Object.keys(o).map(Number).sort((a, b) => a - b).slice(-3);
+      return { p: LIGAJ.jug[id], s: g.reduce((t, k) => t + (capNum(o[k]) ? o[k] : 0), 0) }; }).filter(x => x.p).sort((a, b) => b.s - a.s)[0];
+    if (ult && ult.s > 0) ic("🔥", `En racha: <b>${esc(ult.p.name)}</b>, ${ult.s} pts en las 3 últimas jornadas`);
+  }
+  if (E && E.transfers && E.transfers.length) E.transfers.slice(0, 3).forEach(t => ic(!t.from ? "🛒" : !t.to ? "💸" : "🤝", textoMov(t)));
+  return it;
+}
+function pintarCinta() {
+  const c = $("#cinta"); if (!c) return;
+  const it = itemsCinta(), k = it.join("");
+  if (!it.length) { c.hidden = true; return; }
+  if (k === CINTA_K) return;              // mismo texto: no se reinicia el desplazamiento
+  CINTA_K = k; c.hidden = false;
+  const dur = Math.max(30, it.length * 9);
+  c.innerHTML = `<div class="ci-et" aria-hidden="true"><span class="ci-pt"></span>Ahora</div><div class="ci-v"><div class="ci-pista" style="--dur:${dur}s">${k}<span class="ci-dup" aria-hidden="true">${k}</span></div></div>`;
+  cuentaCinta();
+}
+// la cuenta atrás se escribe aparte (y cada minuto) para no reiniciar el desplazamiento
+function cuentaCinta() {
+  document.querySelectorAll("#cinta .ci-cta").forEach(el => { const f = Math.max(0, Number(el.dataset.ts) - Date.now() / 1000), d = Math.floor(f / 86400), h = Math.floor(f % 86400 / 3600);
+    el.textContent = d ? `${d} d ${h} h` : `${h} h ${Math.floor(f % 3600 / 60)} min`; });
+}
+setInterval(cuentaCinta, 60000);
+/* ---------- La Bolsa de LaLiga: mapa del mercado (como los de bolsa) con todos los jugadores ---------- */
+// Cada casilla es un jugador: el tamaño es lo que vale y el color, cuánto ha subido o bajado en el periodo elegido.
+// Se agrupan por equipo, como los sectores de un mapa de bolsa. Es lo ya ocurrido (estadístico): para todos.
+let bolsaVista = "hoy";
+const BOLSA_P = { hoy: { t: "Hoy", dias: 1, c: [0.005, 0.015, 0.03] }, sem: { t: "7 días", dias: 7, c: [0.02, 0.05, 0.1] }, todo: { t: "Temporada", dias: 9999, c: [0.05, 0.15, 0.3] } };
+// rectángulos «casi cuadrados» (algoritmo squarified): items [{a}] ya ordenados de mayor a menor, en la caja x, y, w, h
+function cuadricula(items, x, y, w, h) {
+  const out = [], tot = items.reduce((t, i) => t + i.v, 0); if (!tot || w <= 0 || h <= 0) return out;
+  const k = w * h / tot, resto = items.map(i => ({ ...i, a: i.v * k }));
+  const peor = (f, l) => { const s = f.reduce((t, i) => t + i.a, 0), mx = Math.max(...f.map(i => i.a)), mn = Math.min(...f.map(i => i.a)); return Math.max(l * l * mx / (s * s), s * s / (l * l * mn)); };
+  while (resto.length) {
+    const l = Math.min(w, h); let fila = [], p = Infinity;
+    while (resto.length) { const f = fila.concat(resto[0]), q = peor(f, l); if (fila.length && q > p) break; fila = f; p = q; resto.shift(); }
+    const g = fila.reduce((t, i) => t + i.a, 0) / l; let pos = 0;
+    fila.forEach(i => { const lg = i.a / g; out.push(w >= h ? { ...i, x, y: y + pos, w: g, h: lg } : { ...i, x: x + pos, y, w: lg, h: g }); pos += lg; });
+    if (w >= h) { x += g; w -= g; } else { y += g; h -= g; }
+  }
+  return out;
+}
+function bolsaDatos() {
+  if (!LIGAJ || !LIGAJ.val || !LIGAJ.jug) return null;
+  const dias = [...new Set(Object.values(LIGAJ.val).flatMap(o => Object.keys(o)))].sort();
+  if (dias.length < 2) return null;
+  const d1 = dias[dias.length - 1], P = BOLSA_P[bolsaVista];
+  const lim = new Date(Date.parse(d1) - P.dias * 864e5).toISOString().slice(0, 10), d0 = dias.find(d => d >= lim) || dias[0];
+  const ini = d0 === d1 ? dias[dias.length - 2] : d0;
+  const J = Object.values(LIGAJ.jug).map(p => { const o = LIGAJ.val[String(p.id)] || {}, v1 = o[d1] || p.value, ks = Object.keys(o).filter(d => d >= ini).sort(), v0 = ks.length ? o[ks[0]] : null;
+    return { p, v: v1 || 0, r: v0 > 0 && v1 ? v1 / v0 - 1 : 0, d: v0 > 0 && v1 ? v1 - v0 : 0 }; }).filter(x => x.v > 0);
+  // índice encadenado: cada día cambia lo que cambia el valor de los jugadores que estaban el día anterior (base 1000)
+  const idx = [{ d: dias[0], i: 1000 }];
+  for (let k = 1; k < dias.length; k++) { let a = 0, b = 0;
+    Object.values(LIGAJ.val).forEach(o => { if (o[dias[k]] && o[dias[k - 1]]) { a += o[dias[k]]; b += o[dias[k - 1]]; } });
+    idx.push({ d: dias[k], i: idx[k - 1].i * (b ? a / b : 1) }); }
+  const k0 = Math.max(0, idx.findIndex(x => x.d >= ini));
+  return { J, d1, ini, P, idx, cambio: idx[idx.length - 1].i / idx[k0].i - 1, total: J.reduce((t, x) => t + x.v, 0) };
+}
+const bolsaColor = (r, c) => r <= -c[2] ? "#c62828" : r <= -c[1] ? "#8e2424" : r <= -c[0] ? "#5a2222" : r < c[0] ? "#26342d" : r < c[1] ? "#165c33" : r < c[2] ? "#1b8a45" : "#25c060";
+const pctB = r => (r > 0 ? "+" : r < 0 ? "−" : "") + nf1c(Math.abs(r * 100)) + " %";
+function bloqueBolsa() {
+  if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return `<section class="card" id="bolsa"><div class="gh"><h2>La Bolsa de LaLiga</h2></div><p class="note">Cargando los valores…</p></section>`; }
+  const B = bolsaDatos(); if (!B) return "";
+  const nombreEq = {}; ((CAL && CAL.games) || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
+  const W = Math.max(300, Math.min(760, (($("#eq") && $("#eq").clientWidth) || 360) - 34)), H = Math.round(W * (W < 560 ? 1.3 : 0.72));
+  const eqs = {}; B.J.forEach(x => { (eqs[x.p.teamId] = eqs[x.p.teamId] || { id: x.p.teamId, v: 0, d: 0, J: [] }); eqs[x.p.teamId].v += x.v; eqs[x.p.teamId].d += x.d; eqs[x.p.teamId].J.push(x); });
+  const cajas = cuadricula(Object.values(eqs).sort((a, b) => b.v - a.v), 0, 0, W, H);
+  const c = B.P.c, cas = [];
+  cajas.forEach(e => {
+    const cab = e.h > 44 && e.w > 46 ? 15 : 0, re = e.v - e.d > 0 ? e.d / (e.v - e.d) : 0;
+    cas.push(`<div class="bo-eq" style="left:${e.x.toFixed(1)}px;top:${e.y.toFixed(1)}px;width:${e.w.toFixed(1)}px;height:${e.h.toFixed(1)}px">${cab ? `<span class="bo-et"><img src="fotos/escudos/${esc(e.id)}.png" alt="" onerror="this.remove()">${esc(nombreEq[e.id] || "")}<em>${pctB(re)}</em></span>` : ""}</div>`);
+    cuadricula(e.J.sort((a, b) => b.v - a.v), e.x + 1, e.y + 1 + cab, e.w - 2, e.h - 2 - cab).forEach(t => {
+      const big = t.w > 50 && t.h > 32, mid = !big && t.w > 30 && t.h > 18;
+      cas.push(`<button class="bo-c" data-bolsa="${esc(t.p.id)}" style="left:${t.x.toFixed(1)}px;top:${t.y.toFixed(1)}px;width:${Math.max(0, t.w - 1).toFixed(1)}px;height:${Math.max(0, t.h - 1).toFixed(1)}px;background:${bolsaColor(t.r, c)}" title="${esc(t.p.name)} · ${eur(t.v)} · ${pctB(t.r)}" aria-label="${esc(t.p.name)}, ${eur(t.v)}, ${pctB(t.r)}" tabindex="-1">${big || mid ? `<b>${esc(apellido(t.p.name))}</b>` : ""}${big ? `<small>${pctB(t.r)}</small>` : ""}</button>`);
+    });
+  });
+  const ix = B.idx, iv = ix[ix.length - 1].i, mn = Math.min(...ix.map(x => x.i)), mx = Math.max(...ix.map(x => x.i)), SW = 120, SH = 36;
+  const sp = ix.map((x, k) => [k / Math.max(1, ix.length - 1) * SW, SH - 3 - (x.i - mn) / Math.max(1e-9, mx - mn) * (SH - 6)]);
+  // los que más ganan o pierden en euros (en porcentaje mandarían siempre los muy baratos)
+  const sube = B.J.slice().sort((a, b) => b.d - a.d).slice(0, 3), baja = B.J.slice().sort((a, b) => a.d - b.d).slice(0, 3);
+  const chip = x => `<button class="bo-mv" data-bolsa="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 26)}<b>${esc(apellido(x.p.name))}</b><span class="${x.d >= 0 ? "up" : "dn"}">${x.d >= 0 ? "+" : "−"}${eur(Math.abs(x.d))}<small>${pctB(x.r)}</small></span></button>`;
+  const seg = Object.entries(BOLSA_P).map(([k, v]) => `<button data-bolsav="${k}" class="${bolsaVista === k ? "on" : ""}">${v.t}</button>`).join("");
+  const desde = B.ini.slice(8, 10) + "/" + B.ini.slice(5, 7);
+  return `<section class="card bo" id="bolsa"><div class="gh"><h2>La Bolsa de LaLiga</h2></div>
+    <div class="bo-cab"><div><small>Índice Golómetro</small><b>${nf1c(iv)}</b><span class="${B.cambio >= 0 ? "up" : "dn"}">${B.cambio >= 0 ? "▲" : "▼"} ${Math.abs(B.cambio) < 0.01 ? (B.cambio >= 0 ? "+" : "−") + (Math.abs(B.cambio) * 100).toFixed(2).replace(".", ",") + " %" : pctB(B.cambio)}</span><em>desde el ${desde} · todo LaLiga vale ${eur(B.total)}</em></div>
+      <svg viewBox="0 0 ${SW} ${SH}" class="bo-sp" aria-hidden="true"><path d="${curva(sp)} L${SW},${SH} L0,${SH} Z" class="bo-spa"/><path d="${curva(sp)}" class="bo-spl"/></svg></div>
+    <div class="seg seg3" role="group" aria-label="Periodo">${seg}</div>
+    <div class="bo-mapa" style="height:${H}px" role="img" aria-label="Mapa del mercado: ${B.J.length} jugadores por equipo, el tamaño es su valor y el color cuánto han cambiado">${cas.join("")}</div>
+    <div class="bo-ley" aria-hidden="true">${[-3, -2, -1, 0, 1, 2, 3].map(n => `<i style="background:${bolsaColor(n === 0 ? 0 : Math.sign(n) * (c[Math.abs(n) - 1] + 1e-6), c)}">${n === 0 ? "0" : (n > 0 ? "+" : "−") + nf1c(c[Math.abs(n) - 1] * 100)}</i>`).join("")}</div>
+    <div class="bo-top"><div><small>Más suben</small>${sube.map(chip).join("")}</div><div><small>Más bajan</small>${baja.map(chip).join("")}</div></div>
+    <p class="note">El tamaño de cada casilla es lo que vale el jugador hoy y el color, cuánto ha cambiado su valor desde el ${desde}. El índice sigue el valor de toda la liga (1.000 el ${ix[0].d.slice(8, 10)}/${ix[0].d.slice(5, 7)}). Toca un jugador para ver su ficha.</p></section>`;
+}
+function pintarBolsa() { const s = $("#bolsa"); if (s) s.outerHTML = bloqueBolsa(); }
+document.addEventListener("click", e => {
+  const v = e.target.closest && e.target.closest("[data-bolsav]");
+  if (v) { bolsaVista = v.dataset.bolsav; pintarBolsa(); return; }
+  const b = e.target.closest && e.target.closest("[data-bolsa]");
+  if (b) abrirFicha(b.dataset.bolsa);
+});
+/* ---------- El mapa de la conquista: LaLiga repartida entre los managers, como un tablero de estrategia ---------- */
+// Cada equipo es un territorio alrededor de su ciudad (polígonos de Voronoi recortados a la silueta de España) y lo
+// conquista el manager cuyos jugadores de ese equipo llevan más puntos esta temporada (plantillas de hoy). Estadístico.
+const ESP_SIL = [[-8.87,41.87],[-8.9,42.1],[-8.82,42.23],[-8.92,42.4],[-8.8,42.48],[-9.05,42.58],[-8.95,42.75],[-9.1,42.78],[-9.3,42.92],[-9.18,43.12],[-8.95,43.27],[-8.55,43.33],[-8.4,43.37],[-8.2,43.45],[-8.05,43.67],[-7.85,43.77],[-7.55,43.72],[-7.15,43.56],[-6.45,43.57],[-5.85,43.66],[-5.4,43.55],[-4.75,43.42],[-4.1,43.43],[-3.78,43.48],[-3.4,43.42],[-2.95,43.4],[-2.45,43.38],[-1.98,43.33],[-1.78,43.38],[-1.45,43.27],[-1.38,43.03],[-0.95,42.98],[-0.55,42.8],[-0.1,42.7],[0.35,42.7],[0.7,42.86],[1.1,42.75],[1.45,42.48],[1.75,42.47],[2.1,42.4],[2.65,42.36],[3.17,42.43],[3.2,42.25],[3.1,41.95],[2.75,41.68],[2.4,41.5],[2.17,41.37],[1.7,41.2],[1.25,41.1],[0.88,40.85],[0.88,40.68],[0.55,40.55],[0.25,40.15],[-0.05,39.92],[-0.33,39.48],[-0.25,39.15],[-0.05,38.9],[0.22,38.75],[-0.05,38.6],[-0.45,38.35],[-0.62,38.05],[-0.78,37.78],[-0.98,37.58],[-1.35,37.55],[-1.65,37.38],[-1.85,37.05],[-2.15,36.72],[-2.45,36.83],[-2.9,36.74],[-3.5,36.72],[-4.4,36.7],[-4.9,36.48],[-5.35,36.15],[-5.6,36.01],[-5.95,36.2],[-6.3,36.52],[-6.43,36.8],[-6.95,37.15],[-7.4,37.18],[-7.5,37.55],[-7.25,37.95],[-7.05,38.2],[-7.3,38.45],[-7.15,38.8],[-7.05,39.05],[-7.35,39.45],[-7.0,39.65],[-6.9,40.05],[-6.85,40.35],[-6.8,40.85],[-6.5,41.15],[-6.2,41.58],[-6.55,41.75],[-6.85,41.95],[-7.2,41.88],[-7.7,41.88],[-8.1,42.0],[-8.5,42.05]];
+// ciudad de cada equipo (por su nombre en el calendario)
+const ESP_CIUDAD = { "Alavés": [-2.67, 42.85], "Getafe": [-3.73, 40.31], "Sevilla": [-5.97, 37.38], "Rayo Vallecano": [-3.66, 40.39], "Racing de Santander": [-3.8, 43.46], "Villarreal": [-0.1, 39.94],
+  "Espanyol": [2.07, 41.35], "Levante": [-0.36, 39.5], "Deportivo da Coruña": [-8.41, 43.37], "Elche": [-0.7, 38.27], "Atlético": [-3.6, 40.44], "Málaga": [-4.42, 36.72], "Valencia": [-0.37, 39.47],
+  "Betis": [-5.98, 37.36], "Real Madrid": [-3.69, 40.45], "Real Sociedad": [-1.97, 43.3], "Celta": [-8.74, 42.21], "Osasuna": [-1.64, 42.8], "Barcelona": [2.12, 41.38], "Athletic Club": [-2.95, 43.26],
+  "Mallorca": [2.65, 39.57], "Girona": [2.82, 41.98], "Real Oviedo": [-5.85, 43.36], "Oviedo": [-5.85, 43.36], "Valladolid": [-4.72, 41.65], "Granada": [-3.6, 37.18], "Cádiz": [-6.27, 36.5], "Almería": [-2.46, 36.84], "Leganés": [-3.76, 40.33], "Las Palmas": [-4.5, 36.3] };
+const ESP_PX = ([lo, la]) => [(lo + 9.6) * 0.766 * 78, (44.05 - la) * 78];    // proyección sencilla (equirectangular a 40° N)
+let conqSel = null, CONQ_VISTO = false;
+// polígono de Voronoi de cada punto: el rectángulo recortado por la mediatriz con cada uno de los demás
+function voronoi(P, W, H) {
+  return P.map((p, i) => {
+    let pol = [[0, 0], [W, 0], [W, H], [0, H]];
+    P.forEach((q, j) => { if (i === j || !pol.length) return;
+      const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, nx = q[0] - p[0], ny = q[1] - p[1], f = v => (v[0] - mx) * nx + (v[1] - my) * ny;
+      const nuevo = [];
+      pol.forEach((a, k) => { const b = pol[(k + 1) % pol.length], fa = f(a), fb = f(b);
+        if (fa <= 0) nuevo.push(a);
+        if ((fa < 0 && fb > 0) || (fa > 0 && fb < 0)) { const t = fa / (fa - fb); nuevo.push([a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])]); } });
+      pol = nuevo; });
+    return pol;
+  });
+}
+function conquistaDatos() {
+  if (!LIGAJ || !LIGAJ.jug || !CAL || !CAL.games || !D) return null;
+  const eqs = {}; CAL.games.forEach(g => { eqs[g.home] = g.homeName; eqs[g.away] = g.awayName; });
+  const man = {}; D.managers.forEach((m, i) => { man[String(m.id)] = { m, i }; });
+  const T = Object.entries(eqs).map(([id, nom]) => {
+    const c = ESP_CIUDAD[nom]; if (!c) return null;
+    const por = {}; Object.values(LIGAJ.jug).forEach(p => { if (String(p.teamId) !== String(id) || !p.owner || !man[String(p.owner)]) return;
+      const o = por[p.owner] = por[p.owner] || { k: String(p.owner), pts: 0, J: [] }; o.pts += Number(p.points) || 0; o.J.push(p); });
+    const L = Object.values(por).sort((a, b) => b.pts - a.pts || b.J.length - a.J.length);
+    const due = L[0] && L[0].pts > 0 && (!L[1] || L[1].pts < L[0].pts) ? man[L[0].k] : null;   // empate = territorio en disputa
+    return { id, nom, c, L, due, disputa: !!(L[0] && L[1] && L[0].pts === L[1].pts && L[0].pts > 0) };
+  }).filter(Boolean);
+  return { T, man };
+}
+function bloqueConquista() {
+  if (!LIGAJ || LIGAJ.cargando || !CAL) { cargarLigaJ(); return ""; }
+  const C = conquistaDatos(); if (!C || C.T.length < 4) return "";
+  const W = 780, H = 640, sil = ESP_SIL.map(ESP_PX), pts = C.T.map(t => ESP_PX(t.c));
+  const celdas = voronoi(pts, W, H);
+  // escudos separados entre sí cuando las ciudades están muy juntas (Madrid, Sevilla, Valencia…), con una línea a su ciudad
+  const r = 27, pos = pts.map(p => [...p]);
+  for (let it = 0; it < 140; it++) pos.forEach((a, i) => { pos.forEach((b, j) => { if (i >= j) return; const dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 0.01, m = 2 * r + 6 - d;
+    if (m > 0) { const ux = dx / d * m / 2, uy = dy / d * m / 2; a[0] -= ux; a[1] -= uy; b[0] += ux; b[1] += uy; } });
+    a[0] += (pts[i][0] - a[0]) * 0.02; a[1] += (pts[i][1] - a[1]) * 0.02; });
+  const camino = P => "M" + P.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join("L") + "Z";
+  const sel = C.T.find(t => t.id === conqSel) || null;
+  const territorios = C.T.map((t, k) => `<path d="${camino(celdas[k])}" class="cq-t${t.due ? "" : " libre"}${sel && sel.id === t.id ? " on" : ""}" style="--c:${t.due ? col(t.due.i) : "#5d6b63"};--d:${(k * 0.04).toFixed(2)}s" data-conq="${esc(t.id)}"/>`).join("");
+  const escudos = C.T.map((t, k) => { const [x, y] = pos[k], [cx, cy] = pts[k], lejos = Math.hypot(x - cx, y - cy) > 4;
+    return `${lejos ? `<line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" class="cq-l"/>` : ""}<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="3" class="cq-p"/>
+      <g class="cq-e${sel && sel.id === t.id ? " on" : ""}" data-conq="${esc(t.id)}" style="--c:${t.due ? col(t.due.i) : "#8a978f"};--d:${(0.5 + k * 0.04).toFixed(2)}s"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" class="cq-a"/>
+      <image href="fotos/escudos/${esc(t.id)}.png" x="${(x - 18).toFixed(1)}" y="${(y - 18).toFixed(1)}" width="36" height="36"/></g>`; }).join("");
+  // clasificación de territorios
+  const cuenta = {}; C.T.forEach(t => { if (t.due) cuenta[t.due.i] = (cuenta[t.due.i] || 0) + 1; });
+  const rk = D.managers.map((m, i) => ({ m, i, n: cuenta[i] || 0 })).sort((a, b) => b.n - a.n);
+  const leyenda = rk.map(x => `<li style="--c:${col(x.i)}" aria-label="${esc(x.m.name)}: ${x.n} ${x.n === 1 ? "territorio" : "territorios"}">${avatar(x.m, x.i)}<b>${esc(x.m.name)}</b><span>${x.n}</span></li>`).join("");
+  const libres = C.T.filter(t => !t.due).length;
+  const info = sel ? `<div class="cq-info"><img src="fotos/escudos/${esc(sel.id)}.png" alt="" onerror="this.remove()"><div><b>${esc(sel.nom)}</b>
+      <small>${sel.due ? `Lo conquista <b>${esc(sel.due.m.name)}</b>: sus jugadores del ${esc(sel.nom)} llevan ${sel.L[0].pts} puntos` : sel.disputa ? "En disputa: empate a puntos" : "Nadie tiene jugadores suyos que hayan puntuado"}</small>
+      ${sel.L.length ? `<ul>${sel.L.map(o => `<li><b>${esc(C.man[o.k].m.name)}</b> · ${o.pts} pts · ${o.J.map(p => esc(p.name)).join(", ")}</li>`).join("")}</ul>` : ""}</div></div>`
+    : `<p class="note" style="margin:6px 0 0">Toca un territorio o un escudo para ver quién manda en ese equipo.</p>`;
+  const entra = !CONQ_VISTO; CONQ_VISTO = true;
+  return `<section class="card${entra ? " entra" : ""}" id="conq"><div class="gh"><h2>El mapa de la conquista</h2></div>
+    <p class="note" style="margin:0 0 8px">Cada equipo de LaLiga es un territorio. Lo conquista el manager cuyos jugadores de ese equipo llevan más puntos esta temporada (con las plantillas de hoy).${libres ? ` ${libres} ${libres === 1 ? "sigue" : "siguen"} sin dueño.` : ""}</p>
+    <div class="cq-mapa"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de España con los ${C.T.length} equipos de LaLiga coloreados según el manager que los conquista">
+      <defs><clipPath id="cqEsp"><path d="${camino(sil)}"/></clipPath><pattern id="cqRej" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#2fd46e33"/></pattern>
+        <filter id="cqBrillo" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+      <rect width="${W}" height="${H}" fill="url(#cqRej)"/>
+      <path d="${camino(sil)}" class="cq-halo" filter="url(#cqBrillo)"/>
+      <g clip-path="url(#cqEsp)">${territorios}</g>
+      <path d="${camino(sil)}" class="cq-sil"/>${escudos}</svg></div>
+    ${info}<ul class="cq-ley">${leyenda}</ul></section>`;
+}
+function pintarConquista() { const s = $("#conq"); if (s) s.outerHTML = bloqueConquista(); }
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest("[data-conq]"); if (!t) return;
+  conqSel = conqSel === t.dataset.conq ? null : t.dataset.conq; pintarConquista();
+});
 // Lámina extra de la crónica: el mapa de calor (mismos puntos y colores de Mister que en la crónica)
 async function esMapaCalor(d, pag, total) {
   const L = d.mapa; if (!L || L.length < 2) return null;
@@ -6656,7 +7000,9 @@ function pintar() {
       ${abierto === m.id ? `<div class="det">${detalle(m)}</div>` : ""}
     </li>`).join("");
 
+  const tituloPodio = (vista === "General" ? "Clasificación general" : vista === "Ult3" ? "Forma: últimas 3 jornadas" : /^J\d+$/.test(vista) ? `Jornada ${vista.slice(1)}` : vista) + (orden.k !== "points" ? ` · ${meta[1]}` : "");
   $("#app").innerHTML = `
+    ${!orden.asc ? htmlPodio(rank, m => m[orden.k], meta[2].toLowerCase(), tituloPodio) : ""}
     <div role="group" aria-label="Jornada">${pills}</div>
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
@@ -6678,6 +7024,7 @@ function pintar() {
     <section class="card" id="caps"></section>
     <section class="card" id="origen"></section>
     <section class="card" id="premios"></section>`;
+  cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
   pintarQuiniela();
   pintarTuJornada();
