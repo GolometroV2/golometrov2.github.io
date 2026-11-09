@@ -111,14 +111,6 @@ ul{list-style:none;margin:0;padding:0}
 .bar i{display:block;height:8px;background:var(--acc);border-radius:4px}
 .bar b{min-width:24px}
 .top{color:var(--mut);font-size:13px;margin:10px 0 0}
-.pitch{background:repeating-linear-gradient(180deg,#2a7d47 0 44px,#26733f 44px 88px);border-radius:var(--r-m);padding:14px 6px;display:flex;flex-direction:column;gap:14px}
-.line{display:flex;justify-content:space-around;gap:4px}
-.pl{display:flex;flex-direction:column;align-items:center;width:20%;min-width:0}
-.pc{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#111315;border:2px solid #fff}
-.pl.off .pc{background:#5d6f64!important;color:#cfd8d2}
-.cap{position:absolute;top:-6px;right:-8px;background:#fff;color:#111315;border-radius:50%;width:16px;height:16px;font-size:10px;display:grid;place-items:center}
-.pn{max-width:100%;font-size:11.5px;font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0008}
-.pe{font-size:11px;min-height:14px}
 .form{color:var(--mut);font-size:13px;margin:0 0 8px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-l);padding:14px;margin-top:20px}
 .gh{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -461,16 +453,9 @@ code{color:var(--accFg)}
 .av-j b{font-size:14px}.av-j small{font-size:12px;color:var(--mut)}
 .av-j.vivo .av-r{background:var(--red);color:#fff;animation:latido 2s ease-in-out infinite}
 @keyframes latido{50%{opacity:.6}}
-.oi{background:repeating-linear-gradient(180deg,#1f6b3d 0 52px,#1c6338 52px 104px);border-radius:var(--r-l);padding:12px 4px;display:flex;flex-direction:column;gap:12px}
-.oi-l{display:flex;justify-content:space-around;gap:2px}
-.oi-p{display:flex;flex-direction:column;align-items:center;min-width:0;width:20%;position:relative}
-.oi-p .cara{box-shadow:0 0 0 2px #fff}
-.oi-n{max-width:100%;font-size:11px;font-weight:700;margin-top:4px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #0009}
-.oi-pt{position:absolute;top:-4px;left:calc(50% + 12px);min-width:20px;height:18px;padding:0 4px;border-radius:var(--r-s);background:var(--acc);color:var(--accTxt);font-size:11px;font-weight:800;display:grid;place-items:center}
-.oi-p small{font-size:9.5px;color:#e6f2ea;opacity:.85;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rc-s{display:inline-flex;gap:2px;margin-right:6px;flex:none}
 .rc-s i{font-style:normal;min-width:20px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10.5px;font-weight:800;background:var(--panel2);color:var(--mut)}
-.rc-s i.a{background:var(--pos);color:#06210f}.rc-s i.m{background:var(--posBg);color:var(--pos)}.rc-s i.b{background:var(--panel2);color:var(--txt)}
+
 .rc-e{overflow:hidden;text-overflow:ellipsis}
 .rc-e.libre{color:var(--pos);font-weight:700}.rc-e.venta{color:var(--accFg);font-weight:700}
 .pron{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -568,7 +553,6 @@ code{color:var(--accFg)}
 li[data-ficha]{cursor:pointer}
 li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 @media(max-width:380px){.nav>div{gap:6px}.logo{font-size:17px;gap:6px}.acciones{gap:6px}.refresh{padding:7px 11px}}
-.oi-p[data-ficha]{cursor:pointer}
 .forma{display:flex;align-items:center;gap:3px;margin-top:2px}
 .fm{font-style:normal;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--panel2);color:var(--mut);margin:0!important}
 .fm-a{background:var(--pos);color:var(--accTxt)}.fm-b{background:var(--red);color:#fff}
@@ -789,9 +773,6 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 @media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px;min-width:44px;justify-content:center}}
 .comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
 /* ---- el once sobre un campo con sus líneas ---- */
-.pitch,.oi{position:relative;isolation:isolate;background:repeating-linear-gradient(180deg,#1f6b3c 0 52px,#1c6337 52px 104px);box-shadow:inset 0 0 40px #0008,inset 0 1px 0 #ffffff14;border:1px solid #2fd46e33}
-.pitch::before,.oi::before{content:"";position:absolute;inset:6px;z-index:-1;pointer-events:none;border:2px solid #ffffff2e;border-radius:var(--r-s);
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none' fill='none' stroke='%23ffffff' stroke-opacity='.18' stroke-width='.8'%3E%3Cpath d='M0 70h100'/%3E%3Ccircle cx='50' cy='70' r='12'/%3E%3Cpath d='M25 0v16h50V0M38 0v6h24V0M25 140v-16h50v16M38 140v-6h24v6'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 /* ---- cambio de pestaña y pulsaciones ---- */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
 #nav,.nav{view-transition-name:none}
@@ -954,9 +935,6 @@ button.lg{min-height:44px}
 body.est-abierto{overflow:hidden}
 /* Alineación en 3D: césped en perspectiva (CSS 3D) y jugadores nítidos encima */
 @property --ax{syntax:"<angle>";inherits:true;initial-value:34deg}
-.v3d-t{display:inline-flex;gap:4px;padding:3px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);margin:0 0 10px}
-.v3d-t button{min-height:38px;min-width:68px;padding:0 14px;border-radius:999px;font-weight:800;font-size:13px;color:var(--mut);background:transparent;border:0;cursor:pointer}
-.v3d-t button.on{background:var(--acc);color:var(--accTxt)}
 .c3d{container-type:inline-size;position:relative;width:100%;max-width:520px;margin:0 auto;aspect-ratio:4/5;border-radius:var(--r-l);overflow:hidden;isolation:isolate;user-select:none;-webkit-user-select:none;color-scheme:dark;
   background:#030a06;box-shadow:inset 0 0 0 1px #2fd46e33}
 .c3d img{-webkit-user-drag:none}
@@ -1010,17 +988,16 @@ body.est-abierto{overflow:hidden}
 .c3d-p{position:absolute;right:-2%;top:6%;z-index:2;display:grid;place-items:center;min-width:calc(var(--k) * 5.2);height:calc(var(--k) * 5.2);padding:0 calc(var(--k) * 1);border-radius:999px;
   font-size:calc(var(--k) * 2.9);font-weight:900;background:#2fd46e;color:#03200e;box-shadow:0 0 0 calc(var(--k) * .4) #03100a,0 calc(var(--k) * .5) calc(var(--k) * 1.4) #000a}
 .c3d-p.fuego{background:#eafff1;color:#06331a;box-shadow:0 0 0 calc(var(--k) * .4) #2fd46e,0 0 calc(var(--k) * 3) #2fd46ecc}
-.c3d-p.neg{background:#ff6b6b;color:#2a0606}
+
 .c3d-x{margin-top:calc(var(--k) * .5);max-width:100%;font-size:calc(var(--k) * 2.2);font-weight:700;color:#d8ecdf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px #000,0 0 6px #000}
 .c3d-j.cap .c3d-np{box-shadow:0 0 0 calc(var(--k) * .35) #2fd46e,0 0 calc(var(--k) * 3) #2fd46e88}
 .c3d-j.off .c3d-im{filter:grayscale(1) brightness(.75) drop-shadow(0 calc(var(--k) * .8) calc(var(--k) * 1.2) #000c)}
-.c3d-j.off .c3d-p{background:#3a4a42;color:#d6e6dc}
+
 .c3d-j[data-ficha]{cursor:pointer}
 .c3d-j[data-ficha]:hover .c3d-np,.c3d-j[data-ficha]:focus-visible .c3d-np{box-shadow:0 0 0 calc(var(--k) * .35) #fff}
 .c3d-pie{position:absolute;left:50%;bottom:3cqw;z-index:200;margin:0;transform:translateX(-50%);padding:1.2cqw 3.6cqw;border-radius:999px;white-space:nowrap;background:#04100bd9;border:1px solid #2fd46e55;
   font-family:var(--f-disp);font-weight:800;font-size:max(12px,3.6cqw);color:#e8f6ee}
 @media (prefers-reduced-motion:reduce){.c3d.entra .c3d-campo,.c3d.entra .c3d-tk,.c3d.entra .c3d-brillo{animation:none}}
-.oi-vac{opacity:.75}.oi-hueco{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:2px dashed currentColor;font-weight:800;font-size:20px}
 /* La temporada de cada manager: historias a pantalla completa */
 .wr-lanza{margin:0 0 14px;padding:14px;border-radius:var(--r-l);background:linear-gradient(135deg,#2fd46e26,#2fd46e08 60%),var(--panel2);border:1px solid #2fd46e40}
 .wr-lanza p{margin:0 0 10px;display:flex;flex-direction:column;gap:2px}
@@ -1224,7 +1201,7 @@ body.wr-abierto{overflow:hidden}
 .cr-st b{font-family:var(--f-disp);font-weight:800;font-stretch:70%;font-size:calc(var(--w) * .075)}
 .cr-st small{font-size:calc(var(--w) * .036);font-weight:800;color:var(--cr-m)}
 .cr-sp{position:absolute;left:12%;right:12%;bottom:8%;width:76%;height:auto;z-index:2}
-.cr-sp rect{fill:color-mix(in srgb,var(--cr-t) 55%,transparent)}.cr-sp rect.top{fill:var(--cr-t)}.cr-sp rect.neg{fill:#ff6b6b}.cr-sp rect.nj{fill:color-mix(in srgb,var(--cr-t) 18%,transparent)}
+.cr-sp rect{stroke:#0006;stroke-width:.6}.cr-sp rect.nj{fill:color-mix(in srgb,var(--cr-t) 18%,transparent);stroke:none}
 .cr-pie{position:absolute;left:8%;right:8%;bottom:3.2%;z-index:2;display:flex;justify-content:space-between;gap:8px;font-size:calc(var(--w) * .034);font-weight:800;color:var(--cr-m)}
 .cr-pie span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .cr-holo{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:color-dodge;opacity:.5;
@@ -1238,6 +1215,12 @@ body.wr-abierto{overflow:hidden}
 .cr-dl dt{font-weight:900;font-size:calc(var(--w) * .045)}
 .cr-dl dd{margin:0;font-size:calc(var(--w) * .04);line-height:1.35;color:var(--cr-m)}
 @media (prefers-reduced-motion:reduce){.cr-tarjeta{animation:none;transition:none}}
+/* Puntos con los colores de Mister: rojo, naranja, amarillo, dos verdes y dos azules (la clase va doble para ganar a los estilos de cada chapa) */
+:root{--mp-ns:#3a4a42;--mp-critical:#e5484d;--mp-failing:#f2711c;--mp-poor:#f5b800;--mp-fair:#a3d63f;--mp-good:#22b14c;--mp-excellent:#22b5e0;--mp-outstanding:#3a5cf6}
+.mp-ns.mp-ns{background:var(--mp-ns);color:#d6e6dc}.mp-critical.mp-critical{background:var(--mp-critical);color:#fff}.mp-failing.mp-failing{background:var(--mp-failing);color:#2b1000}
+.mp-poor.mp-poor{background:var(--mp-poor);color:#2b2000}.mp-fair.mp-fair{background:var(--mp-fair);color:#142400}.mp-good.mp-good{background:var(--mp-good);color:#03200e}
+.mp-excellent.mp-excellent{background:var(--mp-excellent);color:#032532}.mp-outstanding.mp-outstanding{background:var(--mp-outstanding);color:#fff}
+.rac-n{display:inline-block;min-width:20px;padding:1px 4px;border-radius:5px;text-align:center;font-weight:800}
 </style>
 </head>
 <body>
@@ -1515,30 +1498,21 @@ const capPts = x => {
   return MODO_CAP === "total" ? (c.points || 0) : (c.bonus || 0);
 };
 const rep = (e, n) => n ? (n <= 3 ? e.repeat(n) : e + "×" + n) : "";
+// Color de los puntos de un jugador en una jornada, con los mismos tramos que Mister (getPointsColor de su web):
+// menos de 0 rojo, 0-1 naranja, 2-4 amarillo, 5-6 verde claro, 7-9 verde, 10-11 azul claro, 12 o más azul
+const tramoPts = v => { v = typeof v === "string" ? parseFloat(v.replace(",", ".")) : v;
+  return !capNum(v) ? "ns" : v < 0 ? "critical" : v < 2 ? "failing" : v < 5 ? "poor" : v < 7 ? "fair" : v < 10 ? "good" : v < 12 ? "excellent" : "outstanding"; };
+const colPts = v => `var(--mp-${tramoPts(v)})`;
 const suma = (x, c) => (x.players || []).reduce((t, p) => t + (p[c] || 0), 0);
-
-function jugador(p) {
-  const ev = rep("⚽", p.goals) + rep("👟", p.assists) + rep("🟨", p.yellowCards) + rep("🟥", p.redCards) + (p.ownGoals ? "PP" : "");
-  const corto = String(p.name || "").split(" ").slice(-1)[0];
-  return `<div class="pl ${p.played ? "" : "off"}"><div class="pc" style="background:var(--${esc(String(p.pos).toLowerCase())})">${p.played ? esc(p.points) : "–"}${p.captain ? '<b class="cap">C</b>' : ""}</div>
-    <span class="pn" title="${esc(p.name)}">${esc(corto)}</span><span class="pe">${ev}</span></div>`;
-}
 
 function detalle(m) {
   if (vista !== "General" && vista !== "Ult3") {
     const x = (D.matchdays[vista] || {})[m.id];
     if (!x || !(x.players || []).length) return `<p class="top">No hay alineación guardada para esta jornada.</p>`;
-    const lineas = ["DL", "MC", "DF", "PT"].map(pos => {
-      const ps = x.players.filter(p => p.pos === pos);
-      return ps.length ? `<div class="line">${ps.map(jugador).join("")}</div>` : "";
-    }).join("");
-    if (V3D) {
-      const cm = x.captain && x.captain.multiplier;
-      const js = x.players.map(p => ({ id: p.id, name: p.name, teamId: p.teamId, pos: p.pos, pts: p.played ? p.points : "–", cap: p.captain, mult: p.captain ? cm : null, off: !p.played,
-        sub: rep("⚽", p.goals) + rep("👟", p.assists) + rep("🟥", p.redCards) }));
-      return `<p class="form">Formación ${esc(x.formation || "—")}</p>${botonesVista3D()}${htmlCampo3D(js, { titulo: `Alineación de ${m.name}`, pie: `${x.points ?? ""}${x.points != null ? " puntos" : ""}` })}`;
-    }
-    return `<p class="form">Formación ${esc(x.formation || "—")}</p>${botonesVista3D()}<div class="pitch">${lineas}</div>`;
+    const cm = x.captain && x.captain.multiplier;
+    const js = x.players.map(p => ({ id: p.id, name: p.name, teamId: p.teamId, pos: p.pos, pts: p.played ? p.points : "–", cap: p.captain, mult: p.captain ? cm : null, off: !p.played,
+      sub: rep("⚽", p.goals) + rep("👟", p.assists) + rep("🟨", p.yellowCards) + rep("🟥", p.redCards) + (p.ownGoals ? " PP" : "") }));
+    return `<p class="form">Formación ${esc(x.formation || "—")}</p>${htmlCampo3D(js, { titulo: `Alineación de ${m.name}`, pie: `${x.points ?? ""}${x.points != null ? " puntos" : ""}` })}`;
   }
   const js = jornadas();
   const pts = js.map(j => ((D.matchdays[j] || {})[m.id] || {}).points || 0);
@@ -1809,7 +1783,7 @@ function abrirFicha(id) {
   const ffE = FFDATA && FFDATA.jugadores && FFDATA.jugadores[String(p.id)], ffK = ffE && Object.keys(ffE).sort()[0], ff = ffK ? ffE[ffK] : null;
   const pts = (LIGAJ.pts || {})[String(p.id)] || {}, gws = Object.keys(pts).map(Number).sort((a, b) => a - b);
   const maxP = Math.max(1, ...gws.map(g => pts[g] || 0));
-  const barras = gws.map(g => { const v = pts[g]; return `<span class="fb"><i style="height:${v == null ? 3 : Math.max(3, Math.abs(v) / maxP * 46)}px;background:${v == null ? "var(--line)" : v < 0 ? "var(--red)" : v >= 10 ? "var(--pos)" : "var(--acc)"};opacity:${v == null ? .6 : 1}"></i><small>${v == null ? "–" : v}</small><em>J${g}</em></span>`; }).join("");
+  const barras = gws.map(g => { const v = pts[g]; return `<span class="fb"><i style="height:${v == null ? 3 : Math.max(3, Math.abs(v) / maxP * 46)}px;background:${v == null ? "var(--line)" : colPts(v)};opacity:${v == null ? .6 : 1}"></i><small>${v == null ? "–" : v}</small><em>J${g}</em></span>`; }).join("");
   const vh = Object.entries((LIGAJ.val || {})[String(p.id)] || {}).sort();
   let spark = "";
   if (vh.length >= 2) {
@@ -1880,25 +1854,17 @@ function htmlOnceIdeal(gw) {
   const o = onceIdeal(gw);
   if (!o) return vacioHTML("Faltan datos", "Todavía no hay suficientes datos de esta jornada.");
   const nombreM = uid => (D.managers.find(m => String(m.id) === String(uid)) || {}).name;
-  const jugador = c => { const de = (o.enOnce[c.id] || []).map(nombreM).filter(Boolean);
-    return `<div class="oi-p" data-ficha="${esc(c.id)}">${cara(c.id, c.name, c.teamId, 40)}<b class="oi-n">${esc(apellido(c.name))}</b><span class="oi-pt">${c.pts}</span><small>${de.length ? (de.length > 1 ? `en ${de.length} onces` : esc(de[0])) : c.owner ? `ahora de ${esc(c.owner)}` : "nadie lo alineó"}</small></div>`; };
-  const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
   const alineados = ["PT", "DF", "MC", "DL"].reduce((t, p) => t + o[p].filter(c => (o.enOnce[c.id] || []).length).length, 0);
   const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> entre los 11 · ${alineados} de ellos estaban en algún once de la liga.</p>`;
-  if (V3D) {
-    const js = ["PT", "DF", "MC", "DL"].flatMap(p => o[p].map(c => { const de = (o.enOnce[c.id] || []).map(nombreM).filter(Boolean);
-      return { id: c.id, name: c.name, teamId: c.teamId, pos: p, pts: c.pts, sub: de.length ? (de.length > 1 ? `en ${de.length} onces` : de[0]) : "" }; }));
-    return nota + botonesVista3D() + htmlCampo3D(js, { titulo: "Once ideal de la jornada", pie: `${o.form} · ${o.total} puntos` });
-  }
-  return nota + botonesVista3D() + `<div class="oi">${filas}</div>`;
+  const js = ["PT", "DF", "MC", "DL"].flatMap(p => o[p].map(c => { const de = (o.enOnce[c.id] || []).map(nombreM).filter(Boolean);
+    return { id: c.id, name: c.name, teamId: c.teamId, pos: p, pts: c.pts, sub: de.length ? (de.length > 1 ? `en ${de.length} onces` : de[0]) : "" }; }));
+  return nota + htmlCampo3D(js, { titulo: "Once ideal de la jornada", pie: `${o.form} · ${o.total} puntos` });
 }
 
 /* ---------- Alineación en 3D: el campo en perspectiva de cámara de televisión, con los jugadores de pie ---------- */
 // Solo el césped está en 3D (CSS, inclinado como una cámara alta detrás de la portería, sin girar). Los jugadores se
 // dibujan en plano encima, en el punto exacto donde cae su sitio del campo con la misma perspectiva: así la foto y el
 // texto se ven nítidos y nunca se cortan. Todo se mide en anchos del recuadro (cqw), así escala igual en móvil y escritorio.
-let V3D = false;
-try { V3D = localStorage.getItem("v3d") === "1"; } catch (e) {}
 const C3G = { ar: 1.25, pl: 0.04, pw: 0.92, pt: 0.24, ph: 0.86, P: 1.8, oy: -0.2, ax: 34 };   // geometría (en anchos)
 const FILAS_3D = { DL: 0.13, MC: 0.4, DF: 0.66, PT: 0.9 };
 // punto del césped (u de izquierda a derecha, v del medio campo a la portería) -> punto en pantalla y escala
@@ -1927,7 +1893,7 @@ function htmlCampo3D(js, opts = {}) {
     const [X, Y, s] = c3dProy(j.u, j.v), pos = `left:${(X * 100).toFixed(2)}cqw;top:${(Y * 100).toFixed(2)}cqw;--s:${s.toFixed(3)};z-index:${Math.round(Y * 100)};--d:${(0.55 + k * 0.05).toFixed(2)}s`;
     const datos = `data-u="${j.u.toFixed(3)}" data-v="${j.v.toFixed(3)}"`;
     if (j.vacio) return `<div class="c3d-j vac" style="${pos}" ${datos}><span class="c3d-base"></span><span class="c3d-tk"><span class="c3d-bu">${C3D_CAMISETA}</span><span class="c3d-np"><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>`;
-    const pc = j.pts != null ? `<b class="c3d-p${capNum(j.pts) && (tope != null ? j.pts === tope : j.pts >= 10) ? " fuego" : capNum(j.pts) && j.pts < 0 ? " neg" : ""}">${esc(j.pts)}</b>` : "";
+    const pc = j.pts == null ? "" : opts.fuego === "max" ? `<b class="c3d-p${j.pts === tope ? " fuego" : ""}">${esc(j.pts)}</b>` : `<b class="c3d-p mp-${tramoPts(j.off ? null : j.pts)}">${esc(j.pts)}</b>`;
     const foto = (FOTOS && j.id && FOTOS[String(j.id)]) || (j.id ? fotoDe(j.id) : "");
     return `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}${foto ? "" : " sin"}" style="${pos}" ${datos}${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
       <span class="c3d-base"></span>
@@ -1940,7 +1906,6 @@ function htmlCampo3D(js, opts = {}) {
     <div class="c3d-esc" aria-hidden="true"><div class="c3d-campo"><i class="c3d-area"></i><i class="c3d-area2"></i><i class="c3d-arco"></i><i class="c3d-circ"></i><i class="c3d-pto"></i><i class="c3d-pto c3d-pto-c"></i><i class="c3d-brillo"></i></div></div>
     ${fila}${opts.pie ? `<p class="c3d-pie">${opts.pie}</p>` : ""}</div>`;
 }
-const botonesVista3D = () => `<div class="v3d-t" role="group" aria-label="Vista del campo"><button data-v3d="0" class="${V3D ? "" : "on"}" aria-pressed="${!V3D}">Plano</button><button data-v3d="1" class="${V3D ? "on" : ""}" aria-pressed="${V3D}">3D</button></div>`;
 // paralaje suave: el campo se inclina un poco hacia donde está el dedo o el ratón (sin girar) y vuelve a su sitio al soltar
 const C3P = new Map();
 function c3dColoca(c, ax, ay) {
@@ -1971,14 +1936,6 @@ const c3dSuelta = e => { const c = e.target.closest && e.target.closest("[data-c
 document.addEventListener("pointerleave", c3dSuelta, true);
 document.addEventListener("pointerup", e => { if (e.pointerType !== "mouse") c3dSuelta(e); });
 document.addEventListener("pointercancel", c3dSuelta);
-document.addEventListener("click", e => {
-  const b = e.target.closest && e.target.closest("[data-v3d]"); if (!b) return;
-  V3D = b.dataset.v3d === "1";
-  try { localStorage.setItem("v3d", V3D ? "1" : "0"); } catch (err) {}
-  if (seccion === "clas") { pintar(); pintarCronica(); if (otsAbierto) pintarPremios(); }
-  if (seccion === "eq") pintarEquipos();
-  if (seccion === "cap") pintarCapitan();
-});
 
 /* ---------- Previa de la jornada: en cuanto arranca y se ven los onces de todos ---------- */
 let PREVIA_TXT = "";
@@ -2510,7 +2467,7 @@ function pintarComparador() {
     return `<div class="du-e"><span class="du-v ${a > b ? "gana" : ""}">${nf1c(a)}</span><span class="du-b izq"><i style="width:${Math.abs(a) / mx * 100}%;background:${ca}"></i></span><span class="du-t">${t}</span><span class="du-b"><i style="width:${Math.abs(b) / mx * 100}%;background:${cb}"></i></span><span class="du-v ${b > a ? "gana" : ""}">${nf1c(b)}</span></div>`; }).join("");
   const sel = lado => { const p = lado ? B : A; return `<input class="cp-in" list="cp-lista" data-csel="${lado}" value="${esc(p.name)}" aria-label="Jugador ${lado ? "B" : "A"}" autocomplete="off" onfocus="this.select()">`; };
   const cab = p => `<div class="du-m" data-ficha="${esc(p.id)}" role="button" tabindex="0" title="Ver ficha" style="cursor:pointer">${cara(p.id, p.name, p.teamId, 52)}<small>${esc(p.pos)} · ${esc(p.ownerName || "libre")}</small></div>`;
-  const rac = p => (p.streak || []).map(v => `<span>${v === "-" || v == null ? "–" : v}</span>`).join(" ");
+  const rac = p => (p.streak || []).map(v => `<span class="rac-n ${capNum(v) ? "mp-" + tramoPts(v) : ""}">${v === "-" || v == null ? "–" : v}</span>`).join(" ");
   // próximo partido y probabilidad de ser titular (Futbol Fantasy), igual que en la ficha
   const nomEq = {}; (CAL && CAL.games || []).forEach(g => { nomEq[g.home] = g.homeName; nomEq[g.away] = g.awayName; });
   const ahora = Date.now() / 1000;
@@ -2769,13 +2726,11 @@ function htmlOnceTemporada() {
     const x = { form: `${d}-${m}-${f}`, PT: L.PT.slice(0, 1), DF: L.DF.slice(0, d), MC: L.MC.slice(0, m), DL: L.DL.slice(0, f) };
     x.total = ["PT", "DF", "MC", "DL"].reduce((t, k) => t + x[k].reduce((s, p) => s + p.points, 0), 0); if (!o || x.total > o.total) o = x; });
   if (!o) return `<p class="note">Sin datos suficientes.</p>`;
-  const j = p => `<div class="oi-p" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 40)}<b class="oi-n">${esc(apellido(p.name))}</b><span class="oi-pt">${p.points}</span><small>${p.owner ? esc(p.ownerName || "") : "sin dueño"}</small></div>`;
   const mios = {}; ["PT", "DF", "MC", "DL"].forEach(k => o[k].forEach(p => { if (p.ownerName) mios[p.ownerName] = (mios[p.ownerName] || 0) + 1; }));
   const top = Object.entries(mios).sort((a, b) => b[1] - a[1])[0];
   const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> entre los 11${top ? ` · ${esc(top[0])} tiene ${top[1]} de ellos` : ""}.</p>`;
-  if (V3D) return nota + botonesVista3D() + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.name, teamId: p.teamId, pos: k, pts: p.points, sub: p.owner ? p.ownerName || "" : "sin dueño" }))),
-    { titulo: "Once ideal de la temporada", pie: `${o.form} · ${o.total} puntos`, led: "ONCE DE LA TEMPORADA · GOLÓMETRO V2", fuego: "max" });
-  return nota + botonesVista3D() + `<div class="oi">${["DL", "MC", "DF", "PT"].map(k => `<div class="oi-l">${o[k].map(j).join("")}</div>`).join("")}</div>`;
+  return nota + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.name, teamId: p.teamId, pos: k, pts: p.points, sub: p.owner ? p.ownerName || "" : "sin dueño" }))),
+    { titulo: "Once ideal de la temporada", pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
 }
 
 /* Equipos: el mejor once de la temporada que sale de la plantilla de hoy (puntos ya hechos, nada de previsión) */
@@ -2797,10 +2752,8 @@ function bloqueOnceEq(m) {
   if (eqOnceAbierto) {
     const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
     const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> en la temporada entre ${n === 11 ? "los 11" : `estos ${n}`} · valen ${eur(o.valor)} hoy.${o.huecos ? ` <b>Le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"}</b> para completar el once.` : ""}</p>`;
-    cuerpo = nota + botonesVista3D() + (V3D
-      ? htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: p.pts, sub: eur(Number(p.value) || 0) })).concat(hueco(k))),
-        { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos`, led: `${m.name.toUpperCase()} · GOLÓMETRO V2`, fuego: "max" })
-      : `<div class="oi">${["DL", "MC", "DF", "PT"].map(k => `<div class="oi-l">${o[k].map(p => `<div class="oi-p" data-ficha="${esc(p.id)}">${cara(p.id, p.short || p.name, p.teamId, 40)}<b class="oi-n">${esc(apellido(p.short || p.name))}</b><span class="oi-pt">${p.pts}</span><small>${eur(Number(p.value) || 0)}</small></div>`).concat(hueco(k).map(() => `<div class="oi-p oi-vac"><span class="oi-hueco" aria-hidden="true">+</span><b class="oi-n">Hueco</b></div>`)).join("")}</div>`).join("")}</div>`);
+    cuerpo = nota + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: p.pts, sub: eur(Number(p.value) || 0) })).concat(hueco(k))),
+      { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
   }
   return `<details class="cdet" data-eqo="1" ${eqOnceAbierto ? "open" : ""}><summary>Su mejor once de la temporada</summary>${cuerpo}</details>`;
 }
@@ -2830,7 +2783,7 @@ const ESTADO = s => {
 const barras = streak => (streak || []).slice(-5).map(n => {
   if (typeof n !== "number") return `<i class="dt"></i>`;
   const h = Math.round(Math.max(3, Math.min(14, 3 + Math.abs(n) * 1.1)));
-  return `<i style="height:${h}px;background:${n < 0 ? "var(--red)" : n <= 4 ? "var(--pt)" : "var(--pos)"}"></i>`;
+  return `<i style="height:${h}px;background:${colPts(n)}"></i>`;
 }).join("");
 const nombreM = id => (E.managers.find(m => m.id === id) || {}).name || "Alguien";
 
@@ -4551,7 +4504,7 @@ function bloqueRacha(M) {
     <p class="note" style="margin:0 0 6px">Los jugadores de toda la liga que más han puntuado en las 3 últimas jornadas.</p>
     <ul class="clist">${L.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
       <span class="cq"><b>${esc(x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-        <span><span class="rc-s">${x.s.map(v => `<i class="${capNum(v) ? (v >= 10 ? "a" : v >= 5 ? "m" : "b") : "n"}">${capNum(v) ? v : "–"}</i>`).join("")}</span>${estado(x.p)}</span></span>
+        <span><span class="rc-s">${x.s.map(v => `<i class="${capNum(v) ? "mp-" + tramoPts(v) : "n"}">${capNum(v) ? v : "–"}</i>`).join("")}</span>${estado(x.p)}</span></span>
       <span class="cr"><b>${x.t}</b><small>${merEur(x.p.value)}</small></span></li>`).join("")}</ul></section>`;
 }
 
@@ -5285,14 +5238,12 @@ function htmlOnceRec(r) {
   const o = onceQuiniela(r.candidatos || []);
   if (!o) return "";
   const goleada = c => (c.pos === "DF" || c.pos === "PT") && c.p3 >= 0.35;
-  const jugador = c => `<div class="oi-p">${cara(c.p.id, c.p.name, c.p.teamId, 40)}<b class="oi-n">${esc(apellido(c.p.short || c.p.name))}</b><span class="oi-pt">${nf1.format(c.esp)}</span><small>${c === o.cap ? "© capitán" : c.pj < 0.7 ? `juega ${pc(c.pj)}` : goleada(c) ? "⚠ goleada" : ""}</small></div>`;
-  const filas = ["DL", "MC", "DF", "PT"].map(p => `<div class="oi-l">${o[p].map(jugador).join("")}</div>`).join("");
   const fuera = (r.candidatos || []).filter(c => c.score > -Infinity && ![...o.PT, ...o.DF, ...o.MC, ...o.DL].includes(c)).sort((a, b) => b.esp - a.esp).slice(0, 4);
   const riesgo = [...o.PT, ...o.DF].filter(goleada);
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
     <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
-    ${botonesVista3D()}${V3D ? htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(pos => o[pos].map(c => ({ id: c.p.id, name: c.p.short || c.p.name, teamId: c.p.teamId, pos, pts: nf1.format(c.esp), cap: c === o.cap, mult: c === o.cap ? c.m : null, sub: c.pj < 0.7 ? "juega " + pc(c.pj) : goleada(c) ? "⚠ goleada" : "" }))), { titulo: "Tu once recomendado", pie: `${o.form} · ${nf1.format(o.total)} puntos esperados` }) : `<div class="oi">${filas}</div>`}
+    ${htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(pos => o[pos].map(c => ({ id: c.p.id, name: c.p.short || c.p.name, teamId: c.p.teamId, pos, pts: nf1.format(c.esp), cap: c === o.cap, mult: c === o.cap ? c.m : null, sub: c.pj < 0.7 ? "juega " + pc(c.pj) : goleada(c) ? "⚠ goleada" : "" }))), { titulo: "Tu once recomendado", pie: `${o.form} · ${nf1.format(o.total)} puntos esperados` })}
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}
     ${riesgo.length ? `<p class="note">⚠ ${riesgo.map(c => `${esc(c.p.short || c.p.name)}: ${pc(c.p3)} de que su equipo encaje 3 o más contra ${esc(c.rivalNombre || "su rival")}`).join(" · ")}. En lo que va de liga, con 3 o más encajados un defensa hace de media 2 pts y acaba con 0 o menos casi 1 de cada 5 veces. Sigue en el once porque, aun así, sus puntos esperados superan a los del banquillo.</p>` : ""}</details>`;
 }
@@ -6238,7 +6189,7 @@ function cromoSpark(serie) {
   const vs = serie.map(x => capNum(x.v) ? x.v : 0), mx = Math.max(1, ...vs.map(Math.abs)), W = 200, H = 22, n = vs.length;
   if (n < 2) return "";
   return `<svg class="cr-sp" viewBox="0 0 ${W} ${H}" aria-hidden="true">${vs.map((v, k) => { const h = Math.max(2, Math.abs(v) / mx * (H - 4)), x = k * W / n + 1;
-    return `<rect x="${x.toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(W / n - 3).toFixed(1)}" height="${h.toFixed(1)}" rx="2" class="${!capNum(serie[k].v) ? "nj" : v < 0 ? "neg" : v >= 10 ? "top" : ""}"/>`; }).join("")}</svg>`;
+    return `<rect x="${x.toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(W / n - 3).toFixed(1)}" height="${h.toFixed(1)}" rx="2" ${!capNum(serie[k].v) ? `class="nj"` : `style="fill:${colPts(v)}"`}/>`; }).join("")}</svg>`;
 }
 function htmlCromo(d) {
   const p = d.p, foto = (FOTOS && FOTOS[String(p.id)]) || fotoDe(p.id), ape = apellido(p.name);
