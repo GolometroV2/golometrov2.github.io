@@ -6539,6 +6539,23 @@ function pintar() {
   pintarCapitanes();
   pintarPremios();
   pintarOrigen();
+  cuentaClasificacion();
+}
+// los puntos de la tabla suben desde 0 al entrar o al cambiar de jornada/orden (no al abrir un detalle); el valor final no cambia
+let CLAS_CLAVE = "";
+function cuentaClasificacion() {
+  const clave = vista + "|" + orden.k + "|" + orden.asc;
+  if (clave === CLAS_CLAVE) return;
+  CLAS_CLAVE = clave;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.querySelectorAll(".rank .pts b").forEach(el => {
+    const txt = el.textContent, fin = Number(txt);
+    if (!/^\d{1,5}$/.test(txt) || fin < 2) return;
+    const t0 = performance.now(), dur = 700;
+    const paso = ahora => { if (!el.isConnected) return; const k = Math.min(1, (ahora - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = k < 1 ? String(Math.round(fin * e)) : txt; if (k < 1) requestAnimationFrame(paso); };
+    el.textContent = "0"; requestAnimationFrame(paso);
+  });
 }
 document.addEventListener("change", e => {
   const s = e.target.closest("[data-dsel]");
