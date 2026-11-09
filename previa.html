@@ -2472,38 +2472,58 @@ function textoCrec(x) {
   if (x.g <= -0.002) return `−${nf1.format(-x.g * 100)} %/día · se aleja de su cláusula`;
   return "valor estable";
 }
-// Chollos: las cláusulas más baratas por cada punto esperado (sobre todo jugadores de poco precio)
+// Chollos: las cláusulas más baratas por cada punto esperado. Para rellenar la plantilla (pedido del dueño) cuenta sobre
+// todo lo de 2 M o menos: ahí basta con que juegue y dé algo (1,5 pts esperados); por encima se pide lo de siempre (3).
+const CHOLLO = { MAX: 2e6, MIN_RELLENO: 1.5, MIN: 3, PROTEGIDO_DIAS: 3 };
+function espChollo(p, V) {
+  const lesion = Array.isArray(p.status) ? p.status.some(x => x === "injury" || x === "susp") : p.status === "injury" || p.status === "susp";
+  if (lesion || !capNum(V)) return null;
+  const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+  const prior = capPrior(p.pos, V) ?? 3.9;
+  const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+  const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+  const pjM = capPJuega(racha, V, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+  const { pj, tit, ff } = pjConTitular(p, pjM);
+  if (tit != null ? tit < 0.5 : pj < 0.55) return null;            // si no juega, no es un chollo
+  return { esp: mu * pj, pj, ff };
+}
 function clausulasBaratas(ms) {
-  const L = [];
+  const L = [], ahora = Date.now() / 1000;
   ms.forEach(m => (m.players || []).forEach(p => {
-    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
-    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
-    const prior = capPrior(p.pos, p.value) ?? 3.9;
-    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
-    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
-    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
-    const { pj, tit, ff } = pjConTitular(p, pjM);
-    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no es un chollo
-    const esp = mu * pj;
-    if (esp < 3) return;
-    L.push({ m, p, esp, pj, ff, g: crecDiario(p), sobre: p.clause / p.value - 1, r: esp / (p.clause / 1e6) });
+    if (!p.clause || !capNum(p.value)) return;
+    const e = espChollo(p, p.value); if (!e) return;
+    const relleno = p.clause <= CHOLLO.MAX;
+    if (e.esp < (relleno ? CHOLLO.MIN_RELLENO : CHOLLO.MIN)) return;
+    const adq = capTsMadrid(p.acquired), protegido = adq && adq + CHOLLO.PROTEGIDO_DIAS * 86400 > ahora ? adq + CHOLLO.PROTEGIDO_DIAS * 86400 : null;
+    L.push({ m, p, ...e, relleno, protegido, g: crecDiario(p), sobre: p.clause / p.value - 1, r: e.esp / (p.clause / 1e6) });
   }));
   return L.sort((a, b) => b.r - a.r);
+}
+// libres del mercado por 2 M o menos que juegan: se fichan por su valor, sin el 50 % de más de una cláusula
+function libresChollo() {
+  if (!MER_DATA) { cargarMercado(); return null; }
+  return (MER_DATA.libres || []).filter(l => capNum(l.price) && l.price <= CHOLLO.MAX).map(l => { const e = espChollo(l, l.price); return e && e.esp >= CHOLLO.MIN_RELLENO ? { p: l, ...e } : null; })
+    .filter(Boolean).sort((a, b) => b.esp - a.esp);
 }
 let clVista = "todos";
 function bloqueClausulas(ms) {
   const seg = [["baratos", "Chollos"], ["todos", "TOP Cláusulas"]].map(([k, t]) => `<button data-clv="${k}" class="${clVista === k ? "on" : ""}">${t}</button>`).join("");
   if (clVista === "baratos") {
-    const L = clausulasBaratas(ms).slice(0, 10);
-    if (!L.length) return "";
-    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
-      <p class="note" style="margin:0 0 6px">Las cláusulas que menos cuestan por cada punto que se espera del jugador (3 o más por jornada), solo entre los que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Suelen ser jugadores baratos que rinden por encima de su precio.</p>
-      <ul class="clist">${L.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+    const T = clausulasBaratas(ms), rel = T.filter(x => x.relleno).sort((a, b) => b.esp - a.esp).slice(0, 6), lib = libresChollo();
+    const otros = T.filter(x => !x.relleno && x.p.clause <= 4e6).slice(0, 4);
+    const L = [...rel, ...otros];
+    if (!L.length && !(lib && lib.length)) return "";
+    const fila = (x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
         <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
-          <span class="cl2-g">${nf1c(x.r)} pts por millón de cláusula${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
-        <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
-      <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${x.m ? `${avatar(x.m, x.m.i)}${esc(x.m.name)}` : "libre en el mercado"}</span>
+          <span class="cl2-g">${x.protegido ? `protegido hasta el ${esc(enMadrid(x.protegido * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }))} · ` : ""}${x.m ? `${nf1c(x.r)} pts por millón de cláusula` : "se ficha pujando, por su valor"}${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
+        <span class="cr"><b>${merEur(x.m ? x.p.clause : x.p.price)}</b><small>${x.m ? `+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}` : "precio de hoy"}</small></span></li>`;
+    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+      <h3 class="sec">Para rellenar · cláusula de 2 M o menos</h3>
+      ${rel.length ? `<ul class="clist">${rel.map(fila).join("")}</ul>` : `<p class="note">Hoy no hay ninguna cláusula de 2 M o menos de un jugador que juegue.</p>`}
+      ${lib && lib.length ? `<h3 class="sec">En el mercado por menos de 2 M</h3><p class="note" style="margin:0 0 6px">Para rellenar suele salir mejor el mercado: se fichan por su valor, sin el 50 % de más que tiene casi cualquier cláusula.</p><ul class="clist">${lib.slice(0, 5).map(fila).join("")}</ul>` : ""}
+      ${otros.length ? `<h3 class="sec">Si subes un poco · de 2 a 4 M</h3><ul class="clist">${otros.map((x, k) => fila(x, k + rel.length)).join("")}</ul>` : ""}
+      <p class="note">Solo jugadores que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Para rellenar basta con 1,5 pts esperados por jornada; por encima de 2 M se piden 3. Tras un fichaje hay 3 días en los que no se puede clausular.</p></section>`;
   }
   const top = clausulasRentables(ms).slice(0, 10);
   if (!top.length) return "";
@@ -3907,7 +3927,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); if (seccion === "eq" && clVista === "baratos") pintarEquipos(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
