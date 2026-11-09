@@ -1130,6 +1130,41 @@ body.wr-abierto{overflow:hidden}
 @media (max-height:640px){.wr-big{font-size:min(28vw,110px)}.wr-foto{width:min(46vw,170px)}.wr-barrasj{height:90px}.wr-escena{padding-top:78px}}
 @media (prefers-reduced-motion:reduce){.wr-a,.wr-big.wr-a,.wr-aurora i,.wr-anillo::before,.wr-adn,.wr-barrasj i{animation:none}
   .wr-g-p{animation:none;stroke-dashoffset:0}.wr-g-a{animation:none;opacity:1}.wr-barras .activa i{animation:none;transform:scaleX(.5)}}
+
+/* Red de traspasos */
+.red-svg{display:block;width:100%;max-width:420px;margin:0 auto;height:auto;touch-action:manipulation}
+.red-arco{fill:none;stroke-linecap:round;stroke-dasharray:6 8;animation:redFlujo 1.4s linear infinite;transition:opacity .25s}
+.red-arco.mer{stroke:var(--mut)}
+.red-arco.dim{opacity:.08}
+.red-nodo{cursor:pointer;outline:none}.red-nodo circle.fd{transition:opacity .25s}
+.red-nodo.dim{opacity:.3}
+.red-nodo:focus-visible circle.fd{stroke:var(--acc);stroke-width:3}
+.red-nodo text{font-size:11px;font-weight:700;fill:var(--txt);text-anchor:middle;pointer-events:none}
+.red-nodo text.ini{font-size:13px;fill:#fff}
+.red-pie{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--mut);margin:6px 0 10px}
+.red-pie i{display:inline-block;width:18px;height:0;border-top:3px dashed var(--acc);vertical-align:middle;margin-right:5px}.red-pie i.m{border-color:var(--mut)}
+.red-l{list-style:none;margin:0;padding:0}.red-l li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.red-l li span:first-child{min-width:0}.red-l b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.red-bt{min-height:44px;padding:0 14px;border-radius:var(--r-m);border:1px solid var(--line);background:none;color:var(--txt);cursor:pointer;margin-bottom:8px}
+@keyframes redFlujo{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){.red-arco{animation:none}}
+/* Repetición de la liga */
+.rep-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rep-play{width:48px;height:48px;border-radius:50%;border:0;background:var(--acc);color:var(--accTxt);font-size:17px;font-weight:800;flex:none;cursor:pointer;box-shadow:0 0 18px color-mix(in srgb,var(--acc) 45%,transparent)}
+.rep-j{display:flex;flex-direction:column;min-width:74px}.rep-j small{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}.rep-j b{font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.rep-r{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc);background:none}
+.rep-pista{position:relative}
+.rep-f{position:absolute;left:0;right:0;top:0;height:48px;display:flex;align-items:center;gap:8px;transition:transform .9s cubic-bezier(.3,.8,.3,1);will-change:transform}
+.rep-f .av{width:40px;height:40px;font-size:13px}
+.rep-p{width:18px;text-align:center;font-size:13px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums}
+.rep-f.lider .rep-p{color:var(--acc)}
+.rep-c{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.rep-m{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rep-b{display:block;height:10px;border-radius:6px;background:color-mix(in srgb,var(--txt) 8%,transparent);overflow:hidden}
+.rep-b i{display:block;height:100%;width:100%;border-radius:6px;background:var(--c);transform-origin:left;transition:transform .9s cubic-bezier(.3,.8,.3,1)}
+.rep-f.lider .rep-b i{box-shadow:0 0 10px var(--c)}
+.rep-n{min-width:46px;text-align:right;font-size:16px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.rep-f,.rep-b i{transition:none}}
 </style>
 </head>
 <body>
@@ -1215,7 +1250,7 @@ function cargarEquipos() {
   if (!eqOk) return;   // Equipos y Capitán exigen PIN
   fetch("equipos.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
+    .then(j => { E = j; marcaFrescura(); repintarSiVivo(); if (seccion === "clas" && D) { pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarRed(); } if (seccion === "eq") pintarEquipos(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); })
     .catch(() => {});
 }
 
@@ -2461,6 +2496,97 @@ function pintarOrigen() {
 }
 
 /* ---------- Premios de la temporada ---------- */
+/* ---------- Repetición de la liga: carrera de barras jornada a jornada ---------- */
+// Cada manager es una fila que sube o baja de sitio (transform) y una barra que crece (scaleX): nada de layout. Es la
+// misma serie que «La carrera» (serieLiga), solo que animada. Con «reducir movimiento» salta de jornada sin transiciones.
+const REP = { k: null, timer: null, h: 54 };
+function repParar() { clearInterval(REP.timer); REP.timer = null; const b = document.querySelector("[data-rep=play]"); if (b) { b.textContent = "▶"; b.setAttribute("aria-label", "Reproducir"); } }
+function repPoner(k) {
+  const c = $("#rep"); if (!c || !D) return;
+  const S = serieLiga(), n = S.js.length; k = Math.max(0, Math.min(n - 1, k)); REP.k = k;
+  const max = Math.max(1, ...S.ms.map((_, x) => S.cum[x][n - 1]));
+  c.querySelector("#repJ").textContent = S.js[k];
+  const r = c.querySelector(".rep-r"); if (r) { r.value = k; r.style.setProperty("--p", n > 1 ? (k / (n - 1) * 100) + "%" : "0%"); }
+  c.querySelectorAll(".rep-f").forEach(f => {
+    const x = +f.dataset.x, pos = S.rank[k][x] - 1, v = S.cum[x][k];
+    f.style.transform = `translateY(${pos * REP.h}px)`; f.style.zIndex = S.ms.length - pos;
+    f.classList.toggle("lider", pos === 0);
+    f.querySelector(".rep-b i").style.transform = `scaleX(${(v / max).toFixed(4)})`;
+    f.querySelector(".rep-n").textContent = nf0.format(v);
+    f.querySelector(".rep-p").textContent = pos + 1;
+  });
+}
+function pintarRepeticion() {
+  const c = $("#rep"); if (!c) return;
+  repParar();
+  const S = serieLiga(), n = S.js.length;
+  if (n < 2) { c.hidden = true; return; }
+  c.hidden = false;
+  const filas = S.ms.map(({ m, i }, x) => `<div class="rep-f" data-x="${x}" style="--c:${col(i)}"><span class="rep-p"></span>${avatar(m, i)}
+      <div class="rep-c"><span class="rep-m">${esc(m.name)}</span><span class="rep-b"><i></i></span></div><b class="rep-n"></b></div>`).join("");
+  c.innerHTML = `<div class="gh"><h2>Repetición de la liga</h2></div>
+    <p class="note" style="margin:0 0 10px">Pulsa ▶ y mira cómo fue la clasificación jornada a jornada. También puedes arrastrar la barra.</p>
+    <div class="rep-top"><button class="rep-play" data-rep="play" aria-label="Reproducir">▶</button><div class="rep-j"><small>Hasta la jornada</small><b id="repJ"></b></div>
+      <input class="rep-r" type="range" min="0" max="${n - 1}" step="1" value="${n - 1}" aria-label="Jornada de la repetición"></div>
+    <div class="rep-pista" style="height:${S.ms.length * REP.h}px">${filas}</div>`;
+  repPoner(n - 1);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-rep=play]"); if (!b || !D) return;
+  if (REP.timer) return repParar();
+  const n = serieLiga().js.length;
+  if (REP.k >= n - 1) repPoner(0);
+  b.textContent = "❚❚"; b.setAttribute("aria-label", "Pausar");
+  REP.timer = setInterval(() => { if (!document.contains(b) || REP.k >= n - 1) return repParar(); repPoner(REP.k + 1); if (REP.k >= n - 1) repParar(); }, 1300);
+});
+document.addEventListener("input", e => { if (e.target.matches && e.target.matches(".rep-r")) { repParar(); repPoner(+e.target.value); } });
+
+/* ---------- Red de traspasos: managers en círculo y arcos de dinero entre ellos ---------- */
+// Lee los últimos movimientos guardados (equipos.json -> transfers). Centro = Mister (mercado libre). Grosor = dinero.
+let REDSEL = null;
+function pintarRed() {
+  const c = $("#red"); if (!c) return;
+  const T = (E && E.transfers) || [];
+  const ms = (D && D.managers) || [];
+  const idx = {}; ms.forEach((m, i) => idx[String(m.id)] = i);
+  const mov = T.filter(t => (t.from == null || String(t.from) in idx) && (t.to == null || String(t.to) in idx) && !(t.from == null && t.to == null));
+  if (!mov.length || ms.length < 2) { c.hidden = true; return; }
+  c.hidden = false;
+  const n = ms.length, W = 360, cx = 180, cy = 180, R = 125;
+  const pos = ms.map((_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+  const nodo = k => k == null ? "M" : idx[String(k)];
+  const xy = k => k === "M" ? [cx, cy] : pos[k];
+  const agg = {};
+  mov.forEach(t => { const a = nodo(t.from), b = nodo(t.to), key = a + ">" + b; const o = agg[key] = agg[key] || { a, b, v: 0, n: 0 }; o.v += t.value || 0; o.n++; });
+  const arcos = Object.values(agg), maxV = Math.max(...arcos.map(o => o.v), 1);
+  const sel = REDSEL != null && REDSEL < n ? REDSEL : null;
+  const svgArcos = arcos.map(o => {
+    const [x1, y1] = xy(o.a), [x2, y2] = xy(o.b), mx = (x1 + x2) / 2 + (cx - (x1 + x2) / 2) * .45, my = (y1 + y2) / 2 + (cy - (y1 + y2) / 2) * .45;
+    const mer = o.a === "M" || o.b === "M", on = sel == null || o.a === sel || o.b === sel;
+    const w = (1.5 + 5 * Math.sqrt(o.v / maxV)).toFixed(1);
+    return `<path class="red-arco${mer ? " mer" : ""}${on ? "" : " dim"}" d="M${x1.toFixed(1)} ${y1.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${mer ? "" : "var(--acc)"}" stroke-width="${w}"><title>${esc(o.a === "M" ? "Mister" : ms[o.a].name)} → ${esc(o.b === "M" ? "Mister" : ms[o.b].name)}: ${o.n} mov., ${eur(o.v)}</title></path>`;
+  }).join("");
+  const svgNodos = ms.map((m, i) => {
+    const [x, y] = pos[i], dim = sel != null && sel !== i && !arcos.some(o => (o.a === sel && o.b === i) || (o.b === sel && o.a === i));
+    return `<g class="red-nodo${dim ? " dim" : ""}" data-red="${i}" role="button" tabindex="0" aria-pressed="${sel === i}" aria-label="${esc(m.name)}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="26" fill="transparent"/>
+      <circle class="fd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="19" fill="${col(i)}" stroke="${sel === i ? "var(--acc)" : "var(--panel)"}" stroke-width="3"/>
+      <text class="ini" x="${x.toFixed(1)}" y="${(y + 4.5).toFixed(1)}">${esc(m.avatar || "MF")}</text><text x="${x.toFixed(1)}" y="${(y + 35).toFixed(1)}">${esc(String(m.name).slice(0, 10))}</text></g>`;
+  }).join("");
+  const centro = `<g><circle cx="${cx}" cy="${cy}" r="25" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><text x="${cx}" y="${cy + 4}" style="font-size:11px;font-weight:700;fill:var(--mut);text-anchor:middle">Mister</text></g>`;
+  const mios = sel == null ? mov : mov.filter(t => nodo(t.from) === sel || nodo(t.to) === sel);
+  const nom = k => k == null ? "Mister" : ms[idx[String(k)]].name;
+  const lista = mios.slice().sort((a, b) => (b.value || 0) - (a.value || 0)).slice(0, 8).map(t => `<li><span>${esc(t.name)}<br><small class="note">${esc(nom(t.from))} → ${esc(nom(t.to))}</small></span><b>${eur(t.value || 0)}</b></li>`).join("");
+  const gastado = sel == null ? null : mov.filter(t => nodo(t.to) === sel).reduce((q, t) => q + (t.value || 0), 0), cobrado = sel == null ? null : mov.filter(t => nodo(t.from) === sel).reduce((q, t) => q + (t.value || 0), 0);
+  c.innerHTML = `<div class="gh"><h2>Red de traspasos</h2></div>
+    <p class="note" style="margin:0 0 6px">Quién fichó a quién en los últimos ${mov.length} movimientos. Los trazos van de quien vende a quien compra y son más gruesos cuanto más dinero. Toca un manager para ver solo lo suyo.</p>
+    <svg class="red-svg" viewBox="0 0 ${W} ${W}" role="img" aria-label="Red de traspasos entre managers">${svgArcos}${centro}${svgNodos}</svg>
+    <div class="red-pie"><span><i></i>entre managers (cláusulas y traspasos)</span><span><i class="m"></i>con Mister (mercado)</span></div>
+    ${sel != null ? `<button class="red-bt" data-red="-1">✕ Ver a todos</button> <p class="note" style="margin:0 0 6px"><b>${esc(ms[sel].name)}</b>: ha gastado ${eur(gastado)} y ha cobrado ${eur(cobrado)} en estos movimientos.</p>` : ""}
+    <ul class="red-l">${lista}</ul>`;
+}
+document.addEventListener("click", e => { const g = e.target.closest && e.target.closest("[data-red]"); if (!g || !D) return; const i = +g.dataset.red; REDSEL = i < 0 || REDSEL === i ? null : i; pintarRed(); });
+document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".red-nodo")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); } });
+
 function pintarPremios() {
   const cont = $("#premios");
   if (!cont) return;
@@ -6119,11 +6245,13 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["red", "🕸 Traspasos"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
+    <section class="card" id="rep"></section>
+    <section class="card" id="red"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="comp"></section>
@@ -6137,6 +6265,8 @@ function pintar() {
   if (!ENTRADA_HECHA) entradaMarcador();
   pintarCronica();
   pintarGrafico();
+  pintarRepeticion();
+  pintarRed();
   pintarPronostico();
   pintarDuelo();
   pintarComparador();

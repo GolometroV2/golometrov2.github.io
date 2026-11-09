@@ -1004,6 +1004,10 @@ body.est-abierto{overflow:hidden}
 .c3d-c{position:absolute;top:0;left:6px;z-index:3;height:19px;padding:0 5px;border-radius:999px;background:#f2fbf5;color:#08100c;font-size:11px;font-weight:900;display:grid;place-items:center}
 .c3d-j.cap .c3d-f{box-shadow:0 0 0 3px var(--acc),0 0 24px 6px #2fd46eaa,0 10px 18px #000b}
 .c3d-j.off .c3d-f{filter:grayscale(1) brightness(.7)}
+.c3d-j.vac .c3d-f{background:#04100b80;box-shadow:none;outline:2px dashed #ffffffa0;outline-offset:-2px}
+.c3d-j.vac .c3d-f i{font-size:24px;color:#ffffffc0}
+.c3d-j.vac .c3d-n{background:#04100b99;color:#d8ecdf}
+.oi-vac{opacity:.75}.oi-hueco{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:2px dashed currentColor;font-weight:800;font-size:20px}
 .c3d-j.off .c3d-p{background:#3a4a42;color:#d6e6dc;box-shadow:none}
 .c3d-j[data-ficha]{cursor:pointer}
 .c3d-pie{position:absolute;left:50%;bottom:12px;z-index:3;margin:0;transform:translateX(-50%);padding:5px 14px;border-radius:999px;white-space:nowrap;background:#04100bd9;border:1px solid #2fd46e55;
@@ -1013,6 +1017,24 @@ body.est-abierto{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.c3d-campo,.c3d-in,.c3d-led span,.c3d-j.cap .c3d-s{animation:none}}
 @media (min-width:480px){.c3d-b{scale:1.18}}
 @media (min-width:560px){.c3d-b{scale:1.38}}
+
+/* Repetición de la liga */
+.rep-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rep-play{width:48px;height:48px;border-radius:50%;border:0;background:var(--acc);color:var(--accTxt);font-size:17px;font-weight:800;flex:none;cursor:pointer;box-shadow:0 0 18px color-mix(in srgb,var(--acc) 45%,transparent)}
+.rep-j{display:flex;flex-direction:column;min-width:74px}.rep-j small{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}.rep-j b{font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.rep-r{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc);background:none}
+.rep-pista{position:relative}
+.rep-f{position:absolute;left:0;right:0;top:0;height:48px;display:flex;align-items:center;gap:8px;transition:transform .9s cubic-bezier(.3,.8,.3,1);will-change:transform}
+.rep-f .av{width:40px;height:40px;font-size:13px}
+.rep-p{width:18px;text-align:center;font-size:13px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums}
+.rep-f.lider .rep-p{color:var(--acc)}
+.rep-c{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.rep-m{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rep-b{display:block;height:10px;border-radius:6px;background:color-mix(in srgb,var(--txt) 8%,transparent);overflow:hidden}
+.rep-b i{display:block;height:100%;width:100%;border-radius:6px;background:var(--c);transform-origin:left;transition:transform .9s cubic-bezier(.3,.8,.3,1)}
+.rep-f.lider .rep-b i{box-shadow:0 0 10px var(--c)}
+.rep-n{min-width:46px;text-align:right;font-size:16px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.rep-f,.rep-b i{transition:none}}
 </style>
 </head>
 <body>
@@ -1673,10 +1695,13 @@ function htmlCampo3D(js, opts = {}) {
   const jug = [];
   // con 5 en una línea se escalonan un poco para que no se tapen
   Object.entries(por).forEach(([pos, L]) => L.forEach((j, k) => jug.push({ ...j, u: (k + 1) / (L.length + 1), v: FILAS_3D[pos] + (L.length >= 5 ? (k % 2 ? 0.035 : -0.015) : 0) })));
-  const fila = jug.sort((a, b) => a.v - b.v).map((j, k) => `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}" style="left:${(j.u * 100).toFixed(1)}%;top:${(j.v * 100).toFixed(1)}%;--d:${(k * 0.045).toFixed(3)}s"${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
+  // en una jornada brilla quien hace 10 o más; con puntos de toda la temporada, solo el que más lleva
+  const nums = js.map(j => j.pts).filter(capNum), tope = opts.fuego === "max" && nums.length ? Math.max(...nums) : null;
+  const fila = jug.sort((a, b) => a.v - b.v).map((j, k) => j.vacio ? `<div class="c3d-j vac" style="left:${(j.u * 100).toFixed(1)}%;top:${(j.v * 100).toFixed(1)}%;--d:${(k * 0.045).toFixed(3)}s">
+      <span class="c3d-s"></span><span class="c3d-b"><span class="c3d-in"><span class="c3d-f"><i>+</i></span><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>` : `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}" style="left:${(j.u * 100).toFixed(1)}%;top:${(j.v * 100).toFixed(1)}%;--d:${(k * 0.045).toFixed(3)}s"${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
       <span class="c3d-s"></span>
       <span class="c3d-b"><span class="c3d-in">
-        ${j.pts != null ? `<b class="c3d-p${capNum(j.pts) && j.pts >= 10 ? " fuego" : capNum(j.pts) && j.pts < 0 ? " neg" : ""}">${esc(j.pts)}</b>` : ""}${j.cap ? `<b class="c3d-c">${j.mult ? "×" + esc(coma(j.mult)) : "C"}</b>` : ""}
+        ${j.pts != null ? `<b class="c3d-p${capNum(j.pts) && (tope != null ? j.pts === tope : j.pts >= 10) ? " fuego" : capNum(j.pts) && j.pts < 0 ? " neg" : ""}">${esc(j.pts)}</b>` : ""}${j.cap ? `<b class="c3d-c">${j.mult ? "×" + esc(coma(j.mult)) : "C"}</b>` : ""}
         <span class="c3d-f">${j.teamId ? `<img class="c3d-e" src="fotos/escudos/${esc(j.teamId)}.png" alt="" loading="lazy" onerror="this.remove()">` : ""}<i>${esc(iniciales(j.name))}</i><img class="c3d-im" src="${esc(fotoDe(j.id))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>
         <span class="c3d-n">${esc(apellido(j.name))}</span>${j.sub ? `<small class="c3d-x">${esc(j.sub)}</small>` : ""}
       </span></span></div>`).join("");
@@ -1714,7 +1739,9 @@ document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-v3d]"); if (!b) return;
   V3D = b.dataset.v3d === "1";
   try { localStorage.setItem("v3d", V3D ? "1" : "0"); } catch (err) {}
-  if (seccion === "clas") { pintar(); pintarCronica(); }
+  if (seccion === "clas") { pintar(); pintarCronica(); if (otsAbierto) pintarPremios(); }
+  if (seccion === "eq") pintarEquipos();
+  if (seccion === "cap") pintarCapitan();
 });
 
 /* ---------- Previa de la jornada: en cuanto arranca y se ven los onces de todos ---------- */
@@ -2339,6 +2366,51 @@ function pintarOrigen() {
 }
 
 /* ---------- Premios de la temporada ---------- */
+/* ---------- Repetición de la liga: carrera de barras jornada a jornada ---------- */
+// Cada manager es una fila que sube o baja de sitio (transform) y una barra que crece (scaleX): nada de layout. Es la
+// misma serie que «La carrera» (serieLiga), solo que animada. Con «reducir movimiento» salta de jornada sin transiciones.
+const REP = { k: null, timer: null, h: 54 };
+function repParar() { clearInterval(REP.timer); REP.timer = null; const b = document.querySelector("[data-rep=play]"); if (b) { b.textContent = "▶"; b.setAttribute("aria-label", "Reproducir"); } }
+function repPoner(k) {
+  const c = $("#rep"); if (!c || !D) return;
+  const S = serieLiga(), n = S.js.length; k = Math.max(0, Math.min(n - 1, k)); REP.k = k;
+  const max = Math.max(1, ...S.ms.map((_, x) => S.cum[x][n - 1]));
+  c.querySelector("#repJ").textContent = S.js[k];
+  const r = c.querySelector(".rep-r"); if (r) { r.value = k; r.style.setProperty("--p", n > 1 ? (k / (n - 1) * 100) + "%" : "0%"); }
+  c.querySelectorAll(".rep-f").forEach(f => {
+    const x = +f.dataset.x, pos = S.rank[k][x] - 1, v = S.cum[x][k];
+    f.style.transform = `translateY(${pos * REP.h}px)`; f.style.zIndex = S.ms.length - pos;
+    f.classList.toggle("lider", pos === 0);
+    f.querySelector(".rep-b i").style.transform = `scaleX(${(v / max).toFixed(4)})`;
+    f.querySelector(".rep-n").textContent = nf0.format(v);
+    f.querySelector(".rep-p").textContent = pos + 1;
+  });
+}
+function pintarRepeticion() {
+  const c = $("#rep"); if (!c) return;
+  repParar();
+  const S = serieLiga(), n = S.js.length;
+  if (n < 2) { c.hidden = true; return; }
+  c.hidden = false;
+  const filas = S.ms.map(({ m, i }, x) => `<div class="rep-f" data-x="${x}" style="--c:${col(i)}"><span class="rep-p"></span>${avatar(m, i)}
+      <div class="rep-c"><span class="rep-m">${esc(m.name)}</span><span class="rep-b"><i></i></span></div><b class="rep-n"></b></div>`).join("");
+  c.innerHTML = `<div class="gh"><h2>Repetición de la liga</h2></div>
+    <p class="note" style="margin:0 0 10px">Pulsa ▶ y mira cómo fue la clasificación jornada a jornada. También puedes arrastrar la barra.</p>
+    <div class="rep-top"><button class="rep-play" data-rep="play" aria-label="Reproducir">▶</button><div class="rep-j"><small>Hasta la jornada</small><b id="repJ"></b></div>
+      <input class="rep-r" type="range" min="0" max="${n - 1}" step="1" value="${n - 1}" aria-label="Jornada de la repetición"></div>
+    <div class="rep-pista" style="height:${S.ms.length * REP.h}px">${filas}</div>`;
+  repPoner(n - 1);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-rep=play]"); if (!b || !D) return;
+  if (REP.timer) return repParar();
+  const n = serieLiga().js.length;
+  if (REP.k >= n - 1) repPoner(0);
+  b.textContent = "❚❚"; b.setAttribute("aria-label", "Pausar");
+  REP.timer = setInterval(() => { if (!document.contains(b) || REP.k >= n - 1) return repParar(); repPoner(REP.k + 1); if (REP.k >= n - 1) repParar(); }, 1300);
+});
+document.addEventListener("input", e => { if (e.target.matches && e.target.matches(".rep-r")) { repParar(); repPoner(+e.target.value); } });
+
 function pintarPremios() {
   const cont = $("#premios");
   if (!cont) return;
@@ -2391,8 +2463,39 @@ function htmlOnceTemporada() {
   const j = p => `<div class="oi-p" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 40)}<b class="oi-n">${esc(apellido(p.name))}</b><span class="oi-pt">${p.points}</span><small>${p.owner ? esc(p.ownerName || "") : "sin dueño"}</small></div>`;
   const mios = {}; ["PT", "DF", "MC", "DL"].forEach(k => o[k].forEach(p => { if (p.ownerName) mios[p.ownerName] = (mios[p.ownerName] || 0) + 1; }));
   const top = Object.entries(mios).sort((a, b) => b[1] - a[1])[0];
-  return `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> entre los 11${top ? ` · ${esc(top[0])} tiene ${top[1]} de ellos` : ""}.</p><div class="oi">${["DL", "MC", "DF", "PT"].map(k => `<div class="oi-l">${o[k].map(j).join("")}</div>`).join("")}</div>`;
+  const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> entre los 11${top ? ` · ${esc(top[0])} tiene ${top[1]} de ellos` : ""}.</p>`;
+  if (V3D) return nota + botonesVista3D() + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.name, teamId: p.teamId, pos: k, pts: p.points, sub: p.owner ? p.ownerName || "" : "sin dueño" }))),
+    { titulo: "Once ideal de la temporada", pie: `${o.form} · ${o.total} puntos`, led: "ONCE DE LA TEMPORADA · GOLÓMETRO V2", fuego: "max" });
+  return nota + botonesVista3D() + `<div class="oi">${["DL", "MC", "DF", "PT"].map(k => `<div class="oi-l">${o[k].map(j).join("")}</div>`).join("")}</div>`;
 }
+
+/* Equipos: el mejor once de la temporada que sale de la plantilla de hoy (puntos ya hechos, nada de previsión) */
+let eqOnceAbierto = false;
+function bloqueOnceEq(m) {
+  const c = m.players.filter(p => p.pos && capNum(Number(p.points))).map(p => ({ ...p, pts: Number(p.points) }));
+  const por = pos => c.filter(x => x.pos === pos).sort((a, b) => b.pts - a.pts);
+  const L = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  let o = null;
+  // si la plantilla no llega a 11 en ningún dibujo, se elige el que deja menos huecos (y se ven como «hueco»)
+  FORMACIONES.forEach(([d, mm, f]) => {
+    const pide = { PT: 1, DF: d, MC: mm, DL: f }, x = { form: `${d}-${mm}-${f}`, huecos: 0 };
+    ["PT", "DF", "MC", "DL"].forEach(k => { x[k] = L[k].slice(0, pide[k]); x.huecos += pide[k] - x[k].length; x["h" + k] = pide[k] - x[k].length; });
+    x.total = ["PT", "DF", "MC", "DL"].reduce((t, k) => t + x[k].reduce((s2, p) => s2 + p.pts, 0), 0);
+    x.valor = ["PT", "DF", "MC", "DL"].reduce((t, k) => t + x[k].reduce((s2, p) => s2 + (Number(p.value) || 0), 0), 0);
+    if (!o || x.huecos < o.huecos || (x.huecos === o.huecos && x.total > o.total)) o = x; });
+  if (!o || o.huecos > 3) return "";
+  let cuerpo = "";
+  if (eqOnceAbierto) {
+    const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
+    const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> en la temporada entre ${n === 11 ? "los 11" : `estos ${n}`} · valen ${eur(o.valor)} hoy.${o.huecos ? ` <b>Le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"}</b> para completar el once.` : ""}</p>`;
+    cuerpo = nota + botonesVista3D() + (V3D
+      ? htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: p.pts, sub: eur(Number(p.value) || 0) })).concat(hueco(k))),
+        { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos`, led: `${m.name.toUpperCase()} · GOLÓMETRO V2`, fuego: "max" })
+      : `<div class="oi">${["DL", "MC", "DF", "PT"].map(k => `<div class="oi-l">${o[k].map(p => `<div class="oi-p" data-ficha="${esc(p.id)}">${cara(p.id, p.short || p.name, p.teamId, 40)}<b class="oi-n">${esc(apellido(p.short || p.name))}</b><span class="oi-pt">${p.pts}</span><small>${eur(Number(p.value) || 0)}</small></div>`).concat(hueco(k).map(() => `<div class="oi-p oi-vac"><span class="oi-hueco" aria-hidden="true">+</span><b class="oi-n">Hueco</b></div>`)).join("")}</div>`).join("")}</div>`);
+  }
+  return `<details class="cdet" data-eqo="1" ${eqOnceAbierto ? "open" : ""}><summary>Su mejor once de la temporada</summary>${cuerpo}</details>`;
+}
+document.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details[data-eqo]") && e.target.open !== eqOnceAbierto) { eqOnceAbierto = e.target.open; if (eqOnceAbierto) pintarEquipos(); } }, true);
 
 /* ---------- Equipos: seguimiento de plantillas ---------- */
 const nf = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 2 });
@@ -3024,6 +3127,7 @@ function detalleEq(m, hp) {
       <div style="flex:1;min-width:0"><div class="nm">${esc(m.name)}</div><div class="sub">Valor de plantilla</div></div>
       <div class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(dM)}">${sig(dM)} hoy</em></div></div>
     <div class="mini"><span class="up">▲ ${sube} subiendo</span><span style="color:var(--pt)">⚠ ${L.filter(x => x.t.k === "sube_frena").length} frenando</span><span class="dn">▼ ${baja} bajando</span></div>${enDuda ? `<p class="note" style="margin:8px 0 0">⚠ ${enDuda} ${enDuda === 1 ? "jugador tiene" : "jugadores tienen"} menos de un 50 % de ser titular en su próximo partido (Futbol Fantasy y Analítica Fantasy).</p>` : ""}</section>
+    ${bloqueOnceEq(m)}
     <p class="ordlbl">Ordenar jugadores por</p><div class="pills" role="group" aria-label="Ordenar">${sorts}</div>
     <ul class="jpl">${filas}</ul>
     <p class="note">Las tendencias son estimaciones lineales a partir de los cambios diarios guardados; mejoran cuantos más días acumule el historial.</p>
@@ -4879,7 +4983,7 @@ function htmlOnceRec(r) {
   return `<details class="card cdet-card" open><summary class="sumh">Tu once recomendado</summary>
     ${o.faltan ? htmlHueco(o) : ""}
     <p class="note" style="margin:6px 0 8px">${o.form} · <b>${nf1.format(o.total)} puntos esperados</b> con el capitán (${esc(o.cap.p.short || o.cap.p.name)}). Número verde: puntos esperados de cada uno.</p>
-    <div class="oi">${filas}</div>
+    ${botonesVista3D()}${V3D ? htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(pos => o[pos].map(c => ({ id: c.p.id, name: c.p.short || c.p.name, teamId: c.p.teamId, pos, pts: nf1.format(c.esp), cap: c === o.cap, mult: c === o.cap ? c.m : null, sub: c.pj < 0.7 ? "juega " + pc(c.pj) : goleada(c) ? "⚠ goleada" : "" }))), { titulo: "Tu once recomendado", pie: `${o.form} · ${nf1.format(o.total)} puntos esperados` }) : `<div class="oi">${filas}</div>`}
     ${fuera.length ? `<p class="note">En el banquillo: ${fuera.map(c => `${esc(c.p.short || c.p.name)} (${nf1.format(c.esp)})`).join(", ")}.</p>` : ""}
     ${riesgo.length ? `<p class="note">⚠ ${riesgo.map(c => `${esc(c.p.short || c.p.name)}: ${pc(c.p3)} de que su equipo encaje 3 o más contra ${esc(c.rivalNombre || "su rival")}`).join(" · ")}. En lo que va de liga, con 3 o más encajados un defensa hace de media 2 pts y acaba con 0 o menos casi 1 de cada 5 veces. Sigue en el once porque, aun así, sus puntos esperados superan a los del banquillo.</p>` : ""}</details>`;
 }
@@ -5707,11 +5811,12 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
+    <section class="card" id="rep"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
     <section class="card" id="comp"></section>
@@ -5725,6 +5830,7 @@ function pintar() {
   if (!ENTRADA_HECHA) entradaMarcador();
   pintarCronica();
   pintarGrafico();
+  pintarRepeticion();
   pintarPronostico();
   pintarDuelo();
   pintarComparador();
