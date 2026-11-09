@@ -5947,8 +5947,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -6305,11 +6305,14 @@ function abrirComparador(idA, idB) {
     <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
     <div class="cm-cab">${cab(a)}<em>VS</em>${cab(b)}</div>${html}
     <p class="note cm-v"><b>${veredicto}</b> Solo cuenta lo ya jugado (puntos de Mister), sin previsiones.</p>
-    <button class="btn-cromo" data-comparar="${esc(idA)}">⚔️ Cambiar de rival</button></div>`;
+    <button class="btn-cromo" data-comparar="${esc(idA)}">⚔️ Cambiar de rival</button> <button class="btn-cromo" data-cmp-comp>📤 Compartir comparación</button></div>`;
   const f = $("#ovFicha"); if (f) f.hidden = true;
   ov.hidden = false; document.body.classList.add("sin-scroll");
+  CMP_ULT = { a, b, veredicto: veredicto.replace(/&amp;/g, "&"), filas: filas.map(([t, x, y, fmt, cuenta]) => { const X = num(x), Y = num(y); return { t, x: X != null ? String(fmt(X)) : "–", y: Y != null ? String(fmt(Y)) : "–", gx: !!(cuenta && X != null && Y != null && X > Y), gy: !!(cuenta && X != null && Y != null && Y > X) }; }) };
 }
+let CMP_ULT = null;
 document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
   if (c) { const ofi = $("#ovFicha"); if (ofi) ofi.hidden = true; const oc = $("#ovCmp"); if (oc) oc.hidden = true; abrirBuscador(String(c.dataset.comparar)); return; }
   const r = e.target.closest && e.target.closest("[data-cmp]");
@@ -6405,6 +6408,34 @@ async function esCromo(d) {
   return c;
 }
 ES_SETS.cromo = [["Cromo", esCromo]];
+// Lámina de la comparación cara a cara (mismas cifras que el comparador)
+async function esComparar(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const ps = [d.a.p, d.b.p];
+  const ims = await Promise.all(ps.map(p => esImg(esFoto(p.id)))), escs = await Promise.all(ps.map(p => esImg(esEscudo(p.teamId))));
+  esFondo(x, esColor(escs[0], "e" + ps[0].teamId));
+  x.fillStyle = ES.luz; x.font = esF(800, 26, "expanded"); x.fillText("GOLÓMETRO", M, 96);
+  x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText("· cara a cara", M + (x.font = esF(800, 26, "expanded"), x.measureText("GOLÓMETRO").width) + 12, 96);
+  ps.forEach((p, k) => {
+    const cx = k ? W - 270 : 270, col = esColor(escs[k], "e" + p.teamId);
+    if (ims[k]) esJugador(x, ims[k], p.name, col, cx, 540, 400, escs[k]); else esCamiseta(x, col, escs[k], p.name, cx, 520, 300);
+    x.textAlign = "center"; x.fillStyle = ES.luz; x.font = esF(900, 52, "condensed"); x.fillText(esCorta(x, apellido(p.name).toUpperCase(), 440), cx, 600);
+    x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(esCorta(x, `${p.pos} · ${p.ownerName || "sin dueño"}`, 440), cx, 640);
+  });
+  x.textAlign = "center"; x.fillStyle = ES.verde; x.font = esF(900, 70, "condensed"); x.fillText("VS", W / 2, 400);
+  const y0 = 712, dy = 72;
+  d.filas.forEach((f, k) => { const y = y0 + k * dy;
+    if (k % 2 === 0) { x.fillStyle = "rgba(255,255,255,.05)"; x.fillRect(M, y - 52, W - 2 * M, dy - 6); }
+    x.font = esF(900, 50, "condensed");
+    x.fillStyle = f.gx ? ES.luz : ES.txt; x.fillText(f.x, 190, y);
+    x.fillStyle = f.gy ? ES.luz : ES.txt; x.fillText(f.y, W - 190, y);
+    x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(esCorta(x, f.t, 520), W / 2, y - 6); });
+  x.fillStyle = ES.txt; x.font = esF(800, 34); x.fillText(esCorta(x, d.veredicto, W - 2 * M), W / 2, y0 + d.filas.length * dy + 20);
+  x.textAlign = "left";
+  esPie(x, "Solo lo ya jugado, sin previsiones");
+  return c;
+}
+ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
 async function esCromoMvp(d) {
   const cd = d.mvp && cromoDatos(d.mvp.p.id); if (!cd) return null;
