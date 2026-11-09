@@ -27,7 +27,7 @@ Ya no existen las tres pestañas «Seguro / Equilibrado / Arriesgado»: **no las
 4. Anota en `MEJORAS.md` qué hiciste, por qué y qué ideas nuevas has visto. Mantén la lista de ideas pendientes ordenada.
 5. Abre una Pull Request con `gh pr create` explicando en 5 líneas qué cambia y cómo lo has probado. **Nunca subas directo a `main`.**
 
-## MODO INTENSIVO (hasta el 20/11/2026, fin del parón de selecciones; el dueño lo amplió el 09/11)
+## MODO INTENSIVO (hasta el 20/11/2026, fin del parón de selecciones; el dueño lo amplió el 09/11 y autorizó cambiar esa fecha en `agente.yml`)
 Se te ejecuta cada hora. Para no llenar el repositorio de ramas y no crear conflictos:
 - Trabaja siempre en la rama `agente/semana`. Si no existe, créala desde `main`. Si existe: `git fetch origin` y `git checkout agente/semana && git pull --rebase origin agente/semana`; para traer cambios de `main`, usa `git merge origin/main` (nunca `rebase` sobre main).
 - **Claude también sube commits a esta rama a mano.** Nunca reescribas su historia: prohibido `git push --force`, `--force-with-lease`, `reset` o rebase de commits ya subidos. Sube con `git pull --rebase origin agente/semana && git push origin agente/semana`; si falla, repite el pull y vuelve a subir.
