@@ -931,6 +931,21 @@ button.lg{min-height:44px}
 .rvl2>span{font-size:13px;color:var(--mut);line-height:1.4}
 /* a 360 px el texto «hace X min» del botón de actualizar empujaba la cabecera fuera de la pantalla: solo el icono */
 @media (max-width:374px){#btnActT{display:none}}
+/* Estudio: carrusel de las imágenes para compartir */
+.est{--txt:#eaf4ee;--mut:#93a69b;--panel:#0f1814;--panel2:#16211c;--line:#2a3b33;color-scheme:dark;color:var(--txt);position:fixed;inset:0;z-index:90;background:rgba(2,6,4,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top)) 0 max(14px,env(safe-area-inset-bottom))}
+.est[hidden]{display:none}
+.est-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px 10px;color:var(--txt);font-family:var(--f-disp);font-size:18px}
+.est-x{flex:none;min-width:var(--tap);min-height:var(--tap);border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);font-size:18px;cursor:pointer}
+.est-c{flex:1;min-height:0;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px;align-items:center;overscroll-behavior:contain;scrollbar-width:none}
+.est-c::-webkit-scrollbar{display:none}
+.est-c figure{flex:0 0 min(84vw,calc((100dvh - 210px) * .8),520px);margin:0;scroll-snap-align:center}
+.est-c img{width:100%;height:auto;border-radius:18px;box-shadow:0 24px 70px #000c,0 0 0 1px #2fd46e33;display:block}
+.est-c figcaption{text-align:center;color:var(--mut);font-size:13px;margin-top:10px}
+.est-cargando{color:var(--mut);margin:auto;font-size:15px}
+.est-b{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;padding:12px 16px 0;max-width:560px;width:100%;margin:0 auto;box-sizing:border-box}
+.est-b .btn-comp{margin-top:0;color:var(--txt)}
+.est-b .btn-wa,.est-b .btn-comp{min-height:48px;font-size:15px;border:0;cursor:pointer}
+body.est-abierto{overflow:hidden}
 </style>
 </head>
 <body>
@@ -1637,6 +1652,8 @@ function pintarPrevia() {
   const n = +gw.slice(1), juegos = CAL.games.filter(g => g.gw === n);
   const nombre = {}; CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
   const partidoDe = t => juegos.find(g => g.home === t || g.away === t);
+  // el capitán de los datos de Mister no trae su equipo: se saca de su once
+  const eqCap = f => { const c = f.x.captain; return c ? c.teamId ?? ((f.x.players || []).find(q => String(q.id) === String(c.id)) || {}).teamId : null; };
   const hora = g => g && g.ts ? enMadrid(g.ts * 1000, { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
   // puntos esperados de cada jugador alineado (motor del capitán) para el favorito de la jornada
   const PJ = probJornada(n), espDe = PJ.espDe;
@@ -1666,17 +1683,20 @@ function pintarPrevia() {
   const S = serieLiga(), kp = S.js.indexOf("J" + n) - 1;
   const llega = kp >= 0 ? S.ms.map((o, x) => ({ o, t: S.cum[x][kp] })).sort((a, b) => b.t - a.t) : [];
   const lider = llega.length > 1 ? `🏁 Llega líder ${llega[0].o.m.name} (${llega[0].t}), ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} por delante de ${llega[1].o.m.name}` : "";
-  PREVIA_TXT = [`🗞️ ${titulo} · Previa de la jornada ${n}`, lider, "", "🎖️ Capitanes:",
-    ...filas.map(f => { const c = f.x.captain; if (!c) return `• ${f.m.name}: sin capitán`; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
+  EST_DAT.prev = hayEsp ? { n, filas, favorito, dudas, primero, enPrimero, porPartido, llega, PJ, nombre, partidoDe, hora } : null;
+  PREVIA_TXT = [`*🗞️ ${titulo} · Previa de la jornada ${n}*`, lider,
+    hayEsp ? ["", "*🔮 ¿Quién gana la jornada?*", ...favorito.map((f, k) => `${k + 1}. ${f.m.name} — *${pctQ(f.pGana || 0)}* (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
+    "", "*🎖️ Capitanes*",
+    ...filas.map(f => { const c = f.x.captain; if (!c) return `• ${f.m.name}: sin capitán`; const g = partidoDe(eqCap(f)); const r = g ? (g.home === eqCap(f) ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
       return `• ${f.m.name}: ${c.name} ×${coma(c.multiplier || 1)}${r ? ` (${r}, ${hora(g)})` : ""}`; }), "",
+    "", "*🔑 Claves*",
     dudas.length ? `⚠️ Alineados en duda: ${dudas.slice(0, 6).map(d => `${d.p.name} (${d.f.m.name}, ${d.les ? "lesionado" : Math.round(d.t * 100) + " % titular"})`).join(", ")}` : "✅ Nadie ha alineado a jugadores en duda",
     ...filas.filter(f => f.x.players.length < 11).map(f => `🙈 ${f.m.name} juega con ${f.x.players.length}`),
     primero && enPrimero.length ? `🚀 Abre la jornada ${nombre[primero.home]}–${nombre[primero.away]} (${hora(primero)}): ${enPrimero.map(x => `${x.f.m.name} ${x.n}`).join(", ")}` : "",
     porPartido && porPartido.n ? `⚔️ Partido clave: ${nombre[porPartido.g.home]}–${nombre[porPartido.g.away]} (${porPartido.n} jugadores alineados, ${hora(porPartido.g)})` : "",
     llega.length > 1 && PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? `⚔️ Duelo por el liderato: ${llega[0].o.m.name} le gana la jornada a ${llega[1].o.m.name} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : "",
-    hayEsp ? ["", "🔮 Probabilidad de ganar la jornada (al empezar):", ...favorito.map(f => `• ${f.m.name}: ${pctQ(f.pGana || 0)} (≈ ${Math.round(f.media ?? f.esp)} pts)`)].join("\n") : "",
-    "", "Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ")].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
-  const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(c.teamId); const r = g ? (g.home === c.teamId ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
+    "", "_Formaciones: " + filas.map(f => `${f.m.name} ${f.x.formation || "?"}`).join(" · ") + "_", "_Probabilidades al empezar, con 4.000 jornadas simuladas · golometrov2.github.io_"].filter((l, k, a) => l !== "" || (a[k - 1] !== "" && k > 0)).join("\n");
+  const filaCap = f => { const c = f.x.captain; if (!c) return ""; const g = partidoDe(eqCap(f)); const r = g ? (g.home === eqCap(f) ? "vs " + nombre[g.away] : "en " + nombre[g.home]) : "";
     return `<li class="crow" data-ficha="${esc(c.id)}">${avatar(f.m, f.i)}${cara(c.id, c.name, c.teamId, 36)}<span class="cq"><b>${esc(c.name)}</b><span>${esc(f.m.name)}${r ? ` · ${esc(r)} · ${esc(hora(g))}` : ""}</span></span><span class="cr"><b>×${coma(c.multiplier || 1)}</b><small>${c.played ? `${c.points} pts` : f.x.formation || ""}</small></span></li>`; };
   cont.innerHTML = `<div class="gh"><h2>Previa de la jornada ${n}</h2></div>
     <p class="note" style="margin:0 0 8px">Ya se ven los onces de todos. Así llega cada uno.${llega.length > 1 ? ` Llega líder <b>${esc(llega[0].o.m.name)}</b> con ${llega[0].t - llega[1].t} ${llega[0].t - llega[1].t === 1 ? "punto" : "puntos"} de ventaja${PJ.res[llega[0].o.m.id] && PJ.res[llega[0].o.m.id].contra ? ` y le gana la jornada a ${esc(llega[1].o.m.name)} un ${pctQ(PJ.res[llega[0].o.m.id].contra[llega[1].o.m.id] ?? 0.5)} de las veces` : ""}.` : ""}</p>
@@ -1689,7 +1709,7 @@ function pintarPrevia() {
     ${dudas.length ? `<h3 class="sec">Alineados en duda</h3><ul class="clist">${dudas.slice(0, 8).map(d => `<li class="crow" data-ficha="${esc(d.p.id)}">${avatar(d.f.m, d.f.i)}${cara(d.p.id, d.p.name, d.p.teamId, 34)}<span class="cq"><b>${esc(d.p.name)}</b><span>${esc(d.f.m.name)}</span></span><span class="cr"><b class="dn">${d.les ? "✚" : Math.round(d.t * 100) + " %"}</b><small>${d.les ? "lesionado" : "de titular"}</small></span></li>`).join("")}</ul>` : ""}
     ${hayEsp ? `<h3 class="sec">¿Quién gana la jornada?</h3><ul class="pron">${favorito.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${((f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) * 100).toFixed(1)}%;background:${col(f.i)}"></i></span><small>≈ ${Math.round(f.media ?? f.esp)} pts · ${esc(f.x.formation || "")} · © ${esc(f.x.captain ? apellido(f.x.captain.name) : "—")}</small></span><span class="pp" style="font-size:16px">${pctQ(f.pGana || 0)}</span></li>`).join("")}</ul>
       <p class="note">Probabilidad de ganar la jornada al empezar, con el once y el capitán que ha puesto cada uno (≈ puntos esperados). Se juega la jornada 4.000 veces con el motor del Golómetro. No cambia mientras avanza la jornada: eso lo cuenta la clasificación en directo.</p>` : ""}
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button>${hayEsp ? `<button class="btn-comp" data-img="prev" aria-label="Compartir como imagen">🖼️ Imagen</button>` : ""}</div>`;
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(PREVIA_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-compp="1">📋 Copiar</button>${hayEsp ? `<button class="btn-comp" data-img="prev" aria-label="Imágenes para compartir">🖼️ Imágenes</button>` : ""}</div>`;
   if (hayEsp) IMG_DATOS.prev = { titulo: `Previa · jornada ${n}`, sub: "Probabilidad de ganar con los onces y capitanes reales", filas: favorito.map(f => ({ m: f.m, i: f.i, valor: pctQ(f.pGana || 0), det: `≈ ${Math.round(f.media ?? f.esp)} pts · capitán ${f.x.captain ? apellido(f.x.captain.name) : "—"}`, w: (f.pGana || 0) / Math.max(0.01, favorito[0].pGana || 0) })), pie: "" };
 }
 function copiarTexto(btn, txt, base) {
@@ -1955,8 +1975,10 @@ function pintarCronica() {
   ].join("");
   // texto listo para pegar en el grupo de WhatsApp de la liga
   const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
-  CRON_TXT = [`📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}`, "",
-    `🥇 Ganador: ${gan.m.name} (${gan.p} pts)`,
+  EST_DAT.cron = { n: +cronJ.slice(1), gan, seg2, porPts, media, caps, mvp, sube, baja, gol, ult, prev, bqTop, bqPerf, general, S, k,
+    once: LIGAJ && !LIGAJ.cargando ? onceIdeal(cronJ) : null };
+  CRON_TXT = [`*📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}*`, "",
+    `🥇 *Ganador:* ${gan.m.name} — *${gan.p} pts*${seg2 ? ` (${gan.p - seg2.p} más que ${seg2.m.name})` : ""}`,
     caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
     caps.length > 2 ? `🙈 Peor capitán: ${caps[caps.length - 1].d.captain.name} ${caps[caps.length - 1].d.captain.points} pts (${caps[caps.length - 1].m.name})` : "",
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
@@ -1965,12 +1987,14 @@ function pintarCronica() {
     `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
     prev ? (prev.fav === gan ? `🔮 La previa acertó: ${gan.m.name} era el favorito (${pctQ(prev.pf)})` : `🔮 La previa daba favorito a ${prev.fav.m.name} (${pctQ(prev.pf)}); ${gan.m.name} ganó con un ${pctQ(prev.pg)}`) : "",
     bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
-    bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "Clasificación:",
-    ...general.map(({ o, x }) => `${S.rank[k][x]}. ${o.m.name} · ${S.cum[x][k]} (+${S.pts[x][k]})`)].filter(l => l !== "").join("\n").replace("Clasificación:", "\nClasificación:");
+    bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "*📊 Clasificación*",
+    ...general.map(({ o, x }) => { const dl = k > 0 ? S.rank[k - 1][x] - S.rank[k][x] : 0;
+      return `${S.rank[k][x]}. ${o.m.name} · *${S.cum[x][k]}* (+${S.pts[x][k]})${dl > 0 ? ` ▲${dl}` : dl < 0 ? ` ▼${-dl}` : ""}`; }),
+    "_golometrov2.github.io_"].filter(l => l !== "").join("\n").replace("*📊 Clasificación*", "\n*📊 Clasificación*").replace("\n_golometrov2", "\n\n_golometrov2");
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Compartir como imagen">🖼️ Imagen</button></div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button></div>
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
   IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · resultado`, sub: `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
@@ -2448,38 +2472,58 @@ function textoCrec(x) {
   if (x.g <= -0.002) return `−${nf1.format(-x.g * 100)} %/día · se aleja de su cláusula`;
   return "valor estable";
 }
-// Chollos: las cláusulas más baratas por cada punto esperado (sobre todo jugadores de poco precio)
+// Chollos: las cláusulas más baratas por cada punto esperado. Para rellenar la plantilla (pedido del dueño) cuenta sobre
+// todo lo de 2 M o menos: ahí basta con que juegue y dé algo (1,5 pts esperados); por encima se pide lo de siempre (3).
+const CHOLLO = { MAX: 2e6, MIN_RELLENO: 1.5, MIN: 3, PROTEGIDO_DIAS: 3 };
+function espChollo(p, V) {
+  const lesion = Array.isArray(p.status) ? p.status.some(x => x === "injury" || x === "susp") : p.status === "injury" || p.status === "susp";
+  if (lesion || !capNum(V)) return null;
+  const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
+  const prior = capPrior(p.pos, V) ?? 3.9;
+  const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
+  const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
+  const pjM = capPJuega(racha, V, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
+  const { pj, tit, ff } = pjConTitular(p, pjM);
+  if (tit != null ? tit < 0.5 : pj < 0.55) return null;            // si no juega, no es un chollo
+  return { esp: mu * pj, pj, ff };
+}
 function clausulasBaratas(ms) {
-  const L = [];
+  const L = [], ahora = Date.now() / 1000;
   ms.forEach(m => (m.players || []).forEach(p => {
-    if (!p.clause || !capNum(p.value) || p.status === "injury" || p.status === "susp") return;
-    const racha = (p.streak || []).slice(-5), jug = racha.filter(capNum);
-    const prior = capPrior(p.pos, p.value) ?? 3.9;
-    const n = p.avg > 0 && capNum(p.points) ? Math.min(Math.round(p.points / p.avg), 12) : jug.length;
-    const mu = p.avg > 0 ? (n * p.avg + 6 * prior) / (n + 6) : prior;
-    const pjM = capPJuega(racha, p.value, p.pos) ?? (racha.length ? jug.length / racha.length : 0.6);
-    const { pj, tit, ff } = pjConTitular(p, pjM);
-    if (tit != null && tit < 0.5) return;                           // si las webs no lo ven titular, no es un chollo
-    const esp = mu * pj;
-    if (esp < 3) return;
-    L.push({ m, p, esp, pj, ff, g: crecDiario(p), sobre: p.clause / p.value - 1, r: esp / (p.clause / 1e6) });
+    if (!p.clause || !capNum(p.value)) return;
+    const e = espChollo(p, p.value); if (!e) return;
+    const relleno = p.clause <= CHOLLO.MAX;
+    if (e.esp < (relleno ? CHOLLO.MIN_RELLENO : CHOLLO.MIN)) return;
+    const adq = capTsMadrid(p.acquired), protegido = adq && adq + CHOLLO.PROTEGIDO_DIAS * 86400 > ahora ? adq + CHOLLO.PROTEGIDO_DIAS * 86400 : null;
+    L.push({ m, p, ...e, relleno, protegido, g: crecDiario(p), sobre: p.clause / p.value - 1, r: e.esp / (p.clause / 1e6) });
   }));
   return L.sort((a, b) => b.r - a.r);
+}
+// libres del mercado por 2 M o menos que juegan: se fichan por su valor, sin el 50 % de más de una cláusula
+function libresChollo() {
+  if (!MER_DATA) { cargarMercado(); return null; }
+  return (MER_DATA.libres || []).filter(l => capNum(l.price) && l.price <= CHOLLO.MAX).map(l => { const e = espChollo(l, l.price); return e && e.esp >= CHOLLO.MIN_RELLENO ? { p: l, ...e } : null; })
+    .filter(Boolean).sort((a, b) => b.esp - a.esp);
 }
 let clVista = "todos";
 function bloqueClausulas(ms) {
   const seg = [["baratos", "Chollos"], ["todos", "TOP Cláusulas"]].map(([k, t]) => `<button data-clv="${k}" class="${clVista === k ? "on" : ""}">${t}</button>`).join("");
   if (clVista === "baratos") {
-    const L = clausulasBaratas(ms).slice(0, 10);
-    if (!L.length) return "";
-    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
-      <p class="note" style="margin:0 0 6px">Las cláusulas que menos cuestan por cada punto que se espera del jugador (3 o más por jornada), solo entre los que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Suelen ser jugadores baratos que rinden por encima de su precio.</p>
-      <ul class="clist">${L.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
+    const T = clausulasBaratas(ms), rel = T.filter(x => x.relleno).sort((a, b) => b.esp - a.esp).slice(0, 6), lib = libresChollo();
+    const otros = T.filter(x => !x.relleno && x.p.clause <= 4e6).slice(0, 4);
+    const L = [...rel, ...otros];
+    if (!L.length && !(lib && lib.length)) return "";
+    const fila = (x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
         <span class="cq"><b>${esc(x.p.short || x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
-          <span class="cl2-g">${nf1c(x.r)} pts por millón de cláusula${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
-        <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
-      <p class="note">Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+          <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${x.m ? `${avatar(x.m, x.m.i)}${esc(x.m.name)}` : "libre en el mercado"}</span>
+          <span class="cl2-g">${x.protegido ? `protegido hasta el ${esc(enMadrid(x.protegido * 1000, { weekday: "long", hour: "2-digit", minute: "2-digit" }))} · ` : ""}${x.m ? `${nf1c(x.r)} pts por millón de cláusula` : "se ficha pujando, por su valor"}${x.ff ? ` · ${esc(textoTit(x.ff, true))}` : ""}</span></span>
+        <span class="cr"><b>${merEur(x.m ? x.p.clause : x.p.price)}</b><small>${x.m ? `+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}` : "precio de hoy"}</small></span></li>`;
+    return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
+      <h3 class="sec">Para rellenar · cláusula de 2 M o menos</h3>
+      ${rel.length ? `<ul class="clist">${rel.map(fila).join("")}</ul>` : `<p class="note">Hoy no hay ninguna cláusula de 2 M o menos de un jugador que juegue.</p>`}
+      ${lib && lib.length ? `<h3 class="sec">En el mercado por menos de 2 M</h3><p class="note" style="margin:0 0 6px">Para rellenar suele salir mejor el mercado: se fichan por su valor, sin el 50 % de más que tiene casi cualquier cláusula.</p><ul class="clist">${lib.slice(0, 5).map(fila).join("")}</ul>` : ""}
+      ${otros.length ? `<h3 class="sec">Si subes un poco · de 2 a 4 M</h3><ul class="clist">${otros.map((x, k) => fila(x, k + rel.length)).join("")}</ul>` : ""}
+      <p class="note">Solo jugadores que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Para rellenar basta con 1,5 pts esperados por jornada; por encima de 2 M se piden 3. Tras un fichaje hay 3 días en los que no se puede clausular.</p></section>`;
   }
   const top = clausulasRentables(ms).slice(0, 10);
   if (!top.length) return "";
@@ -3883,7 +3927,7 @@ let MER_DATA = null, merTodos = false, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
+    .then(j => { MER_DATA = j; merError = false; marcaFrescura(); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); if (seccion === "cap" && merPedidoCap) pintarCapitan(); if (seccion === "eq" && clVista === "baratos") pintarEquipos(); return fetch("jugadores.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null); })
     .then(jg => { if (jg && MER_DATA) { MER_DATA.jug = Object.fromEntries((jg.jugadores || []).map(x => [x.id, x])); if (seccion === "mer") pintarMercado(); if (seccion === "clas" && D) pintarTuJornada(); } })
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
@@ -4938,6 +4982,7 @@ async function dibujarTarjeta(o) {
   return new Promise(res => c.toBlob(res, "image/png"));
 }
 async function compartirImagen(clave, btn) {
+  if ((clave === "prev" || clave === "cron") && EST_DAT[clave]) return abrirEstudio(clave, btn);
   const o = IMG_DATOS[clave]; if (!o) return;
   const html0 = btn ? btn.innerHTML : "", corto = btn && !btn.textContent.trim();
   if (btn) { btn.disabled = true; if (!corto) btn.textContent = "Preparando…"; }
@@ -4951,6 +4996,417 @@ async function compartirImagen(clave, btn) {
   finally { if (btn) btn.disabled = false; }
 }
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-img]"); if (b) compartirImagen(b.dataset.img, b); });
+
+/* ---------- Estudio: los gráficos de la previa y del post jornada para el grupo de WhatsApp ---------- */
+// Varias imágenes de 1080×1350 (4:5, WhatsApp las enseña enteras) dibujadas en canvas con la fuente y los colores de la
+// web: fondo de noche con los focos del estadio, fotos recortadas de los jugadores con el color de su escudo, campo en
+// perspectiva para el once. Se ven antes en un carrusel y se mandan todas de una vez con el menú de compartir del móvil.
+const ES = { W: 1080, H: 1350, M: 64, verde: "#2fd46e", luz: "#5cf096", txt: "#eaf4ee", mut: "#93a69b", panel: "#0c1712", linea: "#1d3026", rojo: "#ff6b6b" };
+const esF = (peso, tam, ancho = "") => `${peso} ${ancho ? ancho + " " : ""}${tam}px "Saira", system-ui, sans-serif`;
+const esS = (peso, tam) => `${peso} ${tam}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+const EST_DAT = {};
+const ES_IMG = new Map(), ES_COL = {};
+function esImg(src) {
+  if (!src) return Promise.resolve(null);
+  if (ES_IMG.has(src)) return ES_IMG.get(src);
+  const p = new Promise(res => {
+    const im = new Image();
+    // las fotos del repositorio son del mismo sitio; las de fuera solo sirven si dejan usarse en un canvas (CORS)
+    if (/^https?:/i.test(src) && !src.startsWith(location.origin)) im.crossOrigin = "anonymous";
+    im.onload = () => res(im); im.onerror = () => res(null); im.src = src;
+  });
+  ES_IMG.set(src, p);
+  return p;
+}
+const esFoto = id => { id = String(id); return (FOTOS && FOTOS[id]) || fotoDe(id); };
+const esEscudo = t => t ? `fotos/escudos/${t}.png` : null;
+// color dominante (saturado) de un escudo: el halo de cada jugador va del color de su equipo
+function esColor(im, clave) {
+  if (ES_COL[clave]) return ES_COL[clave];
+  let c = ES.verde;
+  if (im) try {
+    const k = document.createElement("canvas"); k.width = k.height = 28;
+    const x = k.getContext("2d"); x.drawImage(im, 0, 0, 28, 28);
+    const d = x.getImageData(0, 0, 28, 28).data, cubos = {};
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      if (d[i + 3] < 200 || Math.max(r, g, b) - Math.min(r, g, b) < 60 || Math.max(r, g, b) < 70) continue;
+      const q = cubos[(r >> 5) + "," + (g >> 5) + "," + (b >> 5)] = cubos[(r >> 5) + "," + (g >> 5) + "," + (b >> 5)] || { n: 0, r: 0, g: 0, b: 0 };
+      q.n++; q.r += r; q.g += g; q.b += b;
+    }
+    const m = Object.values(cubos).sort((a, b) => b.n - a.n)[0];
+    if (m && m.n >= 6) c = `rgb(${Math.round(m.r / m.n)},${Math.round(m.g / m.n)},${Math.round(m.b / m.n)})`;
+  } catch (e) {}
+  return (ES_COL[clave] = c);
+}
+let ES_RUIDO = null;
+function esRuido(x) {
+  if (!ES_RUIDO) {
+    const c = document.createElement("canvas"); c.width = c.height = 180;
+    const y = c.getContext("2d"), im = y.createImageData(180, 180);
+    for (let i = 0; i < im.data.length; i += 4) { const v = Math.random() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 14; }
+    y.putImageData(im, 0, 0); ES_RUIDO = c;
+  }
+  return x.createPattern(ES_RUIDO, "repeat");
+}
+const esA = (x, a, f) => { const g = x.globalAlpha; x.globalAlpha = g * a; f(); x.globalAlpha = g; };
+function esRect(x, X, Y, w, h, r) { x.beginPath(); if (x.roundRect) x.roundRect(X, Y, w, h, r); else x.rect(X, Y, w, h); }
+function esCorta(x, t, max) { t = String(t || ""); if (x.measureText(t).width <= max) return t; while (t.length > 1 && x.measureText(t + "…").width > max) t = t.slice(0, -1); return t + "…"; }
+// pone la fuente más grande que quepa (hasta «min») y, si aun así no cabe, corta con puntos suspensivos
+function esAjusta(x, t, max, peso, tam, min, ancho = "") {
+  for (let z = tam; z >= min; z -= 2) { x.font = esF(peso, z, ancho); if (x.measureText(String(t || "")).width <= max) return String(t || ""); }
+  return esCorta(x, t, max);
+}
+// camiseta del color de su equipo con el escudo en el pecho: para los jugadores sin foto que se pueda usar en la imagen
+function esCamiseta(x, color, escudo, nombre, cx, base, h) {
+  const w = h * 0.78, top = base - h * 0.92, s = w / 100;
+  x.save(); x.translate(cx - w / 2, top); x.scale(s, s);
+  x.beginPath(); x.moveTo(30, 6); x.quadraticCurveTo(50, 18, 70, 6); x.lineTo(98, 22); x.lineTo(88, 44); x.lineTo(78, 39); x.lineTo(78, 108); x.lineTo(22, 108); x.lineTo(22, 39); x.lineTo(12, 44); x.lineTo(2, 22); x.closePath();
+  const g = x.createLinearGradient(0, 0, 100, 110); g.addColorStop(0, color); g.addColorStop(1, "rgba(0,0,0,.55)");
+  x.fillStyle = color; x.fill(); x.fillStyle = g; x.globalAlpha = 0.55; x.fill(); x.globalAlpha = 1;
+  x.lineWidth = 2.5; x.strokeStyle = "rgba(255,255,255,.55)"; x.stroke();
+  x.beginPath(); x.moveTo(30, 6); x.quadraticCurveTo(50, 22, 70, 6); x.strokeStyle = "rgba(255,255,255,.8)"; x.lineWidth = 4; x.stroke();
+  x.restore();
+  if (escudo) x.drawImage(escudo, cx - h * 0.13, top + h * 0.3, h * 0.26, h * 0.26);
+  else { x.fillStyle = "#fff"; x.font = esF(800, h * 0.2); x.textAlign = "center"; x.fillText(iniciales(nombre), cx, top + h * 0.55); x.textAlign = "left"; }
+}
+function esLineas(x, t, max) {
+  const out = []; let l = "";
+  String(t || "").split(/\s+/).forEach(w => { const p = l ? l + " " + w : w; if (x.measureText(p).width > max && l) { out.push(l); l = w; } else l = p; });
+  if (l) out.push(l);
+  return out;
+}
+// fondo: noche, dos focos del estadio, un fogonazo del color de acento arriba, líneas del campo y grano
+function esFondo(x, acento = ES.verde) {
+  const { W, H } = ES;
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#08170f"); g.addColorStop(0.55, "#050d09"); g.addColorStop(1, "#030705");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  [[-60, -160, 0.42], [W + 60, -160, -0.42]].forEach(([fx, fy, a]) => {
+    x.save(); x.translate(fx, fy); x.rotate(a);
+    const c = x.createLinearGradient(0, 0, 0, H * 1.15); c.addColorStop(0, "rgba(220,255,235,.20)"); c.addColorStop(0.5, "rgba(220,255,235,.05)"); c.addColorStop(1, "rgba(220,255,235,0)");
+    x.fillStyle = c; x.beginPath(); x.moveTo(-26, 0); x.lineTo(26, 0); x.lineTo(430, H * 1.15); x.lineTo(-430, H * 1.15); x.closePath(); x.fill(); x.restore();
+  });
+  esA(x, 0.22, () => { const r = x.createRadialGradient(W / 2, 40, 0, W / 2, 40, W * 0.85); r.addColorStop(0, acento); r.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = r; x.fillRect(0, 0, W, H); });
+  x.strokeStyle = "rgba(255,255,255,.05)"; x.lineWidth = 3;
+  x.beginPath(); x.arc(W / 2, H + 40, 330, Math.PI, 2 * Math.PI); x.stroke();
+  x.strokeRect(ES.M / 2, ES.M / 2, W - ES.M, H - ES.M);
+  x.fillStyle = esRuido(x); x.fillRect(0, 0, W, H);
+}
+function esCabecera(x, { titulo, kicker, pag, total }) {
+  const { W, M } = ES, liga = ($("#titulo") && $("#titulo").textContent) || "Mi liga";
+  x.textBaseline = "alphabetic";
+  x.fillStyle = ES.luz; x.font = esF(800, 26, "expanded"); x.fillText("GOLÓMETRO", M, 96);
+  const w = x.measureText("GOLÓMETRO").width;
+  x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(esCorta(x, "· " + liga, 560), M + w + 12, 96);
+  if (total > 1) for (let k = 0; k < total; k++) { x.fillStyle = k === pag ? ES.verde : "rgba(255,255,255,.18)"; esRect(x, W - M - (total - k) * 34 + 6, 84, k === pag ? 26 : 14, 10, 5); x.fill(); }
+  x.fillStyle = ES.txt; x.font = esF(800, 124, "condensed");
+  x.fillText(esCorta(x, titulo, W - 2 * M), M - 4, 232);
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 22; x.fillStyle = ES.verde; x.fillRect(M, 258, 132, 9); x.restore();
+  if (kicker) { x.fillStyle = ES.luz; x.font = esF(700, 40); x.fillText(esCorta(x, kicker, W - 2 * M), M, 322); }
+}
+function esPie(x, texto) {
+  const { W, H, M } = ES;
+  x.fillStyle = ES.linea; x.fillRect(M, H - 118, W - 2 * M, 2);
+  x.fillStyle = ES.mut; x.font = esS(400, 27); x.fillText(esCorta(x, texto || "", W - 2 * M - 330), M, H - 70);
+  x.textAlign = "right"; x.fillStyle = ES.verde; x.font = esF(700, 26, "expanded"); x.fillText("golometrov2.github.io", W - M, H - 70); x.textAlign = "left";
+}
+function esAvatar(x, m, i, im, cx, cy, r, anillo) {
+  x.save(); x.beginPath(); x.arc(cx, cy, r, 0, 2 * Math.PI); x.fillStyle = col(i); x.fill(); x.clip();
+  if (im) x.drawImage(im, cx - r, cy - r, 2 * r, 2 * r);
+  else { x.fillStyle = "#fff"; x.font = esF(800, r * 0.8); x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(m.avatar || iniciales(m.name), cx, cy + 2); x.textAlign = "left"; x.textBaseline = "alphabetic"; }
+  x.restore();
+  if (anillo) { x.save(); x.lineWidth = Math.max(4, r * 0.09); x.strokeStyle = anillo; x.shadowColor = anillo; x.shadowBlur = r * 0.5; x.beginPath(); x.arc(cx, cy, r + x.lineWidth, 0, 2 * Math.PI); x.stroke(); x.restore(); }
+}
+// jugador recortado de pie: base = y de abajo, h = alto de la foto; halo del color de su equipo
+function esJugador(x, im, nombre, color, cx, base, h, escudo) {
+  esA(x, 0.55, () => { const g = x.createRadialGradient(cx, base - h * 0.42, 0, cx, base - h * 0.42, h * 0.62); g.addColorStop(0, color); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(cx - h, base - h * 1.1, 2 * h, h * 1.2); });
+  if (im) { x.save(); x.shadowColor = "rgba(0,0,0,.55)"; x.shadowBlur = h * 0.08; x.shadowOffsetY = h * 0.03; x.drawImage(im, cx - h / 2, base - h, h, h); x.restore(); }
+  else esCamiseta(x, color, escudo, nombre, cx, base, h);
+}
+function esChapa(x, texto, cx, cy, fondo = ES.verde, tinta = "#04140b", tam = 34) {
+  x.font = esF(800, tam, "condensed"); const w = Math.max(tam * 1.5, x.measureText(texto).width + tam * 0.8), h = tam * 1.3;
+  x.save(); x.shadowColor = fondo; x.shadowBlur = 16; x.fillStyle = fondo; esRect(x, cx - w / 2, cy - h / 2, w, h, h / 2); x.fill(); x.restore();
+  x.fillStyle = tinta; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(texto, cx, cy + 1); x.textAlign = "left"; x.textBaseline = "alphabetic";
+}
+function esPanel(x, X, Y, w, h, borde = ES.linea, r = 28) {
+  const g = x.createLinearGradient(0, Y, 0, Y + h); g.addColorStop(0, "rgba(20,38,29,.92)"); g.addColorStop(1, "rgba(10,20,15,.92)");
+  x.fillStyle = g; esRect(x, X, Y, w, h, r); x.fill(); x.lineWidth = 2; x.strokeStyle = borde; x.stroke();
+}
+// campo en perspectiva: trapecio con franjas, líneas y área; esPunto da la posición (u: 0-1 de izquierda a derecha, v: 0-1 de arriba abajo)
+const esPunto = (c, u, v) => { const i = c.w * 0.16 * (1 - v), xl = c.x + i, xr = c.x + c.w - i, vv = Math.pow(v, 1.12); return [xl + (xr - xl) * u, c.y + c.h * vv]; };
+function esCampo(x, c) {
+  const P = (u, v) => esPunto(c, u, v), N = 12;
+  for (let k = 0; k < N; k++) {
+    const a = P(0, k / N), b = P(1, k / N), d = P(1, (k + 1) / N), e = P(0, (k + 1) / N);
+    x.beginPath(); x.moveTo(...a); x.lineTo(...b); x.lineTo(...d); x.lineTo(...e); x.closePath();
+    x.fillStyle = k % 2 ? "#1c6539" : "#1f6e3e"; x.fill();
+  }
+  const l = (pts, cerrar) => { x.beginPath(); pts.forEach((p, k) => k ? x.lineTo(...P(...p)) : x.moveTo(...P(...p))); if (cerrar) x.closePath(); x.stroke(); };
+  x.strokeStyle = "rgba(255,255,255,.55)"; x.lineWidth = 4;
+  l([[0.02, 0.02], [0.98, 0.02], [0.98, 0.99], [0.02, 0.99]], true);
+  l([[0.02, 0.36], [0.98, 0.36]]);
+  l([[0.22, 0.99], [0.22, 0.8], [0.78, 0.8], [0.78, 0.99]]);
+  l([[0.38, 0.99], [0.38, 0.93], [0.62, 0.93], [0.62, 0.99]]);
+  const [cx, cy] = P(0.5, 0.36), [rx] = [c.w * 0.13];
+  x.beginPath(); x.ellipse(cx, cy, rx, rx * 0.42, 0, 0, 2 * Math.PI); x.stroke();
+  // viñeta para que los jugadores destaquen
+  const g = x.createLinearGradient(0, c.y, 0, c.y + c.h); g.addColorStop(0, "rgba(3,8,6,.55)"); g.addColorStop(0.35, "rgba(3,8,6,0)"); g.addColorStop(1, "rgba(3,8,6,.25)");
+  x.fillStyle = g; x.beginPath(); x.moveTo(...P(0, 0)); x.lineTo(...P(1, 0)); x.lineTo(...P(1, 1)); x.lineTo(...P(0, 1)); x.closePath(); x.fill();
+}
+const esCanvas = () => { const c = document.createElement("canvas"); c.width = ES.W; c.height = ES.H; return c; };
+const esPrepara = async () => { try { await Promise.all([document.fonts.load('800 condensed 120px "Saira"'), document.fonts.load('700 expanded 30px "Saira"'), document.fonts.load('700 40px "Saira"')]); } catch (e) {} };
+const esAvs = filas => Promise.all(filas.map(f => esImg(f.m.avatarUrl)));
+
+// ======== POST JORNADA ========
+async function esPortada(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, g = d.gan;
+  const [imG, ...imP] = await Promise.all([esImg(g.m.avatarUrl), ...d.porPts.slice(1, 4).map(f => esImg(f.m.avatarUrl))]);
+  esFondo(x, col(g.i));
+  esCabecera(x, { titulo: `JORNADA ${d.n}`, kicker: "El resultado", pag, total });
+  // ganador
+  const cy = 600;
+  esA(x, 0.5, () => { const r = x.createRadialGradient(W / 2, cy, 0, W / 2, cy, 420); r.addColorStop(0, col(g.i)); r.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = r; x.fillRect(0, cy - 420, W, 840); });
+  esAvatar(x, g.m, g.i, imG, W / 2, cy - 30, 150, ES.luz);
+  esChapa(x, "GANADOR", W / 2, cy + 148, ES.verde, "#04140b", 30);
+  x.textAlign = "center"; x.fillStyle = ES.txt; x.fillText(esAjusta(x, g.m.name, W - 2 * M, 800, 64, 40), W / 2, cy + 250);
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 40; x.fillStyle = ES.luz; x.font = esF(800, 210, "condensed"); x.fillText(String(g.p), W / 2, cy + 450); x.restore();
+  x.fillStyle = ES.mut; x.fillText(esAjusta(x, `puntos${d.seg2 ? ` · ${g.p - d.seg2.p} más que ${d.seg2.m.name}` : ""} · media ${nf1c(d.media)}`, W - 2 * M, 600, 34, 24), W / 2, cy + 504);
+  x.textAlign = "left";
+  // podio (2.º y 3.º) y lo que dijo la previa
+  const resto = d.porPts.slice(1, 3), cw = (W - 2 * M - 20) / 2, y0 = 1126;
+  resto.forEach((f, k) => {
+    const X = M + k * (cw + 20); esPanel(x, X, y0, cw, 100, ES.linea, 24);
+    esAvatar(x, f.m, f.i, imP[k], X + 56, y0 + 50, 32);
+    x.fillStyle = ES.mut; x.font = esF(700, 22); x.fillText(`${k + 2}.º`, X + 104, y0 + 40);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, f.m.name, cw - 220, 700, 30, 22), X + 104, y0 + 76);
+    x.textAlign = "right"; x.fillStyle = ES.txt; x.font = esF(800, 52, "condensed"); x.fillText(String(f.p), X + cw - 22, y0 + 68); x.textAlign = "left";
+  });
+  esPie(x, d.prev ? (d.prev.fav === g ? `🔮 La previa acertó: era el favorito (${pctQ(d.prev.pf).replace(/\u00a0/g, " ")})` : `🔮 La previa daba favorito a ${d.prev.fav.m.name}`) : `Media de la liga ${nf1c(d.media)} pts`);
+  return c;
+}
+async function esOnce(d, pag, total) {
+  const o = d.once; if (!o) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const filas = [["DL", 0.12], ["MC", 0.38], ["DF", 0.64], ["PT", 0.95]];
+  const js = filas.flatMap(([pos, v]) => o[pos].map((p, k) => ({ p, u: (k + 1) / (o[pos].length + 1), v })));
+  const [ims, escs] = await Promise.all([Promise.all(js.map(j => esImg(esFoto(j.p.id)))), Promise.all(js.map(j => esImg(esEscudo(j.p.teamId))))]);
+  esFondo(x);
+  esCabecera(x, { titulo: "ONCE IDEAL", kicker: `Jornada ${d.n} · ${o.form} · ${o.total} puntos`, pag, total });
+  const campo = { x: 40, y: 440, w: W - 80, h: 750 };
+  esCampo(x, campo);
+  const porLinea = {}; js.forEach(j => { porLinea[j.v] = (porLinea[j.v] || 0) + 1; });
+  js.map((j, k) => ({ ...j, k })).sort((a, b) => a.v - b.v).forEach(j => {
+    const [px, py] = esPunto(campo, j.u, j.v), h = 120 + 46 * j.v, color = esColor(escs[j.k], "e" + j.p.teamId);
+    const [xl] = esPunto(campo, 0, j.v), [xr] = esPunto(campo, 1, j.v), hueco = (xr - xl) / (porLinea[j.v] + 1) - 10;
+    esA(x, 0.45, () => { x.fillStyle = "#000"; x.beginPath(); x.ellipse(px, py + 6, h * 0.32, h * 0.08, 0, 0, 2 * Math.PI); x.fill(); });
+    esJugador(x, ims[j.k], j.p.name, color, px, py, h, escs[j.k]);
+    const nom = esAjusta(x, apellido(j.p.name), Math.min(200, hueco - 24), 700, 26, 20), w = x.measureText(nom).width + 24;
+    x.fillStyle = "rgba(4,12,8,.86)"; esRect(x, px - w / 2, py + 4, w, 40, 12); x.fill();
+    x.fillStyle = ES.txt; x.textAlign = "center"; x.fillText(nom, px, py + 33); x.textAlign = "left";
+    esChapa(x, String(j.p.pts), px + h * 0.3, py - h * 0.86, ES.verde, "#04140b", 30);
+  });
+  const enOnce = ["PT", "DF", "MC", "DL"].reduce((t, p) => t + o[p].filter(q => (o.enOnce[q.id] || []).length).length, 0);
+  esPie(x, `${enOnce} de los 11 estaban en algún once de la liga`);
+  return c;
+}
+async function esPremios(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const P = [];
+  if (d.caps[0]) { const k = d.caps[0], cp = k.d.captain; P.push({ ico: "🎖️", t: "Mejor capitán", nom: apellido(cp.name), det: `${cp.points} pts · ${k.m.name}`, foto: cp.id, eq: equipoEn("J" + d.n, k.m.id, cp.id) }); }
+  if (d.mvp) P.push({ ico: "⭐", t: "Jugador de la jornada", nom: apellido(d.mvp.p.name), det: `${d.mvp.p.basePoints ?? d.mvp.p.points} pts · ${d.mvp.n > 1 ? `en ${d.mvp.n} onces` : d.mvp.de[0]}`, foto: d.mvp.p.id, eq: d.mvp.p.teamId });
+  if (d.bqTop) P.push({ ico: "🪑", t: "Banquillo de oro", nom: d.bqTop.f.m.name, det: `se dejó ${d.bqTop.b.perdidos} pts fuera`, m: d.bqTop.f });
+  if (d.sube) P.push({ ico: "📈", t: "La remontada", nom: d.sube.f.m.name, det: `sube ${d.sube.dlt} · ahora ${d.S.rank[d.k][d.sube.f.x]}.º`, m: d.sube.f });
+  if (d.baja) P.push({ ico: "📉", t: "El batacazo", nom: d.baja.f.m.name, det: `baja ${-d.baja.dlt} · ahora ${d.S.rank[d.k][d.baja.f.x]}.º`, m: d.baja.f });
+  if (d.gol && d.gol.d.goals) P.push({ ico: "⚽", t: "Lluvia de goles", nom: d.gol.m.name, det: `${d.gol.d.goals} ${d.gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`, m: d.gol });
+  P.push({ ico: "🐢", t: "Farolillo rojo", nom: d.ult.m.name, det: `${d.ult.p} pts · ${Math.round(d.media - d.ult.p)} bajo la media`, m: d.ult, malo: true });
+  if (P.length < 6 && d.caps.length > 2) { const k = d.caps[d.caps.length - 1], cp = k.d.captain; P.splice(P.length - 1, 0, { ico: "🙈", t: "Peor capitán", nom: apellido(cp.name), det: `${cp.points} pts · ${k.m.name}`, foto: cp.id, eq: equipoEn("J" + d.n, k.m.id, cp.id), malo: true }); }
+  const L = P.slice(0, 6);
+  const ims = await Promise.all(L.map(p => p.foto ? esImg(esFoto(p.foto)) : esImg(p.m.m.avatarUrl)));
+  const escs = await Promise.all(L.map(p => p.foto ? esImg(esEscudo(p.eq)) : null));
+  esFondo(x);
+  esCabecera(x, { titulo: "PREMIOS", kicker: `Jornada ${d.n}`, pag, total });
+  const ch = 248, y0 = 372;
+  L.forEach((p, k) => {
+    const ancha = k === L.length - 1 && L.length % 2 === 1, cw = ancha ? W - 2 * M : (W - 2 * M - 24) / 2;
+    const X = M + (ancha ? 0 : (k % 2) * (cw + 24)), Y = y0 + Math.floor(k / 2) * (ch + 22);
+    esPanel(x, X, Y, cw, ch, p.malo ? "rgba(255,107,107,.35)" : k < 2 ? "rgba(47,212,110,.45)" : ES.linea);
+    x.save(); esRect(x, X, Y, cw, ch, 28); x.clip();
+    if (p.foto) esJugador(x, ims[k], p.nom, esColor(escs[k], "e" + p.eq), X + cw - 100, Y + ch + 6, 220, escs[k]);
+    else esAvatar(x, p.m.m, p.m.i, ims[k], X + cw - 82, Y + 92, 54, col(p.m.i));
+    x.restore();
+    x.font = "52px system-ui, sans-serif"; x.fillText(p.ico, X + 26, Y + 74);
+    x.fillStyle = p.malo ? ES.rojo : ES.luz; x.font = esF(700, 26); x.fillText(p.t, X + 28, Y + 128);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, p.nom, cw - (p.foto ? 210 : 170), 800, 44, 30, "condensed"), X + 28, Y + 180);
+    x.fillStyle = ES.mut; x.font = esS(400, 25); x.fillText(esCorta(x, p.det, cw - (p.foto ? 200 : 60)), X + 28, Y + 220);
+  });
+  esPie(x, d.bqPerf && d.bqPerf.length ? `🎯 Alineación perfecta: ${d.bqPerf.map(f => f.m.name).join(", ")}` : `Ganó ${d.gan.m.name} con ${d.gan.p} puntos`);
+  return c;
+}
+async function esClasif(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, S = d.S, k = d.k;
+  const L = d.general.map(({ o, x: i }) => ({ o, i, r: S.rank[k][i], t: S.cum[i][k], p: S.pts[i][k], dl: k > 0 ? S.rank[k - 1][i] - S.rank[k][i] : 0 }));
+  const ims = await Promise.all(L.map(f => esImg(f.o.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "CLASIFICACIÓN", kicker: `Tras la jornada ${d.n}`, pag, total });
+  const top = L[0].t, n = L.length, fh = Math.min(118, (1210 - 372) / n), y0 = 372;
+  L.forEach((f, j) => {
+    const Y = y0 + j * fh, h = fh - 14, lider = j === 0;
+    esPanel(x, M, Y, W - 2 * M, h, lider ? "rgba(47,212,110,.55)" : ES.linea, 24);
+    x.fillStyle = lider ? ES.luz : ES.mut; x.font = esF(800, 50, "condensed"); x.textAlign = "center"; x.fillText(String(f.r), M + 52, Y + h / 2 + 18); x.textAlign = "left";
+    const flecha = f.dl > 0 ? `▲${f.dl}` : f.dl < 0 ? `▼${-f.dl}` : "=";
+    x.fillStyle = f.dl > 0 ? ES.luz : f.dl < 0 ? ES.rojo : ES.mut; x.font = esF(700, 24); x.textAlign = "center"; x.fillText(flecha, M + 118, Y + h / 2 + 9); x.textAlign = "left";
+    esAvatar(x, f.o.m, f.i, ims[j], M + 196, Y + h / 2, h * 0.36, lider ? ES.luz : null);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, f.o.m.name, 420, 700, 34, 26), M + 252, Y + h / 2 - 2);
+    x.fillStyle = ES.mut; x.font = esS(400, 24); x.fillText(j ? `a ${top - f.t} del líder` : "líder", M + 252, Y + h / 2 + 30);
+    x.textAlign = "right"; x.fillStyle = ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(f.t), W - M - 130, Y + h / 2 + 19);
+    x.fillStyle = ES.luz; x.font = esF(700, 30, "condensed"); x.fillText(`+${f.p}`, W - M - 28, Y + h / 2 + 12); x.textAlign = "left";
+  });
+  esPie(x, `Ganador de la jornada: ${d.gan.m.name} (${d.gan.p})`);
+  return c;
+}
+
+// ======== PREVIA ========
+async function esFavoritos(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, F = d.favorito;
+  const ims = await esAvs(F);
+  esFondo(x, col(F[0].i));
+  esCabecera(x, { titulo: `JORNADA ${d.n}`, kicker: "La previa · ¿quién gana la jornada?", pag, total });
+  const n = F.length, fh = Math.min(122, (1150 - 380) / n), y0 = 380, max = Math.max(0.01, F[0].pGana || 0);
+  F.forEach((f, j) => {
+    const Y = y0 + j * fh, h = fh - 16, fav = j === 0, p = f.pGana || 0;
+    esPanel(x, M, Y, W - 2 * M, h, fav ? "rgba(47,212,110,.6)" : ES.linea, 24);
+    x.save(); esRect(x, M, Y, W - 2 * M, h, 24); x.clip();
+    esA(x, fav ? 0.32 : 0.22, () => { const g = x.createLinearGradient(M, 0, M + (W - 2 * M) * p / max, 0); g.addColorStop(0, col(f.i)); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(M, Y, (W - 2 * M) * p / max, h); });
+    x.fillStyle = col(f.i); x.fillRect(M, Y, 6, h); x.restore();
+    esAvatar(x, f.m, f.i, ims[j], M + 62, Y + h / 2, h * 0.36, fav ? ES.luz : null);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, f.m.name, 560, 700, 33, 26), M + 120, Y + h / 2 - 4);
+    const cp = f.x.captain;
+    x.fillStyle = ES.mut; x.font = esS(400, 23); x.fillText(esCorta(x, `≈ ${Math.round(f.media ?? f.esp)} pts${cp ? ` · capitán ${apellido(cp.name)} ×${coma(cp.multiplier || 1)}` : ""}`, 600), M + 120, Y + h / 2 + 28);
+    x.textAlign = "right"; x.fillStyle = fav ? ES.luz : ES.txt; if (fav) { x.shadowColor = ES.verde; x.shadowBlur = 24; }
+    x.font = esF(800, 66, "condensed"); x.fillText(pctQ(p).replace(/ /g, " "), W - M - 26, Y + h / 2 + 24); x.shadowBlur = 0; x.textAlign = "left";
+  });
+  esPie(x, d.llega && d.llega.length > 1 ? `Llega líder ${d.llega[0].o.m.name}, ${d.llega[0].t - d.llega[1].t} pts por delante` : "4.000 jornadas simuladas con los onces reales");
+  return c;
+}
+async function esCapitanes(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const L = d.filas.filter(f => f.x.captain).map(f => { const t = f.x.captain.teamId ?? ((f.x.players || []).find(q => String(q.id) === String(f.x.captain.id)) || {}).teamId;
+    return { f, cp: { ...f.x.captain, teamId: t }, g: d.partidoDe(t) }; })
+    .sort((a, b) => (b.cp.multiplier || 1) - (a.cp.multiplier || 1)).slice(0, 8);
+  const [ims, escs, avs, rivs] = await Promise.all([Promise.all(L.map(y => esImg(esFoto(y.cp.id)))), Promise.all(L.map(y => esImg(esEscudo(y.cp.teamId)))),
+    Promise.all(L.map(y => esImg(y.f.m.avatarUrl))), Promise.all(L.map(y => esImg(esEscudo(y.g ? (y.g.home === y.cp.teamId ? y.g.away : y.g.home) : null))))]);
+  esFondo(x);
+  esCabecera(x, { titulo: "CAPITANES", kicker: `Jornada ${d.n} · ¿quién acierta?`, pag, total });
+  const cw = (W - 2 * M - 22) / 2, rows = Math.ceil(L.length / 2), ch = Math.min(200, (1214 - 368 - (rows - 1) * 18) / rows), y0 = 368;
+  L.forEach((y, k) => {
+    const sola = k === L.length - 1 && L.length % 2 === 1, X = sola ? (W - cw) / 2 : M + (k % 2) * (cw + 22), Y = y0 + Math.floor(k / 2) * (ch + 18), color = esColor(escs[k], "e" + y.cp.teamId);
+    esPanel(x, X, Y, cw, ch, ES.linea, 26);
+    x.save(); esRect(x, X, Y, cw, ch, 26); x.clip(); esJugador(x, ims[k], y.cp.name, color, X + 92, Y + ch + 4, ch * 0.98, escs[k]); x.restore();
+    esChapa(x, `×${coma(y.cp.multiplier || 1)}`, X + 160, Y + 34, ES.verde, "#04140b", 28);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, apellido(y.cp.name), cw - 210, 800, 40, 28, "condensed"), X + 190, Y + ch * 0.42);
+    esAvatar(x, y.f.m, y.f.i, avs[k], X + 206, Y + ch * 0.64, 16);
+    x.fillStyle = ES.mut; x.font = esS(500, 22); x.fillText(esCorta(x, y.f.m.name, cw - 250), X + 230, Y + ch * 0.64 + 8);
+    if (y.g) {
+      if (rivs[k]) x.drawImage(rivs[k], X + 190, Y + ch * 0.8 - 16, 30, 30);
+      x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(esCorta(x, `${y.g.home === y.cp.teamId ? "vs" : "en"} ${d.nombre[y.g.home === y.cp.teamId ? y.g.away : y.g.home] || ""} · ${d.hora(y.g)}`, cw - 250), X + 228, Y + ch * 0.8 + 8);
+    }
+  });
+  esPie(x, "El multiplicador depende de su valor");
+  return c;
+}
+async function esClaves(d, pag, total) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const pp = d.porPartido && d.porPartido.n ? d.porPartido.g : null, pr = d.primero;
+  const ld = d.llega && d.llega.length > 1 ? d.llega : null, du = (d.dudas || []).slice(0, 4);
+  const [e1, e2, e3, e4, a1, a2, ...fd] = await Promise.all([esImg(esEscudo(pp && pp.home)), esImg(esEscudo(pp && pp.away)), esImg(esEscudo(pr && pr.home)), esImg(esEscudo(pr && pr.away)),
+    esImg(ld && ld[0].o.m.avatarUrl), esImg(ld && ld[1].o.m.avatarUrl), ...du.map(q => esImg(esFoto(q.p.id)))]);
+  esFondo(x);
+  esCabecera(x, { titulo: "CLAVES", kicker: `Jornada ${d.n}`, pag, total });
+  let Y = 372;
+  const bloque = (h, f) => { esPanel(x, M, Y, W - 2 * M, h); f(Y, h); Y += h + 22; };
+  const titulo = (t, y) => { x.fillStyle = ES.luz; x.font = esF(700, 26); x.fillText(t, M + 30, y + 46); };
+  const duelo = (ea, eb, g, y, h, txt) => {
+    const cx = W / 2, ey = y + h / 2 + 16;
+    [[ea, cx - 250], [eb, cx + 250]].forEach(([im, ex]) => { if (im) x.drawImage(im, ex - 60, ey - 60, 120, 120); });
+    x.textAlign = "center"; x.fillStyle = ES.txt; x.font = esF(800, 60, "condensed"); x.fillText("VS", cx, ey + 4);
+    x.font = esF(700, 28); x.fillText(esCorta(x, `${d.nombre[g.home] || ""} – ${d.nombre[g.away] || ""}`, 560), cx, ey + 52);
+    x.fillStyle = ES.mut; x.font = esS(400, 24); x.fillText(esCorta(x, txt, 640), cx, ey + 86); x.textAlign = "left";
+  };
+  if (pp) bloque(290, (y, h) => { titulo("Partido clave", y); duelo(e1, e2, pp, y, h, `${d.porPartido.n} jugadores alineados · ${d.hora(pp)}`); });
+  if (pr && d.enPrimero && d.enPrimero.length && (!pp || pr.id !== pp.id)) bloque(210, (y) => {
+    titulo("Abre la jornada", y);
+    [[e3, M + 60], [e4, M + 130]].forEach(([im, ex]) => { if (im) x.drawImage(im, ex - 30, y + 84, 60, 60); });
+    x.fillStyle = ES.txt; x.font = esF(700, 30); x.fillText(esCorta(x, `${d.nombre[pr.home] || ""} – ${d.nombre[pr.away] || ""} · ${d.hora(pr)}`, 720), M + 190, y + 112);
+    x.fillStyle = ES.mut; x.font = esS(400, 23); x.fillText(esCorta(x, d.enPrimero.slice(0, 3).map(q => `${q.f.m.name} ${q.n}`).join(" · "), 720), M + 190, y + 148);
+  });
+  if (ld && d.PJ.res[ld[0].o.m.id] && d.PJ.res[ld[0].o.m.id].contra) bloque(210, (y) => {
+    titulo("Duelo por el liderato", y);
+    const p = d.PJ.res[ld[0].o.m.id].contra[ld[1].o.m.id] ?? 0.5;
+    esAvatar(x, ld[0].o.m, ld[0].o.i ?? 0, a1, M + 80, y + 130, 40, ES.luz); esAvatar(x, ld[1].o.m, ld[1].o.i ?? 1, a2, W - M - 80, y + 130, 40, null);
+    x.textAlign = "center"; x.fillStyle = ES.txt; x.font = esF(800, 56, "condensed"); x.fillText(`${pctQ(p).replace(/ /g, " ")} – ${pctQ(1 - p).replace(/ /g, " ")}`, W / 2, y + 140);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${ld[0].o.m.name} contra ${ld[1].o.m.name}: quién hace más puntos`, 700), W / 2, y + 178); x.textAlign = "left";
+  });
+  if (du.length && Y < 1060) bloque(Math.min(1214 - Y, 250), (y, h) => {
+    titulo("Alineados en duda", y);
+    const cw = (W - 2 * M - 60) / du.length;
+    du.forEach((q, k) => {
+      const cx = M + 30 + cw * (k + 0.5);
+      x.save(); esRect(x, M, y, W - 2 * M, h, 28); x.clip(); esJugador(x, fd[k], q.p.name, ES.rojo, cx, y + h - 46, Math.min(130, h - 90), null); x.restore();
+      x.textAlign = "center"; x.fillStyle = ES.txt; x.font = esF(700, 22); x.fillText(esCorta(x, apellido(q.p.name), cw - 10), cx, y + h - 20);
+      esChapa(x, q.les ? "lesión" : `${Math.round(q.t * 100)} %`, cx + 42, y + 82, ES.rojo, "#2a0606", 22); x.textAlign = "left";
+    });
+  });
+  esPie(x, "Probabilidades con 4.000 jornadas simuladas");
+  return c;
+}
+
+const ES_SETS = {
+  cron: [["Portada", esPortada], ["Once ideal", esOnce], ["Premios", esPremios], ["Clasificación", esClasif]],
+  prev: [["Favoritos", esFavoritos], ["Capitanes", esCapitanes], ["Claves", esClaves]]
+};
+async function esGenerar(clave) {
+  const d = EST_DAT[clave]; if (!d) return [];
+  await esPrepara();
+  if (!FOTOS) await new Promise(res => { cargarFotos(); let k = 0; const t = setInterval(() => { if (FOTOS || ++k > 40) { clearInterval(t); res(); } }, 100); });
+  const set = ES_SETS[clave].filter(([nom]) => nom !== "Once ideal" || d.once), out = [];
+  for (let k = 0; k < set.length; k++) {
+    try { const c = await set[k][1](d, k, set.length); if (c) out.push({ nombre: set[k][0], c }); } catch (e) { console.warn("Estudio:", set[k][0], e); }
+  }
+  return out;
+}
+const esBlob = c => new Promise(res => c.toBlob(res, "image/png"));
+let ES_ACT = null;
+async function abrirEstudio(clave, btn) {
+  const d = EST_DAT[clave]; if (!d) return;
+  if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
+  let dlg = $("#estudio");
+  if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+    <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
+  dlg.hidden = false; document.body.classList.add("est-abierto");
+  const hojas = await esGenerar(clave);
+  const blobs = await Promise.all(hojas.map(h => esBlob(h.c)));
+  if (ES_ACT) ES_ACT.urls.forEach(u => URL.revokeObjectURL(u));
+  const urls = blobs.map(b => URL.createObjectURL(b));
+  ES_ACT = { clave, hojas, blobs, urls, n: d.n };
+  if (dlg.hidden) return;
+  dlg.querySelector(".est-c").innerHTML = hojas.length ? hojas.map((h, k) => `<figure><img src="${urls[k]}" alt="${esc(h.nombre)}"><figcaption>${k + 1}/${hojas.length} · ${esc(h.nombre)}</figcaption></figure>`).join("")
+    : `<p class="est-cargando">No hay datos suficientes para las imágenes.</p>`;
+  dlg.querySelector(".est-b").innerHTML = hojas.length ? `<button class="btn-wa" data-est="todas">📤 Compartir ${hojas.length === 1 ? "la imagen" : `las ${hojas.length}`}</button><button class="btn-comp" data-est="guardar">⬇️ Guardar</button>` : "";
+}
+async function esCompartir(todas) {
+  const A = ES_ACT; if (!A) return;
+  const files = A.blobs.map((b, k) => new File([b], `golometro-j${A.n}-${A.clave}-${k + 1}.png`, { type: "image/png" }));
+  if (todas && navigator.canShare && navigator.canShare({ files })) { await navigator.share({ files }).catch(() => {}); return; }
+  files.forEach((f, k) => setTimeout(() => { const a = document.createElement("a"); a.href = A.urls[k]; a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }, k * 350));
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-est]"); if (!b) return;
+  if (b.dataset.est === "cerrar") { $("#estudio").hidden = true; document.body.classList.remove("est-abierto"); }
+  else esCompartir(b.dataset.est === "todas");
+});
+document.addEventListener("keydown", e => { const d = $("#estudio"); if (e.key === "Escape" && d && !d.hidden) { d.hidden = true; document.body.classList.remove("est-abierto"); } });
 
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
