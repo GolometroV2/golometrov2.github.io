@@ -1338,6 +1338,32 @@ body.wr-abierto{overflow:hidden}
 .cq-ley b{flex:1;min-width:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cq-ley span{flex:none;min-width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-family:var(--f-disp);font-size:15px;font-weight:900;color:#06110a;background:var(--c)}
 @media (prefers-reduced-motion:reduce){#conq.entra .cq-t,#conq.entra .cq-e{animation:none}.cq-t{transition:none}}
+/* La galaxia de LaLiga */
+.seg5{display:grid;grid-template-columns:repeat(5,1fr);margin:0 0 10px;border-radius:var(--r-m);padding:3px}
+.gal-ms{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px;padding:3px 2px}
+.gal-ms::-webkit-scrollbar{display:none}
+.gal-m{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center;opacity:.75;transition:opacity .2s,transform .2s}
+.gal-m .av{width:36px;height:36px;font-size:13px;box-shadow:0 0 0 2px var(--c)}
+.gal-m.on{opacity:1;transform:scale(1.08)}.gal-m.on .av{box-shadow:0 0 0 3px var(--c),0 0 14px var(--c)}
+.gal-c{position:relative;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1px #2fd46e2e;color-scheme:dark}
+.gal-c canvas{display:block;width:100%;cursor:crosshair;touch-action:manipulation}
+.gal-tip{position:absolute;z-index:2;width:230px;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;background:#06120cee;border:1px solid #2fd46e55;color:#eaf4ee;box-shadow:0 10px 30px #000a;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.gal-tip[hidden]{display:none}
+.gal-tip div{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.gal-tip b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gal-tip small{font-size:11px;color:#b9d6c5;line-height:1.3}
+.gal-tip button{flex:none;min-height:36px;padding:0 10px;border:0;border-radius:10px;background:#2fd46e;color:#03200e;font-weight:800;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.gal-m{transition:none}}
+/* «Explora la liga»: el índice de la Clasificación como tarjetas en dos filas que se deslizan */
+.ind-t{margin:18px 0 8px;font-family:var(--f-disp);font-weight:800;font-size:18px}
+.indice.bento{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(210px,64%);gap:8px;margin:0 -16px;padding:2px 16px 6px;scroll-snap-type:x proximity;scroll-padding:0 16px}
+.indice.bento button{scroll-snap-align:start;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:9px;align-items:center;min-height:68px;padding:10px 12px;text-align:left;white-space:normal;border-radius:16px;
+  background:linear-gradient(150deg,color-mix(in srgb,var(--acc) 14%,var(--panel)),var(--panel) 60%);border:1px solid color-mix(in srgb,var(--acc) 22%,var(--line))}
+.indice.bento button[hidden]{display:none}
+.indice.bento i{grid-row:1/3;font-style:normal;font-size:21px;width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.indice.bento b{font-family:var(--f-disp);font-size:14.5px;font-weight:800;line-height:1.15}
+.indice.bento small{font-family:var(--f-ui,inherit);font-size:11.5px;font-weight:500;line-height:1.25;color:var(--mut)}
+@media (min-width:700px){.indice.bento{grid-auto-columns:minmax(220px,1fr)}}
 </style>
 </head>
 <body>
@@ -3402,6 +3428,7 @@ function resumenEq(ms, hp) {
     ${graficaValor(ms)}
     ${bloqueBolsa()}
     ${bloqueConquista()}
+    ${bloqueGalaxia()}
     ${bloqueRadar(ms)}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
@@ -6845,6 +6872,104 @@ async function esOnceGanador(d, pag, total) {
 }
 ES_SETS.cron.splice(5, 0, ["Once del ganador", esOnceGanador]);
 
+/* ---------- La galaxia de LaLiga: todos los jugadores como estrellas, valor frente a puntos por partido ---------- */
+// Cada estrella es un jugador: a la derecha, más caro; arriba, más puntos por partido; más grande, más puntos en total.
+// Color del manager que lo tiene (blanco si está libre o sin dueño). La línea es lo que suele rendir un jugador de cada
+// precio en LaLiga (ajuste por mínimos cuadrados con el logaritmo del valor): por encima, rinde más de lo que cuesta.
+let galPos = "todos", galMan = null, galSel = null, GAL = null;
+function galDatos() {
+  if (!LIGAJ || !LIGAJ.jug || !D) return null;
+  const man = {}; D.managers.forEach((m, i) => { man[String(m.id)] = { m, i }; });
+  const J = Object.values(LIGAJ.jug).filter(p => capNum(p.avg) && capNum(p.points) && p.points > 0 && p.value > 0)
+    .map(p => ({ p, lx: Math.log10(p.value / 1e6), y: p.avg, o: p.owner ? man[String(p.owner)] : null }));
+  if (J.length < 20) return null;
+  const n = J.length, mx = J.reduce((t, x) => t + x.lx, 0) / n, my = J.reduce((t, x) => t + x.y, 0) / n;
+  const b = J.reduce((t, x) => t + (x.lx - mx) * (x.y - my), 0) / Math.max(1e-9, J.reduce((t, x) => t + (x.lx - mx) ** 2, 0)), a = my - b * mx;
+  return { J, a, b, man };
+}
+function bloqueGalaxia() {
+  if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return ""; }
+  const G = galDatos(); if (!G) return "";
+  const posB = [["todos", "Todos"], ["PT", "PT"], ["DF", "DF"], ["MC", "MC"], ["DL", "DL"]].map(([k, t]) => `<button data-galp="${k}" class="${galPos === k ? "on" : ""}">${t}</button>`).join("");
+  const manB = D.managers.map((m, i) => `<button class="gal-m${galMan === String(m.id) ? " on" : ""}" data-galm="${esc(m.id)}" aria-pressed="${galMan === String(m.id)}" aria-label="Resaltar los jugadores de ${esc(m.name)}" style="--c:${col(i)}">${avatar(m, i)}</button>`).join("");
+  return `<section class="card" id="gal"><div class="gh"><h2>La galaxia de LaLiga</h2></div>
+    <p class="note" style="margin:0 0 8px">Cada estrella es un jugador: a la derecha, más caro; arriba, más puntos por partido; más grande, más puntos en total. Por encima de la línea rinde más de lo que suele rendir alguien de su precio.</p>
+    <div class="seg seg5" role="group" aria-label="Posición">${posB}</div>
+    <div class="gal-ms" role="group" aria-label="Resaltar un manager">${manB}</div>
+    <div class="gal-c"><canvas id="galCv" role="img" aria-label="Galaxia de jugadores de LaLiga: valor frente a puntos por partido"></canvas><div class="gal-tip" id="galTip" hidden></div></div></section>`;
+}
+// dibujo en canvas (con brillo); la primera vez las estrellas salen del centro como en una explosión
+function dibujaGalaxia(entrada) {
+  const cv = $("#galCv"); if (!cv) return;
+  const G = galDatos(); if (!G) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 340, H = Math.round(W * (W < 560 ? 1.05 : 0.62));
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px";
+  const x = cv.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const ml = 34, mr = 12, mt = 14, mb = 30, X0 = Math.log10(Math.max(0.05, Math.min(...G.J.map(j => j.p.value / 1e6)) * 0.9)), X1 = Math.log10(Math.max(2, ...G.J.map(j => j.p.value / 1e6)) * 1.15), Y1 = Math.max(6, ...G.J.map(j => j.y)) * 1.08;
+  const sx = lx => ml + (Math.max(X0, lx) - X0) / (X1 - X0) * (W - ml - mr), sy = y => mt + (1 - Math.max(-1, y) / Y1) * (H - mt - mb);
+  const vis = G.J.filter(j => galPos === "todos" || j.p.pos === galPos);
+  const pts = vis.map(j => ({ j, X: sx(j.lx), Y: sy(j.y), r: 1.6 + Math.sqrt(j.p.points) * 0.28, c: j.o ? col(j.o.i) : "#e9f5ee", dim: galMan && !(j.o && String(j.o.m.id) === galMan) }));
+  GAL = { pts, W, H };
+  const pinta = q => {
+    const g = x.createRadialGradient(W * 0.6, H * 0.35, 10, W * 0.5, H * 0.5, Math.max(W, H)); g.addColorStop(0, "#0e2a1d"); g.addColorStop(0.6, "#050f0a"); g.addColorStop(1, "#020604");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    // polvo de estrellas de fondo (siempre igual)
+    let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    x.fillStyle = "#ffffff"; for (let k = 0; k < 140; k++) { x.globalAlpha = 0.08 + rnd() * 0.25; x.fillRect(rnd() * W, rnd() * H, 1, 1); }
+    x.globalAlpha = 1;
+    // ejes
+    x.strokeStyle = "#ffffff14"; x.fillStyle = "#9fc4ae"; x.font = "600 10px system-ui, sans-serif"; x.lineWidth = 1;
+    [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50].forEach(v => { const X = sx(Math.log10(v)); if (X > W - mr || X < ml + 8) return; x.beginPath(); x.moveTo(X, mt); x.lineTo(X, H - mb); x.stroke(); x.textAlign = "center"; x.fillText(nf1c(v).replace(",0", "") + " M", X, H - mb + 14); });
+    for (let v = 0; v <= Y1; v += 2) { const Y = sy(v); x.beginPath(); x.moveTo(ml, Y); x.lineTo(W - mr, Y); x.stroke(); x.textAlign = "right"; x.fillText(String(v), ml - 6, Y + 3); }
+    x.textAlign = "left"; x.fillStyle = "#6f9a82"; x.fillText("pts por partido", ml + 4, mt + 10); x.textAlign = "right"; x.fillText("valor →", W - mr - 2, H - mb - 6);
+    // la línea de lo esperado por precio
+    x.save(); x.strokeStyle = "#5cf096aa"; x.setLineDash([6, 5]); x.lineWidth = 1.5; x.beginPath();
+    for (let k = 0; k <= 40; k++) { const lx = X0 + (X1 - X0) * k / 40, X = sx(lx), Y = sy(G.a + G.b * lx); k ? x.lineTo(X, Y) : x.moveTo(X, Y); } x.stroke(); x.restore();
+    // estrellas: primero las apagadas, luego las resaltadas
+    const e = 1 - Math.pow(1 - q, 3), cx = W * 0.55, cy = H * 0.5;
+    [true, false].forEach(apagada => pts.filter(t => !!t.dim === apagada).forEach(t => {
+      const X = cx + (t.X - cx) * e, Y = cy + (t.Y - cy) * e;
+      x.globalAlpha = apagada ? 0.16 : t.j.o ? 0.95 : 0.55; x.shadowColor = t.c; x.shadowBlur = apagada ? 0 : t.j.o ? 10 : 4;
+      x.fillStyle = t.c; x.beginPath(); x.arc(X, Y, t.r, 0, 6.2832); x.fill();
+    }));
+    x.globalAlpha = 1; x.shadowBlur = 0;
+    if (galSel && q >= 1) { const t = pts.find(t => String(t.j.p.id) === galSel); if (t) { x.strokeStyle = "#fff"; x.lineWidth = 2; x.beginPath(); x.arc(t.X, t.Y, t.r + 5, 0, 6.2832); x.stroke(); } }
+  };
+  if (entrada && !matchMedia("(prefers-reduced-motion: reduce)").matches) { const t0 = performance.now(), paso = a => { const q = Math.min(1, (a - t0) / 1100); pinta(q); if (q < 1 && cv.isConnected) requestAnimationFrame(paso); }; requestAnimationFrame(paso); }
+  else pinta(1);
+}
+let GAL_VISTA = false;
+function pintarGalaxia() { const s = $("#gal"); if (s) s.outerHTML = bloqueGalaxia(); }
+// tocar cerca de una estrella: tarjeta con el jugador y acceso a su ficha
+function galToca(e) {
+  const cv = $("#galCv"); if (!cv || !GAL) return;
+  const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+  let best = null, bd = 18;
+  GAL.pts.forEach(t => { if (t.dim) return; const d = Math.hypot(t.X - px, t.Y - py); if (d < bd) { bd = d; best = t; } });
+  const tip = $("#galTip");
+  if (!best) { galSel = null; tip.hidden = true; dibujaGalaxia(false); return; }
+  const p = best.j.p, esp = best.j.y - ((galDatos() || {}).a + (galDatos() || {}).b * best.j.lx);
+  galSel = String(p.id); dibujaGalaxia(false);
+  tip.innerHTML = `${cara(p.id, p.name, p.teamId, 34)}<div><b>${esc(p.name)}</b><small>${esc(p.pos)} · ${eur(p.value)} · ${nf1c(p.avg)} pts/partido · ${p.points} pts</small>
+    <small>${best.j.o ? esc(best.j.o.m.name) : "Sin dueño"} · ${esp >= 0 ? `+${nf1c(esp)} sobre lo normal a su precio` : `${nf1c(esp)} bajo lo normal a su precio`}</small></div><button data-ficha="${esc(p.id)}">Ficha</button>`;
+  tip.hidden = false; tip.style.left = Math.max(6, Math.min(GAL.W - 236, best.X - 118)) + "px"; tip.style.top = (best.Y > GAL.H * 0.55 ? best.Y - 86 : best.Y + 14) + "px";
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("[data-galp],[data-galm]"); if (a) {
+    if (a.dataset.galp) galPos = a.dataset.galp; else galMan = galMan === a.dataset.galm ? null : a.dataset.galm;
+    galSel = null; pintarGalaxia(); return; }
+  if (e.target.id === "galCv") galToca(e);
+});
+window.addEventListener("resize", () => { if ($("#galCv")) dibujaGalaxia(false); });
+// se dibuja en cuanto existe el lienzo; la entrada animada, solo la primera vez que se ve en pantalla
+const galObs = new MutationObserver(() => {
+  const cv = $("#galCv"); if (!cv || cv.dataset.listo) return; cv.dataset.listo = "1";
+  if (GAL_VISTA || !("IntersectionObserver" in window)) { dibujaGalaxia(false); return; }
+  dibujaGalaxia(false);
+  const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); if (!GAL_VISTA) { GAL_VISTA = true; dibujaGalaxia(true); } } }, { threshold: 0.35 });
+  io.observe(cv);
+});
+galObs.observe(document.body, { childList: true, subtree: true });
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
 function entradaMarcador() {
@@ -7010,7 +7135,8 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["lt", "🧭 Línea"], ["red", "🕸 Traspasos"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <p class="ind-t">Explora la liga</p>
+    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>

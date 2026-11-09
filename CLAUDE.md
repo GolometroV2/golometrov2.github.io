@@ -44,7 +44,7 @@ El dueño quiere herramientas «que sean una locura estéticamente», al nivel d
 - Mobile-first (360/390/420 px y escritorio) y fluido en el móvil: anima `transform` y `opacity`, para lo que no se ve y respeta siempre `prefers-reduced-motion`. Sin scroll horizontal de la página.
 - Paleta verde del sistema de diseño, sin amarillo de acento. Lo estadístico, para todos; previsiones y consejos, con `soloIA`.
 - Las alineaciones se ven siempre en el campo 3D (`htmlCampo3D`, decisión del dueño 09/11): no vuelvas a poner selector Plano/3D, ni giro ni diagonal. Los puntos de una jornada (y los esperados) llevan los colores de Mister (`tramoPts`, `colPts`, clases `mp-*`); no inventes otra escala.
-- Reutiliza lo que ya existe en vez de duplicarlo: `htmlCampo3D` (campo en 3D), el estudio de imágenes (`ES_*`, `abrirEstudio`, láminas de 1080×1350; para una lámina nueva añade su lista a `ES_SETS` y su dato a `EST_DAT`), las historias (`wrTodos`, `abrirWrapped`), el cromo (`cromoDatos`, `abrirCromo`), `cara()`, `fotoDe()`.
+- Reutiliza lo que ya existe en vez de duplicarlo: `htmlCampo3D` (campo en 3D), `cuadricula` (mapa tipo bolsa), `voronoi` y `ESP_PX` (mapa de España), el estudio de imágenes (`ES_*`, `abrirEstudio`, láminas de 1080×1350; para una lámina nueva añade su lista a `ES_SETS` y su dato a `EST_DAT`), las historias (`wrTodos`, `abrirWrapped`), el cromo (`cromoDatos`, `abrirCromo`), `cara()`, `fotoDe()`.
 - Mismos números que la vista normal: compruébalo con capturas antes y después.
 
 Orden (de más a menos valor; anota en `MEJORAS.md` lo que hagas). Si se te ocurre algo mejor, adelante, pero mira antes que no exista:
@@ -56,6 +56,16 @@ Orden (de más a menos valor; anota en `MEJORAS.md` lo que hagas). Si se te ocur
 6. Línea del tiempo de la temporada: hitos de cada jornada (líder, récord, fichaje más caro, goleada) con desplazamiento horizontal.
 7. Más láminas en el estudio de imágenes: el campo 3D dibujado en canvas para la previa y la crónica, el cromo del MVP, el «Wrapped».
 8. Microinteracciones en toda la web: transición suave entre pestañas, cifras que cuentan al aparecer, estados vacíos con dibujos SVG propios.
+
+### Fase 2 del parón (desde el 10/11): modernizar toda la web y herramientas de vanguardia (pedido del dueño)
+Los 8 puntos de arriba ya están hechos. El dueño: «modernizar toda la web y crear más herramientas futuristas y de vanguardia, impresionantes visualmente, con los datos ya recabados». Ya hay: podio de la Clasificación, cinta «Ahora» bajo la cabecera, «Explora la liga» (tarjetas deslizables), la Bolsa de LaLiga, el mapa de la conquista y la galaxia de LaLiga (Equipos). Ideas, de más a menos valor (mira `MEJORAS.md` antes; si algo ya existe, mejóralo en vez de duplicarlo):
+1. «Explora» también en Equipos (y en Capitán y Mercado con PIN): tarjetas deslizables arriba que llevan a cada bloque, para que las pestañas no sean una lista interminable.
+2. Láminas para compartir de la Bolsa, el mapa de la conquista y la galaxia (estudio de imágenes, `ES_SETS`).
+3. Ficha del jugador como pantalla de app: cabecera con la foto grande sobre el color de su equipo, cifras grandes y el cromo arriba.
+4. Duelo de onces: los dos onces de un cara a cara en el mismo campo 3D (`htmlCampo3D`), uno en cada mitad.
+5. Jornada en directo como «actividad en vivo»: tarjeta fija arriba mientras se juega, con los puntos de cada manager subiendo y quién va ganando.
+6. Mercado (con PIN): radar de pujas, un sónar animado con los libres según su puja ideal y la probabilidad de llevárselos.
+7. Capitán (con PIN): la distribución de puntos posible de cada candidato (curva o violín) en vez de solo techo y suelo.
 
 ## DISEÑO: libertad total (el dueño lo pide expresamente)
 El diseño actual se considera poco profesional. Tienes libertad completa para rehacerlo: paleta, tipografía, espaciados, iconos (SVG propios), tarjetas, tablas, gráficos, animaciones suaves, estados vacíos y de carga, navegación, cabecera, todo. Objetivo: que parezca una app deportiva moderna y cuidada (nivel producto), no una página casera.
