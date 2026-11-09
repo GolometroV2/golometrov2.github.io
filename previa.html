@@ -32,6 +32,8 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@keyframes tabEntra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tab-entra{animation:tabEntra .28s cubic-bezier(.2,.7,.2,1) both}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .nav{position:sticky;top:0;z-index:5;background:var(--panel);background:color-mix(in srgb,var(--panel) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
@@ -1336,6 +1338,8 @@ function ir(sec) {
   $("#eq").hidden = sec !== "eq";
   $("#cap").hidden = sec !== "cap";
   $("#mer").hidden = sec !== "mer";
+  const elT = document.getElementById(sec === "clas" ? "app" : sec);   // transición suave entre pestañas
+  if (elT) { elT.classList.remove("tab-entra"); void elT.offsetWidth; elT.classList.add("tab-entra"); }
   if (sec !== "eq") EQ_CUENTA = 0;   // la cuenta de Equipos vuelve a empezar al entrar otra vez
   pintarNav();
   if (sec === "eq") { if (!CAL) cargarCalendario(); pintarEquipos(); }
