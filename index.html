@@ -1173,6 +1173,60 @@ body.wr-abierto{overflow:hidden}
 .rep-f.lider .rep-b i{box-shadow:0 0 10px var(--c)}
 .rep-n{min-width:46px;text-align:right;font-size:16px;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){.rep-f,.rep-b i{transition:none}}
+/* Cromo holográfico del jugador */
+@property --cx{syntax:"<angle>";inherits:true;initial-value:0deg}
+@property --cy{syntax:"<angle>";inherits:true;initial-value:0deg}
+@property --gx{syntax:"<percentage>";inherits:true;initial-value:30%}
+@property --gy{syntax:"<percentage>";inherits:true;initial-value:20%}
+.btn-cromo{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:12px 0 2px;padding:0 16px;border-radius:999px;border:1px solid #2fd46e66;background:linear-gradient(120deg,#2fd46e26,#2fd46e0a);color:var(--txt);font-weight:800;cursor:pointer}
+.crv{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px calc(20px + env(safe-area-inset-bottom));color-scheme:dark;
+  background:radial-gradient(60% 45% at 50% 40%,#0f3a24 0%,#03100a 70%,#010402 100%);color:#eaf4ee;overflow:hidden}
+.crv[hidden]{display:none}
+.crv-x{position:absolute;top:calc(10px + env(safe-area-inset-top));right:10px;width:44px;height:44px;border-radius:50%;border:0;background:#ffffff1a;color:#fff;font-size:18px;cursor:pointer}
+.crv-ay{margin:0;font-size:13px;color:#a8c9b6}
+.crv-comp{min-width:220px}
+.cr-escena{perspective:1100px}
+.cr-tarjeta{--w:min(74vw,330px,calc((100dvh - 210px) * .714));position:relative;width:var(--w);aspect-ratio:5/7;border-radius:calc(var(--w) * .07);transform-style:preserve-3d;cursor:pointer;touch-action:none;outline:none;
+  transform:rotateX(var(--cx)) rotateY(calc(var(--cy) + var(--giro,0deg)));transition:transform .7s cubic-bezier(.2,.8,.2,1);animation:crFlota 7s ease-in-out infinite alternate}
+.cr-tarjeta.vivo{animation:none;transition:transform .08s linear}
+.cr-tarjeta.girada{--giro:180deg}
+.cr-tarjeta:focus-visible{box-shadow:0 0 0 3px #fff}
+@keyframes crFlota{0%{--cx:6deg;--cy:-10deg;--gx:20%;--gy:15%}50%{--cx:-4deg;--cy:6deg;--gx:70%;--gy:45%}100%{--cx:3deg;--cy:12deg;--gx:85%;--gy:80%}}
+.cr-cara{position:absolute;inset:0;border-radius:inherit;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;isolation:isolate;
+  box-shadow:0 30px 60px -20px #000e,0 0 0 1px #ffffff30,0 0 50px -10px var(--cr-luz)}
+.cr-dorso{transform:rotateY(180deg);padding:9% 8%;display:flex;flex-direction:column;gap:6px}
+.cr-esm{--cr-a:#0b4a2b;--cr-b:#16a05a;--cr-c:#052414;--cr-luz:#2fd46e;--cr-t:#f2fbf5;--cr-m:#cdeedb}
+.cr-pla{--cr-a:#8fa398;--cr-b:#e8f1eb;--cr-c:#56695f;--cr-luz:#d8efe2;--cr-t:#0b1a12;--cr-m:#203a2c}
+.cr-car{--cr-a:#16251d;--cr-b:#243b2e;--cr-c:#0a120e;--cr-luz:#2fd46e66;--cr-t:#eaf4ee;--cr-m:#9fc4ae}
+.cr-fondo{position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(135deg,#ffffff0d 0 2px,#0000 2px 14px),radial-gradient(120% 80% at 75% 20%,#ffffff30,#0000 60%),linear-gradient(150deg,var(--cr-a),var(--cr-b) 45%,var(--cr-c))}
+.cr-cara::after{content:"";position:absolute;inset:0;border-radius:inherit;border:2px solid;border-color:#ffffffa0 #ffffff30 #00000040 #ffffff60;pointer-events:none}
+.cr-sup{position:absolute;left:8%;top:6%;z-index:2;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--cr-t)}
+.cr-nota{font-family:var(--f-disp);font-weight:900;font-stretch:62%;font-size:calc(var(--w) * .2);line-height:.9;text-shadow:0 2px 10px #0006}
+.cr-pos{font-family:var(--f-disp);font-weight:800;font-size:calc(var(--w) * .075);line-height:1}
+.cr-esc{width:calc(var(--w) * .13);height:calc(var(--w) * .13);margin-top:6px;filter:drop-shadow(0 2px 4px #0008)}
+.cr-foto{position:absolute;right:-2%;top:3%;width:74%;height:54%;display:grid;place-items:end center}
+.cr-foto img{width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 12px 18px #000a);-webkit-mask-image:linear-gradient(#000 72%,#0000);mask-image:linear-gradient(#000 72%,#0000)}
+.cr-foto.sin::before{content:attr(data-ini);align-self:center;width:60%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-weight:900;font-size:calc(var(--w) * .16);color:#f2fbf5;background:radial-gradient(circle at 50% 30%,#2f6a49,#0c1712);box-shadow:0 0 0 3px #ffffffaa}
+.cr-nom{position:absolute;left:6%;right:6%;top:56%;z-index:2;text-align:center;font-family:var(--f-disp);font-weight:900;font-stretch:66%;font-size:calc(var(--w) * .135);line-height:1;color:var(--cr-t);text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 10px #0005}
+.cr-st{position:absolute;left:9%;right:9%;top:67%;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);row-gap:2px;border-top:1px solid color-mix(in srgb,var(--cr-t) 30%,transparent);padding-top:6px;color:var(--cr-t)}
+.cr-st span{display:flex;align-items:baseline;justify-content:center;gap:4px}
+.cr-st b{font-family:var(--f-disp);font-weight:800;font-stretch:70%;font-size:calc(var(--w) * .075)}
+.cr-st small{font-size:calc(var(--w) * .036);font-weight:800;color:var(--cr-m)}
+.cr-sp{position:absolute;left:12%;right:12%;bottom:8%;width:76%;height:auto;z-index:2}
+.cr-sp rect{fill:color-mix(in srgb,var(--cr-t) 55%,transparent)}.cr-sp rect.top{fill:var(--cr-t)}.cr-sp rect.neg{fill:#ff6b6b}.cr-sp rect.nj{fill:color-mix(in srgb,var(--cr-t) 18%,transparent)}
+.cr-pie{position:absolute;left:8%;right:8%;bottom:3.2%;z-index:2;display:flex;justify-content:space-between;gap:8px;font-size:calc(var(--w) * .034);font-weight:800;color:var(--cr-m)}
+.cr-pie span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.cr-holo{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:color-dodge;opacity:.5;
+  background:repeating-linear-gradient(115deg,#00ffd522 0%,#2fd46e66 4%,#c8ffe055 8%,#00b4ff33 12%,#00ffd522 16%),radial-gradient(circle at var(--gx) var(--gy),#ffffff55,#0000 40%);
+  background-size:300% 300%,100% 100%;background-position:var(--gx) var(--gy),0 0;filter:contrast(1.3) saturate(1.2)}
+.cr-car .cr-holo{opacity:.25}.cr-pla .cr-holo{opacity:.4;mix-blend-mode:overlay}
+.cr-brillo{position:absolute;inset:0;z-index:4;pointer-events:none;mix-blend-mode:overlay;background:radial-gradient(circle at var(--gx) var(--gy),#ffffffd0 0%,#ffffff40 18%,#0000 46%)}
+.cr-dt{font-family:var(--f-disp);font-weight:900;font-stretch:72%;font-size:calc(var(--w) * .1);line-height:1;color:var(--cr-t)}
+.cr-ds{font-size:calc(var(--w) * .042);font-weight:700;color:var(--cr-m);margin-bottom:4px}
+.cr-dl{margin:0;display:flex;flex-direction:column;gap:7px;color:var(--cr-t)}
+.cr-dl dt{font-weight:900;font-size:calc(var(--w) * .045)}
+.cr-dl dd{margin:0;font-size:calc(var(--w) * .04);line-height:1.35;color:var(--cr-m)}
+@media (prefers-reduced-motion:reduce){.cr-tarjeta{animation:none;transition:none}}
 </style>
 </head>
 <body>
@@ -1755,6 +1809,7 @@ function abrirFicha(id) {
     <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
     <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
       <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
+    ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
@@ -5832,8 +5887,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -6115,6 +6170,151 @@ async function esWrEstrella(t, pag, total) {
   return c;
 }
 ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella]];
+
+/* ---------- Cromo del jugador: carta holográfica que se inclina con el dedo y se gira al tocarla ---------- */
+// La «media» del cromo es estadística (nada de previsiones): su puesto entre los de su misma posición en LaLiga
+// por puntos por partido (60 %) y por puntos totales (40 %), llevado a una escala de 45 a 99.
+function cromoDatos(id) {
+  if (!LIGAJ || !LIGAJ.jug) return null;
+  const p = LIGAJ.jug[String(id)]; if (!p || !p.pos) return null;
+  const igual = Object.values(LIGAJ.jug).filter(q => q.pos === p.pos && capNum(q.points) && q.points > 0);
+  const pct = (f, v) => igual.length > 1 ? igual.filter(q => f(q) < v).length / (igual.length - 1) : 0.5;
+  const jugado = capNum(p.points) && p.points > 0;
+  const nota = jugado ? Math.round(45 + 54 * (0.6 * pct(q => q.avg || 0, p.avg || 0) + 0.4 * pct(q => q.points, p.points))) : 40;
+  const hist = (LIGAJ.pts || {})[String(p.id)] || {}, gws = Object.keys(hist).map(Number).sort((a, b) => a - b);
+  const serie = gws.map(g => ({ g, v: hist[g] })), jug = serie.filter(x => capNum(x.v));
+  const rec = jug.length ? jug.reduce((a, b) => b.v > a.v ? b : a) : null;
+  const racha = (p.streak || []).filter(capNum), forma = racha.length ? racha.reduce((a, b) => a + b, 0) / racha.length : null;
+  const nombreEq = {}; ((CAL && CAL.games) || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
+  const POS = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
+  return { p, nota, tier: nota >= 86 ? "esm" : nota >= 74 ? "pla" : "car", tierNom: nota >= 86 ? "Esmeralda" : nota >= 74 ? "Plata" : "Carbono",
+    pj: jug.length, serie, rec, forma, rival: p.nextRival != null ? nombreEq[p.nextRival] : null, equipo: nombreEq[p.teamId] || "",
+    n: String(p.id), nIg: igual.length, posNom: POS[p.pos] || "jugadores", mejorQue: Math.round(100 * (0.6 * pct(q => q.avg || 0, p.avg || 0) + 0.4 * pct(q => q.points, p.points))) };
+}
+function cromoSpark(serie) {
+  const vs = serie.map(x => capNum(x.v) ? x.v : 0), mx = Math.max(1, ...vs.map(Math.abs)), W = 200, H = 22, n = vs.length;
+  if (n < 2) return "";
+  return `<svg class="cr-sp" viewBox="0 0 ${W} ${H}" aria-hidden="true">${vs.map((v, k) => { const h = Math.max(2, Math.abs(v) / mx * (H - 4)), x = k * W / n + 1;
+    return `<rect x="${x.toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(W / n - 3).toFixed(1)}" height="${h.toFixed(1)}" rx="2" class="${!capNum(serie[k].v) ? "nj" : v < 0 ? "neg" : v >= 10 ? "top" : ""}"/>`; }).join("")}</svg>`;
+}
+function htmlCromo(d) {
+  const p = d.p, foto = (FOTOS && FOTOS[String(p.id)]) || fotoDe(p.id), ape = apellido(p.name);
+  const st = [[p.points ?? 0, "PTS"], [p.avg != null ? nf1.format(p.avg) : "–", "MED"], [d.pj, "PJ"],
+    [d.forma != null ? nf1.format(d.forma) : "–", "FOR"], [p.value ? nf1.format(p.value / 1e6) : "–", "VAL"], [d.rec ? d.rec.v : "–", "REC"]];
+  return `<div class="cr-escena"><div class="cr-tarjeta cr-${d.tier}" tabindex="0" role="button" aria-label="Cromo de ${esc(p.name)}, media ${d.nota}. Tócalo para darle la vuelta">
+    <div class="cr-cara cr-frente">
+      <div class="cr-fondo"></div>
+      <div class="cr-sup"><b class="cr-nota">${d.nota}</b><span class="cr-pos">${esc(p.pos)}</span>${p.teamId ? `<img class="cr-esc" src="fotos/escudos/${esc(p.teamId)}.png" alt="" onerror="this.remove()">` : ""}</div>
+      <div class="cr-foto" data-ini="${esc(iniciales(p.name))}"><img src="${esc(foto)}" alt="" referrerpolicy="no-referrer" draggable="false" onerror="this.parentNode.classList.add('sin');this.remove()"></div>
+      <div class="cr-nom">${esc(ape.length > 14 ? ape.slice(0, 13) + "." : ape)}</div>
+      <div class="cr-st">${st.map(([v, l]) => `<span><b>${esc(v)}</b><small>${l}</small></span>`).join("")}</div>
+      ${cromoSpark(d.serie)}
+      <div class="cr-pie"><span>${esc(d.tierNom)}</span><span>${esc(p.ownerName || "Sin dueño")}</span></div>
+      <div class="cr-holo"></div><div class="cr-brillo"></div>
+    </div>
+    <div class="cr-cara cr-dorso">
+      <div class="cr-fondo"></div>
+      <b class="cr-dt">${esc(p.name)}</b><small class="cr-ds">${esc(d.equipo)} · ${esc(d.tierNom)}</small>
+      <dl class="cr-dl">
+        <div><dt>Media ${d.nota}</dt><dd>Mejor que el ${d.mejorQue} % de los ${d.nIg} ${esc(d.posNom)} con puntos, por puntos por partido (60 %) y puntos totales (40 %).</dd></div>
+        ${d.rec ? `<div><dt>Mejor jornada</dt><dd>J${d.rec.g}, con ${d.rec.v} puntos.</dd></div>` : ""}
+        ${d.forma != null ? `<div><dt>Forma</dt><dd>${nf1.format(d.forma)} puntos de media en sus últimos ${(p.streak || []).filter(capNum).length} partidos.</dd></div>` : ""}
+        ${d.rival ? `<div><dt>Próximo partido</dt><dd>${p.nextHome ? "En casa contra" : "Fuera, contra"} ${esc(d.rival)}.</dd></div>` : ""}
+        <div><dt>Valor</dt><dd>${merEur(p.value || 0)}${p.clause ? ` · cláusula ${merEur(p.clause)}` : ""}.</dd></div>
+      </dl>
+      <div class="cr-holo"></div>
+    </div></div></div>`;
+}
+let CROMO = null;
+function abrirCromo(id) {
+  const d = cromoDatos(id); if (!d) return;
+  let ov = $("#ovCromo");
+  if (!ov) { ov = document.createElement("div"); ov.id = "ovCromo"; ov.className = "crv"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); document.body.appendChild(ov); }
+  ov.setAttribute("aria-label", `Cromo de ${d.p.name}`);
+  ov.innerHTML = `<button class="crv-x" data-cromo-x aria-label="Cerrar">✕</button>${htmlCromo(d)}
+    <p class="crv-ay">Muévelo con el dedo · tócalo para darle la vuelta</p>
+    <button class="btn-wa crv-comp" data-cromo-comp>📤 Compartir el cromo</button>`;
+  ov.hidden = false; document.body.classList.add("sin-scroll");
+  CROMO = { d, ov, giro: false, volver: document.activeElement };
+  ov.querySelector(".cr-tarjeta").focus({ preventScroll: true });
+}
+function cerrarCromo() {
+  if (!CROMO) return;
+  CROMO.ov.hidden = true; CROMO.ov.innerHTML = "";
+  if (!$("#ovFicha") || $("#ovFicha").hidden) document.body.classList.remove("sin-scroll");
+  const v = CROMO.volver; CROMO = null; if (v && v.focus) v.focus({ preventScroll: true });
+}
+// inclinación siguiendo el dedo o el ratón; al soltar vuelve suave a su sitio
+function cromoMueve(e) {
+  const t = CROMO && e.target.closest && e.target.closest(".cr-tarjeta"); if (!t) return;
+  const r = t.getBoundingClientRect(), x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+  t.classList.add("vivo");
+  t.style.setProperty("--cx", ((0.5 - y) * 24).toFixed(1) + "deg"); t.style.setProperty("--cy", ((x - 0.5) * 30).toFixed(1) + "deg");
+  t.style.setProperty("--gx", (x * 100).toFixed(1) + "%"); t.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
+}
+document.addEventListener("pointermove", cromoMueve);
+document.addEventListener("pointerdown", e => { if (CROMO && e.target.closest && e.target.closest(".cr-tarjeta")) { CROMO.x0 = e.clientX; CROMO.y0 = e.clientY; cromoMueve(e); } });
+const cromoSuelta = e => {
+  const t = CROMO && CROMO.ov.querySelector(".cr-tarjeta"); if (!t) return;
+  if (e.type === "pointerleave" || e.pointerType !== "mouse") { t.classList.remove("vivo"); ["--cx", "--cy", "--gx", "--gy"].forEach(k => t.style.removeProperty(k)); }
+};
+document.addEventListener("pointerup", cromoSuelta);
+document.addEventListener("pointercancel", cromoSuelta);
+document.addEventListener("pointerout", e => { if (CROMO && e.pointerType === "mouse" && e.target.closest && e.target.closest(".cr-tarjeta") && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".cr-tarjeta"))) cromoSuelta({ type: "pointerleave" }); });
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("[data-cromo]");
+  if (a) { abrirCromo(a.dataset.cromo); return; }
+  if (!CROMO) return;
+  if (e.target.closest("[data-cromo-x]") || e.target === CROMO.ov) { cerrarCromo(); return; }
+  if (e.target.closest("[data-cromo-comp]")) { EST_DAT.cromo = CROMO.d; abrirEstudio("cromo", e.target.closest("[data-cromo-comp]")); return; }
+  const t = e.target.closest(".cr-tarjeta");
+  if (t && (CROMO.x0 == null || Math.hypot(e.clientX - CROMO.x0, e.clientY - CROMO.y0) < 12)) { CROMO.giro = !CROMO.giro; t.classList.toggle("girada", CROMO.giro); }
+});
+document.addEventListener("keydown", e => {
+  if (!CROMO || ($("#estudio") && !$("#estudio").hidden)) return;
+  if (e.key === "Escape") { e.stopImmediatePropagation(); cerrarCromo(); }
+  else if ((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest(".cr-tarjeta")) { e.preventDefault(); CROMO.giro = !CROMO.giro; e.target.closest(".cr-tarjeta").classList.toggle("girada", CROMO.giro); }
+}, true);
+
+/* lámina del cromo para compartir */
+async function esCromo(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, H, M } = ES, p = d.p;
+  const [im, escu] = await Promise.all([esImg(esFoto(p.id)), esImg(esEscudo(p.teamId))]);
+  const color = esColor(escu, "e" + p.teamId);
+  esFondo(x, color);
+  x.fillStyle = ES.luz; x.font = esF(800, 26, "expanded"); x.fillText("GOLÓMETRO", M, 96);
+  x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(esCorta(x, "· cromo de la temporada", 600), M + (x.font = esF(800, 26, "expanded"), x.measureText("GOLÓMETRO").width) + 12, 96);
+  const cw = 700, ch = 980, X = (W - cw) / 2, Y = 140;
+  const T = { esm: ["#0b4a2b", "#16a05a", "#052414", "#7dffb5"], pla: ["#9fb2a8", "#e6efe9", "#5d7067", "#ffffff"], car: ["#16251d", "#22382b", "#0a120e", "#5cf096"] }[d.tier];
+  x.save(); x.shadowColor = "rgba(47,212,110,.45)"; x.shadowBlur = 60;
+  esRect(x, X, Y, cw, ch, 44); const g = x.createLinearGradient(X, Y, X + cw, Y + ch); g.addColorStop(0, T[0]); g.addColorStop(0.45, T[1]); g.addColorStop(1, T[2]); x.fillStyle = g; x.fill(); x.restore();
+  x.save(); esRect(x, X, Y, cw, ch, 44); x.clip();
+  // foto, que se funde con la parte de abajo de la carta
+  if (im) { esJugador(x, im, p.name, color, X + cw * 0.6, Y + 620, 560, escu); }
+  else esCamiseta(x, color, escu, p.name, X + cw * 0.6, Y + 600, 420);
+  esA(x, 0.94, () => { const fu = x.createLinearGradient(0, Y + 400, 0, Y + 612); fu.addColorStop(0, "rgba(0,0,0,0)"); fu.addColorStop(1, T[2]); x.fillStyle = fu; x.fillRect(X, Y + 400, cw, 212); x.fillStyle = T[2]; x.fillRect(X, Y + 611, cw, ch - 611); });
+  // brillo holográfico en diagonal y rayas finas, por encima de todo
+  esA(x, 0.35, () => { const h = x.createLinearGradient(X, Y, X + cw, Y + ch * 0.6); [[0, "rgba(255,255,255,0)"], [0.38, "rgba(160,255,210,.0)"], [0.47, "rgba(200,255,230,.85)"], [0.52, "rgba(120,255,240,.5)"], [0.6, "rgba(255,255,255,0)"], [1, "rgba(255,255,255,0)"]].forEach(([o, cc]) => h.addColorStop(o, cc)); x.fillStyle = h; x.fillRect(X, Y, cw, ch); });
+  x.strokeStyle = "rgba(255,255,255,.06)"; x.lineWidth = 2; for (let k = -ch; k < cw; k += 22) { x.beginPath(); x.moveTo(X + k, Y); x.lineTo(X + k + ch, Y + ch); x.stroke(); }
+  x.restore();
+  esRect(x, X, Y, cw, ch, 44); x.lineWidth = 5; x.strokeStyle = T[3]; x.stroke();
+  const tinta = d.tier === "pla" ? "#0b1a12" : "#f2fbf5";
+  x.fillStyle = tinta; x.font = esF(900, 150, "condensed"); x.fillText(String(d.nota), X + 52, Y + 180);
+  x.font = esF(800, 52, "condensed"); x.fillText(p.pos, X + 60, Y + 240);
+  if (escu) x.drawImage(escu, X + 56, Y + 268, 86, 86);
+  x.textAlign = "center"; x.fillStyle = tinta; x.fillText(esAjusta(x, apellido(p.name).toUpperCase(), cw - 80, 900, 96, 56, "condensed"), W / 2, Y + 712);
+  x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.35)" : "rgba(255,255,255,.25)"; x.fillRect(X + 70, Y + 740, cw - 140, 3);
+  const st = [[p.points ?? 0, "PTS"], [p.avg != null ? nf1.format(p.avg) : "–", "MED"], [d.pj, "PJ"], [d.forma != null ? nf1.format(d.forma) : "–", "FOR"], [p.value ? nf1.format(p.value / 1e6) : "–", "VAL"], [d.rec ? d.rec.v : "–", "REC"]];
+  st.forEach(([v, l], k) => { const cx = X + 70 + (k % 3 + 0.5) * (cw - 140) / 3, cy = Y + 806 + Math.floor(k / 3) * 84;
+    x.textAlign = "right"; x.fillStyle = tinta; x.font = esF(800, 58, "condensed"); x.fillText(String(v), cx + 8, cy);
+    x.textAlign = "left"; x.font = esF(700, 26); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.7)" : "rgba(242,251,245,.75)"; x.fillText(l, cx + 16, cy); });
+  x.textAlign = "left";
+  x.font = esF(700, 26); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.7)" : "rgba(242,251,245,.7)"; x.fillText(d.tierNom, X + 56, Y + ch - 36);
+  x.textAlign = "right"; x.fillText(esCorta(x, p.ownerName || "Sin dueño", cw - 300), X + cw - 56, Y + ch - 36); x.textAlign = "left";
+  esPie(x, `Media ${d.nota}: mejor que el ${d.mejorQue} % de los ${d.posNom}`);
+  return c;
+}
+ES_SETS.cromo = [["Cromo", esCromo]];
 
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
