@@ -153,6 +153,12 @@ ul{list-style:none;margin:0;padding:0}
 .cp .rec b{font-size:24px;font-weight:800;color:var(--pos)}
 .cp .rec small{display:block;color:var(--mut);font-size:12px;margin-top:2px;white-space:nowrap}
 .note{color:var(--mut);font-size:13px;margin:8px 0 0}
+.vacio{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--mut);padding:28px 16px;font-size:13px;line-height:1.45}
+.vacio svg{width:72px;height:72px;margin-bottom:4px;animation:vacFlota 3.2s ease-in-out infinite}
+.vacio b{color:var(--txt);font-size:15px}
+.vacio .vb{stroke:var(--acc);fill:color-mix(in srgb,var(--acc) 10%,transparent)}
+.vacio .vl{stroke:var(--mut);fill:none;opacity:.6}
+@keyframes vacFlota{50%{transform:translateY(-5px)}}
 .up{color:var(--pos)}.dn{color:var(--red)}.flat{color:var(--mut)}
 .pts em.up{color:var(--pos)}.pts em.flat{color:var(--mut)}
 .mini{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
@@ -1285,6 +1291,10 @@ const enMadrid = (iso, o) => { try { return new Intl.DateTimeFormat("es-ES", { t
 const fechaMadrid = iso => enMadrid(iso, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
 const fechaCorta = iso => enMadrid(iso, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// estado vacío con dibujo propio: un balón que flota sobre el césped (SVG, sin imágenes)
+function vacioHTML(titulo, texto) {
+  return `<div class="vacio" role="status"><svg viewBox="0 0 72 72" aria-hidden="true" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="vl" d="M8 62h56M18 68h36"/><circle class="vb" cx="36" cy="32" r="20"/><path class="vl" style="stroke:var(--acc);opacity:.8" d="M36 22l9 6-3 11H30l-3-11zM36 22V12M45 28l10-4M42 39l7 8M30 39l-7 8M27 28l-10-4"/></svg><b>${esc(titulo)}</b><span>${texto}</span></div>`;
+}
 const jornadas = () => Object.keys(D.matchdays || {}).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
 const col = i => `hsl(${Math.round((i * 360 / Math.max((D || E || { managers: [] }).managers.length, 1) + 200) % 360)} 70% 58%)`;
 const fondo = (m, i) => Number.isFinite(m.hue) ? `hsl(${m.hue} 50% 50%)` : col(i);
@@ -1744,7 +1754,7 @@ function pintarCapitanes() {
     cuerpo = ord.length ? `<div class="podio">${pd(top[1], 1)}${pd(top[0], 0)}${pd(top[2], 2)}</div>
       ${resto.length ? `<ul class="clist">${resto.map((x, k) => fila(x, k + 3)).join("")}</ul>` : ""}
       <p class="note">${peores ? "Los capitanes que menos dieron: los que no jugaron cuentan 0." : "Puntos del capitán ya multiplicados: base × multiplicador."}</p>`
-      : `<p class="note">Aún no hay capitanes que hayan jugado.</p>`;
+      : vacioHTML("Sin capitanes todavía", "Aparecerán cuando juegue el primero.");
   }
   cont.innerHTML = `<div class="gh"><h2>Capitanes de la temporada</h2></div><div class="seg seg3">${seg}</div>${cuerpo}`;
 }
@@ -1860,7 +1870,7 @@ function onceIdeal(gw) {
 function htmlOnceIdeal(gw) {
   if (!LIGAJ || LIGAJ.cargando) { cargarLigaJ(); return `<p class="note">Cargando jugadores de la liga…</p>`; }
   const o = onceIdeal(gw);
-  if (!o) return `<p class="note">No hay datos suficientes de esta jornada.</p>`;
+  if (!o) return vacioHTML("Faltan datos", "Todavía no hay suficientes datos de esta jornada.");
   const nombreM = uid => (D.managers.find(m => String(m.id) === String(uid)) || {}).name;
   const jugador = c => { const de = (o.enOnce[c.id] || []).map(nombreM).filter(Boolean);
     return `<div class="oi-p" data-ficha="${esc(c.id)}">${cara(c.id, c.name, c.teamId, 40)}<b class="oi-n">${esc(apellido(c.name))}</b><span class="oi-pt">${c.pts}</span><small>${de.length ? (de.length > 1 ? `en ${de.length} onces` : esc(de[0])) : c.owner ? `ahora de ${esc(c.owner)}` : "nadie lo alineó"}</small></div>`; };
@@ -3279,7 +3289,7 @@ function resumenEq(ms, hp) {
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
-    <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : `<p class="note">Aún no se ha detectado ningún fichaje ni venta.</p>`}</section>`;
+    <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : vacioHTML("Todo tranquilo", "Aún no se ha detectado ningún fichaje ni venta.")}</section>`;
 }
 
 // Próximos rivales de cada jugador de la plantilla, con la dificultad según lo que marca y encaja cada rival
@@ -4524,7 +4534,7 @@ function bloqueParaTi(r) {
   const pills = selectorM(merMan, "data-mm", null, "Manager");
   // huecos del once (plantilla que no da para 11): un libre de ese puesto suma entero
   const nec = o ? (([d, m, f]) => ({ PT: 1, DF: d, MC: m, DL: f }))(o.form.split("-").map(Number)) : {};
-  let cuerpo = `<p class="note">No hay datos suficientes de esta plantilla.</p>`;
+  let cuerpo = vacioHTML("Faltan datos", "Todavía no hay suficientes datos de esta plantilla.");
   if (o) {
     const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
       if ((o[x.pos] || []).length < (nec[x.pos] || 0)) return { x, tit: null, g: x.espProx };
@@ -4843,7 +4853,7 @@ function bloqueLeerRivales(r) {
 function pintarMercado() {
   const cont = $("#mer");
   if (!iaOk) { cont.innerHTML = htmlBloqueo("Las pujas y recomendaciones del mercado son solo para el dueño de la web."); pin = ""; pintarPin(); return; }
-  if (merError || !MER_DATA) { cont.innerHTML = merError ? `<div class="msg">Todavía no hay datos del mercado.<br>Se generan con <code>mercado_mister.py</code> (workflow «mercado»).</div>` : `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; return; }
+  if (merError || !MER_DATA) { cont.innerHTML = merError ? vacioHTML("Sin datos del mercado", "Se generan con <code>mercado_mister.py</code> (workflow «mercado»).") : `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; return; }
   if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Cargando calendario...</div>`; cargarCalendario(); return; }
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
   cargarPujas(); cargarMerHist();
@@ -5368,7 +5378,7 @@ function pintarCapitan() {
     return;
   }
   if (!E) { cont.innerHTML = `<div class="esq" role="status" aria-label="Cargando"><i></i><i></i><i></i><i></i></div>`; cargarEquipos(); return; }
-  if (!CAL || !CAL.games) { cont.innerHTML = `<div class="msg">Todavía no hay calendario.<br>Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento).</div>`; return; }
+  if (!CAL || !CAL.games) { cont.innerHTML = vacioHTML("Sin calendario", "Se genera con <code>calendario_mister.py</code> (lo ejecuta el workflow de seguimiento)."); return; }
   if (!capMan || !E.managers.some(m => m.id === capMan)) capMan = YO && E.managers.some(m => m.id === YO) ? YO : E.managers[0] && E.managers[0].id;
   const pills = selectorM(capMan, "data-cm", null, "Manager", m => m.squadValue ? eur(m.squadValue) : "");
   if (PAR) { if (PAR.params) capAplicarParametros(PAR.params); capAplicarLiga(PAR.liga); capAplicarRiesgo(PAR.riesgo); }
@@ -5428,7 +5438,7 @@ function pintarEquipos() {
     pin = ""; pintarPin();
     return;
   }
-  if (!E) { cont.innerHTML = `<div class="msg">Todavía no hay datos de equipos.<br>Se generan con <code>seguimiento_equipos.py</code>.</div>`; return; }
+  if (!E) { cont.innerHTML = vacioHTML("Sin datos de equipos", "Se generan con <code>seguimiento_equipos.py</code>."); return; }
   const hp = id => (E.history || {})[id] || [];
   const ms = E.managers.map((m, i) => ({ ...m, i }));
   const pills = selectorM(eqSel, "data-e", { id: "resumen", html: `<span class="av msel-res" aria-hidden="true">≡</span>`, corto: "Todos", largo: "Resumen de la liga", dato: "" }, "Equipo", m => m.squadValue ? eur(m.squadValue) : "");
