@@ -6325,6 +6325,12 @@ async function esCromo(d) {
   return c;
 }
 ES_SETS.cromo = [["Cromo", esCromo]];
+// Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
+async function esCromoMvp(d) {
+  const cd = d.mvp && cromoDatos(d.mvp.p.id); if (!cd) return null;
+  return esCromo(cd);
+}
+ES_SETS.cron.splice(3, 0, ["Jugador de la jornada", esCromoMvp]);
 
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
