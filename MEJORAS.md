@@ -3,9 +3,11 @@
 El agente lee este archivo al empezar y lo actualiza al terminar.
 
 ## En curso (lo está haciendo Claude a mano: NO lo toques, elige otra cosa)
+- 2026-11-09: «Wrapped» de cada manager y cromo holográfico del jugador (puntos 2 y 3 de la hoja de ruta del parón). Elige otra cosa de la lista.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-09 (a mano por Claude) · **Campo 3D en más sitios**: once ideal de la temporada (Premios) y «Su mejor once de la temporada» en cada plantilla de Equipos (puntos ya hechos y valor de hoy; si no llega a 11, elige el dibujo con menos huecos y los marca). El agente ya lo había puesto en el once recomendado del Capitán. Punto 1 de la hoja de ruta: hecho.
 - 2026-11-09 (agente, parón 1/8, campo 3D en el Capitán) · **«Tu once recomendado» en 3D** (pestaña Capitán, con PIN): botón Plano/3D (se recuerda el elegido) que reutiliza `htmlCampo3D`; cada jugador muestra sus puntos esperados, el capitán lleva ×multiplicador y los avisos («juega 60 %», «⚠ goleada»). Mismos números que la lista plana. Probado a 390 px con Playwright: sin errores de consola ni scroll horizontal; alterna con el plano. Ideas: 3D también en la plantilla de cada manager en Equipos y en el once ideal de la temporada.
 - 2026-11-09 (a mano por Claude, pedido del dueño: «alineaciones en 3D, que sea una locura estéticamente») · **Alineaciones en 3D**: botón Plano/3D en la alineación de cada manager (Clasificación, al abrir una jornada) y en el once ideal de la crónica; se recuerda en el móvil (`localStorage v3d`). Estadio hecho solo con CSS 3D (`htmlCampo3D`): campo con medidas reales, gradas al fondo y a los lados, panel LED que corre, focos; jugadores de pie que miran siempre a la cámara, se gira e inclina arrastrando (doble toque centra), capitán con anillo de luz, 10+ puntos destacados y negativos en rojo. Probado a 360/390/420/1280 px: mismos números que la vista plana, sin scroll horizontal ni errores. Aprendido: hay que impedir el arrastre nativo de las fotos (`dragstart`) o el navegador cancela el giro.
 - 2026-11-09 (a mano por Claude, pedido del dueño) · **Chollos para rellenar**: en «Cláusulas que merecen la pena → Baratos» salen primero las cláusulas de 2 M o menos de jugadores que juegan (titular ≥ 50 %), después los libres del mercado por menos de 2 M y al final «si subes un poco» (2-4 M). Respeta los 3 días de protección tras fichar.
@@ -107,7 +109,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Rehacer el diseño completo de forma profesional, moderna y actual (ver sección DISEÑO de CLAUDE.md). Fases: 1 sistema de diseño, 2 cabecera y navegación, 3 Clasificación, 4 Equipos, 5 Capitán, 6 Mercado, 7 microinteracciones y accesibilidad, 8 revisión final.
 
 ## Ideas pendientes (de más a menos valor)
-0. Hoja de ruta del parón (09-20/11): herramientas visuales muy avanzadas, en el orden de la sección PARÓN de `CLAUDE.md` (campo 3D en más sitios, «Wrapped» de cada manager, cromo del jugador, repetición de la liga, red de traspasos, línea del tiempo, más láminas del estudio, microinteracciones).
+0. Hoja de ruta del parón (09-20/11): herramientas visuales muy avanzadas, en el orden de la sección PARÓN de `CLAUDE.md`. Hecho: 1 (campo 3D en más sitios). En curso a mano: 2 y 3. Libres para el agente: 4 (repetición de la liga), 5 (red de traspasos), 6 (línea del tiempo), 7 (láminas del estudio), 8 (microinteracciones).
 1. (Comprobada el 2026-11-04: las 4 pestañas a 360 px no desbordan y sin errores de consola; las tablas anchas del análisis del Capitán van en contenedores con scroll propio. Nada que corregir.)
 2. (Hecho el 05/11 con `pujas.json`.) Cuando haya más compras: recalibrar `PUJA.RIVAL` (interés de los demás según prioridad) comparando qué libres se fichan frente a su prioridad del día.
 3. (Hecho: ya existe como «Crónica» de la jornada, `pintarCronica`.) Resumen automático de la jornada: mejor y peor plantilla, mejor capitán, mayor fichaje.
