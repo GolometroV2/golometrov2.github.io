@@ -5702,14 +5702,11 @@ async function esPortada(d, pag, total) {
   esPie(x, d.prev ? (d.prev.fav === g ? `🔮 La previa acertó: era el favorito (${pctQ(d.prev.pf).replace(/\u00a0/g, " ")})` : `🔮 La previa daba favorito a ${d.prev.fav.m.name}`) : `Media de la liga ${nf1c(d.media)} pts`);
   return c;
 }
-async function esOnce(d, pag, total) {
-  const o = d.once; if (!o) return null;
-  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
-  const filas = [["DL", 0.12], ["MC", 0.38], ["DF", 0.64], ["PT", 0.95]];
-  const js = filas.flatMap(([pos, v]) => o[pos].map((p, k) => ({ p, u: (k + 1) / (o[pos].length + 1), v })));
+// campo con el once (compartido por «Once ideal» y «Once del favorito»); o = {PT:[], DF:[], MC:[], DL:[]} con id, name, teamId y chapa (texto, opcional)
+async function esDibujaOnce(x, o) {
+  const { W } = ES, filas = [["DL", 0.12], ["MC", 0.38], ["DF", 0.64], ["PT", 0.95]];
+  const js = filas.flatMap(([pos, v]) => (o[pos] || []).map((p, k) => ({ p, u: (k + 1) / (o[pos].length + 1), v })));
   const [ims, escs] = await Promise.all([Promise.all(js.map(j => esImg(esFoto(j.p.id)))), Promise.all(js.map(j => esImg(esEscudo(j.p.teamId))))]);
-  esFondo(x);
-  esCabecera(x, { titulo: "ONCE IDEAL", kicker: `Jornada ${d.n} · ${o.form} · ${o.total} puntos`, pag, total });
   const campo = { x: 40, y: 440, w: W - 80, h: 750 };
   esCampo(x, campo);
   const porLinea = {}; js.forEach(j => { porLinea[j.v] = (porLinea[j.v] || 0) + 1; });
@@ -5721,10 +5718,27 @@ async function esOnce(d, pag, total) {
     const nom = esAjusta(x, apellido(j.p.name), Math.min(200, hueco - 24), 700, 26, 20), w = x.measureText(nom).width + 24;
     x.fillStyle = "rgba(4,12,8,.86)"; esRect(x, px - w / 2, py + 4, w, 40, 12); x.fill();
     x.fillStyle = ES.txt; x.textAlign = "center"; x.fillText(nom, px, py + 33); x.textAlign = "left";
-    esChapa(x, String(j.p.pts), px + h * 0.3, py - h * 0.86, ES.verde, "#04140b", 30);
+    if (j.p.chapa != null && j.p.chapa !== "") esChapa(x, String(j.p.chapa), px + h * 0.3, py - h * 0.86, ES.verde, "#04140b", 30);
   });
+}
+async function esOnce(d, pag, total) {
+  const o = d.once; if (!o) return null;
+  const c = esCanvas(), x = c.getContext("2d");
+  esFondo(x);
+  esCabecera(x, { titulo: "ONCE IDEAL", kicker: `Jornada ${d.n} · ${o.form} · ${o.total} puntos`, pag, total });
+  await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map(k => [k, o[k].map(p => ({ ...p, chapa: p.pts }))])));
   const enOnce = ["PT", "DF", "MC", "DL"].reduce((t, p) => t + o[p].filter(q => (o.enOnce[q.id] || []).length).length, 0);
   esPie(x, `${enOnce} de los 11 estaban en algún once de la liga`);
+  return c;
+}
+// previa: el once que ha puesto el favorito, con su capitán (estadístico: es el once real)
+async function esOnceFav(d, pag, total) {
+  const f = d.favorito[0], pl = (f && f.x.players) || []; if (pl.length < 11) return null;
+  const c = esCanvas(), x = c.getContext("2d"), cm = f.x.captain && f.x.captain.multiplier;
+  esFondo(x, col(f.i));
+  esCabecera(x, { titulo: "SU ONCE", kicker: `Favorito J${d.n} · ${f.m.name}${f.x.formation ? " · " + f.x.formation : ""}`, pag, total });
+  await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map(k => [k, pl.filter(p => p.pos === k).map(p => ({ ...p, chapa: p.captain ? "×" + coma(cm || 1) : "" }))])));
+  esPie(x, f.pGana != null ? `Favorito · ${pctQ(f.pGana).replace(/\u00a0/g, " ")} de ganar la jornada` : "Favorito de la previa");
   return c;
 }
 async function esPremios(d, pag, total) {
@@ -5880,7 +5894,7 @@ async function esClaves(d, pag, total) {
 
 const ES_SETS = {
   cron: [["Portada", esPortada], ["Once ideal", esOnce], ["Premios", esPremios], ["Clasificación", esClasif]],
-  prev: [["Favoritos", esFavoritos], ["Capitanes", esCapitanes], ["Claves", esClaves]]
+  prev: [["Favoritos", esFavoritos], ["Once del favorito", esOnceFav], ["Capitanes", esCapitanes], ["Claves", esClaves]]
 };
 async function esGenerar(clave) {
   const d = EST_DAT[clave]; if (!d) return [];
