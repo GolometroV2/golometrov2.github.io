@@ -6489,6 +6489,18 @@ async function esMapaCalor(d, pag, total) {
 }
 ES_SETS.cron.splice(4, 0, ["Mapa de calor", esMapaCalor]);
 
+// Lámina extra de la crónica: el once con el que ganó la jornada (puntos de cada jugador; © = capitán)
+async function esOnceGanador(d, pag, total) {
+  const g = d.gan, pl = (g && g.d && g.d.players) || []; if (pl.length < 11) return null;
+  const c = esCanvas(), x = c.getContext("2d"), bp = p => p.basePoints ?? p.points ?? 0, cap = g.d.captain && g.d.captain.id;
+  esFondo(x, col(g.i));
+  esCabecera(x, { titulo: "SU ONCE", kicker: `Ganador J${d.n} · ${g.m.name}${g.x && g.x.formation ? " · " + g.x.formation : ""}`, pag, total });
+  await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map(k => [k, pl.filter(p => p.pos === k).map(p => ({ ...p, chapa: (p.id === cap ? "©" : "") + (p.played === false ? "–" : bp(p)) }))])));
+  esPie(x, `${g.p} puntos · © = capitán`);
+  return c;
+}
+ES_SETS.cron.splice(5, 0, ["Once del ganador", esOnceGanador]);
+
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
 function entradaMarcador() {
