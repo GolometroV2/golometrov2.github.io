@@ -207,6 +207,13 @@ h3.sec{margin:26px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:
 .cp.hero{border-color:var(--accFg);background:linear-gradient(180deg,var(--accBg),var(--panel) 70%);padding:14px}
 .hero-et{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accFg);margin:0 0 8px}
 .cp.hero .jp-right b{font-size:22px}
+.mc-f{display:grid;grid-template-columns:30px 1fr 34px;gap:6px;align-items:center;margin-top:6px}
+.mc-f>.av,.mc-f>img{width:28px;height:28px}
+.mc-c{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:2px}
+.mc-c i{font-style:normal;display:flex;align-items:center;justify-content:center;height:30px;border-radius:5px;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;animation:mcIn .35s both;animation-delay:var(--d,0s)}
+.mc-c i.cap{box-shadow:0 0 0 2px var(--txt)}
+.mc-t{text-align:right;font-weight:800;font-size:14px}
+@keyframes mcIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 .cdet{margin-top:8px}
 .tuj .gh{display:flex;align-items:center;justify-content:space-between}.tuj-cambia{border:0;background:none;padding:0;min-width:44px;min-height:44px;display:grid;place-items:center}.tuj-cambia .av{width:32px;height:32px}
 .tuj-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tuj-f{width:100%;display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 10px;border-radius:var(--r-m);background:var(--panel2);border:0;text-align:left;color:inherit;font:inherit}
@@ -2292,6 +2299,15 @@ function pintarQuiniela() {
 
 /* ---------- Crónica de la jornada ---------- */
 let cronJ = null;
+function htmlMapaCalor(filas) {
+  const ord = { PT: 0, DF: 1, MC: 2, DL: 3 }, bp = p => p.basePoints ?? p.points ?? 0;
+  const lin = filas.filter(f => (f.d.players || []).length).sort((a, b) => b.p - a.p);
+  if (lin.length < 2) return "";
+  const fila = (f, r) => { const ps = f.d.players.slice().sort((a, b) => (ord[a.pos] ?? 9) - (ord[b.pos] ?? 9));
+    const cap = f.d.captain && f.d.captain.id;
+    return `<div class="mc-f">${avatar(f.m, f.i)}<span class="mc-c">${ps.map((p, c) => `<i class="mp-${tramoPts(p.played === false ? null : bp(p))}${p.id === cap ? " cap" : ""}" style="--d:${((r * 0.05) + c * 0.02).toFixed(2)}s" title="${esc(p.name)}: ${p.played === false ? "no jugó" : bp(p) + " pts"}${p.id === cap ? " (capitán)" : ""}">${p.played === false ? "–" : bp(p)}</i>`).join("")}</span><b class="mc-t">${f.p}</b></div>`; };
+  return `<details class="cdet"><summary>Mapa de calor de la jornada</summary>${lin.map(fila).join("")}<p class="note">Cada casilla es un jugador del once (portero, defensas, medios, delanteros) con los colores de Mister; el borde marca al capitán. Mantén pulsada una casilla para ver el nombre.</p></details>`;
+}
 function pintarCronica() {
   const cont = $("#cron");
   if (!cont) return;
@@ -2364,6 +2380,7 @@ function pintarCronica() {
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button></div>
+    ${htmlMapaCalor(filas)}
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
   IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · resultado`, sub: `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
