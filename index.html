@@ -562,6 +562,16 @@ code{color:var(--accFg)}
 .sin-scroll{overflow:hidden}
 .f4{grid-template-columns:repeat(4,1fr)!important}.f4 b{font-size:16px!important}
 .fbar{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding-bottom:2px}
+.al{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.al li{display:flex;align-items:center;gap:10px}
+.al .pq{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.al-t{position:relative;display:block;height:20px;border-radius:10px;background:var(--panel2)}
+.al-t u{position:absolute;top:8px;height:4px;border-radius:2px;background:var(--accBg,rgba(60,200,120,.25))}
+.al-t s{position:absolute;top:2px;bottom:2px;width:2px;margin-left:-1px;background:var(--txt);opacity:.7}
+.al-t i{position:absolute;top:5px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--acc);opacity:.75}
+.al-t i.mx{background:var(--acc);opacity:1;box-shadow:0 0 0 2px var(--accBg,transparent)}
+.al-t i.mn{background:var(--red,#e5484d);opacity:1}
+.al small{color:var(--mut);font-size:11px;white-space:normal}
 .fb{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:26px}
 .fb i{display:block;width:16px;border-radius:4px}
 .fb small{font-size:11px;font-weight:700}.fb em{font-style:normal;font-size:9.5px;color:var(--mut)}
@@ -2714,6 +2724,32 @@ function pintarOrigen() {
     <div class="og-ley">${[["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<span><i style="background:${POSC[k]}"></i>${t}</span>`).join("")}<span><i class="og-cap"></i>Capitán</span></div>
     <ul class="og">${filas.map(f => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="og-b">${seg(f.s.PT, POSC.PT, "Porteros")}${seg(f.s.DF, POSC.DF, "Defensas")}${seg(f.s.MC, POSC.MC, "Medios")}${seg(f.s.DL, POSC.DL, "Delanteros")}${seg(f.s.CAP, "repeating-linear-gradient(45deg,var(--acc) 0 4px,transparent 4px 7px)", "Capitán")}</span>
       <small>PT ${f.s.PT} · DF ${f.s.DF} · MC ${f.s.MC} · DL ${f.s.DL} · capitán +${f.s.CAP}</small></span><span class="pp" style="font-size:16px">${f.tot}</span></li>`).join("")}</ul>`;
+}
+
+/* ---------- Altibajos: cómo de regular es cada manager (puntos de cada jornada en una línea) ---------- */
+// Una fila por manager con un punto por jornada sobre la misma escala para todos, la mediana marcada y la mejor y la peor
+// jornada. Solo lee D.matchdays (estadístico, sin PIN).
+function pintarAltibajos() {
+  const cont = $("#alti"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas();
+  const L = D.managers.map((m, i) => {
+    const v = js.map(j => ({ j, p: ((D.matchdays[j] || {})[m.id] || {}).points })).filter(x => capNum(x.p));
+    if (v.length < 2) return null;
+    const o = v.map(x => x.p).sort((a, b) => a - b), n = o.length, med = n % 2 ? o[(n - 1) / 2] : (o[n / 2 - 1] + o[n / 2]) / 2;
+    const media = o.reduce((a, b) => a + b, 0) / n, sd = Math.sqrt(o.reduce((t, x) => t + (x - media) ** 2, 0) / n);
+    return { m, i, v, med, media, sd, mejor: v.reduce((a, b) => b.p > a.p ? b : a), peor: v.reduce((a, b) => b.p < a.p ? b : a) };
+  }).filter(Boolean).sort((a, b) => a.sd - b.sd);
+  if (L.length < 2) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const todos = L.flatMap(x => x.v.map(y => y.p)), mn = Math.min(...todos), mx = Math.max(...todos), rg = Math.max(1, mx - mn);
+  const X = p => (4 + (p - mn) / rg * 92).toFixed(2);
+  const fiable = L[0], loco = L[L.length - 1];
+  cont.innerHTML = `<div class="gh"><h2>Altibajos</h2></div>
+    <p class="note" style="margin:0 0 10px">Cada punto es una jornada. Cuanto más juntos, más regular; la rayita es su jornada típica (mediana). Ordenados del más regular al más irregular.</p>
+    <ul class="al">${L.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b>
+      <span class="al-t" role="img" aria-label="${esc(x.m.name)}: de ${x.peor.p} a ${x.mejor.p} puntos, típica ${nf1.format(x.med)}"><u style="left:${X(Math.min(...x.v.map(y => y.p)))}%;width:${(X(x.mejor.p) - X(x.peor.p)).toFixed(2)}%"></u><s style="left:${X(x.med)}%"></s>${x.v.map(y => `<i class="${y === x.mejor ? "mx" : y === x.peor ? "mn" : ""}" style="left:${X(y.p)}%" title="J${y.j.slice(1)}: ${y.p}"></i>`).join("")}</span>
+      <small>Mejor J${x.mejor.j.slice(1)} · ${x.mejor.p} · peor J${x.peor.j.slice(1)} · ${x.peor.p} · típica ${nf1.format(x.med)}</small></span><span class="pp" style="font-size:14px">±${Math.round(x.sd)}</span></li>`).join("")}</ul>
+    <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -7136,7 +7172,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -7149,6 +7185,7 @@ function pintar() {
     <section class="card" id="comp"></section>
     <section class="card" id="caps"></section>
     <section class="card" id="origen"></section>
+    <section class="card" id="alti"></section>
     <section class="card" id="premios"></section>`;
   cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
@@ -7167,6 +7204,7 @@ function pintar() {
   pintarCapitanes();
   pintarPremios();
   pintarOrigen();
+  pintarAltibajos();
   cuentaClasificacion();
 }
 // los puntos de la tabla suben desde 0 al entrar o al cambiar de jornada/orden (no al abrir un detalle); el valor final no cambia
