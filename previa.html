@@ -576,6 +576,12 @@ code{color:var(--accFg)}
 .mx-g .av{width:26px;height:26px;font-size:10px;justify-self:center}
 .mx-c{display:flex;align-items:center;justify-content:center;height:36px;border-radius:8px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--acc) calc(var(--w)*70%),var(--panel2));color:var(--txt)}
 .mx-c.d{background:transparent;opacity:.3}
+.dp-f{display:grid;grid-template-columns:30px 1fr 44px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line,rgba(128,128,128,.18))}
+.dp-f .av{width:26px;height:26px;font-size:10px}
+.dp-f b{text-align:right;font-variant-numeric:tabular-nums}
+.dp-c{min-width:0}.dp-c small{display:block;color:var(--mut);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.dp-b{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;background:var(--panel2)}
+.dp-b i{display:block;height:100%}.dp-b .k0{background:var(--acc)}.dp-b .k1{background:color-mix(in srgb,var(--acc) 65%,var(--panel2))}.dp-b .k2{background:color-mix(in srgb,var(--acc) 38%,var(--panel2))}
 .rc-f{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line,rgba(128,128,128,.18))}
 .rc-f .av{width:26px;height:26px;font-size:10px}
 .rc-t{display:flex;gap:2px;min-width:0}
@@ -3345,6 +3351,23 @@ function bloqueRadar(ms) {
 }
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-radar]"); if (b) { radarSel = b.dataset.radar; if (seccion === "eq") pintarEquipos(); } });
 
+// Dependencia de las estrellas: qué parte de los puntos de la plantilla de hoy la dan sus 3 mejores jugadores
+function bloqueDependencia(ms) {
+  const R = ms.map((m, i) => {
+    const js = m.players.filter(p => capNum(p.points) && p.points > 0).sort((a, b) => b.points - a.points);
+    const tot = js.reduce((t, p) => t + p.points, 0), top = js.slice(0, 3);
+    return { m, i, tot, top, pct: tot ? top.reduce((t, p) => t + p.points, 0) / tot : 0 };
+  }).filter(r => r.tot > 0).sort((a, b) => b.pct - a.pct);
+  if (R.length < 3) return "";
+  const filas = R.map(r => `<div class="dp-f">${avatar(r.m, r.i)}<div class="dp-c">
+      <div class="dp-b" role="img" aria-label="${esc(r.m.name)}: ${r.top.map(p => esc(p.short || p.name) + " " + p.points + " puntos").join(", ")}, de ${r.tot} en total">${r.top.map((p, k) => `<i class="k${k}" style="width:${(p.points / r.tot * 100).toFixed(2)}%"></i>`).join("")}</div>
+      <small>${r.top.map(p => esc(p.short || p.name)).join(" · ")}</small></div><b>${Math.round(r.pct * 100)}%</b></div>`).join("");
+  const a = R[0], z = R[R.length - 1];
+  return `<section class="card"><div class="gh"><h2>¿Cuánto dependen de sus estrellas?</h2></div>
+    <p class="note" style="margin:0 0 10px">Parte de los puntos de la plantilla de hoy que dan sus 3 mejores jugadores (tramos de más a menos oscuro). Cuanto más alto, más pierde si se lesionan.</p>${filas}
+    <p class="note">Más dependiente: <b>${esc(a.m.name)}</b> (${Math.round(a.pct * 100)} % en 3 jugadores). Más repartido: <b>${esc(z.m.name)}</b> (${Math.round(z.pct * 100)} %).</p></section>`;
+}
+
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
@@ -3530,6 +3553,7 @@ function resumenEq(ms, hp) {
     ${bloqueConquista()}
     ${bloqueGalaxia()}
     ${bloqueRadar(ms)}
+    ${bloqueDependencia(ms)}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${soloIA(bloqueClausulas(ms))}
