@@ -572,6 +572,12 @@ code{color:var(--accFg)}
 .al-t i.mx{background:var(--acc);opacity:1;box-shadow:0 0 0 2px var(--accBg,transparent)}
 .al-t i.mn{background:var(--red,#e5484d);opacity:1}
 .al small{color:var(--mut);font-size:11px;white-space:normal}
+.mx-g{display:grid;gap:3px;align-items:center}
+.mx-g .av{width:26px;height:26px;font-size:10px;justify-self:center}
+.mx-c{display:flex;align-items:center;justify-content:center;height:36px;border-radius:8px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--acc) calc(var(--w)*70%),var(--panel2));color:var(--txt)}
+.mx-c.d{background:transparent;opacity:.3}
+.mx-c.p{background:color-mix(in srgb,var(--red,#e5484d) calc((1 - var(--w))*55%),var(--panel2))}
+.mx-t{font-size:11px;color:var(--mut);text-align:center;font-weight:700}
 .fb{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:26px}
 .fb i{display:block;width:16px;border-radius:4px}
 .fb small{font-size:11px;font-weight:700}.fb em{font-style:normal;font-size:9.5px;color:var(--mut)}
@@ -2750,6 +2756,35 @@ function pintarAltibajos() {
       <span class="al-t" role="img" aria-label="${esc(x.m.name)}: de ${x.peor.p} a ${x.mejor.p} puntos, típica ${nf1.format(x.med)}"><u style="left:${X(Math.min(...x.v.map(y => y.p)))}%;width:${(X(x.mejor.p) - X(x.peor.p)).toFixed(2)}%"></u><s style="left:${X(x.med)}%"></s>${x.v.map(y => `<i class="${y === x.mejor ? "mx" : y === x.peor ? "mn" : ""}" style="left:${X(y.p)}%" title="J${y.j.slice(1)}: ${y.p}"></i>`).join("")}</span>
       <small>Mejor J${x.mejor.j.slice(1)} · ${x.mejor.p} · peor J${x.peor.j.slice(1)} · ${x.peor.p} · típica ${nf1.format(x.med)}</small></span><span class="pp" style="font-size:14px">±${Math.round(x.sd)}</span></li>`).join("")}</ul>
     <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>`;
+}
+
+/* ---------- Cara a cara de todos: matriz de enfrentamientos (jornadas ganadas a cada rival) ---------- */
+// Cada casilla es en cuántas jornadas el manager de la fila sumó más puntos que el de la columna. Solo lee D.matchdays.
+function pintarMatriz() {
+  const cont = $("#mat"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas(), M = D.managers, n = M.length;
+  const pt = (j, m) => ((D.matchdays[j] || {})[m.id] || {}).points;
+  const g = M.map(() => M.map(() => ({ w: 0, t: 0 })));
+  js.forEach(j => M.forEach((a, x) => M.forEach((b, y) => {
+    const pa = pt(j, a), pb = pt(j, b);
+    if (x === y || !capNum(pa) || !capNum(pb)) return;
+    g[x][y].t++; if (pa > pb) g[x][y].w++;
+  })));
+  if (n < 2 || !g.some(f => f.some(c => c.t))) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const tot = M.map((m, x) => ({ m, i: x, w: g[x].reduce((t, c) => t + c.w, 0), t: g[x].reduce((t, c) => t + c.t, 0) })).filter(r => r.t).sort((a, b) => b.w / b.t - a.w / a.t);
+  const pr = tot[0], pe = tot[tot.length - 1];
+  const cab = M.map((m, y) => avatar(m, y)).join("");
+  const filas = M.map((m, x) => `${avatar(m, x)}${M.map((b, y) => {
+    const c = g[x][y]; if (x === y) return `<span class="mx-c d">·</span>`;
+    if (!c.t) return `<span class="mx-c d">–</span>`;
+    const w = c.w / c.t;
+    return `<span class="mx-c${w < .5 ? " p" : ""}" style="--w:${w.toFixed(2)}" role="img" aria-label="${esc(m.name)} gana a ${esc(b.name)} en ${c.w} de ${c.t} jornadas">${c.w}-${c.t - c.w}</span>`;
+  }).join("")}`).join("");
+  cont.innerHTML = `<div class="gh"><h2>Cara a cara de todos</h2></div>
+    <p class="note" style="margin:0 0 10px">Cada casilla dice en cuántas jornadas ganó el de la izquierda al de arriba (ganadas-perdidas). Verde: le gana más veces; rojo: pierde más.</p>
+    <div class="mx-g" style="grid-template-columns:30px repeat(${n},minmax(0,1fr))"><span></span>${cab}${filas}</div>
+    <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -7172,7 +7207,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -7186,6 +7221,7 @@ function pintar() {
     <section class="card" id="caps"></section>
     <section class="card" id="origen"></section>
     <section class="card" id="alti"></section>
+    <section class="card" id="mat"></section>
     <section class="card" id="premios"></section>`;
   cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
@@ -7205,6 +7241,7 @@ function pintar() {
   pintarPremios();
   pintarOrigen();
   pintarAltibajos();
+  pintarMatriz();
   cuentaClasificacion();
 }
 // los puntos de la tabla suben desde 0 al entrar o al cambiar de jornada/orden (no al abrir un detalle); el valor final no cambia
