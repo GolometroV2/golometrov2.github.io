@@ -2462,7 +2462,7 @@ function pintarCronica() {
   ].join("");
   // texto listo para pegar en el grupo de WhatsApp de la liga
   const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
-  EST_DAT.cron = { n: +cronJ.slice(1), gan, seg2, porPts, media, caps, mvp, sube, baja, gol, ult, prev, bqTop, bqPerf, general, S, k,
+  EST_DAT.cron = { n: +cronJ.slice(1), mapa: filas.filter(f => (f.d.players || []).length).sort((a, b) => b.p - a.p), gan, seg2, porPts, media, caps, mvp, sube, baja, gol, ult, prev, bqTop, bqPerf, general, S, k,
     once: LIGAJ && !LIGAJ.cargando ? onceIdeal(cronJ) : null };
   CRON_TXT = [`*📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}*`, "",
     `🥇 *Ganador:* ${gan.m.name} — *${gan.p} pts*${seg2 ? ` (${gan.p - seg2.p} más que ${seg2.m.name})` : ""}`,
@@ -6804,6 +6804,47 @@ document.addEventListener("click", e => {
   const t = e.target.closest && e.target.closest("[data-conq]"); if (!t) return;
   conqSel = conqSel === t.dataset.conq ? null : t.dataset.conq; pintarConquista();
 });
+// Lámina extra de la crónica: el mapa de calor (mismos puntos y colores de Mister que en la crónica)
+async function esMapaCalor(d, pag, total) {
+  const L = d.mapa; if (!L || L.length < 2) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const ord = { PT: 0, DF: 1, MC: 2, DL: 3 }, bp = p => p.basePoints ?? p.points ?? 0;
+  const fondo = { ns: "#3a4a42", critical: "#e5484d", failing: "#f2711c", poor: "#f5b800", fair: "#a3d63f", good: "#22b14c", excellent: "#22b5e0", outstanding: "#3a5cf6" };
+  const letra = { ns: "#d6e6dc", critical: "#fff", failing: "#2b1000", poor: "#2b2000", fair: "#142400", good: "#03200e", excellent: "#032532", outstanding: "#fff" };
+  const ims = await Promise.all(L.map(f => esImg(f.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "MAPA DE CALOR", kicker: `Jornada ${d.n} · cada casilla es un jugador`, pag, total });
+  const n = L.length, fh = Math.min(112, (1190 - 372) / n), y0 = 372, c0 = M + 100, tw = 118;
+  const nc = Math.max(...L.map(f => f.d.players.length)), cw = Math.min(72, (W - M - tw - c0) / nc), ch = Math.min(cw, fh - 26);
+  L.forEach((f, j) => {
+    const Y = y0 + j * fh, cy = Y + (fh - 14) / 2, cap = f.d.captain && f.d.captain.id;
+    esAvatar(x, f.m, f.x, ims[j], M + 44, cy, 30, j === 0 ? ES.luz : null);
+    f.d.players.slice().sort((a, b) => (ord[a.pos] ?? 9) - (ord[b.pos] ?? 9)).forEach((p, q) => {
+      const t = tramoPts(p.played === false ? null : bp(p)), cx = c0 + q * cw;
+      x.fillStyle = fondo[t] || fondo.ns; x.beginPath(); x.roundRect(cx, cy - ch / 2, cw - 6, ch, 10); x.fill();
+      if (p.id === cap) { x.strokeStyle = "#fff"; x.lineWidth = 4; x.beginPath(); x.roundRect(cx - 1, cy - ch / 2 - 1, cw - 4, ch + 2, 11); x.stroke(); }
+      x.fillStyle = letra[t] || "#fff"; x.font = esF(800, Math.round(ch * 0.46), "condensed"); x.textAlign = "center";
+      x.fillText(p.played === false ? "–" : String(bp(p)), cx + (cw - 6) / 2, cy + ch * 0.17); x.textAlign = "left";
+    });
+    x.textAlign = "right"; x.fillStyle = j === 0 ? ES.luz : ES.txt; x.font = esF(900, 56, "condensed"); x.fillText(String(f.p), W - M - 6, cy + 19); x.textAlign = "left";
+  });
+  esPie(x, "Borde blanco = capitán · colores de Mister");
+  return c;
+}
+ES_SETS.cron.splice(4, 0, ["Mapa de calor", esMapaCalor]);
+
+// Lámina extra de la crónica: el once con el que ganó la jornada (puntos de cada jugador; © = capitán)
+async function esOnceGanador(d, pag, total) {
+  const g = d.gan, pl = (g && g.d && g.d.players) || []; if (pl.length < 11) return null;
+  const c = esCanvas(), x = c.getContext("2d"), bp = p => p.basePoints ?? p.points ?? 0, cap = g.d.captain && g.d.captain.id;
+  esFondo(x, col(g.i));
+  esCabecera(x, { titulo: "SU ONCE", kicker: `Ganador J${d.n} · ${g.m.name}${g.x && g.x.formation ? " · " + g.x.formation : ""}`, pag, total });
+  await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map(k => [k, pl.filter(p => p.pos === k).map(p => ({ ...p, chapa: (p.id === cap ? "©" : "") + (p.played === false ? "–" : bp(p)) }))])));
+  esPie(x, `${g.p} puntos · © = capitán`);
+  return c;
+}
+ES_SETS.cron.splice(5, 0, ["Once del ganador", esOnceGanador]);
+
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
 function entradaMarcador() {
