@@ -1148,6 +1148,14 @@ body.wr-abierto{overflow:hidden}
 .red-bt{min-height:44px;padding:0 14px;border-radius:var(--r-m);border:1px solid var(--line);background:none;color:var(--txt);cursor:pointer;margin-bottom:8px}
 @keyframes redFlujo{to{stroke-dashoffset:-28}}
 @media (prefers-reduced-motion:reduce){.red-arco{animation:none}}
+/* Línea del tiempo de la temporada */
+.lt-pista{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;margin:0 -2px;position:relative;-webkit-overflow-scrolling:touch}
+.lt-j{flex:none;width:200px;scroll-snap-align:start;background:var(--panel2,var(--panel));border:1px solid var(--line);border-radius:14px;padding:12px;position:relative}
+.lt-j::before{content:"";position:absolute;left:12px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 25%,transparent)}
+.lt-j h3{margin:4px 0 8px;font-size:18px}
+.lt-h{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.3;margin-top:7px}.lt-h i{font-style:normal;flex:none;width:20px;text-align:center}
+.lt-h small{display:block;color:var(--mut)}
+.lt-j.ult{border-color:var(--acc)}
 /* Repetición de la liga */
 .rep-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .rep-play{width:48px;height:48px;border-radius:50%;border:0;background:var(--acc);color:var(--accTxt);font-size:17px;font-weight:800;flex:none;cursor:pointer;box-shadow:0 0 18px color-mix(in srgb,var(--acc) 45%,transparent)}
@@ -2540,6 +2548,32 @@ document.addEventListener("click", e => {
   REP.timer = setInterval(() => { if (!document.contains(b) || REP.k >= n - 1) return repParar(); repPoner(REP.k + 1); if (REP.k >= n - 1) repParar(); }, 1300);
 });
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches(".rep-r")) { repParar(); repPoner(+e.target.value); } });
+
+/* ---------- Línea del tiempo de la temporada: hitos de cada jornada (desplazamiento horizontal) ---------- */
+// Solo usa los puntos por jornada (serieLiga): líder, mejor puntuación, récord de la temporada, mayor salto de puestos.
+function pintarLinea() {
+  const c = $("#lt"); if (!c) return;
+  const S = serieLiga(), n = S.js.length;
+  if (n < 2) { c.hidden = true; return; }
+  c.hidden = false;
+  const N = S.ms.length, nom = x => esc(S.ms[x].m.name);
+  let rec = -1;
+  const tarjetas = S.js.map((j, k) => {
+    let mx = 0; for (let x = 1; x < N; x++) if (S.pts[x][k] > S.pts[mx][k]) mx = x;
+    let lider = S.rank[k].indexOf(1), peor = 0; for (let x = 1; x < N; x++) if (S.pts[x][k] < S.pts[peor][k]) peor = x;
+    let salto = null; if (k > 0) for (let x = 0; x < N; x++) { const g = S.rank[k - 1][x] - S.rank[k][x]; if (g > 0 && (!salto || g > salto.g)) salto = { x, g }; }
+    const esRec = S.pts[mx][k] > rec; if (esRec) rec = S.pts[mx][k];
+    const h = [["🥇", `${nom(lider)}<small>líder con ${nf0.format(S.cum[lider][k])} pts</small>`],
+      ["🔥", `${nom(mx)}<small>${S.pts[mx][k]} pts${esRec ? " · récord de la temporada" : ""}</small>`],
+      ["🧊", `${nom(peor)}<small>${S.pts[peor][k]} pts, el que menos</small>`]];
+    if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
+    return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
+  }).join("");
+  c.innerHTML = `<div class="gh"><h2>Línea del tiempo</h2></div>
+    <p class="note" style="margin:0 0 10px">Los momentos de cada jornada. Desliza hacia los lados.</p>
+    <div class="lt-pista" tabindex="0" role="region" aria-label="Línea del tiempo de la temporada">${tarjetas}</div>`;
+  const p = c.querySelector(".lt-pista"); p.scrollLeft = p.scrollWidth;
+}
 
 /* ---------- Red de traspasos: managers en círculo y arcos de dinero entre ellos ---------- */
 // Lee los últimos movimientos guardados (equipos.json -> transfers). Centro = Mister (mercado libre). Grosor = dinero.
@@ -6245,12 +6279,13 @@ function pintar() {
     ${vivo && Object.values(vivo).some(x => x.n) ? `<p class="note" style="margin:0 0 8px">⏳ Jornada a medias: cuántos alineados de cada uno faltan por jugar${iaOk ? " y con cuántos puntos acabaría (≈, estimación del Golómetro)" : ""}.</p>` : ""}
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
-    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["red", "🕸 Traspasos"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
+    <nav class="indice" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}>📣 Previa</button><button data-ir="quin" id="irQuin" hidden>🎲 Predicción</button>${[["cron", "📰 Crónica"], ["graf", "📈 Carrera"], ["rep", "▶ Repetición"], ["lt", "🧭 Línea"], ["red", "🕸 Traspasos"], ["pron", "🔮 Pronóstico"], ["duelo", "⚔️ Duelo"], ["comp", "🆚 Jugadores"], ["caps", "🎖️ Capitanes"], ["origen", "🧩 Puntos"], ["premios", "🏅 Premios"]].map(([k, t]) => `<button data-ir="${k}">${t}</button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="rep"></section>
+    <section class="card" id="lt"></section>
     <section class="card" id="red"></section>
     <section class="card" id="pron"></section>
     <section class="card" id="duelo"></section>
@@ -6266,6 +6301,7 @@ function pintar() {
   pintarCronica();
   pintarGrafico();
   pintarRepeticion();
+  pintarLinea();
   pintarRed();
   pintarPronostico();
   pintarDuelo();
