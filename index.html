@@ -181,6 +181,7 @@ ul{list-style:none;margin:0;padding:0}
 .cp .cph{display:flex;align-items:center;gap:10px}
 .porque{font-size:12px;color:var(--accFg);margin-top:3px}
 .alerta{margin:8px 0 0;background:var(--redBg);color:var(--red);border-radius:var(--r-s);padding:5px 10px;font-size:12.5px;font-weight:600}
+.cdist{padding:8px 2px 2px}.cdist-t{font-size:12px;font-weight:600;margin-bottom:4px}.cdist svg{width:100%;height:auto;display:block}
 .claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .clave,.rv{background:var(--panel2);border-radius:var(--r-m);overflow:hidden}
 .clave summary,.rv summary{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;list-style:none}
@@ -5989,9 +5990,31 @@ function bloqueEquipo(inf, enfoque) {
     <li><b>Últimos partidos:</b> ${u} <span class="note">(goles a favor-en contra)</span></li></ul>`;
 }
 
+// Distribución de puntos posible de un candidato: cada barra es la probabilidad de sacar esos puntos (colores de Mister).
+// La primera barra («no juega») es la probabilidad de no salir. Los mismos datos que el modelo (`ys`, `pj`).
+function curvaPuntos(c) {
+  if (!c.ys || !c.ys.length) return "";
+  const lo = Math.floor(Math.min(0, ...c.ys)), hi = Math.ceil(Math.max(...c.ys, 6));
+  const n = Math.max(1, Math.min(24, hi - lo + 1)), paso = (hi - lo + 1) / n;
+  const cubos = Array(n).fill(0), w = c.pj / c.ys.length;
+  c.ys.forEach(y => { cubos[Math.max(0, Math.min(n - 1, Math.floor((y - lo) / paso)))] += w; });
+  const pMax = Math.max(1 - c.pj, ...cubos, 0.01);
+  const W = 300, H = 64, bw = W / (n + 2);
+  const barra = (i, p, fill, et) => { const h = Math.max(p > 0 ? 1.5 : 0, p / pMax * (H - 4)); return `<rect x="${(i * bw + 1).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" style="fill:${fill}"><title>${et}: ${pc(p)}</title></rect>`; };
+  const barras = barra(0, 1 - c.pj, "var(--line)", "No juega") + cubos.map((p, i) => { const a = lo + i * paso; return barra(i + 2, p, colPts(a + paso / 2), `${nf1.format(a)} a ${nf1.format(a + paso)} pts`); }).join("");
+  const x0 = (2 + (0 - lo) / paso) * bw;
+  return `<div class="cdist"><div class="cdist-t">Reparto de sus puntos (sin capitanía)</div>
+    <svg viewBox="0 0 ${W} ${H + 14}" role="img" aria-label="Probabilidad de cada cantidad de puntos; no juega ${pc(1 - c.pj)}">${barras}
+      <line x1="${x0.toFixed(1)}" x2="${x0.toFixed(1)}" y1="0" y2="${H}" stroke="var(--mut)" stroke-dasharray="2 3" stroke-width="1"/>
+      <text x="${(bw / 2).toFixed(1)}" y="${H + 11}" text-anchor="middle" font-size="8" fill="var(--mut)">no juega</text>
+      <text x="${x0.toFixed(1)}" y="${H + 11}" text-anchor="middle" font-size="8" fill="var(--mut)">0</text>
+      <text x="${W - 2}" y="${H + 11}" text-anchor="end" font-size="8" fill="var(--mut)">${hi} pts</text></svg>
+    <p class="note" style="margin:2px 0 0">Altura = probabilidad. No juega: ${pc(1 - c.pj)} · más de ${CAP.UMBRAL_ALTO} pts: ${pc(c.pAlto)} · menos de 0: ${pc(c.pNeg)}.</p></div>`;
+}
+
 function clavesCandidato(c, r) {
   const inf = r.info(c.rival), ps = inf.pos[c.pos], pn = POSN[c.pos], nom = esc(c.rivalNombre || "el rival");
-  const cl = [];
+  const cl = [curvaPuntos(c)].filter(Boolean);
   // 1) Cómo puntúan los de su posición contra este rival
   {
     const ok = ps.n >= 3;
