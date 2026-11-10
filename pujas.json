@@ -1,7 +1,55 @@
 {
-"updatedAt": "2026-11-09T04:05:15Z",
+"updatedAt": "2026-11-10T04:03:46Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-10T04:03:46Z",
+"playerId": "70941",
+"name": "Bil Nsongo",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 9631000,
+"listado": 9470000,
+"precio": 9708000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-10T04:03:46Z",
+"playerId": "56628",
+"name": "Lucien Agoumé",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 10213000,
+"listado": 10171000,
+"precio": 10359000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-10T04:03:46Z",
+"playerId": "63868",
+"name": "Rodrigo Mendoza",
+"from": null,
+"to": "8663449",
+"tipo": "mercado",
+"valor": 208000,
+"listado": 184000,
+"precio": null,
+"clausulaMinima": true
+},
+{
+"ts": "2026-11-10T04:03:46Z",
+"playerId": "5340038",
+"name": "Aaron Mayol",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 1080000,
+"listado": 1085000,
+"precio": 1585000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-09T04:05:15Z",
 "playerId": "60858",
