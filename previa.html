@@ -7013,6 +7013,37 @@ async function esOnceGanador(d, pag, total) {
 }
 ES_SETS.cron.splice(5, 0, ["Once del ganador", esOnceGanador]);
 
+// Lámina extra de la crónica: la copa del ganador de la jornada dibujada con trazos propios (metal verde plateado), con su avatar, placa y puntos
+async function esTrofeo(d, pag, total) {
+  const g = d.gan; if (!g) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, cx = W / 2, im = await esImg(g.m.avatarUrl);
+  esFondo(x, col(g.i));
+  esCabecera(x, { titulo: "LA COPA", kicker: `Jornada ${d.n} · ${g.m.name}`, pag, total });
+  // rayos detrás de la copa
+  x.save(); x.translate(cx, 700); x.globalAlpha = 0.16;
+  for (let k = 0; k < 16; k++) { x.rotate(Math.PI / 8); const r = x.createLinearGradient(0, 0, 0, -560); r.addColorStop(0, ES.luz); r.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = r; x.beginPath(); x.moveTo(-22, 0); x.lineTo(22, 0); x.lineTo(70, -560); x.lineTo(-70, -560); x.closePath(); x.fill(); }
+  x.restore();
+  const metal = (y0, y1) => { const m = x.createLinearGradient(cx - 260, y0, cx + 260, y1); m.addColorStop(0, "#b8f5d2"); m.addColorStop(0.3, "#f2fff8"); m.addColorStop(0.55, "#6fcf9c"); m.addColorStop(1, "#1c6b44"); return m; };
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 50;
+  x.lineWidth = 26; x.strokeStyle = metal(480, 720); x.lineCap = "round";
+  [-1, 1].forEach(sg => { x.beginPath(); x.moveTo(cx + sg * 215, 520); x.bezierCurveTo(cx + sg * 345, 520, cx + sg * 345, 690, cx + sg * 150, 730); x.stroke(); });
+  x.fillStyle = metal(450, 900);
+  x.beginPath(); x.moveTo(cx - 230, 450); x.lineTo(cx + 230, 450); x.bezierCurveTo(cx + 230, 640, cx + 150, 760, cx + 38, 790); x.lineTo(cx + 38, 880); x.lineTo(cx - 38, 880); x.lineTo(cx - 38, 790); x.bezierCurveTo(cx - 150, 760, cx - 230, 640, cx - 230, 450); x.closePath(); x.fill();
+  esRect(x, cx - 150, 880, 300, 46, 14); x.fill();
+  esRect(x, cx - 210, 926, 420, 70, 18); x.fill();
+  x.restore();
+  esA(x, 0.45, () => { x.fillStyle = "#fff"; x.beginPath(); x.moveTo(cx - 190, 470); x.bezierCurveTo(cx - 190, 620, cx - 140, 720, cx - 90, 750); x.lineTo(cx - 120, 750); x.bezierCurveTo(cx - 175, 700, cx - 215, 610, cx - 215, 470); x.closePath(); x.fill(); });
+  x.fillStyle = "rgba(255,255,255,.7)"; esRect(x, cx - 240, 440, 480, 20, 10); x.fill();
+  esAvatar(x, g.m, g.i, im, cx, 590, 105, ES.luz);
+  esPanel(x, M, 1030, W - 2 * M, 150, ES.verde, 30);
+  x.textAlign = "center"; x.fillStyle = ES.txt; x.fillText(esAjusta(x, g.m.name, W - 2 * M - 80, 800, 64, 36), cx, 1100);
+  x.fillStyle = ES.mut; x.font = esF(600, 30); x.fillText(`${g.p} puntos${d.seg2 ? ` · +${g.p - d.seg2.p} sobre ${esCorta(x, d.seg2.m.name, 300)}` : ""}`, cx, 1152);
+  x.textAlign = "left";
+  esPie(x, `Ganador de la jornada ${d.n}`);
+  return c;
+}
+ES_SETS.cron.splice(1, 0, ["La copa", esTrofeo]);
+
 /* ---------- La galaxia de LaLiga: todos los jugadores como estrellas, valor frente a puntos por partido ---------- */
 // Cada estrella es un jugador: a la derecha, más caro; arriba, más puntos por partido; más grande, más puntos en total.
 // Color del manager que lo tiene (blanco si está libre o sin dueño). La línea es lo que suele rendir un jugador de cada
