@@ -464,6 +464,18 @@ code{color:var(--accFg)}
 .rv1{background:color-mix(in srgb,var(--pos) 45%,var(--panel2))}.rv2{background:color-mix(in srgb,var(--pos) 22%,var(--panel2))}
 .rv3{background:var(--panel2)}.rv4{background:color-mix(in srgb,var(--red) 22%,var(--panel2))}.rv5{background:color-mix(in srgb,var(--red) 45%,var(--panel2))}
 .rv0{color:var(--mut)}
+.vv{margin:-6px 0 14px;padding:6px 12px;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line)}
+.vv ol{list-style:none;margin:0;padding:0}
+.vv li{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 0}
+.vv li+li{border-top:1px solid var(--line)}
+.vv-p{width:16px;text-align:center;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.vv-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.vv-n b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vv-n small{font-size:11px;color:var(--mut)}
+.vv-b{display:block;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.vv-b i{display:block;height:100%;background:var(--c,var(--ac));transform-origin:left;transition:transform .6s}
+.vv-v{font-size:18px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.vv-b i{transition:none}}
 .av-j{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:10px 12px;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line)}
 .av-r{flex:none;min-width:74px;text-align:center;font-weight:800;font-size:14px;padding:8px 6px;border-radius:var(--r-m);background:var(--acc);color:var(--accTxt)}
 .av-j>span:last-child{display:flex;flex-direction:column;min-width:0}
@@ -1879,6 +1891,16 @@ function jornadaEnVivo() {
   const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
   return g ? g.gw : null;
 }
+// «Directo»: mientras se juega la jornada, tarjeta con los puntos de cada manager y quién va ganando (mismos puntos que la clasificación de la jornada)
+function htmlVivoLiga(gw) {
+  const j = "J" + gw, md = D && D.matchdays && D.matchdays[j];
+  if (!md) return "";
+  const v = proyeccionVivo(j) || {};
+  const L = D.managers.map((m, i) => ({ m, i, pts: (md[m.id] || {}).points || 0, n: (v[m.id] || {}).n || 0, esp: (v[m.id] || {}).esp || 0 })).sort((a, b) => b.pts - a.pts);
+  if (!L.length || !L.some(x => x.pts)) return "";
+  const mx = Math.max(1, L[0].pts);
+  return `<div class="vv" aria-label="Puntos de la jornada ${gw} en directo"><ol>${L.map((x, k) => `<li style="--c:${col(x.i)}"><span class="vv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="vv-n"><b>${esc(x.m.name)}</b><span class="vv-b"><i style="transform:scaleX(${(x.pts / mx).toFixed(3)})"></i></span><small>${x.n ? `${x.n} por jugar${iaOk && x.esp ? ` · ≈ ${Math.round(x.pts + x.esp)}` : ""}` : "ya ha jugado todo"}</small></span><b class="vv-v">${x.pts}</b></li>`).join("")}</ol></div>`;
+}
 function pintarAviso() {
   const cont = $("#aviso");
   if (!cont) return;
@@ -1893,7 +1915,7 @@ function pintarAviso() {
   const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
   cont.innerHTML = htmlNovedades() + (falta > 0
     ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span><button class="av-cal" data-ics="1" aria-label="Añadir el inicio de las próximas jornadas a mi calendario" title="Añadir a mi calendario"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg></button></div>`
-    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
+    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>${htmlVivoLiga(gw)}`);
 }
 
 // Calendario: un archivo .ics con el inicio de cada jornada que falta y un aviso 2 horas antes (para el capitán)
