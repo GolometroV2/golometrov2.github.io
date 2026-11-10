@@ -1340,15 +1340,34 @@ body.wr-abierto{overflow:hidden}
 @keyframes poCae{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:none}}
 @keyframes poLuz{from{opacity:0}to{opacity:1}}
 .po-ay{margin:6px 0 0;text-align:center;font-size:11px;color:#8fb3a0}
-.po-tl{display:flex;align-items:center;gap:10px;padding:4px 4px 8px}
-.po-play{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #2fd46e77;background:#2fd46e22;color:#eaf4ee;font-size:15px;cursor:pointer}
-.po-play:active{transform:scale(.92)}
-.po-tl input{flex:1;min-width:0;height:44px;margin:0;padding:0;background:none;-webkit-appearance:none;appearance:none;cursor:pointer}
-.po-tl input::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#2fd46e var(--p,100%),#ffffff2b var(--p,100%))}
-.po-tl input::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#2fd46e var(--p,100%),#ffffff2b var(--p,100%))}
-.po-tl input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;border:0;background:#fff;box-shadow:0 0 0 4px #2fd46e77,0 2px 8px #000a}
-.po-tl input::-moz-range-thumb{width:24px;height:24px;border-radius:50%;border:0;background:#fff;box-shadow:0 0 0 4px #2fd46e77,0 2px 8px #000a}
-.po-j{flex:none;min-width:38px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:19px;color:#6ff3a3;font-variant-numeric:tabular-nums}
+.po-tl{display:flex;align-items:center;gap:12px;padding:0 4px 6px}
+.po-play{position:relative;flex:none;display:grid;place-items:center;width:50px;height:50px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#03200e;
+  background:conic-gradient(#9dffc6 var(--p,0%),#ffffff1c 0);box-shadow:0 0 22px #2fd46e44;transition:transform .15s}
+.po-play::before{content:"";position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7dfab0,#2fd46e 55%,#178a47)}
+.po-play svg{position:relative;width:20px;height:20px;fill:currentColor}
+.po-play:active{transform:scale(.9)}
+.po-play:focus-visible,.po-rio:focus-visible{outline:2px solid #6ff3a3;outline-offset:3px}
+.po-rio{position:relative;flex:1;min-width:0;height:64px;container-type:inline-size;touch-action:pan-y;cursor:grab;border-radius:12px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.po-rio.arrastra{cursor:grabbing}
+.po-riel{position:absolute;left:14px;right:14px;top:41px;height:4px;border-radius:2px;background:#ffffff1a;overflow:hidden}
+.po-riel i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(var(--f,1));background:linear-gradient(90deg,#14532f,#2fd46e 70%,#b9ffd6);transition:transform .45s cubic-bezier(.3,1,.4,1)}
+.po-tk{position:absolute;top:43px;left:calc(14px + var(--i) * (100cqw - 28px));width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#071a10;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 40%,#0000);transition:background .3s,box-shadow .3s,transform .3s}
+.po-tk.ya{background:var(--c);box-shadow:0 0 0 2px #04100a,0 0 9px var(--c)}
+.po-tk.cambio{width:12px;height:12px;margin:-6px 0 0 -6px}
+.po-tk.cambio.ya{box-shadow:0 0 0 2px #04100a,0 0 0 3.5px #ffffffcc,0 0 12px var(--c)}
+.po-ext{position:absolute;left:0;right:0;top:60px;display:flex;justify-content:space-between;padding:0 4px;font-size:10px;font-weight:700;color:#7fa892;pointer-events:none}
+.po-cab{position:absolute;left:0;top:0;width:28px;height:100%;pointer-events:none;transform:translateX(calc(var(--f,1) * (100cqw - 28px)));transition:transform .45s cubic-bezier(.3,1.25,.4,1)}
+.po-rio.arrastra .po-cab,.po-rio.arrastra .po-riel i{transition-duration:.12s}
+.po-cab b{position:absolute;left:50%;top:0;padding:2px 8px;border-radius:999px;transform:translateX(-50%);white-space:nowrap;background:#2fd46e;color:#03200e;
+  font-family:var(--f-disp);font-weight:900;font-size:12px;line-height:16px;box-shadow:0 4px 14px #0008}
+.po-cab b::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;margin-left:-4px;background:inherit;transform:rotate(45deg);border-radius:1px;z-index:-1}
+.po-cab-av{position:absolute;left:-3px;top:27px;transition:transform .2s}
+.po-cab-av .av{width:34px;height:34px;font-size:12px;box-shadow:0 0 0 2px #04100a,0 0 0 4px var(--c),0 0 18px var(--c),0 6px 14px #000a}
+.po-rio.arrastra .po-cab-av{transform:scale(1.15)}
+.po-cab-av.nuevo{animation:poNuevo .5s cubic-bezier(.3,1.6,.4,1)}
+@keyframes poNuevo{from{transform:scale(.4) rotate(-20deg)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.po-cab,.po-riel i,.po-tk,.po-cab-av{transition:none}.po-cab-av.nuevo{animation:none}}
 .po-info{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
 .po-info.ab{grid-template-rows:1fr}
 .po-info>div{min-height:0;overflow:hidden}
@@ -7079,11 +7098,10 @@ function htmlPodio(rank, valor, unidad, titulo, tiempo) {
     <p class="po-t" id="poT" aria-live="polite">${esc(podioTitulo(k))}</p>
     <div class="po-esc"><div class="po-3d"><span class="po-haz" style="--hx:${PODIO_X[selL || 1]}"></span>
       ${[2, 1, 3].map(p => `<div class="po-ped po-p${p}" style="--d:${[0, 0.35, 0.15, 0.5][p]}s" aria-hidden="true"><span class="po-tapa"></span><span class="po-num">${p}</span></div>`).join("")}${fichas}</div></div>
-    ${hayT ? `<div class="po-tl"><button class="po-play" data-po-play aria-label="Reproducir la temporada">${PODIO.tm ? "⏸" : "▶"}</button>
-      <input type="range" id="poR" min="0" max="${n - 1}" step="1" value="${k}" style="--p:${(k / (n - 1) * 100).toFixed(1)}%" aria-label="Viajar a otra jornada" aria-valuetext="Jornada ${esc(S.js[k].slice(1))}">
-      <output class="po-j" id="poJ" for="poR">${esc(S.js[k])}</output></div>` : ""}
+    ${hayT ? podioTlHTML(k) : ""}
+
     <div class="po-info${PODIO.sel ? " ab" : ""}" id="poInfo"><div>${PODIO.sel ? podioInfoHTML(PODIO.sel, k) : ""}</div></div>
-    ${PODIO.sel ? "" : `<p class="po-ay" id="poAy">Toca a un manager${hayT ? " · mueve la barra para viajar por la temporada" : ""}</p><div style="height:10px"></div>`}</div>`;
+    ${PODIO.sel ? "" : `<p class="po-ay" id="poAy">Toca a un manager${hayT ? " · arrastra la línea: cada punto es una jornada, del color de quien iba líder" : ""}</p><div style="height:10px"></div>`}</div>`;
 }
 // ficha del manager tocado: sus puntos jornada a jornada y su historia en la general (todo ya ocurrido)
 function podioInfoHTML(id, k) {
@@ -7112,7 +7130,7 @@ function podioColoca() {
   const lider = p.querySelector('.po-f[data-l="1"]');
   if (lider && antes && lider !== antes) { podioSalta(lider); if (navigator.vibrate) navigator.vibrate(12); }
   $("#poT").textContent = podioTitulo(k);
-  const r = $("#poR"); if (r) { r.value = k; r.style.setProperty("--p", (k / (d.n - 1) * 100).toFixed(1) + "%"); r.setAttribute("aria-valuetext", "Jornada " + d.S.js[k].slice(1)); $("#poJ").textContent = d.S.js[k]; }
+  podioRio(k);
   const selL = PODIO.sel ? est.findIndex(e => e.id === PODIO.sel) + 1 : 1;
   p.querySelector(".po-haz").style.setProperty("--hx", PODIO_X[selL || 1]);
   p.querySelectorAll(".po-f").forEach(f => { const s = f.dataset.poM === PODIO.sel; f.classList.toggle("sel", s); f.setAttribute("aria-pressed", s); });
@@ -7120,7 +7138,43 @@ function podioColoca() {
   inf.classList.toggle("ab", !!PODIO.sel);
   const ay = $("#poAy"); if (ay) ay.hidden = !!PODIO.sel;
 }
-function podioSalta(f) { f.classList.remove("salta"); void f.offsetWidth; f.classList.add("salta"); setTimeout(() => f.classList.remove("salta"), 700); }
+// la línea de la temporada: un punto por jornada del color de quien iba líder (los grandes, cambios de líder) y el líder viajando encima
+const PO_ICO = { play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.2v13.6L19 12z"/></svg>`, pausa: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>` };
+const podioLider = k => { const id = podioEstado(k)[0].id; return PODIO.d.ms.find(m => String(m.id) === id); };
+function podioTlHTML(k) {
+  const d = PODIO.d, n = d.n, L = d.S.js.map((_, i) => podioLider(i)), m = L[k];
+  const tk = L.map((l, i) => `<i class="po-tk${i <= k ? " ya" : ""}${i && l !== L[i - 1] ? " cambio" : ""}" style="--i:${(i / (n - 1)).toFixed(4)};--c:${col(l.idx)}"></i>`).join("");
+  return `<div class="po-tl"><button class="po-play" data-po-play style="--p:${(k / (n - 1) * 100).toFixed(1)}%" aria-label="${PODIO.tm ? "Pausar" : "Reproducir la temporada"}">${PODIO.tm ? PO_ICO.pausa : PO_ICO.play}</button>
+    <div class="po-rio" id="poRio" role="slider" tabindex="0" aria-label="Viajar por la temporada" aria-valuemin="0" aria-valuemax="${n - 1}" aria-valuenow="${k}" aria-valuetext="${esc(d.S.js[k])}, líder ${esc(m.name)}" style="--f:${(k / (n - 1)).toFixed(4)}">
+      <span class="po-riel"><i></i></span>${tk}
+      <span class="po-cab"><b id="poJ">${esc(d.S.js[k])}</b><span class="po-cab-av" id="poCabAv" data-id="${esc(m.id)}" style="--c:${col(m.idx)}">${avatar(m, m.idx)}</span></span></div></div>`;
+}
+function podioRio(k) {
+  const r = $("#poRio"), d = PODIO.d; if (!r) return;
+  const f = (k / (d.n - 1)).toFixed(4), m = podioLider(k), av = $("#poCabAv");
+  r.style.setProperty("--f", f); r.setAttribute("aria-valuenow", k); r.setAttribute("aria-valuetext", `${d.S.js[k]}, líder ${m.name}`);
+  r.querySelectorAll(".po-tk").forEach((e, i) => e.classList.toggle("ya", i <= k));
+  $("#poJ").textContent = d.S.js[k];
+  const pl = $(".po-play"); if (pl) pl.style.setProperty("--p", (f * 100).toFixed(1) + "%");
+  if (av.dataset.id !== String(m.id)) { av.dataset.id = m.id; av.style.setProperty("--c", col(m.idx)); av.innerHTML = avatar(m, m.idx); av.classList.remove("nuevo"); void av.offsetWidth; av.classList.add("nuevo"); }
+}
+// arrastrar por la línea (dedo o ratón) y flechas del teclado
+let PO_ARR = null;
+function podioDesdeX(r, x) { const b = r.getBoundingClientRect(), f = Math.max(0, Math.min(1, (x - b.left - 14) / (b.width - 28))); return Math.round(f * (PODIO.d.n - 1)); }
+function podioK() { return PODIO.k == null ? PODIO.d.n - 1 : PODIO.k; }
+document.addEventListener("pointerdown", e => {
+  const r = e.target.closest && e.target.closest("#poRio"); if (!r || !PODIO.d || !PODIO.d.S) return;
+  PO_ARR = r; r.classList.add("arrastra"); try { r.setPointerCapture(e.pointerId); } catch (_) {}
+  podioPara(); const k = podioDesdeX(r, e.clientX); if (k !== podioK()) podioIr(k);
+});
+document.addEventListener("pointermove", e => { if (!PO_ARR || !PO_ARR.isConnected) return; const k = podioDesdeX(PO_ARR, e.clientX); if (k !== podioK()) podioIr(k); }, { passive: true });
+["pointerup", "pointercancel"].forEach(ev => document.addEventListener(ev, () => { if (PO_ARR) { PO_ARR.classList.remove("arrastra"); PO_ARR = null; } }));
+document.addEventListener("keydown", e => {
+  if (!e.target.id || e.target.id !== "poRio" || !PODIO.d) return;
+  const k = podioK(), n = PODIO.d.n, nk = { ArrowLeft: k - 1, ArrowDown: k - 1, ArrowRight: k + 1, ArrowUp: k + 1, Home: 0, End: n - 1 }[e.key];
+  if (nk == null) return; e.preventDefault(); podioPara(); podioIr(nk);
+});
+function podioSalta(f) { const p = f.closest(".pdx"); if (p) p.classList.remove("entra"); f.classList.remove("salta"); void f.offsetWidth; f.classList.add("salta"); setTimeout(() => f.classList.remove("salta"), 700); }
 function podioConfeti(f, color) {
   const cv = $(".po-conf"); if (!cv || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const R = cv.getBoundingClientRect(), r = f.querySelector(".av").getBoundingClientRect(), W = cv.width = R.width, H = cv.height = R.height, x = cv.getContext("2d"), t0 = performance.now();
@@ -7133,13 +7187,13 @@ function podioConfeti(f, color) {
     requestAnimationFrame(paso); };
   requestAnimationFrame(paso);
 }
-function podioPara() { clearInterval(PODIO.tm); PODIO.tm = 0; const b = $(".po-play"); if (b) { b.textContent = "▶"; b.setAttribute("aria-label", "Reproducir la temporada"); } }
-function podioIr(k) { const d = PODIO.d; if (!d || !d.S) return; k = Math.max(0, Math.min(d.n - 1, k)); PODIO.k = k >= d.n - 1 ? null : k; podioColoca(); }
+function podioPara() { clearInterval(PODIO.tm); PODIO.tm = 0; const b = $(".po-play"); if (b) { b.innerHTML = PO_ICO.play; b.setAttribute("aria-label", "Reproducir la temporada"); } }
+function podioIr(k) { const d = PODIO.d; if (!d || !d.S) return; const p = $(".pdx.entra"); if (p) p.classList.remove("entra"); k = Math.max(0, Math.min(d.n - 1, k)); PODIO.k = k >= d.n - 1 ? null : k; podioColoca(); }
 function podioPlay() {
   const d = PODIO.d; if (!d || !d.S) return;
   if (PODIO.tm) { podioPara(); return; }
   let k = PODIO.k == null ? 0 : PODIO.k + 1; podioIr(k);
-  const b = $(".po-play"); if (b) { b.textContent = "⏸"; b.setAttribute("aria-label", "Pausar"); }
+  const b = $(".po-play"); if (b) { b.innerHTML = PO_ICO.pausa; b.setAttribute("aria-label", "Pausar"); }
   PODIO.tm = setInterval(() => { if (!$(".pdx") || !PODIO.d || !PODIO.d.S || k >= PODIO.d.n - 1) { podioPara(); return; } podioIr(++k); if (k >= PODIO.d.n - 1) podioPara(); }, 850);
 }
 document.addEventListener("click", e => {
@@ -7154,7 +7208,6 @@ document.addEventListener("click", e => {
   else if ((b = q("[data-po-wr]"))) abrirWrapped(Number(b.dataset.poWr));
   else if ((b = q("[data-po-pt]"))) { const [a, c, j] = b.dataset.poPt.split("|"); ptAbrir(a, c, j); }
 });
-document.addEventListener("input", e => { if (e.target.id === "poR") { podioPara(); podioIr(Number(e.target.value)); } });
 // el podio se inclina y el foco sigue al dedo o al ratón; al soltar vuelve suave a su sitio
 document.addEventListener("pointermove", e => {
   const p = e.target.closest && e.target.closest(".pdx"); if (!p || e.target.closest(".po-tl,.po-info") || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -7187,7 +7240,7 @@ function cuentaPuntosFilas() {
   requestAnimationFrame(paso);
 }
 function cuentaPodio() {
-  const p = $(".pdx.entra"); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const p = $(".pdx.entra"); if (p) setTimeout(() => p.classList.remove("entra"), 2000); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   p.querySelectorAll("[data-po]").forEach((el, k) => {
     const fin = Number(el.dataset.po); if (!isFinite(fin) || fin <= 0) return;
     const t0 = performance.now() + 450 + k * 120, dur = 900;
