@@ -1388,6 +1388,7 @@ body.wr-abierto{overflow:hidden}
 .ms-l small.up{color:var(--pos)}.ms-l small.dn{color:var(--red)}
 .ms-ring{position:absolute;right:6px;top:6px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--acc) var(--p),var(--line) 0);font-size:10px;font-weight:900}
 .ms-ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--panel2)}.ms-ring span{position:relative}
+.ms-own{position:absolute;right:6px;top:6px}.ms-own .av{width:28px;height:28px;font-size:10px;box-shadow:0 0 0 2px var(--panel2)}
 .ms-chk{display:block;width:100%;margin-top:4px;padding:5px 0;border-radius:8px;background:var(--panel);font-style:normal;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:var(--mut)}
 .ms-l.on .ms-chk{background:var(--acc);color:var(--accTxt)}
 @media (prefers-reduced-motion:reduce){.ms-ji,.ms-l,.ms-bar i{transition:none}.ms-hud.barre::after{animation:none}}
@@ -5735,7 +5736,7 @@ function planCalc(r, P, m) {
    probabilidad de ganarla). Aquí se eligen a mano ventas y pujas y se ve al momento cómo quedan la caja, el dinero esperado y el
    once; «Plan óptimo» busca la combinación que más vale: dinero esperado + (puntos del once × lo que tú digas que vale un punto),
    sin gastar más de lo que hay en caja aunque se ganen todas las pujas. */
-const MESA = { v: new Set(), c: new Set(), lam: 2, d: null };
+const MESA = { v: new Set(), c: new Set(), k: new Set(), lam: 2, d: null, kc: null, claus: [] };
 const MESA_LAM = [[0, "Solo dinero"], [1e5, "1 punto = 100 k"], [2.5e5, "1 punto = 250 k"], [5e5, "1 punto = 500 k"], [2e6, "Sobre todo puntos"]];
 // puntos esperados del mejor once posible con una lista de { pos, esp } (sin el extra del capitán)
 function mesaOnce(L) {
@@ -5752,33 +5753,49 @@ function mesaDatos(r) {
     const Vh = y ? y.Vh : x.V >= 1e6 ? planProyectar(x.V, g, d.h) : x.V, puja = y ? y.puja : x.puja, pw = y ? y.pw : x.pl && capNum(x.pl.p) ? x.pl.p : 0.5, esp = x.espProx || 0;
     return { id: String(x.j.id), j: x.j, pos: x.pos, V: x.V, Vh, puja, pw, esp, ev: pw * (Vh - puja), dp: mesaOnce(mios.concat([{ pos: x.pos, esp }])) - base };
   }).sort((a, b) => (b.ev + 2.5e5 * b.dp * b.pw) - (a.ev + 2.5e5 * a.dp * a.pw)).slice(0, 12);
-  return { m: d.m, mios, libres, saldo: d.saldo, h: d.h, gw: d.P.despues.gw, base };
+  // clausulazos posibles hoy: jugadores de rivales (no recién fichados) que entrarían en tu once, con lo que te suman y lo que le quitan al suyo
+  if (MESA.kc !== PLANC.k) {
+    const ahora = Date.now() / 1000, claus = [];
+    (E.managers || []).forEach((o, oi) => { if (o.id === d.m.id) return;
+      let cs = []; try { cs = recomendarCapitanes({ cal: CAL, D, E, managerId: o.id, gw: d.P.despues.gw }).candidatos || []; } catch (e) {}
+      const su = cs.map(c => ({ id: String(c.p.id), pos: c.p.pos, esp: c.score > -Infinity && c.esp > 0 ? c.esp : 0 })), sb = mesaOnce(su);
+      o.players.forEach(p => { const cl = Number(p.clause) || 0, adq = capTsMadrid(p.acquired); if (!(cl > 0) || (adq && adq + PLAN.PROTEGIDO_DIAS * 86400 > ahora)) return;
+        const e = su.find(x => x.id === String(p.id)), esp = e ? e.esp : 0, dp = mesaOnce(mios.concat([{ pos: p.pos, esp }])) - base; if (dp < 0.3) return;
+        const V = Number(p.value) || 0, Vh = V >= 1e6 ? planProyectar(V, planG(p), d.h) : V;
+        claus.push({ id: String(p.id), p, o, oi, pos: p.pos, esp, cl, V, Vh, dp, quita: sb - mesaOnce(su.filter(x => x.id !== String(p.id))) }); }); });
+    MESA.claus = claus.sort((a, b) => (b.dp + b.quita) / b.cl - (a.dp + a.quita) / a.cl).slice(0, 12); MESA.kc = PLANC.k;
+  }
+  return { m: d.m, mios, libres, claus: MESA.claus, saldo: d.saldo, h: d.h, gw: d.P.despues.gw, base };
 }
-function mesaCalc(M, v, c, lam) {
-  const ven = M.mios.filter(x => v.has(x.id)), com = M.libres.filter(y => c.has(y.id)), quedan = M.mios.filter(x => !v.has(x.id));
-  const cobro = ven.reduce((t, x) => t + x.V, 0), gasto = com.reduce((t, y) => t + y.puja, 0);
-  const dinero = ven.reduce((t, x) => t - x.d, 0) + com.reduce((t, y) => t + y.ev, 0);
-  const pts = mesaOnce(quedan.concat(com)), ptsE = mesaOnce(quedan.concat(com.map(y => ({ pos: y.pos, esp: y.esp * y.pw }))));
+function mesaCalc(M, v, c, lam, k = MESA.k) {
+  const ven = M.mios.filter(x => v.has(x.id)), com = M.libres.filter(y => c.has(y.id)), cla = M.claus.filter(z => k.has(z.id)), quedan = M.mios.filter(x => !v.has(x.id));
+  const cobro = ven.reduce((t, x) => t + x.V, 0), gasto = com.reduce((t, y) => t + y.puja, 0) + cla.reduce((t, z) => t + z.cl, 0);
+  const dinero = ven.reduce((t, x) => t - x.d, 0) + com.reduce((t, y) => t + y.ev, 0) + cla.reduce((t, z) => t + z.Vh - z.cl, 0);
+  const pts = mesaOnce(quedan.concat(com, cla)), ptsE = mesaOnce(quedan.concat(com.map(y => ({ pos: y.pos, esp: y.esp * y.pw })), cla));
   const caja = M.saldo != null ? M.saldo * 1e6 + cobro - gasto : null;
-  return { ven, com, cobro, gasto, dinero, pts, dPts: pts - M.base, caja, U: dinero + lam * (ptsE - M.base), ok: caja == null ? com.length <= PLAN.MAX_COMPRAS : caja >= 0 };
+  return { ven, com, cla, cobro, gasto, dinero, pts, dPts: pts - M.base, caja, U: dinero + lam * (ptsE - M.base), ok: caja == null ? com.length + cla.length <= PLAN.MAX_COMPRAS : caja >= 0 };
 }
 // búsqueda: desde no hacer nada, se aplica cada vez el cambio (una venta, una puja o una venta + una puja) que más mejora el resultado
 function mesaOptimo(M, lam) {
-  let v = new Set(), c = new Set(), mejor = mesaCalc(M, v, c, lam);
+  let v = new Set(), c = new Set(), k = new Set(), mejor = mesaCalc(M, v, c, lam, k);
   const alt = (s, id) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; };
   for (let it = 0; it < 40; it++) {
     let paso = null;
-    const prueba = (v2, c2) => { const r = mesaCalc(M, v2, c2, lam); if (r.ok && r.U > mejor.U + 5e4 && (!paso || r.U > paso.r.U)) paso = { v: v2, c: c2, r }; };
-    M.mios.forEach(x => prueba(alt(v, x.id), c)); M.libres.forEach(y => prueba(v, alt(c, y.id)));
-    M.mios.forEach(x => M.libres.forEach(y => prueba(alt(v, x.id), alt(c, y.id))));
+    const prueba = (v2, c2, k2) => { const r = mesaCalc(M, v2, c2, lam, k2); if (r.ok && r.U > mejor.U + 5e4 && (!paso || r.U > paso.r.U)) paso = { v: v2, c: c2, k: k2, r }; };
+    M.mios.forEach(x => prueba(alt(v, x.id), c, k)); M.libres.forEach(y => prueba(v, alt(c, y.id), k)); M.claus.forEach(z => prueba(v, c, alt(k, z.id)));
+    M.mios.forEach(x => { M.libres.forEach(y => prueba(alt(v, x.id), alt(c, y.id), k)); M.claus.forEach(z => prueba(alt(v, x.id), c, alt(k, z.id))); });
     if (!paso) break;
-    v = paso.v; c = paso.c; mejor = paso.r;
+    v = paso.v; c = paso.c; k = paso.k; mejor = paso.r;
   }
-  return { v, c };
+  return { v, c, k };
 }
 function bloqueMesa(r) {
   const M = MESA.d = mesaDatos(r); if (!M) return "";
-  MESA.v = new Set([...MESA.v].filter(id => M.mios.some(x => x.id === id))); MESA.c = new Set([...MESA.c].filter(id => M.libres.some(y => y.id === id)));
+  MESA.v = new Set([...MESA.v].filter(id => M.mios.some(x => x.id === id))); MESA.c = new Set([...MESA.c].filter(id => M.libres.some(y => y.id === id))); MESA.k = new Set([...MESA.k].filter(id => M.claus.some(z => z.id === id)));
+  const clausulas = M.claus.map(z => `<button class="ms-l${MESA.k.has(z.id) ? " on" : ""}" data-mesa-k="${esc(z.id)}" aria-pressed="${MESA.k.has(z.id)}" aria-label="Clausular a ${esc(z.p.name)}, de ${esc(z.o.name)}">
+      <span class="ms-own" title="De ${esc(z.o.name)}">${avatar(z.o, z.oi)}</span>${cara(z.p.id, z.p.name, z.p.teamId, 46)}
+      <b>${esc(z.p.short || z.p.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${z.pos.toLowerCase()})">${z.pos}</span>cláusula <b>${merEur(z.cl)}</b></small>
+      <small class="up">+${nf1.format(z.dp)} pts en tu once</small><small>${z.quita > 0.05 ? `−${nf1.format(z.quita)} pts a su dueño` : "no era titular suyo"}</small><i class="ms-chk">CLAUSULAR</i></button>`).join("");
   const chips = M.mios.slice().sort((a, b) => a.d - b.d).map(x => `<button class="ms-j${MESA.v.has(x.id) ? " v" : ""}" data-mesa-v="${esc(x.id)}" aria-pressed="${MESA.v.has(x.id)}" aria-label="Vender a ${esc(x.p.name)}">
       <span class="ms-ji"><span class="ms-f">${x.en2 ? `<i class="ms-xi">XI</i>` : ""}${cara(x.p.id, x.p.name, x.p.teamId, 40)}<b>${esc(x.p.short || apellido(x.p.name))}</b><small class="${!x.prev || Math.abs(x.d) < 5000 ? "flat" : x.d > 0 ? "up" : "dn"}">${!x.prev ? "sin previsión" : Math.abs(x.d) < 5000 ? "= igual" : (x.d > 0 ? "▲ " : "▼ ") + merEur(Math.abs(x.d))}</small></span>
       <span class="ms-b"><b>VENDIDO</b><span>+${merEur(x.V)}</span><small>${x.d < -5000 ? `evitas bajar ${merEur(-x.d)}` : x.d > 5000 ? `renuncias a ${merEur(x.d)}` : "a tu caja"}${x.en2 ? " · era titular" : ""}</small></span></span></button>`).join("");
@@ -5795,13 +5812,14 @@ function bloqueMesa(r) {
         <div><small>Dinero que esperas ganar</small><b id="msDin"></b><em>frente a no hacer nada</em></div>
         <div><small>Tu once en la J${M.gw}</small><b id="msPts"></b><em id="msDp"></em></div></div>
       <div class="ms-bar" aria-hidden="true"><i class="g" id="msBg"></i><i class="q" id="msBq"></i><i class="f" id="msBf"></i></div>
-      <div class="ms-ley"><span><i style="background:#ffffffd9"></i>Pujas <b id="msLg"></b></span><span><i style="background:#2fd46e"></i>Te queda <b id="msLq"></b></span><span>Cobras por ventas <b id="msLc"></b></span></div>
+      <div class="ms-ley"><span><i style="background:#ffffffd9"></i>Pujas y cláusulas <b id="msLg"></b></span><span><i style="background:#2fd46e"></i>Te queda <b id="msLq"></b></span><span>Cobras por ventas <b id="msLc"></b></span></div>
       <p class="ms-res" id="msRes" aria-live="polite"></p></div>
     <div class="ms-acc"><button class="ms-opt" data-mesa="opt">⚡ Plan óptimo</button><button data-mesa="limpia">Limpiar</button><button data-mesa="copia">📋 Copiar</button></div>
     <label class="ms-lam"><span>Dinero</span><input type="range" min="0" max="${MESA_LAM.length - 1}" step="1" value="${MESA.lam}" data-mesa-lam aria-label="Qué pesa más en el plan óptimo: el dinero o los puntos"><span>Puntos</span><b id="msLam">${MESA_LAM[MESA.lam][1]}</b></label>
     <div class="ms-tira" aria-hidden="true"><span>Caja <b id="msTc"></b></span><span>Dinero <b id="msTd"></b></span><span>Once <b id="msTp"></b></span></div>
     <h3 class="sec">Tu plantilla · toca para vender</h3><div class="ms-g">${chips}</div>
     <h3 class="sec">Libres de hoy · toca para pujar</h3>${cartas ? `<div class="ms-ls">${cartas}</div>` : `<p class="note">Hoy no hay libres con puja calculada.</p>`}
+    ${clausulas ? `<h3 class="sec">Clausulazos · toca para clausular</h3><p class="note" style="margin:0 0 6px">Jugadores de tus rivales que hoy se pueden clausular y entrarían en tu once: lo que te suman y lo que le quitan al suyo en la J${M.gw}. Pagas la cláusula entera, que es más de lo que valen.</p><div class="ms-ls">${clausulas}</div>` : ""}
     <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></section>`;
 }
 function mesaNum(el, v, fmt) {
@@ -5815,7 +5833,8 @@ function mesaTexto(M, R) {
   const ls = [`Plan del Golómetro para ${M.m.name} (hasta la J${M.gw})`];
   if (R.ven.length) ls.push("VENDER: " + R.ven.map(x => `${x.p.name} (${merEur(x.V)})`).join(", "));
   if (R.com.length) ls.push("PUJAR: " + R.com.map(y => `${y.j.name} ${merEur(y.puja)} (${Math.round(y.pw * 100)} % de ganarla)`).join(", "));
-  if (!R.ven.length && !R.com.length) ls.push("No hacer nada.");
+  if (R.cla.length) ls.push("CLAUSULAR: " + R.cla.map(z => `${z.p.name} a ${z.o.name} (${merEur(z.cl)})`).join(", "));
+  if (!R.ven.length && !R.com.length && !R.cla.length) ls.push("No hacer nada.");
   ls.push(`Dinero esperado: ${merEurS(R.dinero)} · once J${M.gw}: ${nf1.format(R.pts)} pts${R.caja != null ? ` · caja si gano todas: ${merEur(Math.abs(R.caja))}${R.caja < 0 ? " EN NEGATIVO" : ""}` : ""}`);
   return ls.join("\n");
 }
@@ -5831,11 +5850,12 @@ function mesaPinta(barre) {
   const T = Math.max(1, (M.saldo != null ? M.saldo * 1e6 : R.gasto) + R.cobro), w = v => Math.max(0, Math.min(100, v / T * 100)).toFixed(1) + "%", mal = R.caja != null && R.caja < 0;
   $("#msBg").style.setProperty("--w", mal ? "0%" : w(R.gasto)); $("#msBq").style.setProperty("--w", mal || R.caja == null ? "0%" : w(R.caja)); $("#msBf").style.setProperty("--w", mal ? "100%" : "0%");
   $("#msLg").textContent = merEur(R.gasto); $("#msLq").textContent = R.caja == null ? "–" : eur(R.caja); $("#msLc").textContent = merEur(R.cobro);
-  const nv = R.ven.length, nc = R.com.length;
-  $("#msRes").innerHTML = !nv && !nc ? "Toca jugadores para vender o pujar, o pulsa <b>Plan óptimo</b>."
-    : `${nv ? `Vendes ${nv === 1 ? esc(R.ven[0].p.short || R.ven[0].p.name) : nv + " jugadores"} y cobras <b>${merEur(R.cobro)}</b>. ` : ""}${nc ? `Pujas por ${nc === 1 ? esc(R.com[0].j.name) : nc + " libres"} (hasta <b>${merEur(R.gasto)}</b>). ` : ""}${mal ? `<b class="dn">No te llega: te faltarían ${merEur(-R.caja)} si ganas todas.</b>` : `${R.dinero >= -5000 ? `Esperas ganar <b>${merEurS(Math.max(0, R.dinero))}</b>` : `Te cuesta <b class="dn">${merEur(-R.dinero)}</b> de media`}${Math.abs(R.dPts) >= 0.05 ? ` y tu once ${R.dPts > 0 ? "sube" : "baja"} <b${R.dPts < 0 ? ` class="dn"` : ""}>${nf1.format(Math.abs(R.dPts))} pts</b>` : ""}.`}`;
+  const nv = R.ven.length, nc = R.com.length, nk = R.cla.length, quita = R.cla.reduce((t, z) => t + z.quita, 0);
+  $("#msRes").innerHTML = !nv && !nc && !nk ? "Toca jugadores para vender, pujar o clausular, o pulsa <b>Plan óptimo</b>."
+    : `${nk ? `Clausulas a ${nk === 1 ? esc(R.cla[0].p.short || R.cla[0].p.name) : nk + " jugadores"} por <b>${merEur(R.cla.reduce((t, z) => t + z.cl, 0))}</b>${quita > 0.05 ? ` y le quitas ${nf1.format(quita)} pts a ${nk === 1 ? esc(R.cla[0].o.name) : "sus dueños"}` : ""}. ` : ""}${nv ? `Vendes ${nv === 1 ? esc(R.ven[0].p.short || R.ven[0].p.name) : nv + " jugadores"} y cobras <b>${merEur(R.cobro)}</b>. ` : ""}${nc ? `Pujas por ${nc === 1 ? esc(R.com[0].j.name) : nc + " libres"} (hasta <b>${merEur(R.gasto)}</b>). ` : ""}${mal ? `<b class="dn">No te llega: te faltarían ${merEur(-R.caja)} si ganas todas.</b>` : `${R.dinero >= -5000 ? `Esperas ganar <b>${merEurS(Math.max(0, R.dinero))}</b>` : nk && !nc ? `Pagas <b class="dn">${merEur(-R.dinero)}</b> más de lo que ${nk === 1 ? "vale" : "valen"}` : `Te cuesta <b class="dn">${merEur(-R.dinero)}</b> de media`}${Math.abs(R.dPts) >= 0.05 ? ` y tu once ${R.dPts > 0 ? "sube" : "baja"} <b${R.dPts < 0 ? ` class="dn"` : ""}>${nf1.format(Math.abs(R.dPts))} pts</b>` : ""}.`}`;
   document.querySelectorAll("#mesa [data-mesa-v]").forEach(b => { const on = MESA.v.has(b.dataset.mesaV); b.classList.toggle("v", on); b.setAttribute("aria-pressed", on); });
   document.querySelectorAll("#mesa [data-mesa-c]").forEach(b => { const on = MESA.c.has(b.dataset.mesaC); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "PUJA PUESTA ✓" : "PUJAR"; });
+  document.querySelectorAll("#mesa [data-mesa-k]").forEach(b => { const on = MESA.k.has(b.dataset.mesaK); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "CLAUSULADO ✓" : "CLAUSULAR"; });
   if (barre) { hud.classList.remove("barre"); void hud.offsetWidth; hud.classList.add("barre"); }
 }
 document.addEventListener("click", e => {
@@ -5844,9 +5864,10 @@ document.addEventListener("click", e => {
   let b;
   if ((b = e.target.closest("[data-mesa-v]"))) { alt(MESA.v, b.dataset.mesaV); mesaPinta(false); }
   else if ((b = e.target.closest("[data-mesa-c]"))) { alt(MESA.c, b.dataset.mesaC); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa-k]"))) { alt(MESA.k, b.dataset.mesaK); mesaPinta(false); }
   else if ((b = e.target.closest("[data-mesa]"))) { const q = b.dataset.mesa;
-    if (q === "opt") { const o = mesaOptimo(MESA.d, MESA_LAM[MESA.lam][0]); MESA.v = o.v; MESA.c = o.c; mesaPinta(true); if (navigator.vibrate) navigator.vibrate(12); }
-    else if (q === "limpia") { MESA.v = new Set(); MESA.c = new Set(); mesaPinta(false); }
+    if (q === "opt") { const o = mesaOptimo(MESA.d, MESA_LAM[MESA.lam][0]); MESA.v = o.v; MESA.c = o.c; MESA.k = o.k; mesaPinta(true); if (navigator.vibrate) navigator.vibrate(12); }
+    else if (q === "limpia") { MESA.v = new Set(); MESA.c = new Set(); MESA.k = new Set(); mesaPinta(false); }
     else if (q === "copia") { const t = mesaTexto(MESA.d, mesaCalc(MESA.d, MESA.v, MESA.c, MESA_LAM[MESA.lam][0])), ok = () => { b.textContent = "Copiado ✓"; setTimeout(() => { if (b.isConnected) b.textContent = "📋 Copiar"; }, 1600); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, () => {}); } }
 });
