@@ -181,6 +181,9 @@ ul{list-style:none;margin:0;padding:0}
 .cp .cph{display:flex;align-items:center;gap:10px}
 .porque{font-size:12px;color:var(--accFg);margin-top:3px}
 .alerta{margin:8px 0 0;background:var(--redBg);color:var(--red);border-radius:var(--r-s);padding:5px 10px;font-size:12.5px;font-weight:600}
+.cv-l{stroke-dasharray:1;stroke-dashoffset:0;animation:cvDib .9s ease-out both}@keyframes cvDib{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.cv-l{animation:none}}
+.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
 .cdist{padding:8px 2px 2px}.cdist-t{font-size:12px;font-weight:600;margin-bottom:4px}.cdist svg{width:100%;height:auto;display:block}
 .claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .clave,.rv{background:var(--panel2);border-radius:var(--r-m);overflow:hidden}
@@ -6259,6 +6262,29 @@ function curvaPuntos(c) {
     <p class="note" style="margin:2px 0 0">Altura = probabilidad. No juega: ${pc(1 - c.pj)} · más de ${CAP.UMBRAL_ALTO} pts: ${pc(c.pAlto)} · menos de 0: ${pc(c.pNeg)}.</p></div>`;
 }
 
+// «Duelo de curvas» (Capitán, con PIN): la distribución de puntos de los 4 mejores candidatos, superpuestas y suavizadas.
+// Eje = puntos que te darían como capitán (puntos × multiplicador), los mismos `ys` y `pj` del modelo; el área de cada
+// curva es su probabilidad de jugar (lo que falta hasta 100 % es «no juega» y vale 0 puntos).
+function bloqueCurvas(cands) {
+  const cs = cands.filter(c => c.ys && c.ys.length).slice(0, 4);
+  if (cs.length < 2) return "";
+  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"];
+  const xs = cs.map(c => c.ys.map(y => y * c.m)), hi = Math.ceil(Math.max(...xs.flat(), 8)), lo = Math.floor(Math.min(0, ...xs.flat()));
+  const N = 60, W = 320, H = 120, X = v => (v - lo) / (hi - lo) * W;
+  const dens = cs.map((c, k) => { const bw = Math.max(0.8, 0.45 * c.m), w = c.pj / xs[k].length;
+    return Array.from({ length: N + 1 }, (_, i) => { const x = lo + (hi - lo) * i / N; return xs[k].reduce((t, y) => t + Math.exp(-0.5 * ((x - y) / bw) ** 2), 0) * w / (bw * 2.5066); }); });
+  const pico = Math.max(...dens.flat(), 1e-6), Y = d => H - 4 - d / pico * (H - 14);
+  const trazo = d => d.map((v, i) => `${i ? "L" : "M"}${(i / N * W).toFixed(1)} ${Y(v).toFixed(1)}`).join("");
+  const curvas = dens.map((d, k) => `<path d="${trazo(d)}L${W} ${H - 4}L0 ${H - 4}Z" fill="${cols[k]}" opacity=".13"/>
+    <path class="cv-l" pathLength="1" d="${trazo(d)}" fill="none" stroke="${cols[k]}" stroke-width="2.2" stroke-linejoin="round" style="animation-delay:${k * 120}ms"/>`).join("");
+  const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
+  const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
+  const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
+  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+    <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
+    <ul class="cv-ley">${leyenda}</ul></div>`;
+}
+
 function clavesCandidato(c, r) {
   const inf = r.info(c.rival), ps = inf.pos[c.pos], pn = POSN[c.pos], nom = esc(c.rivalNombre || "el rival");
   const cl = [curvaPuntos(c)].filter(Boolean);
@@ -6592,11 +6618,12 @@ function pintarCapitan() {
       ["once", "🧩", "Tu once", "El mejor once posible", htmlOnceRec(r)],
       ["ganar", "🎯", "Ganar la jornada", "Tus opciones con cada capitán", bloqueCapGanar(r)],
       ["liga", "👥", "La liga", "A quién capitanean los demás", htmlCapLiga(cg, gwVer)],
+      ["cur", "📈", "Curvas", "Sus puntos posibles, frente a frente", bloqueCurvas(util)],
       ["hor", "⏰", "Horario", "Cuándo juega cada uno", htmlHorario(r)],
       ["alt", "🔁", "Alternativas", "Otras opciones y riesgo", top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""]].filter(x => x[4]);
     const cb = k => { const x = cx.find(y => y[0] === k); return x ? `<div id="cpx-${k}">${x[4]}</div>` : ""; };
     const cexplora = `<nav class="indice bento" aria-label="Más del Capitán">${cx.map(x => `<button data-ir="cpx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
-    cuerpo = `${cexplora}${cb("rec")}${cb("once")}${cb("ganar")}${cb("liga")}${cb("hor")}${cb("alt")}
+    cuerpo = `${cexplora}${cb("rec")}${cb("once")}${cb("ganar")}${cb("liga")}${cb("cur")}${cb("hor")}${cb("alt")}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
       ${bloqueRivales(r, util)}
