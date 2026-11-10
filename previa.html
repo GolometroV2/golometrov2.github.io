@@ -1392,6 +1392,100 @@ body.wr-abierto{overflow:hidden}
 .indice.bento b{font-family:var(--f-disp);font-size:14.5px;font-weight:800;line-height:1.15}
 .indice.bento small{font-family:var(--f-ui,inherit);font-size:11.5px;font-weight:500;line-height:1.25;color:var(--mut)}
 @media (min-width:700px){.indice.bento{grid-auto-columns:minmax(220px,1fr)}}
+/* El partido: dos onces en un campo 3D, a pantalla completa */
+.btn-pt{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:12px 0 4px;border:0;border-radius:999px;font-weight:900;font-size:15px;cursor:pointer;color:#03200e;
+  background:linear-gradient(100deg,#2fd46e,#7dffb5 50%,#2fd46e);background-size:200% 100%;box-shadow:0 8px 26px #2fd46e55;animation:ptBoton 4s linear infinite}
+@keyframes ptBoton{to{background-position:-200% 0}}
+.indice.bento button.pt-ent{background:linear-gradient(150deg,#0c3a22,#04140c);border-color:#2fd46e88;color:#eafff2;box-shadow:0 0 18px #2fd46e33}
+.indice.bento button.pt-ent small{color:#a5ecc2}.indice.bento button.pt-ent i{background:#2fd46e33}
+.pt{position:fixed;inset:0;z-index:82;display:grid;place-items:center;background:#010402;color:#eef8f2;color-scheme:dark;--ca:#2fd46e;--cb:#5aa2ff}
+.pt[hidden]{display:none}
+.pt-marco{--w:min(100vw,500px,calc((100dvh - 292px) / 1.27));position:relative;width:min(100vw,500px);height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:calc(6px + env(safe-area-inset-top)) 10px calc(8px + env(safe-area-inset-bottom));box-sizing:border-box;
+  background:radial-gradient(90% 50% at 50% 30%,#0d2a1c,#030a06 75%)}
+.pt-top{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;position:relative}
+.pt-top b{font-family:var(--f-disp);font-size:15px;min-width:92px;text-align:center}
+.pt-b{min-width:44px;height:44px;padding:0 10px;border:0;border-radius:14px;background:#ffffff14;color:#fff;font-size:17px;font-weight:800;cursor:pointer}
+.pt-b:disabled{opacity:.3;cursor:default}
+.pt-x{position:absolute;right:0;top:0}
+.pt-vacio{margin:auto;max-width:30ch;text-align:center;color:#b9d6c5}
+.pt-mar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;width:100%}
+.pt-eq{display:flex;align-items:center;gap:7px;min-width:0;min-height:48px;padding:4px 6px;border:0;border-radius:14px;background:none;color:#fff;cursor:pointer;text-align:left}
+.pt-eq.b{flex-direction:row-reverse;text-align:right}
+.pt-eq .av{flex:none;width:40px;height:40px;font-size:14px;box-shadow:0 0 0 2.5px var(--ca)}
+.pt-eq.b .av{box-shadow:0 0 0 2.5px var(--cb)}
+.pt-eq span{min-width:0;font-size:12.5px;font-weight:800;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pt-res{display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:14px;background:#000a;box-shadow:inset 0 0 0 1px #ffffff1f}
+.pt-res b{min-width:44px;text-align:center;font-family:var(--f-disp);font-weight:900;font-stretch:70%;font-size:38px;line-height:1;font-variant-numeric:tabular-nums}
+.pt-res b.pum{animation:ptPum .45s ease-out}
+@keyframes ptPum{30%{transform:scale(1.35);color:#7dffb5}}
+.pt-res span{display:grid;place-items:center}
+.pt-res i{font-style:normal;font-size:11.5px;font-weight:800;color:#03200e;background:#2fd46e;border-radius:6px;padding:1px 6px;min-width:26px;text-align:center}
+.pt.gana-a #ptSa,.pt.gana-b #ptSb{color:#7dffb5;text-shadow:0 0 18px #2fd46e}
+.pt-pick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;width:100%;padding:6px;border-radius:14px;background:#ffffff10}
+.pt-pick[hidden]{display:none}
+.pt-pick small{width:100%;text-align:center;color:#b9d6c5;font-size:12px}
+.pt-pick button{display:flex;flex-direction:column;align-items:center;gap:2px;width:60px;min-height:56px;padding:2px;border:0;background:none;color:#fff;cursor:pointer}
+.pt-pick .av{width:36px;height:36px;font-size:12px}
+.pt-pick span{max-width:58px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-prob{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;height:20px;padding:0 8px;box-sizing:border-box;border-radius:999px;overflow:hidden;background:var(--cb);font-size:11px;font-weight:900;color:#04110a}
+.pt-prob i{position:absolute;left:0;top:0;bottom:0;width:50%;background:var(--ca);transition:width .6s cubic-bezier(.3,.8,.3,1);box-shadow:2px 0 0 #010402}
+.pt-prob span,.pt-prob em{position:relative}
+.pt-prob em{font-style:normal;font-size:10px;font-weight:700;color:#04110acc}
+/* la escena */
+.pt-esc{container-type:inline-size;position:relative;flex:none;width:var(--w);aspect-ratio:1/1.27;border-radius:16px;overflow:hidden;isolation:isolate;user-select:none;-webkit-user-select:none}
+.pt-cielo{position:absolute;inset:0;background:radial-gradient(50cqw 26cqw at 0% 0%,#d8ffe640,#0000),radial-gradient(50cqw 26cqw at 100% 0%,#d8ffe640,#0000),radial-gradient(120% 50% at 50% 0%,#12382a,#030a06 70%)}
+.pt-per{position:absolute;inset:0;perspective:300cqw;perspective-origin:50% -20cqw}
+.pt-campo{position:absolute;left:10cqw;width:80cqw;top:-5cqw;height:130cqw;transform:rotateX(58deg);
+  background:radial-gradient(60% 40% at 50% 50%,#ffffff1c,#0000),repeating-linear-gradient(180deg,#2f9a4c 0 6.25%,#28893f 6.25% 12.5%);box-shadow:0 0 0 2.6cqw #1d6b36,0 0 14cqw 2cqw #2fd46e33,inset 0 0 0 .5cqw #ffffffd0}
+.pt-campo i{position:absolute;border:.5cqw solid #ffffffc8}
+.pt-l1{left:0;right:0;top:50%;height:0;border-width:.5cqw 0 0!important}
+.pt-l2{left:36.5%;width:27%;top:41.3%;height:17.4%;border-radius:50%}
+.pt-l3{left:20.35%;right:20.35%;top:0;height:15.7%;border-top:0!important}
+.pt-l4{left:20.35%;right:20.35%;bottom:0;height:15.7%;border-bottom:0!important}
+.pt-l5{left:36.5%;right:36.5%;top:0;height:5.2%;border-top:0!important}
+.pt-l6{left:36.5%;right:36.5%;bottom:0;height:5.2%;border-bottom:0!important}
+.pt-j{position:absolute;width:0;height:0;--k:calc(1cqw * var(--s));--c:var(--ca)}
+.pt-j.b{--c:var(--cb)}
+.pt-base{position:absolute;left:calc(var(--k) * -5.2);top:calc(var(--k) * -1.3);width:calc(var(--k) * 10.4);height:calc(var(--k) * 2.6);border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--c) 85%,#0000) 35%,color-mix(in srgb,var(--c) 40%,#0000) 60%,#0000)}
+.pt-tk{position:absolute;left:0;top:0;width:calc(var(--k) * 15);display:flex;flex-direction:column;align-items:center;transform:translate(-50%,calc(var(--k) * -10.6));filter:saturate(.35) brightness(.62);transition:filter .4s,scale .3s;transform-origin:50% 100%}
+.pt-j.rev .pt-tk{filter:none}
+.pt-j.act{z-index:250!important}
+.pt-j.act .pt-tk{scale:1.28}
+.pt-bu{position:relative;width:calc(var(--k) * 10.6);height:calc(var(--k) * 10.6);display:grid;place-items:end center}
+.pt-bu img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 calc(var(--k) * .5) calc(var(--k) * .8) #000c);-webkit-mask-image:linear-gradient(#000 82%,#0000);mask-image:linear-gradient(#000 82%,#0000)}
+.pt-bu .c3d-cam,.pt-ini{display:none}
+.pt-j.sin .c3d-cam{display:block;position:absolute;left:8%;bottom:0;width:84%;height:84%}
+.pt-j.sin .c3d-cam path{fill:color-mix(in srgb,var(--c) 45%,#0c1712)}
+.pt-j.sin .pt-ini{display:block;position:absolute;left:0;right:0;bottom:28%;text-align:center;font-style:normal;font-family:var(--f-disp);font-weight:900;font-size:calc(var(--k) * 3);color:#fff}
+.pt-c{position:absolute;left:0;top:8%;width:calc(var(--k) * 3.2);height:calc(var(--k) * 3.2);border-radius:50%;display:grid;place-items:center;background:#f2fbf5;color:#06331a;font-size:calc(var(--k) * 2);font-weight:900}
+.pt-p{position:absolute;right:-4%;top:4%;min-width:calc(var(--k) * 4.2);height:calc(var(--k) * 4.2);padding:0 calc(var(--k) * .7);box-sizing:border-box;border-radius:999px;display:grid;place-items:center;font-size:calc(var(--k) * 2.5);font-weight:900;box-shadow:0 0 0 calc(var(--k) * .3) #03100a;scale:0}
+.pt-j.rev .pt-p{scale:1;transition:scale .35s cubic-bezier(.3,1.8,.5,1)}
+.pt-n{display:none;margin-top:calc(var(--k) * -.8);padding:calc(var(--k) * .3) calc(var(--k) * 1);border-radius:calc(var(--k) * .9);background:#04110be6;box-shadow:0 0 0 1px var(--c);font-size:calc(var(--k) * 2.3);font-weight:800;white-space:nowrap;max-width:calc(var(--k) * 22)}
+.pt-j.act .pt-n{display:block}
+.pt-balon{position:absolute;z-index:260;width:3.4cqw;height:3.4cqw;margin:-2.6cqw 0 0 3cqw;border-radius:50%;left:50cqw;top:62cqw;background:radial-gradient(circle at 35% 30%,#fff 0 45%,#cfd8d3 46% 70%,#7d8a83);box-shadow:0 .8cqw 1.2cqw #0009;transition:left .5s cubic-bezier(.4,.1,.3,1),top .5s cubic-bezier(.4,.1,.3,1)}
+.pt-balon.vuela{animation:ptVuela .5s ease-out}
+@keyframes ptVuela{50%{translate:0 -9cqw;scale:1.5}}
+.pt-mas{position:absolute;translate:-50% -17cqw;font-family:var(--f-disp);font-weight:900;font-size:8cqw;color:var(--ca);text-shadow:0 0 3cqw #000,0 .4cqw 0 #000;pointer-events:none;animation:ptMas 1.25s ease-out forwards}
+.pt-mas.b{color:var(--cb)}.pt-mas.neg{color:#ff6b6b}
+@keyframes ptMas{0%{opacity:0;scale:.4}18%{opacity:1;scale:1.25}100%{opacity:0;translate:-50% -34cqw}}
+.pt-flash{position:absolute;left:50%;top:44%;z-index:320;translate:-50% -50%;max-width:92%;padding:2cqw 4cqw;border-radius:3cqw;text-align:center;font-family:var(--f-disp);font-weight:900;font-size:5.4cqw;line-height:1.1;color:#04110a;background:var(--c,#2fd46e);box-shadow:0 0 10cqw var(--c,#2fd46e);opacity:0;pointer-events:none}
+.pt-flash.on{animation:ptFlash 1.5s ease-out}
+@keyframes ptFlash{0%{opacity:0;scale:.5;rotate:-3deg}15%{opacity:1;scale:1.08;rotate:-3deg}75%{opacity:1;scale:1;rotate:-3deg}100%{opacity:0;scale:1.1;rotate:-3deg}}
+.pt-conf{position:absolute;inset:0;width:100%;height:100%;z-index:330;pointer-events:none}
+.pt-fin{position:absolute;left:5%;right:5%;top:30%;z-index:340;display:flex;flex-direction:column;align-items:center;gap:1cqw;padding:4cqw;border-radius:5cqw;text-align:center;background:#03100af2;box-shadow:0 0 0 1px #ffffff30,0 10cqw 20cqw #000c;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:ptFin .6s cubic-bezier(.2,1.3,.4,1) both}
+.pt-fin[hidden]{display:none}
+@keyframes ptFin{from{opacity:0;scale:.7}}
+.pt-fin small{font-size:max(11px,3cqw);font-weight:700;color:#a5ecc2}
+.pt-fin>b{font-family:var(--f-disp);font-weight:900;font-size:7cqw;line-height:1.05;overflow-wrap:anywhere}
+.pt-fr{font-family:var(--f-disp);font-weight:900;font-stretch:66%;font-size:15cqw;line-height:1}
+.pt-fin p{margin:0;font-size:max(12px,3.3cqw);line-height:1.35;color:#d6e9de}
+.pt-com{width:100%;min-height:22px;margin:0;text-align:center;font-size:13.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-com i{font-style:normal}.pt-com em{font-style:normal;font-size:11.5px;color:#a5ecc2}
+.pt-com.cap{color:#a5ecc2}
+.pt-graf{width:100%;height:54px;flex:none;border-radius:10px;background:#ffffff0c}
+.pt-ctl{display:flex;gap:6px;width:100%;justify-content:center}
+.pt-comp{flex:1;max-width:190px;font-size:14px;background:#2fd46e;color:#03200e}
+@media (prefers-reduced-motion:reduce){.btn-pt,.pt-fin,.pt-res b.pum{animation:none}.pt-tk,.pt-prob i,.pt-balon{transition:none}}
 </style>
 </head>
 <body>
@@ -2619,6 +2713,7 @@ function pintarDuelo() {
       <div class="du-m">${avatar(B.m, B.i)}<b style="color:${cb}">${cum[xb][n - 1]}</b></div></div>
     <div class="du-est">${est.map(filaEst).join("")}</div>
     <details class="cdet"><summary>Jornada a jornada</summary><div class="du-pulso">${pulso}</div><p class="note">Hacia la izquierda gana ${esc(A.m.name)}; hacia la derecha, ${esc(B.m.name)}.</p></details>
+    <button class="btn-pt" data-pt="duelo">🏟️ Ver su partido en 3D</button>
     <details class="cdet"><summary>Tabla de duelos de toda la liga</summary>${tablaDuelos(S, orden)}</details>`;
 }
 /* ---------- Comparador de dos jugadores ---------- */
@@ -6220,8 +6315,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7142,6 +7237,216 @@ const galObs = new MutationObserver(() => {
   io.observe(cv);
 });
 galObs.observe(document.body, { childList: true, subtree: true });
+/* ---------- El partido: dos onces frente a frente en un campo 3D, retransmitido como un directo ---------- */
+// Repite una jornada ya jugada entre dos managers: los 22 alineados sobre el mismo césped y sus puntos van cayendo en
+// el orden real de los partidos de LaLiga. Marcador, comentarista, probabilidad de ganar en cada momento (con la media
+// de temporada de los que faltaban por jugar) y la gráfica de la ventaja. Todo son datos ya ocurridos: para todos.
+const PTG = { pl: 0.1, pw: 0.8, pt: -0.05, ph: 1.3, P: 3, oy: -0.2, ax: 58 };          // geometría del campo, en anchos
+const PT_FILAS = { a: { DL: 0.59, MC: 0.72, DF: 0.84, PT: 0.95 }, b: { PT: 0.05, DF: 0.16, MC: 0.28, DL: 0.41 } };
+function ptProy(u, v) {
+  const x = (u - 0.5) * PTG.pw, y = (v - 0.5) * PTG.ph, a = PTG.ax * Math.PI / 180, s = PTG.P / (PTG.P - y * Math.sin(a));
+  return [0.5 + (PTG.pl + PTG.pw / 2 + x - 0.5) * s, PTG.oy + (PTG.pt + PTG.ph / 2 + y * Math.cos(a) - PTG.oy) * s, s];
+}
+const ptFi = z => { const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2), e = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z / 2); return z >= 0 ? 0.5 * (1 + e) : 0.5 * (1 - e); };
+let PT = null;
+function ptDatos(aId, bId, j) {
+  const md = D.matchdays[j] || {}, n = +j.slice(1);
+  const lado = (id, k) => { const i = D.managers.findIndex(m => String(m.id) === String(id)), x = md[id];
+    return { k, m: D.managers[i], i, c: col(i), x, J: ((x && x.players) || []).map(p => ({ ...p, lado: k, pts: p.played ? (p.points || 0) : 0 })) }; };
+  const A = lado(aId, "a"), B = lado(bId, "b");
+  if (!A.x || !B.x || !A.J.length || !B.J.length) return null;
+  // sitio de cada jugador en el campo
+  [A, B].forEach(L => ["PT", "DF", "MC", "DL"].forEach(pos => { const F = L.J.filter(p => p.pos === pos), q = F.length, gap = q <= 1 ? 0 : Math.min(0.21, 0.86 / q);
+    F.forEach((p, k) => { p.u = 0.5 + (k - (q - 1) / 2) * gap; p.v = PT_FILAS[L.k][pos] + (q >= 5 ? (k % 2 ? 0.02 : -0.02) : 0); }); }));
+  // guion: los partidos reales en su orden; dentro de cada uno, de menos a más puntos
+  const games = ((CAL && CAL.games) || []).filter(g => g.gw === n).sort((x, y) => (x.ts || 9e12) - (y.ts || 9e12));
+  const todos = A.J.concat(B.J), usados = new Set(), pasos = [];
+  const mete = (g, L) => { if (!L.length) return; pasos.push({ t: "cap", g }); L.sort((x, y) => x.pts - y.pts || (x.lado < y.lado ? -1 : 1)).forEach(p => { usados.add(p); pasos.push({ t: "jug", p }); }); };
+  games.forEach(g => mete(g, todos.filter(p => p.teamId === g.home || p.teamId === g.away)));
+  mete(null, todos.filter(p => !usados.has(p)));
+  // marcador, ventaja y probabilidad de ganar antes y después de cada jugador
+  const media = p => { const q = LIGAJ && LIGAJ.jug && LIGAJ.jug[String(p.id)], mu = q && capNum(q.avg) ? q.avg : { PT: 3.5, DF: 3.5, MC: 4, DL: 4.5 }[p.pos] || 4; return mu * (p.captain ? (p.captainMultiplier || 1) : 1); };
+  const prob = (sa, sb, faltan) => { let mu = sa - sb, v = 0.01; faltan.forEach(p => { const e = media(p), sd = 4.2 * (p.captain ? (p.captainMultiplier || 1) : 1); mu += p.lado === "a" ? e : -e; v += sd * sd; }); return ptFi(mu / Math.sqrt(v)); };
+  let sa = 0, sb = 0; const faltan = new Set(todos), tr = [{ d: 0, p: prob(0, 0, faltan) }]; let cambios = 0, lider = 0;
+  pasos.forEach(s => { if (s.t !== "jug") return; faltan.delete(s.p); if (s.p.lado === "a") sa += s.p.pts; else sb += s.p.pts;
+    const sg = Math.sign(sa - sb); s.cambio = sg !== 0 && lider !== 0 && sg !== lider; if (sg !== 0) { if (s.cambio) cambios++; lider = sg; }
+    s.sa = sa; s.sb = sb; s.prob = prob(sa, sb, faltan); tr.push({ d: sa - sb, p: s.prob }); });
+  const mvp = todos.slice().sort((x, y) => y.pts - x.pts)[0];
+  return { A, B, j, n, pasos, tr, sa, sb, cambios, mvp, maxD: Math.max(8, ...tr.map(t => Math.abs(t.d))), minP: Math.min(...tr.map(t => t.p)), maxP: Math.max(...tr.map(t => t.p)) };
+}
+function ptJugadorHTML(p, k) {
+  const [X, Y, s] = ptProy(p.u, p.v), foto = (FOTOS && FOTOS[String(p.id)]) || fotoDe(p.id);
+  p.X = X; p.Y = Y; p.el = `ptj-${p.lado}${k}`;
+  return `<div class="pt-j ${p.lado}${foto ? "" : " sin"}" id="${p.el}" style="left:${(X * 100).toFixed(2)}cqw;top:${(Y * 100).toFixed(2)}cqw;--s:${s.toFixed(3)};z-index:${Math.round(Y * 100)}">
+    <span class="pt-base"></span><span class="pt-tk"><span class="pt-bu">${C3D_CAMISETA}<i class="pt-ini">${esc(iniciales(p.name))}</i>${foto ? `<img src="${esc(foto)}" alt="" draggable="false" referrerpolicy="no-referrer" onerror="this.closest('.pt-j').classList.add('sin');this.remove()">` : ""}${p.captain ? `<b class="pt-c">C</b>` : ""}<b class="pt-p"></b></span><span class="pt-n">${esc(apellido(p.name))}</span></span></div>`;
+}
+function ptAbrir(aId, bId, j) {
+  const js = jornadas(); j = j && js.includes(j) ? j : js[js.length - 1];
+  if (!LIGAJ) cargarLigaJ(); if (!FOTOS && typeof cargarFotos === "function") cargarFotos();
+  let el = $("#pt3");
+  if (!el) { el = document.createElement("div"); el.id = "pt3"; el.className = "pt"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); document.body.appendChild(el); }
+  if (PT) clearTimeout(PT.tm);
+  const d = ptDatos(aId, bId, j), volver = PT ? PT.volver : document.activeElement;
+  PT = { d, a: aId, b: bId, j, k: -1, sa: 0, sb: 0, pausa: false, vel: 1, fin: false, tm: 0, el, volver, pick: null };
+  el.hidden = false; document.body.classList.add("sin-scroll");
+  const k = js.indexOf(j), nav = `<button class="pt-b" data-pt="jant" aria-label="Jornada anterior"${k > 0 ? "" : " disabled"}>‹</button><b>Jornada ${esc(j.slice(1))}</b><button class="pt-b" data-pt="jsig" aria-label="Jornada siguiente"${k < js.length - 1 ? "" : " disabled"}>›</button>`;
+  if (!d) { el.setAttribute("aria-label", "El partido"); el.innerHTML = `<div class="pt-marco"><div class="pt-top">${nav}<button class="pt-b pt-x" data-pt="cerrar" aria-label="Cerrar">✕</button></div><p class="pt-vacio">Uno de los dos no tiene once guardado en esta jornada. Prueba con otra.</p></div>`; return; }
+  const { A, B } = d;
+  el.setAttribute("aria-label", `El partido: ${A.m.name} contra ${B.m.name}, jornada ${d.n}`);
+  el.style.setProperty("--ca", A.c); el.style.setProperty("--cb", B.c);
+  const eq = L => `<button class="pt-eq ${L.k}" data-pt="elige-${L.k}" aria-label="Cambiar a ${esc(L.m.name)} por otro manager">${avatar(L.m, L.i)}<span>${esc(L.m.name)}</span></button>`;
+  el.innerHTML = `<div class="pt-marco">
+    <div class="pt-top">${nav}<button class="pt-b pt-x" data-pt="cerrar" aria-label="Cerrar">✕</button></div>
+    <div class="pt-mar">${eq(A)}<div class="pt-res" aria-live="off"><b id="ptSa">0</b><span><i id="ptMin">0'</i></span><b id="ptSb">0</b></div>${eq(B)}</div>
+    <div class="pt-pick" id="ptPick" hidden></div>
+    <div class="pt-prob" role="img" aria-label="Probabilidad de ganar de cada uno"><i id="ptPr"></i><span id="ptPa">50 %</span><em>opciones de ganar</em><span id="ptPb">50 %</span></div>
+    <div class="pt-esc" id="ptEsc"><div class="pt-cielo" aria-hidden="true"></div>
+      <div class="pt-per" aria-hidden="true"><div class="pt-campo"><i class="pt-l1"></i><i class="pt-l2"></i><i class="pt-l3"></i><i class="pt-l4"></i><i class="pt-l5"></i><i class="pt-l6"></i></div></div>
+      ${A.J.map(ptJugadorHTML).join("")}${B.J.map(ptJugadorHTML).join("")}
+      <i class="pt-balon" id="ptBal" aria-hidden="true"></i><div class="pt-flash" id="ptFlash" aria-hidden="true"></div>
+      <canvas class="pt-conf" id="ptConf" aria-hidden="true"></canvas><div class="pt-fin" id="ptFin" hidden></div></div>
+    <p class="pt-com" id="ptCom" aria-live="polite">Saltan los dos onces al césped…</p>
+    <svg class="pt-graf" id="ptGraf" viewBox="0 0 320 54" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="pt-ctl"><button class="pt-b" data-pt="pausa" id="ptPausa" aria-label="Pausar">⏸</button><button class="pt-b" data-pt="vel" id="ptVel" aria-label="Cambiar la velocidad">×1</button><button class="pt-b" data-pt="fin" aria-label="Ir al final">⏭</button><button class="pt-b" data-pt="rep" aria-label="Repetir">↻</button><button class="pt-b pt-comp" data-pt="comp">📤 Compartir</button></div></div>`;
+  ptGraf(0); ptProb(d.tr[0].p);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { ptFinal(true); return; }
+  PT.tm = setTimeout(ptPaso, 1500);
+  el.querySelector(".pt-x").focus({ preventScroll: true });
+}
+function ptCerrar() {
+  if (!PT) return; clearTimeout(PT.tm);
+  PT.el.hidden = true; PT.el.innerHTML = ""; document.body.classList.remove("sin-scroll");
+  const v = PT.volver; PT = null; if (v && v.focus) v.focus({ preventScroll: true });
+}
+function ptProb(p) {
+  const a = Math.round(p * 100); $("#ptPr").style.width = (p * 100).toFixed(1) + "%"; $("#ptPa").textContent = a + " %"; $("#ptPb").textContent = (100 - a) + " %";
+}
+// la ventaja jugador a jugador: por encima de la línea manda el de la izquierda; por debajo, el de la derecha
+function ptGraf(n) {
+  const d = PT.d, W = 320, H = 54, N = d.tr.length - 1, X = k => 4 + k / Math.max(1, N) * (W - 8), Y = v => H / 2 - v / d.maxD * (H / 2 - 5);
+  const P = d.tr.slice(0, n + 1).map((t, k) => [X(k), Y(t.d)]), linea = "M" + P.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join("L");
+  const area = `${linea}L${P[P.length - 1][0].toFixed(1)},${H / 2}L${P[0][0].toFixed(1)},${H / 2}Z`, u = P[P.length - 1];
+  $("#ptGraf").innerHTML = `<defs><clipPath id="ptUp"><rect width="${W}" height="${H / 2}"/></clipPath><clipPath id="ptDn"><rect y="${H / 2}" width="${W}" height="${H / 2}"/></clipPath></defs>
+    <path d="${area}" fill="var(--ca)" opacity=".55" clip-path="url(#ptUp)"/><path d="${area}" fill="var(--cb)" opacity=".55" clip-path="url(#ptDn)"/>
+    <line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#ffffff40" stroke-dasharray="3 4"/><path d="${linea}" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="${u[0].toFixed(1)}" cy="${u[1].toFixed(1)}" r="3" fill="#fff"/>`;
+}
+function ptRevela(p, anima) {
+  const el = document.getElementById(p.el); if (!el) return;
+  el.classList.add("rev"); const chip = el.querySelector(".pt-p");
+  chip.textContent = p.played ? p.pts : "–"; chip.className = "pt-p mp-" + tramoPts(p.played ? p.pts : null);
+  if (!anima) return;
+  PT.el.querySelectorAll(".pt-j.act").forEach(x => x.classList.remove("act")); el.classList.add("act");
+  const bal = $("#ptBal"); bal.style.left = (p.X * 100).toFixed(2) + "cqw"; bal.style.top = (p.Y * 100).toFixed(2) + "cqw"; bal.classList.remove("vuela"); void bal.offsetWidth; bal.classList.add("vuela");
+  if (p.played && p.pts) { const f = document.createElement("b"); f.className = "pt-mas " + p.lado + (p.pts < 0 ? " neg" : ""); f.textContent = (p.pts > 0 ? "+" : "") + p.pts;
+    f.style.left = (p.X * 100).toFixed(2) + "cqw"; f.style.top = (p.Y * 100).toFixed(2) + "cqw"; f.style.zIndex = 300; $("#ptEsc").appendChild(f); setTimeout(() => f.remove(), 1300); }
+}
+function ptMarcador(sa, sb, min) {
+  [["#ptSa", sa, PT.sa], ["#ptSb", sb, PT.sb]].forEach(([q, v, antes]) => { const e = $(q); e.textContent = v; if (v !== antes) { e.classList.remove("pum"); void e.offsetWidth; e.classList.add("pum"); } });
+  PT.sa = sa; PT.sb = sb; $("#ptMin").textContent = min + "'";
+}
+const ptDia = ts => ts ? enMadrid(ts * 1000, { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
+function ptPaso() {
+  if (!PT || PT.pausa || PT.fin) return;
+  const d = PT.d, s = d.pasos[++PT.k];
+  if (!s) { ptFinal(false); return; }
+  const com = $("#ptCom"), nJ = d.pasos.filter(x => x.t === "jug").length, hechos = d.pasos.slice(0, PT.k + 1).filter(x => x.t === "jug").length;
+  let espera = 780;
+  if (s.t === "cap") {
+    com.innerHTML = s.g ? `<i>🏟️</i> <b>${esc(s.g.homeName)} ${capNum(s.g.gh) ? `${s.g.gh}–${s.g.ga}` : "vs"} ${esc(s.g.awayName)}</b> · ${esc(ptDia(s.g.ts))}` : `<i>🪑</i> Los que no tuvieron partido`;
+    com.className = "pt-com cap"; espera = 950;
+  } else {
+    const p = s.p, L = p.lado === "a" ? d.A : d.B;
+    ptRevela(p, true); ptMarcador(s.sa, s.sb, Math.round(hechos / nJ * 90)); ptProb(s.prob); ptGraf(hechos);
+    com.className = "pt-com"; com.innerHTML = `<i style="color:${L.c}">●</i> ${p.played ? `<b>${esc(apellido(p.name))}</b> ${p.pts > 0 ? "+" : ""}${p.pts}${p.captain ? ` <em>capitán ×${coma(p.captainMultiplier || 1)}</em>` : ""}${p.goals ? " " + "⚽".repeat(Math.min(3, p.goals)) : ""} para ${esc(L.m.name)}` : `<b>${esc(apellido(p.name))}</b> no jugó`}`;
+    if (s.cambio) { const f = $("#ptFlash"); f.textContent = `¡${L.m.name} se pone por delante!`; f.style.setProperty("--c", L.c); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on"); espera = 1500; }
+    else if (p.pts >= 12) espera = 1100;
+  }
+  PT.tm = setTimeout(ptPaso, espera / PT.vel);
+}
+function ptFinal(directo) {
+  if (!PT || !PT.d) return; clearTimeout(PT.tm);
+  const d = PT.d; PT.fin = true; PT.k = d.pasos.length;
+  d.pasos.forEach(s => { if (s.t === "jug") ptRevela(s.p, false); });
+  PT.el.querySelectorAll(".pt-j.act").forEach(x => x.classList.remove("act"));
+  ptMarcador(d.sa, d.sb, 90); ptGraf(d.tr.length - 1); ptProb(d.sa === d.sb ? 0.5 : d.sa > d.sb ? 1 : 0);
+  const G = d.sa === d.sb ? null : d.sa > d.sb ? d.A : d.B, P = G === d.A ? d.B : d.A, mvpL = d.mvp.lado === "a" ? d.A : d.B;
+  $("#ptCom").className = "pt-com"; $("#ptCom").innerHTML = `<i>📣</i> Final del partido`;
+  const sufrio = G ? (G === d.A ? d.minP : 1 - d.maxP) : null;
+  const fin = $("#ptFin"); fin.hidden = false;
+  fin.innerHTML = `<small>Final · jornada ${d.n}</small><b style="color:${G ? G.c : "#fff"}">${G ? `Gana ${esc(G.m.name)}` : "Empate"}</b><span class="pt-fr">${d.sa} – ${d.sb}</span>
+    <p>${G ? (d.cambios ? `${d.cambios} ${d.cambios === 1 ? "cambio" : "cambios"} de líder. ` : `${esc(G.m.name)} mandó de principio a fin. `) + (sufrio != null && sufrio < 0.25 ? `Llegó a tener solo un ${Math.max(1, Math.round(sufrio * 100))} % de opciones.` : "") : "Reparto de puntos."}</p>
+    <p>Mejor jugador: <b>${esc(d.mvp.name)}</b>, ${d.mvp.pts} puntos para ${esc(mvpL.m.name)}.</p>`;
+  if (G) PT.el.classList.add(G === d.A ? "gana-a" : "gana-b");
+  $("#ptPausa").textContent = "▶"; $("#ptPausa").setAttribute("aria-label", "Repetir");
+  if (!directo && G) ptConfeti(G.c);
+}
+function ptConfeti(color) {
+  const cv = $("#ptConf"); if (!cv || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight, x = cv.getContext("2d"), t0 = performance.now();
+  const P = Array.from({ length: 110 }, (_, k) => ({ x: Math.random() * W, y: -20 - Math.random() * H * 0.5, vx: (Math.random() - 0.5) * 2.2, vy: 2 + Math.random() * 3.4, r: 3 + Math.random() * 4, a: Math.random() * 6.3, va: (Math.random() - 0.5) * 0.3, c: k % 3 === 0 ? "#ffffff" : k % 3 === 1 ? color : "#2fd46e" }));
+  const paso = t => { if (!cv.isConnected) return; x.clearRect(0, 0, W, H); const q = (t - t0) / 3400;
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += p.va; x.save(); x.translate(p.x, p.y); x.rotate(p.a); x.globalAlpha = Math.max(0, 1 - q); x.fillStyle = p.c; x.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); x.restore(); });
+    if (q < 1) requestAnimationFrame(paso); else x.clearRect(0, 0, W, H); };
+  requestAnimationFrame(paso);
+}
+function ptElegir(k) {
+  const pk = $("#ptPick"); if (!pk) return;
+  if (PT.pick === k) { PT.pick = null; pk.hidden = true; return; }
+  PT.pick = k; clearTimeout(PT.tm); PT.pausa = true; if ($("#ptPausa")) $("#ptPausa").textContent = "▶";
+  const otro = k === "a" ? PT.b : PT.a;
+  pk.hidden = false; pk.innerHTML = `<small>¿Quién juega ${k === "a" ? "abajo" : "arriba"}?</small>` + D.managers.map((m, i) => String(m.id) === String(otro) ? "" : `<button data-ptm="${esc(m.id)}" aria-label="${esc(m.name)}">${avatar(m, i)}<span>${esc(m.name)}</span></button>`).join("");
+}
+document.addEventListener("click", e => {
+  const ab = e.target.closest && e.target.closest("[data-pt]"), q = ab && ab.dataset.pt;
+  if (q === "duelo" && typeof duelo !== "undefined" && duelo) { ptAbrir(duelo[0], duelo[1]); return; }
+  if (q === "top") { const S = serieLiga(), n = S.js.length, ord = D.managers.map((m, i) => ({ id: m.id, t: S.cum[i][n - 1] })).sort((x, y) => y.t - x.t);
+    const yo = YO && ord.some(o => String(o.id) === String(YO)) ? YO : ord[0].id, rival = ord.find(o => String(o.id) !== String(yo)).id; ptAbrir(yo, rival); return; }
+  if (!PT) return;
+  const pm = e.target.closest("[data-ptm]");
+  if (pm) { if (PT.pick === "a") ptAbrir(pm.dataset.ptm, PT.b, PT.j); else ptAbrir(PT.a, pm.dataset.ptm, PT.j); return; }
+  if (!q) return;
+  const js = jornadas(), k = js.indexOf(PT.j);
+  if (q === "cerrar") ptCerrar();
+  else if (q === "jant" && k > 0) ptAbrir(PT.a, PT.b, js[k - 1]);
+  else if (q === "jsig" && k < js.length - 1) ptAbrir(PT.a, PT.b, js[k + 1]);
+  else if (q === "elige-a" || q === "elige-b") ptElegir(q.slice(-1));
+  else if (q === "rep" || (q === "pausa" && PT.fin)) ptAbrir(PT.a, PT.b, PT.j);
+  else if (q === "pausa") { PT.pausa = !PT.pausa; ab.textContent = PT.pausa ? "▶" : "⏸"; ab.setAttribute("aria-label", PT.pausa ? "Seguir" : "Pausar"); clearTimeout(PT.tm); if (!PT.pausa) { PT.pick = null; $("#ptPick").hidden = true; ptPaso(); } }
+  else if (q === "vel") { PT.vel = PT.vel === 1 ? 2 : PT.vel === 2 ? 4 : 1; ab.textContent = "×" + PT.vel; }
+  else if (q === "fin" && PT.d) ptFinal(false);
+  else if (q === "comp" && PT.d) { EST_DAT.pt = PT.d; abrirEstudio("pt", ab); }
+});
+document.addEventListener("keydown", e => {
+  if (!PT || ($("#estudio") && !$("#estudio").hidden)) return;
+  if (e.key === "Escape") { e.stopImmediatePropagation(); ptCerrar(); }
+}, true);
+
+/* lámina del partido para compartir */
+async function esPartido(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, { A, B } = d;
+  const [ia, ib] = await Promise.all([esImg(A.m.avatarUrl), esImg(B.m.avatarUrl)]);
+  const G = d.sa === d.sb ? null : d.sa > d.sb ? A : B;
+  esFondo(x, G ? G.c : ES.verde);
+  esCabecera(x, { titulo: "EL PARTIDO", kicker: `Jornada ${d.n} · cara a cara`, pag: 1, total: 1 });
+  esAvatar(x, A.m, A.i, ia, W * 0.16, 470, 92, A.c); esAvatar(x, B.m, B.i, ib, W * 0.84, 470, 92, B.c);
+  x.textAlign = "center"; x.fillStyle = ES.txt;
+  x.fillText(esAjusta(x, A.m.name, 330, 700, 34, 20), W * 0.19, 630); x.fillText(esAjusta(x, B.m.name, 330, 700, 34, 20), W * 0.81, 630);
+  x.font = esF(900, 170, "condensed"); x.fillStyle = G === A ? ES.luz : ES.txt; x.fillText(String(d.sa), W * 0.385, 530); x.fillStyle = G === B ? ES.luz : ES.txt; x.fillText(String(d.sb), W * 0.615, 530);
+  x.fillStyle = ES.mut; x.font = esF(800, 90, "condensed"); x.fillText("–", W / 2, 520);
+  x.fillStyle = ES.luz; x.fillText(esAjusta(x, G ? `GANA ${G.m.name.toUpperCase()}` : "EMPATE", W - 2 * M, 800, 64, 36, "condensed"), W / 2, 740);
+  // la ventaja jugador a jugador
+  const gx = M, gy = 800, gw = W - 2 * M, gh = 300, N = d.tr.length - 1, X = k => gx + 20 + k / Math.max(1, N) * (gw - 40), Y = v => gy + gh / 2 - v / d.maxD * (gh / 2 - 24);
+  esPanel(x, gx, gy, gw, gh);
+  [[A.c, 0], [B.c, gh / 2]].forEach(([cc, dy]) => { x.save(); x.beginPath(); x.rect(gx, gy + dy, gw, gh / 2); x.clip(); x.beginPath(); x.moveTo(X(0), gy + gh / 2); d.tr.forEach((t, k) => x.lineTo(X(k), Y(t.d))); x.lineTo(X(N), gy + gh / 2); x.closePath(); esA(x, 0.6, () => { x.fillStyle = cc; x.fill(); }); x.restore(); });
+  x.strokeStyle = "rgba(255,255,255,.3)"; x.setLineDash([8, 8]); x.lineWidth = 2; x.beginPath(); x.moveTo(gx + 20, gy + gh / 2); x.lineTo(gx + gw - 20, gy + gh / 2); x.stroke(); x.setLineDash([]);
+  x.strokeStyle = "#fff"; x.lineWidth = 4; x.lineJoin = "round"; x.beginPath(); d.tr.forEach((t, k) => k ? x.lineTo(X(k), Y(t.d)) : x.moveTo(X(k), Y(t.d))); x.stroke();
+  x.textAlign = "left"; x.fillStyle = ES.mut; x.font = esS(600, 24); x.fillText("La ventaja, jugador a jugador", gx + 24, gy + 40);
+  x.textAlign = "center"; x.fillStyle = ES.txt; x.font = esS(500, 30);
+  x.fillText(esCorta(x, `${d.cambios ? `${d.cambios} ${d.cambios === 1 ? "cambio" : "cambios"} de líder` : "Sin cambios de líder"} · Mejor jugador: ${apellido(d.mvp.name)} (${d.mvp.pts})`, W - 2 * M), W / 2, 1170); x.textAlign = "left";
+  esPie(x, "Míralo en 3D en el Golómetro");
+  return c;
+}
+ES_SETS.pt = [["El partido", esPartido]];
 /* ---------- Entrada: la primera vez que se pinta la clasificación, los puntos suben como en un marcador ---------- */
 let ENTRADA_HECHA = false;
 function entradaMarcador() {
@@ -7308,7 +7613,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
