@@ -3232,6 +3232,34 @@ function pintarSinCap() {
     <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.` : "Nadie cambiaría de puesto: el capitán no decide la liga."} Al que más le ha dado el capitán: <b>${esc(ayuda.m.name)}</b> (+${ayuda.ext}).</p>`;
 }
 
+/* ---------- Liga de duelos: la clasificación si cada jornada fuese un todos contra todos (3 por victoria, 1 por empate) ---------- */
+// Cada jornada, cada manager se mide con los demás: gana, empata o pierde según los puntos de esa jornada. Solo lee D.matchdays.
+function pintarLigaDuelos() {
+  const cont = $("#ligad"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas(), M = D.managers;
+  const R = M.map((m, i) => ({ m, i, g: 0, e: 0, p: 0, tot: 0, n: 0 }));
+  js.forEach(j => R.forEach(a => {
+    const pa = ((D.matchdays[j] || {})[a.m.id] || {}).points; if (!capNum(pa)) return;
+    a.tot += pa; a.n++;
+    R.forEach(b => { if (a === b) return; const pb = ((D.matchdays[j] || {})[b.m.id] || {}).points; if (!capNum(pb)) return;
+      if (pa > pb) a.g++; else if (pa === pb) a.e++; else a.p++; });
+  }));
+  const L = R.filter(r => r.n > 0);
+  if (L.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  L.forEach(r => { r.pt = r.g * 3 + r.e; });
+  const real = L.slice().sort((a, b) => b.tot - a.tot), duel = L.slice().sort((a, b) => b.pt - a.pt || b.tot - a.tot);
+  const mx = Math.max(1, ...L.map(r => r.pt));
+  const filas = duel.map((r, k) => { const d = real.indexOf(r) - k;
+    return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.pt} puntos de duelos"><i style="width:${Math.max(3, r.pt / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.g} ganados · ${r.e} empates · ${r.p} perdidos</small></span>
+      <span class="pts"><b>${r.pt}</b><em class="${d > 0 ? "up" : d < 0 ? "dn" : ""}" style="${d ? "" : "color:var(--mut)"}">${d > 0 ? "▲ " + d : d < 0 ? "▼ " + -d : "="}</em></span></li>`; }).join("");
+  const cambian = L.filter(r => real.indexOf(r) !== duel.indexOf(r)).length, sube = duel.map((r, k) => ({ r, d: real.indexOf(r) - k })).sort((a, b) => b.d - a.d)[0];
+  cont.innerHTML = `<div class="gh"><h2>Liga de duelos</h2></div>
+    <p class="note" style="margin:0 0 10px">Y si cada jornada fuese un todos contra todos: cada manager gana 3 por cada rival al que supera ese fin de semana y 1 por cada empate. Premia ganar muchas jornadas, no sumar muchos puntos. La flecha compara con la clasificación real.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>`;
+}
+
 /* ---------- Formaciones: qué esquema da más puntos (estadístico) ---------- */
 function pintarFormaciones() {
   const cont = $("#form"); if (!cont || !D || !D.matchdays) return;
@@ -8479,7 +8507,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -8496,6 +8524,7 @@ function pintar() {
     <section class="card" id="mat"></section>
     <section class="card" id="rach"></section>
     <section class="card" id="sincap"></section>
+    <section class="card" id="ligad"></section>
     <section class="card" id="form"></section>
     <section class="card" id="rota"></section>
     <section class="card" id="premios"></section>`;
@@ -8520,6 +8549,7 @@ function pintar() {
   pintarMatriz();
   pintarRachas();
   pintarSinCap();
+  pintarLigaDuelos();
   pintarFormaciones();
   pintarRotacion();
   cuentaClasificacion();
