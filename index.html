@@ -181,6 +181,10 @@ ul{list-style:none;margin:0;padding:0}
 .cp .cph{display:flex;align-items:center;gap:10px}
 .porque{font-size:12px;color:var(--accFg);margin-top:3px}
 .alerta{margin:8px 0 0;background:var(--redBg);color:var(--red);border-radius:var(--r-s);padding:5px 10px;font-size:12.5px;font-weight:600}
+.cv-l{stroke-dasharray:1;stroke-dashoffset:0;animation:cvDib .9s ease-out both}@keyframes cvDib{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.cv-l{animation:none}}
+.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
+.cdist{padding:8px 2px 2px}.cdist-t{font-size:12px;font-weight:600;margin-bottom:4px}.cdist svg{width:100%;height:auto;display:block}
 .claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .clave,.rv{background:var(--panel2);border-radius:var(--r-m);overflow:hidden}
 .clave summary,.rv summary{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;list-style:none}
@@ -370,6 +374,7 @@ code{color:var(--accFg)}
 .ct-hero{position:relative;overflow:hidden}
 .ct-hero .av{width:52px;height:52px;font-size:17px}
 .ct-copa{flex:none;width:34px;height:40px;transform-origin:50% 100%;animation:copaEnt .7s cubic-bezier(.2,1.4,.4,1) .15s both}
+.wr-copa{width:68px;height:80px;margin:0 auto 6px;display:block;filter:drop-shadow(0 0 18px #2fd46e66)}
 .ct-copa .brillo{animation:copaBrillo 3.2s ease-in-out 1s infinite}
 .ct-hero::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,#ffffff2e,transparent);transform:translateX(-120%) skewX(-18deg);animation:heroBrillo 3.2s ease-in-out .9s infinite;pointer-events:none}
 @keyframes copaEnt{from{transform:translateY(14px) scale(.3) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
@@ -463,6 +468,18 @@ code{color:var(--accFg)}
 .rv1{background:color-mix(in srgb,var(--pos) 45%,var(--panel2))}.rv2{background:color-mix(in srgb,var(--pos) 22%,var(--panel2))}
 .rv3{background:var(--panel2)}.rv4{background:color-mix(in srgb,var(--red) 22%,var(--panel2))}.rv5{background:color-mix(in srgb,var(--red) 45%,var(--panel2))}
 .rv0{color:var(--mut)}
+.vv{margin:-6px 0 14px;padding:6px 12px;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line)}
+.vv ol{list-style:none;margin:0;padding:0}
+.vv li{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 0}
+.vv li+li{border-top:1px solid var(--line)}
+.vv-p{width:16px;text-align:center;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.vv-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.vv-n b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vv-n small{font-size:11px;color:var(--mut)}
+.vv-b{display:block;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.vv-b i{display:block;height:100%;background:var(--c,var(--ac));transform-origin:left;transition:transform .6s}
+.vv-v{font-size:18px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.vv-b i{transition:none}}
 .av-j{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:10px 12px;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line)}
 .av-r{flex:none;min-width:74px;text-align:center;font-weight:800;font-size:14px;padding:8px 6px;border-radius:var(--r-m);background:var(--acc);color:var(--accTxt)}
 .av-j>span:last-child{display:flex;flex-direction:column;min-width:0}
@@ -830,6 +847,25 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 #nav,.nav{view-transition-name:none}
 .btn-wa:active,.btn-comp:active,.refresh:active,.tuj-f:active,.pill:active,.indice button:active{transform:scale(.97)}
 .btn-wa,.btn-comp,.refresh,.tuj-f,.pill,.indice button{transition:transform .12s ease,background-color .15s,color .15s}
+/* Radar de pujas (Mercado, con PIN): sónar con los libres; cerca del centro = puja ideal barata, punto grande = más valor */
+.rp-svg{width:100%;max-width:360px;display:block;margin:0 auto;touch-action:manipulation}
+.rp-aro{fill:none;stroke:var(--line,rgba(127,127,127,.3));stroke-width:.6;stroke-dasharray:2 3}
+.rp-eje{stroke:var(--line,rgba(127,127,127,.3));stroke-width:.5}
+.rp-t{font-size:7px;fill:var(--mut,#8a9a90);text-anchor:middle}
+.rp-barre{transform-origin:160px 160px;animation:rp-giro 6s linear infinite}
+@keyframes rp-giro{to{transform:rotate(360deg)}}
+.rp-d{cursor:pointer;outline:none}
+.rp-d circle.rp-p{fill:var(--acc,#2fd46e);stroke:var(--bg,#0b120e);stroke-width:1.2;transition:transform .2s}
+.rp-d.m circle.rp-p{opacity:.55}.rp-d.b circle.rp-p{opacity:.3}
+.rp-d circle.rp-h{fill:none;stroke:var(--acc,#2fd46e);stroke-width:1;opacity:0}
+.rp-d.on circle.rp-h{opacity:1;animation:rp-pulso 1.6s ease-out infinite}
+.rp-d:focus-visible circle.rp-h{opacity:1}
+@keyframes rp-pulso{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
+.rp-d circle{transform-box:fill-box;transform-origin:center}
+.rp-ficha{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:48px}
+.rp-ficha .cq{flex:1;display:flex;flex-direction:column;min-width:0}.rp-ficha .cq span{white-space:normal;overflow:visible;font-size:12px;color:var(--mut,#8a9a90)}
+.rp-ficha button{min-height:44px}
+@media (prefers-reduced-motion:reduce){.rp-barre,.rp-d.on circle.rp-h{animation:none}}
 /* ---- perfil de cada manager (radar) ---- */
 .rd-sel{display:flex;gap:2px;justify-content:space-between;max-width:360px;margin:0 auto}
 .rd-sel button{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;opacity:.55;transition:opacity .15s,border-color .15s}
@@ -1218,6 +1254,20 @@ body.wr-abierto{overflow:hidden}
 .cm-f{display:grid;grid-template-columns:1fr 1.3fr 1fr;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);text-align:center}
 .cm-f span{font-size:12px;color:var(--mut)}.cm-f b{font-size:18px;font-variant-numeric:tabular-nums;opacity:.7}.cm-f b.gana{color:var(--acc);opacity:1}
 .cm-v{margin-top:12px}
+.fh{position:relative;overflow:hidden;display:flex;align-items:flex-end;gap:14px;margin:-14px -16px 4px;padding:62px 16px 16px;background:linear-gradient(160deg,hsl(var(--h) 42% 24%),hsl(var(--h) 30% 11%) 70%),var(--panel2);color:#fff}
+.fh::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,#2fd46e33,transparent 60%);pointer-events:none}
+.fh-esc{position:absolute;right:-18px;top:-10px;width:170px;height:170px;object-fit:contain;opacity:.13;transform:rotate(-12deg);pointer-events:none}
+.fh-ph,.fh-tx{position:relative;z-index:1}
+.fh-ph .cara{box-shadow:0 0 0 3px #ffffff40,0 8px 24px #0006;background:#ffffff1f}
+.fh-ph .cara-i{color:#fff}
+.fh-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.fh-tx small{font-size:12px;font-weight:700;color:#bff5d3}
+.fh-tx b{font-size:26px;line-height:1.1;letter-spacing:-.6px;font-family:var(--f-disp)}
+.fh-r{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.fh-r .ch-vs{color:#e6f5ec}
+.fh-x{position:relative;z-index:2;height:0;margin:0;overflow:visible}
+.fh-x .ov-x{position:relative;top:0;background:#0007;color:#fff;border-color:#fff3}
+@media(prefers-reduced-motion:no-preference){.fh-ph{animation:sube .3s ease-out}}
 .btn-cromo{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:12px 0 2px;padding:0 16px;border-radius:999px;border:1px solid #2fd46e66;background:linear-gradient(120deg,#2fd46e26,#2fd46e0a);color:var(--txt);font-weight:800;cursor:pointer}
 .crv{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px calc(20px + env(safe-area-inset-bottom));color-scheme:dark;
   background:radial-gradient(60% 45% at 50% 40%,#0f3a24 0%,#03100a 70%,#010402 100%);color:#eaf4ee;overflow:hidden}
@@ -1289,6 +1339,129 @@ body.wr-abierto{overflow:hidden}
 .cin-i::after{content:"";width:5px;height:5px;margin-left:18px;border-radius:50%;background:#2fd46e66}
 .ci-up{color:#5cf096;font-weight:800}.ci-dn{color:#ff8a8a;font-weight:800}
 @media (prefers-reduced-motion:reduce){.ci-pista{animation:none}.ci-v{overflow-x:auto;scrollbar-width:none}.ci-dup{display:none}}
+/* Mesa de operaciones (Mercado, con PIN): simulador de ventas y pujas con marcador en vivo */
+.ms-hud{position:relative;margin:0 0 12px;padding:14px 12px 12px;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
+  background:radial-gradient(90% 120% at 50% 0%,#17462d 0%,#0a2116 50%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e44,0 0 26px -8px #2fd46e88}
+.ms-hud::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(#2fd46e12 1px,#0000 1px) 0 0/100% 22px,linear-gradient(90deg,#2fd46e12 1px,#0000 1px) 0 0/22px 100%;-webkit-mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000);mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000)}
+.ms-hud::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;z-index:-1;pointer-events:none;opacity:0;background:linear-gradient(90deg,#0000,#9dffc633,#0000);transform:translateX(-100%)}
+.ms-hud.barre::after{animation:msBarre .9s ease-out}
+@keyframes msBarre{0%{opacity:1;transform:translateX(-100%)}100%{opacity:0;transform:translateX(260%)}}
+.ms-k{margin:0 0 10px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#a5ecc2}
+.ms-n{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ms-n>div{min-width:0;padding:10px 6px;border-radius:12px;background:#00000047;box-shadow:inset 0 0 0 1px #ffffff12;text-align:center}
+.ms-n small{display:block;font-size:10.5px;line-height:1.2;color:#a9c7b6}
+.ms-n b{display:block;margin:3px 0;font-family:var(--f-disp);font-weight:900;font-size:clamp(19px,6.2vw,26px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ms-n b.up{color:#6ff3a3;text-shadow:0 0 16px #2fd46e88}.ms-n b.dn{color:#ff8a8a}
+.ms-n em{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:#cfe3d7}
+.ms-n input{width:100%;min-height:36px;margin:2px 0;border-radius:8px;border:1px solid #2fd46e77;background:#04140c;color:#fff;font:inherit;font-weight:800;text-align:center}
+.ms-bar{display:flex;height:8px;margin:12px 0 6px;border-radius:4px;overflow:hidden;background:#ffffff1a}
+.ms-bar i{flex:0 0 auto;width:var(--w,0%);transition:width .5s cubic-bezier(.3,1,.4,1)}
+.ms-bar .g{background:#ffffffd9}.ms-bar .q{background:linear-gradient(90deg,#1c9c52,#6ff3a3)}.ms-bar .f{background:#ff6b6b}
+.ms-ley{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:#a9c7b6}
+.ms-ley i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:2px;vertical-align:-1px}
+.ms-res{margin:10px 0 0;font-size:13px;line-height:1.45;color:#eaf4ee}.ms-res b{color:#8dffb9}.ms-res b.dn{color:#ff8a8a}
+.ms-acc{display:flex;gap:8px;margin:0 0 10px}
+.ms-acc button{flex:1;min-width:0;min-height:46px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.ms-acc button:active{transform:scale(.97)}
+.ms-acc .ms-opt{flex:1.5;border:0;background:linear-gradient(120deg,#1fb85c,#5cf096);color:#03200e;box-shadow:0 0 22px -4px #2fd46eaa}
+.ms-lam{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:12px;color:var(--mut)}
+.ms-lam input{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc)}
+.ms-lam b{flex:none;min-width:118px;text-align:right;color:var(--txt);font-size:12px}
+.ms-tira{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);z-index:6;display:flex;justify-content:space-around;gap:6px;margin:6px 0 0;padding:9px 8px;border-radius:999px;background:#06170ef2;box-shadow:inset 0 0 0 1px #2fd46e66,0 8px 20px -8px #000;color:#a9c7b6;font-size:11.5px;white-space:nowrap}
+.ms-tira b{margin-left:3px;font-family:var(--f-disp);font-weight:900;font-size:14px;color:#fff;font-variant-numeric:tabular-nums}.ms-tira b.up{color:#6ff3a3}.ms-tira b.dn{color:#ff8a8a}
+.ms-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;perspective:700px}
+@media (min-width:560px){.ms-g{grid-template-columns:repeat(6,1fr)}}
+.ms-j{position:relative;height:112px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ms-ji{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.2,.4,1)}
+.ms-j.v .ms-ji{transform:rotateY(180deg)}
+.ms-f,.ms-b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 3px;border-radius:12px;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line)}
+.ms-f b,.ms-l b{max-width:100%;font-size:11.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-f small{font-size:10.5px;font-weight:800;white-space:nowrap}
+.ms-xi{position:absolute;left:5px;top:5px;padding:1px 5px;border-radius:6px;background:var(--accBg);color:var(--accFg);font-style:normal;font-size:9px;font-weight:900}
+.ms-b{transform:rotateY(180deg);background:linear-gradient(160deg,#14532f,#06170e);box-shadow:inset 0 0 0 1.5px #2fd46e;color:#eaf4ee}
+.ms-b b{font-family:var(--f-disp);font-weight:900;font-size:13px;letter-spacing:.06em;color:#8dffb9}
+.ms-b span{font-family:var(--f-disp);font-weight:900;font-size:14px;white-space:nowrap}
+.ms-b small{font-size:9px;line-height:1.15;text-align:center;color:#a9c7b6}
+.ms-j:focus-visible,.ms-l:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:12px}
+.ms-ls{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:4px;scroll-snap-type:x proximity}
+.ms-ls::-webkit-scrollbar{display:none}
+.ms-l{position:relative;flex:none;width:136px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;border:0;border-radius:14px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line);color:inherit;font:inherit;cursor:pointer;scroll-snap-align:start;transition:box-shadow .25s,transform .25s;-webkit-tap-highlight-color:transparent}
+.ms-l.on{box-shadow:inset 0 0 0 2px var(--acc),0 0 20px -6px var(--acc);transform:translateY(-3px)}
+.ms-l small{font-size:11px;color:var(--mut);white-space:nowrap}.ms-l small b{display:inline;font-size:11px;color:var(--txt)}
+.ms-l small.up{color:var(--pos)}.ms-l small.dn{color:var(--red)}
+.ms-ring{position:absolute;right:6px;top:6px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--acc) var(--p),var(--line) 0);font-size:10px;font-weight:900}
+.ms-ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--panel2)}.ms-ring span{position:relative}
+.ms-own{position:absolute;right:6px;top:6px}.ms-own .av{width:28px;height:28px;font-size:10px;box-shadow:0 0 0 2px var(--panel2)}
+.ms-chk{display:block;width:100%;margin-top:4px;padding:5px 0;border-radius:8px;background:var(--panel);font-style:normal;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:var(--mut)}
+.ms-l.on .ms-chk{background:var(--acc);color:var(--accTxt)}
+@media (prefers-reduced-motion:reduce){.ms-ji,.ms-l,.ms-bar i{transition:none}.ms-hud.barre::after{animation:none}}
+/* El futuro de la liga: abanico de la simulación y «¿y si…?» con el ritmo de cada manager */
+.pf{position:relative;margin:0 0 12px;padding:10px 6px 6px;border-radius:var(--r-l);overflow:hidden;color:#eaf4ee;color-scheme:dark;
+  background:radial-gradient(120% 90% at 100% 0%,#143d28 0%,#081c12 55%,#030c07 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
+.pf-g{position:relative}
+.pf-g svg{display:block;width:100%;height:auto;overflow:visible}
+.pf-g .lin{fill:none;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round;opacity:.5;transition:opacity .3s}
+.pf-g .lin.fut{stroke-dasharray:3 4}
+.pf-g .lin.on{stroke-width:3;opacity:1;filter:drop-shadow(0 0 5px currentColor)}
+.pf-g .ban{opacity:.2}.pf-g .ban2{opacity:.3}
+.pf-g text{font-size:9px;fill:#9fc0ae;font-family:var(--f-ui,inherit)}
+.pf-g .hoy{stroke:#6ff3a3;stroke-width:1;stroke-dasharray:2 3}
+.pf-g .cero{stroke:#ffffff33;stroke-width:1}
+.pf-av{position:absolute;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer;
+  transform:translate3d(var(--x),var(--y),0);transition:transform .45s cubic-bezier(.3,1.2,.4,1);-webkit-tap-highlight-color:transparent}
+.pf-av .av{width:24px;height:24px;font-size:9px;box-shadow:0 0 0 2px #04100a,0 0 0 3.5px var(--c);transition:transform .3s}
+.pf-av.on{z-index:2}.pf-av.on .av{transform:scale(1.35);box-shadow:0 0 0 2px #04100a,0 0 0 3.5px #fff,0 0 14px var(--c)}
+.pf-foco{margin:0 0 12px;padding:12px;border-radius:14px;background:var(--panel2);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
+.pf-fh{display:flex;align-items:center;gap:10px}
+.pf-fh .av{flex:none;width:44px;height:44px;font-size:15px}
+.pf-fh>span{flex:1;min-width:0}
+.pf-fh b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-fh small{display:block;font-size:12px;color:var(--mut)}
+.pf-big{flex:none;text-align:right}
+.pf-big b{font-family:var(--f-disp);font-weight:900;font-size:30px;line-height:1;color:var(--accFg);font-variant-numeric:tabular-nums}
+.pf-esc{margin:0 0 12px}.pf-esc button{flex:1}
+.pf-sub{margin:8px 0 0;font-size:12px;color:var(--mut)}
+.pf-rit{display:flex;align-items:center;gap:8px;margin:10px 0 2px}
+.pf-rit button{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--txt);font-size:18px;font-weight:800;cursor:pointer}
+.pf-rit input{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc)}
+.pf-rl{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:8px;font-size:12px;color:var(--mut)}
+.pf-rl b{font-family:var(--f-disp);font-weight:900;font-size:17px;color:var(--txt);font-variant-numeric:tabular-nums}
+.pf-frs{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.4}
+.pf-frs li{padding:8px 10px;border-radius:10px;background:var(--panel)}.pf-frs b{color:var(--accFg)}
+.pf-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.pf-l li{display:flex;align-items:center;gap:10px;min-height:52px;padding:4px 6px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pf-l li.on{background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line)}
+.pf-l .av{flex:none;width:34px;height:34px;font-size:12px}
+.pf-q{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.pf-q b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-b{height:7px;border-radius:4px;background:var(--panel2);overflow:hidden}.pf-l li.on .pf-b{background:var(--panel)}
+.pf-b i{display:block;height:100%;border-radius:4px;transform-origin:0 50%;transform:scaleX(var(--v,0));transition:transform .35s cubic-bezier(.3,1,.4,1)}
+.pf-ps{display:flex;gap:2px;align-items:center;font-size:10px;color:var(--mut)}
+.pf-ps i{flex:1;max-width:22px;height:10px;border-radius:2px;background:var(--c);opacity:var(--o,0);box-shadow:0 0 0 1px var(--line)}
+.pf-ps span{margin-left:6px;white-space:nowrap}
+.pf-pc{flex:none;min-width:50px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:19px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.pf-av,.pf-av .av,.pf-b i,.pf-g .lin{transition:none}}
+/* Rayos X de la plantilla (Equipos) */
+.rx-capas{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:0 4px}.rx-capas::-webkit-scrollbar{display:none}.rx-capas .pill{flex:none;min-height:40px}
+.rx-campo{position:relative;border-radius:var(--r-l);overflow:hidden}
+.rx-scan{position:absolute;left:0;right:0;top:0;height:16%;z-index:300;pointer-events:none;opacity:0;background:linear-gradient(#0000,#6ff3a340 75%,#eafff1cc);border-bottom:2px solid #eafff1}
+.rx-campo.barre .rx-scan{animation:rxScan .85s cubic-bezier(.4,0,.6,1)}
+@keyframes rxScan{0%{opacity:1;transform:translateY(-100%)}85%{opacity:1}100%{opacity:0;transform:translateY(540%)}}
+.rx-ban{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px 6px;padding:4px}.rx-ban::-webkit-scrollbar{display:none}
+.rx-b{flex:none;width:78px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:0;border-radius:12px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line);color:inherit;font:inherit;cursor:pointer}
+.rx-b b{max-width:100%;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rx-v{min-width:30px;padding:1px 6px;border-radius:7px;background:var(--panel);font-family:var(--f-disp);font-weight:900;font-size:13px;text-align:center}
+.rx-b small{font-size:9.5px;color:var(--mut);white-space:nowrap}
+.rx-lin{display:flex;flex-direction:column;gap:7px;margin:4px 0 10px}
+.rx-lin>div{display:flex;align-items:center;gap:8px;font-size:12px}
+.rx-lin .jp-pos2{flex:none;width:30px;text-align:center}
+.rx-lb{flex:1;height:9px;border-radius:5px;background:var(--panel2);overflow:hidden}
+.rx-lb i{display:block;height:100%;border-radius:5px;transform-origin:0 50%;transform:scaleX(var(--w))}
+.rx-lin b{flex:none;min-width:34px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:15px}
+.rx-lin small{flex:none;min-width:58px;text-align:right;color:var(--mut)}
+.rx-ins{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.4}
+.rx-ins li{padding:8px 10px;border-radius:10px;background:var(--panel2)}.rx-ins b{color:var(--accFg)}
+@media (prefers-reduced-motion:reduce){.rx-campo.barre .rx-scan{animation:none}}
 /* Podio interactivo: fichas que saltan de pedestal al viajar por las jornadas, foco que sigue al dedo y ficha de cada manager al tocarlo */
 .pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
   background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
@@ -1737,6 +1910,16 @@ function jornadaEnVivo() {
   const t = Date.now() / 1000, g = CAL.games.find(x => x.ts && x.ts <= t && t <= x.ts + 3 * 3600);
   return g ? g.gw : null;
 }
+// «Directo»: mientras se juega la jornada, tarjeta con los puntos de cada manager y quién va ganando (mismos puntos que la clasificación de la jornada)
+function htmlVivoLiga(gw) {
+  const j = "J" + gw, md = D && D.matchdays && D.matchdays[j];
+  if (!md) return "";
+  const v = proyeccionVivo(j) || {};
+  const L = D.managers.map((m, i) => ({ m, i, pts: (md[m.id] || {}).points || 0, n: (v[m.id] || {}).n || 0, esp: (v[m.id] || {}).esp || 0 })).sort((a, b) => b.pts - a.pts);
+  if (!L.length || !L.some(x => x.pts)) return "";
+  const mx = Math.max(1, L[0].pts);
+  return `<div class="vv" aria-label="Puntos de la jornada ${gw} en directo"><ol>${L.map((x, k) => `<li style="--c:${col(x.i)}"><span class="vv-p">${k + 1}</span>${avatar(x.m, x.i)}<span class="vv-n"><b>${esc(x.m.name)}</b><span class="vv-b"><i style="transform:scaleX(${(x.pts / mx).toFixed(3)})"></i></span><small>${x.n ? `${x.n} por jugar${iaOk && x.esp ? ` · ≈ ${Math.round(x.pts + x.esp)}` : ""}` : "ya ha jugado todo"}</small></span><b class="vv-v">${x.pts}</b></li>`).join("")}</ol></div>`;
+}
 function pintarAviso() {
   const cont = $("#aviso");
   if (!cont) return;
@@ -1751,7 +1934,7 @@ function pintarAviso() {
   const cuando = enMadrid(ini * 1000, { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
   cont.innerHTML = htmlNovedades() + (falta > 0
     ? `<div class="av-j"><span class="av-r">${d > 0 ? `${d} d ${hh} h` : `${hh} h ${mm} min`}</span><span><b>La jornada ${gw} empieza el ${esc(cuando)}</b><small>Deja puestos tu once y tu capitán antes del primer partido.</small></span><button class="av-cal" data-ics="1" aria-label="Añadir el inicio de las próximas jornadas a mi calendario" title="Añadir a mi calendario"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg></button></div>`
-    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>`);
+    : `<div class="av-j vivo"><span class="av-r">En juego</span><span><b>Jornada ${gw} en marcha</b><small>Quedan ${quedan} de ${todos.length} partidos.</small></span></div>${htmlVivoLiga(gw)}`);
 }
 
 // Calendario: un archivo .ics con el inicio de cada jornada que falta y un aviso 2 horas antes (para el capitán)
@@ -2146,9 +2329,14 @@ function abrirFicha(id) {
   let ov = $("#ovFicha");
   if (!ov) { ov = document.createElement("div"); ov.id = "ovFicha"; ov.className = "ov"; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(p.name)}">
-    <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
-    <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
-      <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
+    <div class="ov-h fh-x"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
+    <div class="fh" style="--h:${(Number(p.teamId) * 47) % 360}">
+      <img class="fh-esc" src="${esc(merUrlEscudo(p.teamId))}" alt="" aria-hidden="true" onerror="this.remove()">
+      <div class="fh-ph">${cara(p.id, p.name, p.teamId, 112)}</div>
+      <div class="fh-tx"><small>${esc(nombreEq[p.teamId] || "")}</small>
+        <b>${esc(p.name)}</b>
+        <span class="fh-r"><span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? `<span class="st st-injury">✚</span>` : ""}
+        <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></span></div></div>
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
@@ -2241,7 +2429,7 @@ function htmlCampo3D(js, opts = {}) {
     const [X, Y, s] = c3dProy(j.u, j.v), pos = `left:${(X * 100).toFixed(2)}cqw;top:${(Y * 100).toFixed(2)}cqw;--s:${s.toFixed(3)};z-index:${Math.round(Y * 100)};--d:${(0.55 + k * 0.05).toFixed(2)}s`;
     const datos = `data-u="${j.u.toFixed(3)}" data-v="${j.v.toFixed(3)}"`;
     if (j.vacio) return `<div class="c3d-j vac" style="${pos}" ${datos}><span class="c3d-base"></span><span class="c3d-tk"><span class="c3d-bu">${C3D_CAMISETA}</span><span class="c3d-np"><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>`;
-    const pc = j.pts == null ? "" : opts.fuego === "max" ? `<b class="c3d-p${j.pts === tope ? " fuego" : ""}">${esc(j.pts)}</b>` : `<b class="c3d-p mp-${tramoPts(j.off ? null : j.pts)}">${esc(j.pts)}</b>`;
+    const pc = j.pts == null && j.txt == null ? "" : opts.fuego === "max" ? `<b class="c3d-p${j.pts === tope && tope != null ? " fuego" : ""}">${esc(j.txt ?? j.pts)}</b>` : `<b class="c3d-p mp-${tramoPts(j.off ? null : j.pts)}">${esc(j.txt ?? j.pts)}</b>`;
     const foto = (FOTOS && j.id && FOTOS[String(j.id)]) || (j.id ? fotoDe(j.id) : "");
     return `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}${foto ? "" : " sin"}" style="${pos}" ${datos}${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
       <span class="c3d-base"></span>
@@ -2707,7 +2895,7 @@ function pintarCronica() {
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button></div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button>${seg2 ? `<button class="btn-comp" data-cr-pt="${esc(gan.m.id)}|${esc(seg2.m.id)}|${esc(cronJ)}" aria-label="Ver el partido en 3D">🏟️ Partido 3D</button>` : ""}</div>
     ${htmlMapaCalor(filas)}
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
@@ -2862,37 +3050,138 @@ function tablaDuelos(S, orden) {
     <p class="note">Cada casilla: jornadas que el de la fila le ha ganado al de la columna (verde si va ganando el duelo). ±: balance total de duelos ganados menos perdidos en ${n} jornadas.</p>`;
 }
 
-/* ---------- Pronóstico de la liga (simulación de las jornadas que faltan) ---------- */
+/* ---------- Pronóstico de la liga (simulación de las jornadas que faltan), ahora interactivo ----------
+   Mismo modelo de siempre (media y variación de cada manager encogidas hacia las de la liga, 3.000 ligas simuladas con la misma
+   semilla): sin tocar nada salen los mismos porcentajes. Lo nuevo: el abanico de cada manager en una gráfica (puntos respecto a la
+   media de la liga), el reparto de puestos finales, y un «¿y si…?»: se mueve el ritmo de cualquiera y todo se recalcula al momento,
+   con lo que necesita para ganar la liga y cuándo alcanzaría al líder. */
 const JORNADAS_TOTALES = 38;
 let PRON = null;
+const PRONX = { foco: null, ritmo: {} };
+function pronPar(S) {
+  const n = S.js.length, todas = S.pts.flat(), mL = todas.reduce((a, b) => a + b, 0) / todas.length, sL = Math.sqrt(todas.reduce((t, v) => t + (v - mL) ** 2, 0) / todas.length), K = 6;
+  return S.pts.map(p => { const m = p.reduce((a, b) => a + b, 0) / p.length; const s = Math.sqrt(p.reduce((t, v) => t + (v - m) ** 2, 0) / p.length);
+    return { m: (n * m + K * mL) / (n + K), s: Math.sqrt((n * s * s + K * sL * sL) / (n + K)) }; });
+}
+function pronSim(S, par, quedan) {
+  const n = S.js.length, N = S.ms.length;
+  let semilla = 12345; const azar = () => (semilla = (semilla * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const normal = () => { let u = 0, v = 0; while (!u) u = azar(); while (!v) v = azar(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const SIM = 3000, gana = new Array(N).fill(0), podio = new Array(N).fill(0), ultimo = new Array(N).fill(0), fin = S.ms.map(() => 0), pos = S.ms.map(() => new Array(N).fill(0));
+  for (let s = 0; s < SIM; s++) {
+    const tot = S.ms.map((_, x) => S.cum[x][n - 1] + par[x].m * quedan + normal() * par[x].s * Math.sqrt(quedan));
+    const ord = tot.map((v, x) => [v, x]).sort((a, b) => b[0] - a[0]);
+    gana[ord[0][1]]++; ord.slice(0, 3).forEach(([, x]) => podio[x]++); ultimo[ord[N - 1][1]]++;
+    ord.forEach(([, x], r) => pos[x][r]++);
+    tot.forEach((v, x) => fin[x] += v);
+  }
+  return S.ms.map((o, x) => ({ o, x, g: gana[x] / SIM, p: podio[x] / SIM, u: ultimo[x] / SIM, f: fin[x] / SIM, m: par[x].m, pos: pos[x].map(v => v / SIM) }));
+}
+const pronPct = v => v >= 0.995 ? ">99 %" : v > 0 && v < 0.005 ? "<1 %" : Math.round(v * 100) + " %";
+const pronRitmos = () => PRON.base.map((b, x) => ({ m: b.m + (PRONX.ritmo[PRON.S.ms[x].m.id] || 0), s: b.s }));
 function pintarPronostico() {
   const cont = $("#pron");
   if (!cont) return;
   const S = serieLiga(), n = S.js.length, quedan = JORNADAS_TOTALES - n, N = S.ms.length;
-  if (n < 3 || quedan <= 0) { cont.innerHTML = ""; return; }
-  const clave = n + ":" + S.cum.map(c => c[n - 1]).join(",");
-  if (!PRON || PRON.clave !== clave) {
-    // cada manager: su media y su variación por jornada, encogidas hacia las de la liga (con 11 jornadas una racha engaña)
-    const todas = S.pts.flat(), mL = todas.reduce((a, b) => a + b, 0) / todas.length, sL = Math.sqrt(todas.reduce((t, v) => t + (v - mL) ** 2, 0) / todas.length);
-    const K = 6, par = S.pts.map(p => { const m = p.reduce((a, b) => a + b, 0) / p.length; const s = Math.sqrt(p.reduce((t, v) => t + (v - m) ** 2, 0) / p.length);
-      return { m: (n * m + K * mL) / (n + K), s: Math.sqrt((n * s * s + K * sL * sL) / (n + K)) }; });
-    let semilla = 12345; const azar = () => (semilla = (semilla * 1103515245 + 12345) % 2147483648) / 2147483648;
-    const normal = () => { let u = 0, v = 0; while (!u) u = azar(); while (!v) v = azar(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
-    const SIM = 3000, gana = new Array(N).fill(0), podio = new Array(N).fill(0), ultimo = new Array(N).fill(0), fin = S.ms.map(() => 0);
-    for (let s = 0; s < SIM; s++) {
-      const tot = S.ms.map((_, x) => S.cum[x][n - 1] + par[x].m * quedan + normal() * par[x].s * Math.sqrt(quedan));
-      const ord = tot.map((v, x) => [v, x]).sort((a, b) => b[0] - a[0]);
-      gana[ord[0][1]]++; ord.slice(0, 3).forEach(([, x]) => podio[x]++); ultimo[ord[N - 1][1]]++;
-      tot.forEach((v, x) => fin[x] += v);
-    }
-    PRON = { clave, filas: S.ms.map((o, x) => ({ o, x, g: gana[x] / SIM, p: podio[x] / SIM, u: ultimo[x] / SIM, f: fin[x] / SIM, m: par[x].m })).sort((a, b) => b.g - a.g || b.p - a.p) };
-  }
-  const pct = v => v >= 0.995 ? ">99 %" : v > 0 && v < 0.005 ? "<1 %" : Math.round(v * 100) + " %";
+  if (n < 3 || quedan <= 0) { cont.innerHTML = ""; PRON = null; return; }
+  PRON = { S, n, quedan, N, base: pronPar(S) };
+  const ids = S.ms.map(o => String(o.m.id)), lider = S.ms.map((_, x) => x).sort((a, b) => S.cum[b][n - 1] - S.cum[a][n - 1]);
+  if (!PRONX.foco || !ids.includes(PRONX.foco)) PRONX.foco = YO && ids.includes(String(YO)) ? String(YO) : ids[lider[0]];
   cont.innerHTML = `<div class="gh"><h2>¿Quién ganará la liga?</h2></div>
-    <p class="note" style="margin:0 0 10px">Simulación de las ${quedan} jornadas que faltan, 3.000 veces, con el ritmo de cada uno hasta ahora.</p>
-    <ul class="pron">${PRON.filas.map(f => `<li>${avatar(f.o.m, f.o.i)}<span class="pq"><b>${esc(f.o.m.name)}</b><span class="pb"><i style="width:${(f.g * 100).toFixed(1)}%;background:${col(f.o.i)}"></i></span><small>Podio ${pct(f.p)} · último ${pct(f.u)} · acabaría con ~${Math.round(f.f)} pts</small></span><span class="pp">${pct(f.g)}</span></li>`).join("")}</ul>
-    <p class="note">Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
+    <p class="note" style="margin:0 0 10px">Las ${quedan} jornadas que faltan, jugadas 3.000 veces con el ritmo de cada uno. Toca a un manager y mueve su ritmo para ver qué pasaría.</p>
+    <div class="pf"><div class="pf-g" id="pfG"><svg id="pfSvg" viewBox="0 0 340 210" role="img" aria-label="Puntos de cada manager respecto a la media de la liga, y hacia dónde va"></svg>
+      ${S.ms.map((o, x) => `<button class="pf-av" data-pf-m="${esc(o.m.id)}" style="--c:${col(o.i)}" aria-label="Ver a ${esc(o.m.name)}">${avatar(o.m, o.i)}</button>`).join("")}</div></div>
+    <div class="seg pf-esc" role="group" aria-label="Con qué ritmo se simula"><button data-pf-esc="temp">Ritmo de la temporada</button><button data-pf-esc="forma">Forma: últimas 5</button></div>
+    <div class="pf-foco" id="pfFoco"></div>
+    <ul class="pf-l" id="pfL">${lider.map(x => { const o = S.ms[x]; return `<li data-pf-m="${esc(o.m.id)}" style="--c:${col(o.i)}">${avatar(o.m, o.i)}<span class="pf-q"><b>${esc(o.m.name)}</b><span class="pf-b"><i style="background:${col(o.i)}"></i></span>
+      <span class="pf-ps" title="Probabilidad de acabar en cada puesto, del 1.º al ${N}.º">${S.ms.map(() => "<i></i>").join("")}<span></span></span></span><span class="pf-pc"></span></li>`; }).join("")}</ul>
+    <p class="note">El abanico es donde acabaría 8 de cada 10 veces. Los cuadritos de cada fila son sus opciones de acabar 1.º, 2.º, 3.º… (más color, más probable). Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
+  pronFoco();
 }
+// tarjeta del manager elegido, con el mando de su ritmo (se crea solo al cambiar de manager para no cortar el arrastre)
+function pronFoco() {
+  const P = PRON, f = $("#pfFoco"); if (!P || !f) return;
+  const x = P.S.ms.findIndex(o => String(o.m.id) === PRONX.foco), o = P.S.ms[x], b = P.base[x].m, d = PRONX.ritmo[o.m.id] || 0;
+  f.style.setProperty("--c", col(o.i));
+  f.innerHTML = `<div class="pf-fh">${avatar(o.m, o.i)}<span><b>${esc(o.m.name)}</b><small>opciones de ganar la liga</small></span><span class="pf-big"><b id="pfGana"></b></span></div>
+    <p class="pf-sub" id="pfSub"></p>
+    <div class="pf-rl"><span>Su ritmo en lo que queda</span><span><b id="pfRit"></b> pts por jornada</span></div>
+    <div class="pf-rit"><button data-pf="menos" aria-label="Medio punto menos por jornada">−</button><input type="range" id="pfR" min="${(b - 15).toFixed(1)}" max="${(b + 15).toFixed(1)}" step="0.5" value="${(b + d).toFixed(1)}" aria-label="Ritmo de ${esc(o.m.name)} en puntos por jornada"><button data-pf="mas" aria-label="Medio punto más por jornada">+</button><button data-pf="cero" aria-label="Volver a su ritmo real">↺</button></div>
+    <ul class="pf-frs" aria-live="polite"><li id="pfNec"></li><li id="pfAlc"></li></ul>`;
+  pronPinta();
+}
+function pronPinta() {
+  const P = PRON; if (!P || !$("#pfSvg")) return;
+  const { S, n, quedan, N } = P, par = pronRitmos(), R = pronSim(S, par, quedan), fx = S.ms.findIndex(o => String(o.m.id) === PRONX.foco), T = JORNADAS_TOTALES;
+  // gráfica: puntos respecto a la media de la liga; pasado real, futuro al ritmo marcado y abanico del elegido
+  const med = k => S.cum.reduce((t, c) => t + c[k], 0) / N, rel = S.cum.map(c => c.map((v, k) => v - med(k)));
+  const mR = par.reduce((t, p) => t + p.m, 0) / N, fut = (x, k) => rel[x][n - 1] + (par[x].m - mR) * k;
+  const sd = k => Math.sqrt(k * ((1 - 1 / N) ** 2 * par[fx].s ** 2 + par.reduce((t, p, y) => t + (y === fx ? 0 : p.s ** 2), 0) / N ** 2));
+  const vals = rel.flat().concat(S.ms.map((_, x) => fut(x, quedan)), [fut(fx, quedan) + 1.2816 * sd(quedan), fut(fx, quedan) - 1.2816 * sd(quedan)]);
+  const lo = Math.min(...vals), hi = Math.max(...vals), X = j => 24 + (j - 1) / (T - 1) * (340 - 24 - 34), Y = v => 12 + (hi - v) / Math.max(1, hi - lo) * (210 - 12 - 20);
+  const camino = pts => pts.map((p, k) => (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+  const ks = Array.from({ length: quedan + 1 }, (_, k) => k), banda = z => camino(ks.map(k => [X(n + k), Y(fut(fx, k) + z * sd(k))]).concat(ks.slice().reverse().map(k => [X(n + k), Y(fut(fx, k) - z * sd(k))]))) + "Z";
+  // avatares al final de cada línea (separados si se pisan)
+  const g = $("#pfG"), W = g.clientWidth || 340, esc_ = W / 340, hueco = 27, ys = S.ms.map((_, x) => ({ x, y: Y(fut(x, quedan)) * esc_ })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ys.length; i++) if (ys[i].y - ys[i - 1].y < hueco) ys[i].y = ys[i - 1].y + hueco;
+  const sobra = ys[ys.length - 1].y - (198 * esc_); if (sobra > 0) { ys[ys.length - 1].y -= sobra; for (let i = ys.length - 2; i >= 0; i--) if (ys[i + 1].y - ys[i].y < hueco) ys[i].y = ys[i + 1].y - hueco; }
+  const avs = g.querySelectorAll(".pf-av");
+  ys.forEach(e => { const a = avs[e.x]; a.style.setProperty("--x", ((X(T) + 17) * esc_).toFixed(1) + "px"); a.style.setProperty("--y", e.y.toFixed(1) + "px"); a.classList.toggle("on", e.x === fx); });
+  const cf = col(S.ms[fx].i);
+  $("#pfSvg").innerHTML = `<rect x="${X(n).toFixed(1)}" y="6" width="${(X(T) - X(n)).toFixed(1)}" height="186" fill="#ffffff08"/>
+    <line class="cero" x1="24" x2="${X(T).toFixed(1)}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/><text x="2" y="${(Y(0) + 3).toFixed(1)}">media</text>
+    <text x="2" y="${(Y(hi) + 7).toFixed(1)}">+${Math.round(hi)}</text><text x="2" y="${(Y(lo) - 1).toFixed(1)}">−${Math.round(-lo)}</text>
+    <path class="ban" d="${banda(1.2816)}" fill="${cf}"/><path class="ban2" d="${banda(0.6745)}" fill="${cf}"/>
+    ${S.ms.map((o, x) => `<path class="lin${x === fx ? " on" : ""}" style="color:${col(o.i)}" stroke="${col(o.i)}" d="${camino(rel[x].map((v, k) => [X(k + 1), Y(v)]))}"/><path class="lin fut${x === fx ? " on" : ""}" style="color:${col(o.i)}" stroke="${col(o.i)}" d="M${X(n).toFixed(1)} ${Y(rel[x][n - 1]).toFixed(1)}L${X(T).toFixed(1)} ${Y(fut(x, quedan)).toFixed(1)}"/>`).join("")}
+    ${ys.map(e => `<path class="lin${e.x === fx ? " on" : ""}" stroke="${col(S.ms[e.x].i)}" style="color:${col(S.ms[e.x].i)};stroke-width:1" d="M${X(T).toFixed(1)} ${Y(fut(e.x, quedan)).toFixed(1)}L${(X(T) + 6).toFixed(1)} ${(e.y / esc_).toFixed(1)}"/>`).join("")}
+    <line class="hoy" x1="${X(n).toFixed(1)}" x2="${X(n).toFixed(1)}" y1="6" y2="192"/>
+    <text x="24" y="206">J1</text><text x="${X(n).toFixed(1)}" y="206" text-anchor="middle" fill="#6ff3a3">hoy · J${n}</text><text x="${X(T).toFixed(1)}" y="206" text-anchor="end">J${T}</text>`;
+  // filas: opciones de título y reparto de puestos
+  document.querySelectorAll("#pfL li").forEach(li => { const r = R.find(q => String(q.o.m.id) === li.dataset.pfM); if (!r) return;
+    li.classList.toggle("on", r.x === fx); li.querySelector(".pf-b i").style.setProperty("--v", r.g.toFixed(3)); li.querySelector(".pf-pc").textContent = pronPct(r.g);
+    const mx = r.pos.indexOf(Math.max(...r.pos)); li.querySelectorAll(".pf-ps i").forEach((c, k) => c.style.setProperty("--o", (0.06 + 0.94 * Math.min(1, r.pos[k] / 0.6)).toFixed(2)));
+    li.querySelector(".pf-ps span").textContent = `lo más probable: ${mx + 1}.º (${pronPct(r.pos[mx])})`; });
+  const libre = Object.values(PRONX.ritmo).some(v => Math.abs(v) > 0.01);
+  document.querySelectorAll("[data-pf-esc]").forEach(b2 => { const on = b2.dataset.pfEsc === "forma" ? PRONX.esc === "forma" : !libre; b2.classList.toggle("on", on); b2.setAttribute("aria-pressed", on); });
+  // tarjeta del elegido
+  const r = R[fx], o = S.ms[fx], b = P.base[fx].m, ritmo = par[fx].m, nf = v => nf1.format(v);
+  $("#pfGana").textContent = pronPct(r.g);
+  $("#pfSub").textContent = `Podio ${pronPct(r.p)} · último ${pronPct(r.u)} · acabaría con ~${Math.round(r.f)} pts`;
+  $("#pfRit").textContent = nf(ritmo) + (Math.abs(ritmo - b) < 0.05 ? "" : ` (${ritmo > b ? "+" : "−"}${nf(Math.abs(ritmo - b))})`);
+  const ins = $("#pfR"); if (ins && document.activeElement !== ins) ins.value = ritmo.toFixed(1);
+  // qué ritmo necesita para tener la mitad de las opciones (bisección con la misma simulación)
+  // (es lo más caro de calcular: se espera a que el dedo pare un instante)
+  clearTimeout(PRONX.tm); PRONX.tm = setTimeout(() => { const el = $("#pfNec"); if (!el || PRON !== P) return;
+  const gCon = m => pronSim(S, par.map((p, x) => x === fx ? { m, s: p.s } : p), quedan)[fx].g;
+  let nec;
+  if (gCon(b + 40) < 0.5) nec = null; else { let a = b - 25, c = b + 40; for (let i = 0; i < 11; i++) { const h = (a + c) / 2; gCon(h) >= 0.5 ? c = h : a = h; } nec = c; }
+  el.innerHTML = nec == null ? `Ni haciendo 40 puntos más por jornada llegaría a ser el favorito.`
+    : `Para ser el favorito (1 de cada 2 veces campeón) necesita <b>${nf(nec)} pts por jornada</b>: ${Math.abs(nec - ritmo) < 0.3 ? "justo lo que marca ahora" : nec > ritmo ? `<b>${nf(nec - ritmo)} más</b> de lo que marca` : `le sobran ${nf(ritmo - nec)}`}.`; }, PRONX.visto ? 140 : 0); PRONX.visto = true;
+  // cuándo alcanza al líder (o cuándo le alcanzan), con los ritmos marcados
+  const act = S.ms.map((_, x) => S.cum[x][n - 1]), ord = act.map((v, x) => x).sort((p, q) => act[q] - act[p]), L = ord[0];
+  const alcanza = (de, a) => { const gap = act[a] - act[de], dif = par[de].m - par[a].m; if (dif <= 0) return null; const k = Math.max(1, Math.ceil(gap / dif)); return n + k <= T ? n + k : null; };
+  if (fx !== L) { const j = alcanza(fx, L), gap = act[L] - act[fx];
+    $("#pfAlc").innerHTML = j ? `Está a ${gap} puntos de ${esc(S.ms[L].m.name)}. A estos ritmos lo adelanta en la <b>jornada ${j}</b>.` : `Está a ${gap} puntos de ${esc(S.ms[L].m.name)}. A estos ritmos <b>no lo alcanza</b> antes del final${par[fx].m > par[L].m ? ` (le recorta ${nf(par[fx].m - par[L].m)} por jornada y no le da tiempo)` : ""}.`; }
+  else { const pers = ord.slice(1).map(y => ({ y, j: alcanza(y, L) })).filter(e => e.j).sort((p, q) => p.j - q.j)[0];
+    $("#pfAlc").innerHTML = pers ? `Va líder con ${act[L] - act[ord[1]]} puntos sobre el 2.º. A estos ritmos, ${esc(S.ms[pers.y].m.name)} lo adelanta en la <b>jornada ${pers.j}</b>.` : `Va líder con ${act[L] - act[ord[1]]} puntos sobre el 2.º y, a estos ritmos, <b>nadie lo alcanza</b>.`; }
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("#pron"); if (!c || !PRON) return;
+  const m = e.target.closest("[data-pf-m]"), b = e.target.closest("[data-pf]"), es = e.target.closest("[data-pf-esc]");
+  if (es) { const { S, base } = PRON; PRONX.ritmo = {}; PRONX.esc = es.dataset.pfEsc === "forma" ? "forma" : null;
+    // forma: la media de sus últimas 5 jornadas en lugar de la de toda la temporada
+    if (PRONX.esc) S.ms.forEach((o, x) => { const u = S.pts[x].slice(-5); PRONX.ritmo[o.m.id] = Math.max(-15, Math.min(15, u.reduce((a, v) => a + v, 0) / u.length - base[x].m)); });
+    pronFoco(); }
+  else if (m) { if (PRONX.foco !== m.dataset.pfM) { PRONX.foco = m.dataset.pfM; pronFoco(); } }
+  else if (b) { const x = PRON.S.ms.findIndex(o => String(o.m.id) === PRONX.foco), id = PRON.S.ms[x].m.id, d = PRONX.ritmo[id] || 0;
+    PRONX.esc = null; PRONX.ritmo[id] = b.dataset.pf === "cero" ? 0 : Math.max(-15, Math.min(15, d + (b.dataset.pf === "mas" ? 0.5 : -0.5))); pronPinta(); }
+});
+document.addEventListener("input", e => {
+  if (e.target.id !== "pfR" || !PRON) return;
+  const x = PRON.S.ms.findIndex(o => String(o.m.id) === PRONX.foco);
+  PRONX.esc = null; PRONX.ritmo[PRON.S.ms[x].m.id] = Number(e.target.value) - PRON.base[x].m; pronPinta();
+});
+window.addEventListener("resize", () => { if (PRON && $("#pfSvg")) pronPinta(); });
 
 /* ---------- De dónde salen los puntos de cada manager (por posición, con capitán aparte) ---------- */
 function pintarOrigen() {
@@ -3029,6 +3318,34 @@ function pintarSinCap() {
     <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.` : "Nadie cambiaría de puesto: el capitán no decide la liga."} Al que más le ha dado el capitán: <b>${esc(ayuda.m.name)}</b> (+${ayuda.ext}).</p>`;
 }
 
+/* ---------- Liga de duelos: la clasificación si cada jornada fuese un todos contra todos (3 por victoria, 1 por empate) ---------- */
+// Cada jornada, cada manager se mide con los demás: gana, empata o pierde según los puntos de esa jornada. Solo lee D.matchdays.
+function pintarLigaDuelos() {
+  const cont = $("#ligad"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas(), M = D.managers;
+  const R = M.map((m, i) => ({ m, i, g: 0, e: 0, p: 0, tot: 0, n: 0 }));
+  js.forEach(j => R.forEach(a => {
+    const pa = ((D.matchdays[j] || {})[a.m.id] || {}).points; if (!capNum(pa)) return;
+    a.tot += pa; a.n++;
+    R.forEach(b => { if (a === b) return; const pb = ((D.matchdays[j] || {})[b.m.id] || {}).points; if (!capNum(pb)) return;
+      if (pa > pb) a.g++; else if (pa === pb) a.e++; else a.p++; });
+  }));
+  const L = R.filter(r => r.n > 0);
+  if (L.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  L.forEach(r => { r.pt = r.g * 3 + r.e; });
+  const real = L.slice().sort((a, b) => b.tot - a.tot), duel = L.slice().sort((a, b) => b.pt - a.pt || b.tot - a.tot);
+  const mx = Math.max(1, ...L.map(r => r.pt));
+  const filas = duel.map((r, k) => { const d = real.indexOf(r) - k;
+    return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.pt} puntos de duelos"><i style="width:${Math.max(3, r.pt / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.g} ganados · ${r.e} empates · ${r.p} perdidos</small></span>
+      <span class="pts"><b>${r.pt}</b><em class="${d > 0 ? "up" : d < 0 ? "dn" : ""}" style="${d ? "" : "color:var(--mut)"}">${d > 0 ? "▲ " + d : d < 0 ? "▼ " + -d : "="}</em></span></li>`; }).join("");
+  const cambian = L.filter(r => real.indexOf(r) !== duel.indexOf(r)).length, sube = duel.map((r, k) => ({ r, d: real.indexOf(r) - k })).sort((a, b) => b.d - a.d)[0];
+  cont.innerHTML = `<div class="gh"><h2>Liga de duelos</h2></div>
+    <p class="note" style="margin:0 0 10px">Y si cada jornada fuese un todos contra todos: cada manager gana 3 por cada rival al que supera ese fin de semana y 1 por cada empate. Premia ganar muchas jornadas, no sumar muchos puntos. La flecha compara con la clasificación real.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>`;
+}
+
 /* ---------- Formaciones: qué esquema da más puntos (estadístico) ---------- */
 function pintarFormaciones() {
   const cont = $("#form"); if (!cont || !D || !D.matchdays) return;
@@ -3080,6 +3397,87 @@ function pintarRotacion() {
     <ul class="pron">${R.filter(r => r.fijo).map(r => `<li data-ficha="${r.fijo.id}">${cara(r.fijo.id, r.fijo.name, r.fijo.teamId, 36)}<span class="pq"><b>${esc(r.fijo.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · en ${r.fijo.n} de ${r.n + 1} onces</span></span><span class="pts"><b>${nf0.format(r.fijo.pts)}</b> pts</span></li>`).join("")}</ul>
     <p class="note">El jugador que más veces ha estado en el once de cada manager y los puntos (sin capitán) que le ha dado.</p>
     <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>`;
+}
+
+/* ---------- Plantones: alineados que no llegaron a jugar (estadístico, solo lee D.matchdays) ---------- */
+function pintarPlantones() {
+  const cont = $("#plan"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas();
+  const R = D.managers.map((m, i) => {
+    let tot = 0, no = 0, peor = null; const rep = {};
+    js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x || !Array.isArray(x.players) || !x.players.length) return;
+      const f = x.players.filter(p => p.played === false); tot += x.players.length; no += f.length;
+      if (!peor || f.length > peor.n) peor = { j, n: f.length };
+      f.forEach(p => { const o = rep[p.id] || (rep[p.id] = { id: p.id, name: p.name, teamId: p.teamId, n: 0 }); o.n++; }); });
+    const rr = Object.values(rep).sort((a, b) => b.n - a.n)[0] || null;
+    return { m, i, tot, no, peor, rr };
+  }).filter(r => r.tot >= 11);
+  if (R.length < 3 || !R.some(r => r.no)) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  R.sort((a, b) => b.no / b.tot - a.no / a.tot);
+  const mx = Math.max(...R.map(r => r.no / r.tot)), pc = r => Math.round(r.no / r.tot * 100);
+  const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${pc(r)} % de alineados sin jugar"><i style="width:${Math.max(3, r.no / r.tot / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.no} de ${r.tot} alineados · peor ${esc(r.peor.j)} con ${r.peor.n}</small></span><span class="pts"><b>${pc(r)} %</b></span></li>`).join("");
+  const rep = R.filter(r => r.rr && r.rr.n >= 2);
+  const a = R[0], z = R[R.length - 1];
+  cont.innerHTML = `<div class="gh"><h2>Plantones</h2></div>
+    <p class="note" style="margin:0 0 10px">Alineados que no llegaron a jugar (lesión, banquillo o descanso) sobre el total de huecos del once en la temporada. Menos barra = mejor ojo.</p>
+    <ul class="pron">${filas}</ul>
+    ${rep.length ? `<h3 class="sec">Los que más dejaron plantado</h3><ul class="pron">${rep.map(r => `<li data-ficha="${r.rr.id}">${cara(r.rr.id, r.rr.name, r.rr.teamId, 36)}<span class="pq"><b>${esc(r.rr.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · sin jugar en ${r.rr.n} onces</span></span></li>`).join("")}</ul>` : ""}
+    <p class="note">El que más huecos regala es <b>${esc(a.m.name)}</b> (${pc(a)} %) y el que mejor los llena, <b>${esc(z.m.name)}</b> (${pc(z)} %).</p>`;
+}
+
+/* ---------- Clubes: de qué equipo real viven los puntos de cada manager (estadístico, solo lee D.matchdays) ---------- */
+function pintarClubes() {
+  const cont = $("#clubes"); if (!cont || !D || !D.matchdays) return;
+  const nom = {}; (CAL && CAL.games || []).forEach(g => { nom[g.home] = g.homeName; nom[g.away] = g.awayName; });
+  const tot = {};
+  const R = D.managers.map((m, i) => {
+    const c = {}; let t = 0;
+    jornadas().forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+      (x.players || []).forEach(p => { if (p.played === false || !p.teamId) return; const b = p.basePoints != null ? p.basePoints : p.points; if (!capNum(b)) return;
+        c[p.teamId] = (c[p.teamId] || 0) + b; tot[p.teamId] = (tot[p.teamId] || 0) + b; t += b; }); });
+    const top = Object.entries(c).sort((a, b) => b[1] - a[1])[0];
+    return { m, i, t, id: top && top[0], v: top ? top[1] : 0 };
+  }).filter(r => r.t > 0);
+  if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  R.sort((a, b) => b.v / b.t - a.v / a.t);
+  const esc2 = id => `<img class="cara-e" style="position:static;width:26px;height:26px" src="fotos/escudos/${esc(id)}.png" alt="" onerror="this.remove()">`;
+  const nm = id => esc(nom[id] || "su club");
+  const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${Math.round(r.v / r.t * 100)} % de sus puntos"><i style="width:${(r.v / r.t * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${nm(r.id)} · ${r.v} de ${r.t} pts</small></span>${esc2(r.id)}<span class="pts"><b>${Math.round(r.v / r.t * 100)} %</b></span></li>`).join("");
+  const top = Object.entries(tot).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const T = Object.values(tot).reduce((a, b) => a + b, 0);
+  cont.innerHTML = `<div class="gh"><h2>Clubes de cada uno</h2></div>
+    <p class="note" style="margin:0 0 10px">De qué equipo real sale la mayor parte de los puntos de cada manager (sin capitán, solo jugadores que jugaron). Barra larga = vive de un solo club.</p>
+    <ul class="pron">${filas}</ul>
+    <h3 class="sec">Los clubes que más puntos reparten en la liga</h3>
+    <ul class="pron">${top.map(([id, v], k) => `<li>${esc2(id)}<span class="pq"><b>${k + 1}.º ${nm(id)}</b></span><span class="pts"><b>${v}</b> pts · ${Math.round(v / T * 100)} %</span></li>`).join("")}</ul>
+    <p class="note">El más pegado a un solo club es <b>${esc(R[0].m.name)}</b> y el que más reparte, <b>${esc(R[R.length - 1].m.name)}</b>.</p>`;
+}
+
+/* ---------- Récords de la temporada: las mejores actuaciones individuales y de manager (solo lee D.matchdays) ---------- */
+function pintarRecords() {
+  const cont = $("#recs"); if (!cont || !D || !D.matchdays) return;
+  const js = jornadas(), M = D.managers;
+  const mj = [], jg = new Map();
+  js.forEach(j => M.forEach((m, i) => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+    if (capNum(x.points)) mj.push({ j, m, i, p: x.points });
+    (x.players || []).forEach(p => { if (p.played === false) return; const b = p.basePoints != null ? p.basePoints : p.points; if (!capNum(b)) return;
+      const k = p.id + "|" + j; if (!jg.has(k) || (jg.get(k).b < b)) jg.set(k, { j, id: p.id, name: p.name, teamId: p.teamId, b, m, i }); }); }));
+  if (mj.length < 6 || !jg.size) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const topJ = mj.slice().sort((a, b) => b.p - a.p).slice(0, 5), peorJ = mj.slice().sort((a, b) => a.p - b.p)[0];
+  const topP = [...jg.values()].sort((a, b) => b.b - a.b || a.j.localeCompare(b.j, "es", { numeric: true })).slice(0, 5);
+  // mayor paliza: más diferencia entre el mejor y el peor de una misma jornada
+  let pal = null; js.forEach(j => { const v = mj.filter(r => r.j === j); if (v.length < 2) return; const a = v.reduce((x, y) => y.p > x.p ? y : x), z = v.reduce((x, y) => y.p < x.p ? y : x); if (!pal || a.p - z.p > pal.d) pal = { j, a, z, d: a.p - z.p }; });
+  const medalla = k => ["🥇", "🥈", "🥉"][k] || (k + 1) + ".º";
+  const fm = topJ.map((r, k) => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${medalla(k)} ${esc(r.m.name)}</b><small>${esc(r.j)}</small></span><span class="pts"><b>${r.p}</b> pts</span></li>`).join("");
+  const fp = topP.map((r, k) => `<li data-ficha="${r.id}">${cara(r.id, r.name, r.teamId, 36)}<span class="pq"><b>${medalla(k)} ${esc(r.name)}</b><small>${esc(r.j)} · en el once de ${esc(r.m.name)}</small></span><span class="pts"><b>${r.b}</b> pts</span></li>`).join("");
+  cont.innerHTML = `<div class="gh"><h2>Récords de la temporada</h2></div>
+    <h3 class="sec">Mejores jornadas de un manager</h3><ul class="pron">${fm}</ul>
+    <h3 class="sec">Mejores actuaciones de un jugador</h3><ul class="pron">${fp}</ul>
+    <p class="note">Puntos del jugador sin contar el capitán; tocar uno abre su ficha.</p>
+    <p class="note">La peor jornada fue la de <b>${esc(peorJ.m.name)}</b> en la ${esc(peorJ.j)}: ${peorJ.p} puntos.${pal ? ` La mayor paliza: ${esc(pal.j)}, <b>${esc(pal.a.m.name)}</b> (${pal.a.p}) contra <b>${esc(pal.z.m.name)}</b> (${pal.z.p}), ${pal.d} puntos de diferencia.` : ""}</p>`;
 }
 
 /* ---------- Premios de la temporada ---------- */
@@ -3257,8 +3655,31 @@ function htmlOnceTemporada() {
     { titulo: "Once ideal de la temporada", pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
 }
 
-/* Equipos: el mejor once de la temporada que sale de la plantilla de hoy (puntos ya hechos, nada de previsión) */
-let eqOnceAbierto = false;
+/* Equipos: rayos X de una plantilla. Su mejor once de la temporada (puntos ya hechos, nada de previsión) en el campo, con capas que cambian
+   lo que se lee de cada jugador (puntos, forma, valor, cláusula, puntos por millón), el banquillo y un diagnóstico por líneas frente al
+   resto de la liga. Sirve para estudiar a un rival: dónde es fuerte, dónde flojea y qué cuesta quitarle a cada uno. */
+let rxCapa = "pts", rxBarre = false;
+const RX_CAPAS = [["pts", "Puntos", "Puntos de cada uno en la temporada. Brilla el que más lleva."], ["forma", "Forma", "Media de puntos en sus últimas 5 jornadas (solo las que jugó), con los colores de Mister. Debajo, su media de toda la temporada."],
+  ["valor", "Valor", "Lo que vale hoy (en millones) y cuánto ha cambiado desde ayer. Brilla el más caro."], ["cl", "Cláusula", "Lo que cuesta clausularlo (en millones) y, debajo, cuántas veces su valor es (🔒 = recién fichado, aún no se puede). Brilla el que más puntos por jornada da por cada millón de cláusula."],
+  ["renta", "Pts por M", "Puntos de la temporada por cada millón que vale. Brilla el más rentable."]];
+const rxForma = p => { const u = (p.streak || []).filter(capNum); return u.length ? u.reduce((a, b) => a + b, 0) / u.length : null; };
+const rxM = v => nf1.format(v / 1e6);
+function rxDato(p, capa) {
+  const V = Number(p.value) || 0, pts = Number(p.points) || 0, f = rxForma(p), dl = V - (Number(p.prev) || V), cl = Number(p.clause) || 0;
+  if (capa === "forma") return { pts: f == null ? null : Math.round(f * 10) / 10, txt: f == null ? "–" : nf1.format(f), sub: p.avg != null ? `temp. ${nf1.format(p.avg)}` : "", v: f == null ? -1 : f };
+  if (capa === "valor") return { pts: V, txt: rxM(V), sub: Math.abs(dl) < 500 ? "= hoy" : `${dl > 0 ? "▲" : "▼"} ${merEur(Math.abs(dl))}`, v: V };
+  if (capa === "cl") { const adq = capTsMadrid(p.acquired), prot = adq && adq + PLAN.PROTEGIDO_DIAS * 86400 > Date.now() / 1000, r = cl > 0 ? (p.avg || 0) / (cl / 1e6) : 0;
+    return { pts: cl > 0 && !prot ? r : null, txt: cl > 0 ? rxM(cl) : "–", sin: !(cl > 0 && !prot), sub: prot ? "🔒" : cl > 0 && V > 0 ? `×${nf1.format(cl / V)}` : "", v: cl > 0 ? -cl : -Infinity, cl: prot ? 0 : cl }; }
+  if (capa === "renta") { const r = V >= 3e5 ? pts / (V / 1e6) : null; return { pts: r, txt: r == null ? "–" : nf1.format(r), sub: eur(V), v: r == null ? -1 : r }; }
+  return { pts, txt: String(pts), sub: eur(V), v: pts };
+}
+// puntos de cada línea de cada manager en la temporada: lo que alineó de verdad, sin el extra del capitán (como «¿De dónde salen los puntos?»)
+function rxLineas() {
+  const js = jornadas();
+  return D.managers.map(m => { const s = { PT: 0, DF: 0, MC: 0, DL: 0 };
+    js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => { if (s[p.pos] != null) s[p.pos] += p.basePoints ?? p.points ?? 0; }));
+    return { id: String(m.id), s }; });
+}
 function bloqueOnceEq(m) {
   const c = m.players.filter(p => p.pos && capNum(Number(p.points))).map(p => ({ ...p, pts: Number(p.points) }));
   const por = pos => c.filter(x => x.pos === pos).sort((a, b) => b.pts - a.pts);
@@ -3272,16 +3693,37 @@ function bloqueOnceEq(m) {
     x.valor = ["PT", "DF", "MC", "DL"].reduce((t, k) => t + x[k].reduce((s2, p) => s2 + (Number(p.value) || 0), 0), 0);
     if (!o || x.huecos < o.huecos || (x.huecos === o.huecos && x.total > o.total)) o = x; });
   if (!o || o.huecos > 3) return "";
-  let cuerpo = "";
-  if (eqOnceAbierto) {
-    const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
-    const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> en la temporada entre ${n === 11 ? "los 11" : `estos ${n}`} · valen ${eur(o.valor)} hoy.${o.huecos ? ` <b>Le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"}</b> para completar el once.` : ""}</p>`;
-    cuerpo = nota + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: p.pts, sub: eur(Number(p.value) || 0) })).concat(hueco(k))),
-      { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
+  const capa = RX_CAPAS.find(x => x[0] === rxCapa) || RX_CAPAS[0], k0 = capa[0];
+  const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
+  const once = ["PT", "DF", "MC", "DL"].flatMap(k => o[k]), enOnce = new Set(once.map(p => String(p.id))), ban = c.filter(p => !enOnce.has(String(p.id)));
+  const campo = htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => { const d = rxDato(p, k0); return { id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: d.pts, txt: d.txt, sub: d.sub }; }).concat(hueco(k))),
+    { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos · ${eur(o.valor)}`, fuego: k0 === "forma" ? null : "max" });
+  const banco = ban.map(p => ({ p, d: rxDato(p, k0) })).sort((a, b) => b.d.v - a.d.v).map(({ p, d }) => `<button class="rx-b" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 38)}<b>${esc(p.short || apellido(p.name))}</b><span class="rx-v${k0 === "forma" && d.pts != null ? " mp-" + tramoPts(d.pts) : ""}">${esc(d.txt)}</span><small>${esc(d.sub)}</small></button>`).join("");
+  // diagnóstico por líneas frente al resto de la liga
+  const LN = rxLineas(), yo = LN.find(x => x.id === String(m.id)), NOM = { PT: "Portería", DF: "Defensa", MC: "Medio campo", DL: "Delantera" };
+  let lineas = "", frases = [];
+  if (yo && LN.length > 1) {
+    const filas = ["PT", "DF", "MC", "DL"].map(k => { const vs = LN.map(x => x.s[k]), v = yo.s[k], mx = Math.max(...vs, 1), puesto = 1 + vs.filter(z => z > v).length; return { k, v, puesto, w: v / mx }; });
+    lineas = `<div class="rx-lin">${filas.map(f => `<div><span class="jp-pos2" style="margin:0;background:var(--${f.k.toLowerCase()})">${f.k}</span><span class="rx-lb"><i style="--w:${f.w.toFixed(3)};background:var(--${f.k.toLowerCase()})"></i></span><b>${f.v}</b><small>${f.puesto}.º de ${LN.length}</small></div>`).join("")}</div>`;
+    const ord = filas.slice().sort((a, b) => a.puesto - b.puesto || b.w - a.w), fu = ord[0], de = ord[ord.length - 1];
+    frases.push(`Su fuerte: <b>${NOM[fu.k].toLowerCase()}</b> (${fu.puesto}.ª de la liga, ${fu.v} puntos).` + (de.puesto > fu.puesto ? ` Su punto débil: <b>${NOM[de.k].toLowerCase()}</b> (${de.puesto}.ª, ${de.v}).` : ""));
   }
-  return `<details class="cdet" data-eqo="1" ${eqOnceAbierto ? "open" : ""}><summary>Su mejor once de la temporada</summary>${cuerpo}</details>`;
+  const conF = c.map(p => ({ p, f: rxForma(p) })).filter(x => x.f != null && (x.p.streak || []).filter(capNum).length >= 3).sort((a, b) => b.f - a.f);
+  if (conF.length > 1) frases.push(`En forma: <b>${esc(conF[0].p.short || conF[0].p.name)}</b> (${nf1.format(conF[0].f)} de media en sus últimas jornadas). El más flojo: ${esc(conF[conF.length - 1].p.short || conF[conF.length - 1].p.name)} (${nf1.format(conF[conF.length - 1].f)}).`);
+  if (k0 === "cl") { const cs = once.map(p => rxDato(p, "cl")), tot = cs.reduce((t, d) => t + d.cl, 0), mej = once.map(p => ({ p, d: rxDato(p, "cl") })).filter(x => x.d.pts != null).sort((a, b) => b.d.pts - a.d.pts)[0];
+    frases.push(`Clausular a los ${cs.filter(d => d.cl).length} del once que se pueden costaría <b>${eur(tot)}</b>.${mej ? ` El que más da por lo que cuesta: <b>${esc(mej.p.short || mej.p.name)}</b> (${rxM(mej.p.clause)} M, ${nf1.format(mej.p.avg || 0)} de media).` : ""}`); }
+  if (k0 === "valor") frases.push(`El once vale <b>${eur(o.valor)}</b> y el banquillo ${eur(ban.reduce((t, p) => t + (Number(p.value) || 0), 0))} (${ban.length} ${ban.length === 1 ? "jugador" : "jugadores"}).`);
+  if (k0 === "renta") { const rs = c.map(p => ({ p, d: rxDato(p, "renta") })).filter(x => x.d.pts != null).sort((a, b) => b.d.pts - a.d.pts); if (rs.length > 1) frases.push(`El más rentable: <b>${esc(rs[0].p.short || rs[0].p.name)}</b> (${rs[0].d.txt} puntos por millón). El menos: ${esc(rs[rs.length - 1].p.short || rs[rs.length - 1].p.name)} (${rs[rs.length - 1].d.txt}).`); }
+  const barre = rxBarre; rxBarre = false;
+  return `<section class="card rx"><div class="gh"><h2>Rayos X de la plantilla</h2></div>
+    <div class="pills rx-capas" role="group" aria-label="Qué se lee de cada jugador">${RX_CAPAS.map(([k, t]) => `<button class="pill ${k === k0 ? "on" : ""}" data-rx="${k}" aria-pressed="${k === k0}">${t}</button>`).join("")}</div>
+    <p class="note" style="margin:8px 0">Su mejor once de la temporada${o.huecos ? ` (le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"} para completarlo)` : ""}. ${capa[2]}</p>
+    <div class="rx-campo${barre ? " barre" : ""}">${campo}<i class="rx-scan" aria-hidden="true"></i></div>
+    ${banco ? `<p class="ordlbl">Banquillo · ${ban.length}</p><div class="rx-ban">${banco}</div>` : ""}
+    ${lineas ? `<p class="ordlbl">Puntos de cada línea esta temporada, frente a la liga</p>${lineas}` : ""}
+    ${frases.length ? `<ul class="rx-ins">${frases.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}</section>`;
 }
-document.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details[data-eqo]") && e.target.open !== eqOnceAbierto) { eqOnceAbierto = e.target.open; if (eqOnceAbierto) pintarEquipos(); } }, true);
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-rx]"); if (!b || b.dataset.rx === rxCapa) return; rxCapa = b.dataset.rx; rxBarre = true; pintarEquipos(); });
 
 /* ---------- Equipos: seguimiento de plantillas ---------- */
 const nf = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 2 });
@@ -3815,6 +4257,16 @@ function bloqueFichajes(ms) {
     <ul>${top.map(t => `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>
     <p class="ordlbl" style="margin-top:12px">Quién ha gastado más</p>
     <ul class="pron">${act.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.gasto / mx * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"}${x.cl ? ` (${x.cl} por cláusula)` : ""}${x.ing ? " · ingresa " + eur(x.ing) : ""}</small></span><span class="pp" style="font-size:15px">${eur(x.gasto)}</span></li>`).join("")}</ul>
+    ${(() => {      // sobreprecio medio de las pujas ganadas en el mercado (precio pagado frente al valor del día en que salió el jugador)
+      const so = ms.map((m, i) => { const L = ((PUJAS && PUJAS.compras) || []).filter(c => c.tipo === "mercado" && String(c.to) === String(m.id) && c.precio && c.listado && !c.clausulaMinima);
+        const ex = L.reduce((s, c) => s + (c.precio - c.listado), 0), base = L.reduce((s, c) => s + c.listado, 0);
+        return { m, i, n: L.length, ex, p: base ? ex / base : 0 }; }).filter(x => x.n >= 2).sort((a, b) => b.p - a.p);
+      if (so.length < 2) return "";
+      const mp = Math.max(0.001, ...so.map(x => Math.abs(x.p)));
+      return `<p class="ordlbl" style="margin-top:12px">Quién puja más por encima del valor</p>
+      <ul class="pron">${so.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.max(0, x.p) / mp * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} pujas ganadas en el mercado · ${x.ex >= 0 ? "ha pagado de más " : "ha ahorrado "}${eur(Math.abs(x.ex))} en total</small></span><span class="pp" style="font-size:15px">${x.p >= 0 ? "+" : "−"}${nf1.format(Math.abs(x.p) * 100)} %</span></li>`).join("")}</ul>
+      <p class="note">Sobreprecio medio: lo pagado frente al valor del jugador el día que salió al mercado. Solo pujas ganadas con precio conocido (mínimo 2).</p>`;
+    })()}
     <p class="note">Importes pagados de verdad: en las cláusulas, la cláusula; en el mercado, la puja ganadora (Mister pone la cláusula nueva en 1,5 veces lo pagado). Si no se sabe, el valor del jugador ese día. Solo cuenta los últimos ${(E.transfers || []).length} movimientos guardados.</p></section>`;
 }
 
@@ -3863,18 +4315,23 @@ function resumenEq(ms, hp) {
   const tipo = t => !t.from ? ["mv-c", "Fichaje"] : !t.to ? ["mv-v", "Venta"] : (pagoDe(t) || {}).tipo === "clausula" ? ["mv-t", "Cláusula"] : ["mv-t", "Traspaso"];
   const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
-  return `<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
-    ${graficaValor(ms)}
-    ${bloqueBolsa()}
-    ${bloqueConquista()}
-    ${bloqueGalaxia()}
+  const ex = [["gvalor", "📈", "Evolución", "Cuánto vale cada plantilla", graficaValor(ms)], ["bolsa", "🟩", "La Bolsa", "El mercado de LaLiga en un mapa", bloqueBolsa()], ["conquista", "🗺️", "Conquista", "Quién domina cada equipo", bloqueConquista()], ["galaxia", "✨", "Galaxia", "Valor frente a puntos, jugador a jugador", bloqueGalaxia()],
+    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()]]
+    .filter(x => x[4]);
+  const bl = k => { const x = ex.find(y => y[0] === k); return x ? `<div id="eqx-${k}">${x[4]}</div>` : ""; };
+  const explora = `<nav class="indice bento" aria-label="Más de Equipos">${ex.map(x => `<button data-ir="eqx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
+  return `${explora}<p class="ordlbl">Valor de plantilla</p><ul class="rank">${filas}</ul>
+    ${bl("gvalor")}
+    ${bl("bolsa")}
+    ${bl("conquista")}
+    ${bl("galaxia")}
     ${bloqueRadar(ms)}
-    ${bloqueDependencia(ms)}
-    ${bloqueAciertoCap()}
-    ${bloqueBanquilloTemp()}
+    ${bl("exdep")}
+    ${bl("excap")}
+    ${bl("exban")}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
-    ${bloqueDisciplina()}
+    ${bl("exdis")}
     ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
@@ -5343,6 +5800,150 @@ function planCalc(r, P, m) {
   return { P, m, h, mios, vender, dudas, suben, compras, sinDinero, saldo, cobroHoy, caja, c2, esp2,
     ahorro: vender.reduce((t, x) => t - x.d, 0), ganancia: compras.reduce((t, y) => t + y.esperado, 0), cartera: mios.reduce((t, x) => t + x.d, 0) };
 }
+/* ---------- Mesa de operaciones (Mercado, solo con PIN): simulador de ventas y pujas ----------
+   Parte del mismo cálculo que el Plan (planDatos: valor previsto de cada jugador hasta la víspera de la próxima jornada, puja y
+   probabilidad de ganarla). Aquí se eligen a mano ventas y pujas y se ve al momento cómo quedan la caja, el dinero esperado y el
+   once; «Plan óptimo» busca la combinación que más vale: dinero esperado + (puntos del once × lo que tú digas que vale un punto),
+   sin gastar más de lo que hay en caja aunque se ganen todas las pujas. */
+const MESA = { v: new Set(), c: new Set(), k: new Set(), lam: 2, d: null, kc: null, claus: [] };
+const MESA_LAM = [[0, "Solo dinero"], [1e5, "1 punto = 100 k"], [2.5e5, "1 punto = 250 k"], [5e5, "1 punto = 500 k"], [2e6, "Sobre todo puntos"]];
+// puntos esperados del mejor once posible con una lista de { pos, esp } (sin el extra del capitán)
+function mesaOnce(L) {
+  const por = pos => L.filter(c => c.pos === pos && c.esp > 0).map(c => c.esp).sort((a, b) => b - a), G = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  const s = (a, n) => a.slice(0, n).reduce((t, v) => t + v, 0);
+  return Math.max(...FORMACIONES.map(([d, m, f]) => s(G.PT, 1) + s(G.DF, d) + s(G.MC, m) + s(G.DL, f)));
+}
+function mesaDatos(r) {
+  const d = planDatos(r); if (!d) return null;
+  const mios = d.mios.map(x => ({ id: String(x.p.id), p: x.p, pos: x.p.pos, V: x.V, d: x.previsible ? x.d : 0, prev: x.previsible, en2: x.en2, esp: x.c && x.c.score > -Infinity && x.c.esp > 0 ? x.c.esp : 0 }));
+  const base = mesaOnce(mios), plan = new Map([...d.compras, ...d.sinDinero].map(y => [String(y.x.j.id), y]));
+  const libres = r.lista.filter(x => x.prio !== "evitar" && x.V > 0 && capNum(x.puja)).map(x => {
+    const y = plan.get(String(x.j.id)), g = x.jf ? capClamp(x.jf.g || 0, [-0.1, 0.1]) : 0;
+    const Vh = y ? y.Vh : x.V >= 1e6 ? planProyectar(x.V, g, d.h) : x.V, puja = y ? y.puja : x.puja, pw = y ? y.pw : x.pl && capNum(x.pl.p) ? x.pl.p : 0.5, esp = x.espProx || 0;
+    return { id: String(x.j.id), j: x.j, pos: x.pos, V: x.V, Vh, puja, pw, esp, ev: pw * (Vh - puja), dp: mesaOnce(mios.concat([{ pos: x.pos, esp }])) - base };
+  }).sort((a, b) => (b.ev + 2.5e5 * b.dp * b.pw) - (a.ev + 2.5e5 * a.dp * a.pw)).slice(0, 12);
+  // clausulazos posibles hoy: jugadores de rivales (no recién fichados) que entrarían en tu once, con lo que te suman y lo que le quitan al suyo
+  if (MESA.kc !== PLANC.k) {
+    const ahora = Date.now() / 1000, claus = [];
+    (E.managers || []).forEach((o, oi) => { if (o.id === d.m.id) return;
+      let cs = []; try { cs = recomendarCapitanes({ cal: CAL, D, E, managerId: o.id, gw: d.P.despues.gw }).candidatos || []; } catch (e) {}
+      const su = cs.map(c => ({ id: String(c.p.id), pos: c.p.pos, esp: c.score > -Infinity && c.esp > 0 ? c.esp : 0 })), sb = mesaOnce(su);
+      o.players.forEach(p => { const cl = Number(p.clause) || 0, adq = capTsMadrid(p.acquired); if (!(cl > 0) || (adq && adq + PLAN.PROTEGIDO_DIAS * 86400 > ahora)) return;
+        const e = su.find(x => x.id === String(p.id)), esp = e ? e.esp : 0, dp = mesaOnce(mios.concat([{ pos: p.pos, esp }])) - base; if (dp < 0.3) return;
+        const V = Number(p.value) || 0, Vh = V >= 1e6 ? planProyectar(V, planG(p), d.h) : V;
+        claus.push({ id: String(p.id), p, o, oi, pos: p.pos, esp, cl, V, Vh, dp, quita: sb - mesaOnce(su.filter(x => x.id !== String(p.id))) }); }); });
+    MESA.claus = claus.sort((a, b) => (b.dp + b.quita) / b.cl - (a.dp + a.quita) / a.cl).slice(0, 12); MESA.kc = PLANC.k;
+  }
+  return { m: d.m, mios, libres, claus: MESA.claus, saldo: d.saldo, h: d.h, gw: d.P.despues.gw, base };
+}
+function mesaCalc(M, v, c, lam, k = MESA.k) {
+  const ven = M.mios.filter(x => v.has(x.id)), com = M.libres.filter(y => c.has(y.id)), cla = M.claus.filter(z => k.has(z.id)), quedan = M.mios.filter(x => !v.has(x.id));
+  const cobro = ven.reduce((t, x) => t + x.V, 0), gasto = com.reduce((t, y) => t + y.puja, 0) + cla.reduce((t, z) => t + z.cl, 0);
+  const dinero = ven.reduce((t, x) => t - x.d, 0) + com.reduce((t, y) => t + y.ev, 0) + cla.reduce((t, z) => t + z.Vh - z.cl, 0);
+  const pts = mesaOnce(quedan.concat(com, cla)), ptsE = mesaOnce(quedan.concat(com.map(y => ({ pos: y.pos, esp: y.esp * y.pw })), cla));
+  const caja = M.saldo != null ? M.saldo * 1e6 + cobro - gasto : null;
+  return { ven, com, cla, cobro, gasto, dinero, pts, dPts: pts - M.base, caja, U: dinero + lam * (ptsE - M.base), ok: caja == null ? com.length + cla.length <= PLAN.MAX_COMPRAS : caja >= 0 };
+}
+// búsqueda: desde no hacer nada, se aplica cada vez el cambio (una venta, una puja o una venta + una puja) que más mejora el resultado
+function mesaOptimo(M, lam) {
+  let v = new Set(), c = new Set(), k = new Set(), mejor = mesaCalc(M, v, c, lam, k);
+  const alt = (s, id) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; };
+  for (let it = 0; it < 40; it++) {
+    let paso = null;
+    const prueba = (v2, c2, k2) => { const r = mesaCalc(M, v2, c2, lam, k2); if (r.ok && r.U > mejor.U + 5e4 && (!paso || r.U > paso.r.U)) paso = { v: v2, c: c2, k: k2, r }; };
+    M.mios.forEach(x => prueba(alt(v, x.id), c, k)); M.libres.forEach(y => prueba(v, alt(c, y.id), k)); M.claus.forEach(z => prueba(v, c, alt(k, z.id)));
+    M.mios.forEach(x => { M.libres.forEach(y => prueba(alt(v, x.id), alt(c, y.id), k)); M.claus.forEach(z => prueba(alt(v, x.id), c, alt(k, z.id))); });
+    if (!paso) break;
+    v = paso.v; c = paso.c; k = paso.k; mejor = paso.r;
+  }
+  return { v, c, k };
+}
+function bloqueMesa(r) {
+  const M = MESA.d = mesaDatos(r); if (!M) return "";
+  MESA.v = new Set([...MESA.v].filter(id => M.mios.some(x => x.id === id))); MESA.c = new Set([...MESA.c].filter(id => M.libres.some(y => y.id === id))); MESA.k = new Set([...MESA.k].filter(id => M.claus.some(z => z.id === id)));
+  const clausulas = M.claus.map(z => `<button class="ms-l${MESA.k.has(z.id) ? " on" : ""}" data-mesa-k="${esc(z.id)}" aria-pressed="${MESA.k.has(z.id)}" aria-label="Clausular a ${esc(z.p.name)}, de ${esc(z.o.name)}">
+      <span class="ms-own" title="De ${esc(z.o.name)}">${avatar(z.o, z.oi)}</span>${cara(z.p.id, z.p.name, z.p.teamId, 46)}
+      <b>${esc(z.p.short || z.p.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${z.pos.toLowerCase()})">${z.pos}</span>cláusula <b>${merEur(z.cl)}</b></small>
+      <small class="up">+${nf1.format(z.dp)} pts en tu once</small><small>${z.quita > 0.05 ? `−${nf1.format(z.quita)} pts a su dueño` : "no era titular suyo"}</small><i class="ms-chk">CLAUSULAR</i></button>`).join("");
+  const chips = M.mios.slice().sort((a, b) => a.d - b.d).map(x => `<button class="ms-j${MESA.v.has(x.id) ? " v" : ""}" data-mesa-v="${esc(x.id)}" aria-pressed="${MESA.v.has(x.id)}" aria-label="Vender a ${esc(x.p.name)}">
+      <span class="ms-ji"><span class="ms-f">${x.en2 ? `<i class="ms-xi">XI</i>` : ""}${cara(x.p.id, x.p.name, x.p.teamId, 40)}<b>${esc(x.p.short || apellido(x.p.name))}</b><small class="${!x.prev || Math.abs(x.d) < 5000 ? "flat" : x.d > 0 ? "up" : "dn"}">${!x.prev ? "sin previsión" : Math.abs(x.d) < 5000 ? "= igual" : (x.d > 0 ? "▲ " : "▼ ") + merEur(Math.abs(x.d))}</small></span>
+      <span class="ms-b"><b>VENDIDO</b><span>+${merEur(x.V)}</span><small>${x.d < -5000 ? `evitas bajar ${merEur(-x.d)}` : x.d > 5000 ? `renuncias a ${merEur(x.d)}` : "a tu caja"}${x.en2 ? " · era titular" : ""}</small></span></span></button>`).join("");
+  const cartas = M.libres.map(y => `<button class="ms-l${MESA.c.has(y.id) ? " on" : ""}" data-mesa-c="${esc(y.id)}" aria-pressed="${MESA.c.has(y.id)}" aria-label="Pujar por ${esc(y.j.name)}">
+      <span class="ms-ring" style="--p:${Math.round(y.pw * 100)}%" title="Probabilidad de ganar la puja"><span>${Math.round(y.pw * 100)}%</span></span>${cara(y.j.id, y.j.name, y.j.teamId, 46)}
+      <b>${esc(y.j.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${y.pos.toLowerCase()})">${y.pos}</span>puja <b>${merEur(y.puja)}</b></small>
+      <small class="${y.ev >= 0 ? "up" : "dn"}">${merEurS(y.ev)} esperados</small><small>${y.dp > 0.05 ? `+${nf1.format(y.dp)} pts en tu once` : "no entra en tu once"}</small><i class="ms-chk">PUJAR</i></button>`).join("");
+  requestAnimationFrame(() => mesaPinta(false));
+  return `<section class="card mesa" id="mesa"><div class="gh"><h2>🎛️ Mesa de operaciones</h2></div>
+    <p class="note" style="margin:0 0 10px">Prueba ventas y pujas con la plantilla de ${esc(M.m.name)} y mira al momento cómo quedan tu caja, tu dinero y tu once de la jornada ${M.gw}. O deja que el Golómetro busque la mejor combinación.</p>
+    ${selectorM(merMan, "data-mm", null, "Plantilla")}
+    <div class="ms-hud" id="msHud"><p class="ms-k">De hoy a la víspera de la J${M.gw} · ${M.h} ${M.h === 1 ? "día" : "días"}</p>
+      <div class="ms-n"><div><small>Caja si ganas todas las pujas</small>${M.saldo == null ? `<input type="number" inputmode="decimal" step="0.1" placeholder="Tu saldo (M)" data-saldo aria-label="Tu saldo en millones">` : `<b id="msCaja"></b>`}<em id="msCajaS"></em></div>
+        <div><small>Dinero que esperas ganar</small><b id="msDin"></b><em>frente a no hacer nada</em></div>
+        <div><small>Tu once en la J${M.gw}</small><b id="msPts"></b><em id="msDp"></em></div></div>
+      <div class="ms-bar" aria-hidden="true"><i class="g" id="msBg"></i><i class="q" id="msBq"></i><i class="f" id="msBf"></i></div>
+      <div class="ms-ley"><span><i style="background:#ffffffd9"></i>Pujas y cláusulas <b id="msLg"></b></span><span><i style="background:#2fd46e"></i>Te queda <b id="msLq"></b></span><span>Cobras por ventas <b id="msLc"></b></span></div>
+      <p class="ms-res" id="msRes" aria-live="polite"></p></div>
+    <div class="ms-acc"><button class="ms-opt" data-mesa="opt">⚡ Plan óptimo</button><button data-mesa="limpia">Limpiar</button><button data-mesa="copia">📋 Copiar</button></div>
+    <label class="ms-lam"><span>Dinero</span><input type="range" min="0" max="${MESA_LAM.length - 1}" step="1" value="${MESA.lam}" data-mesa-lam aria-label="Qué pesa más en el plan óptimo: el dinero o los puntos"><span>Puntos</span><b id="msLam">${MESA_LAM[MESA.lam][1]}</b></label>
+    <div class="ms-tira" aria-hidden="true"><span>Caja <b id="msTc"></b></span><span>Dinero <b id="msTd"></b></span><span>Once <b id="msTp"></b></span></div>
+    <h3 class="sec">Tu plantilla · toca para vender</h3><div class="ms-g">${chips}</div>
+    <h3 class="sec">Libres de hoy · toca para pujar</h3>${cartas ? `<div class="ms-ls">${cartas}</div>` : `<p class="note">Hoy no hay libres con puja calculada.</p>`}
+    ${clausulas ? `<h3 class="sec">Clausulazos · toca para clausular</h3><p class="note" style="margin:0 0 6px">Jugadores de tus rivales que hoy se pueden clausular y entrarían en tu once: lo que te suman y lo que le quitan al suyo en la J${M.gw}. Pagas la cláusula entera, que es más de lo que valen.</p><div class="ms-ls">${clausulas}</div>` : ""}
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></section>`;
+}
+function mesaNum(el, v, fmt) {
+  if (!el) return;
+  const de = el._v, red = matchMedia("(prefers-reduced-motion: reduce)").matches; el._v = v;
+  if (de == null || red || de === v) { el.textContent = fmt(v); return; }
+  const t0 = performance.now(), paso = t => { if (el._v !== v || !el.isConnected) return; const q = Math.min(1, (t - t0) / 450), e = 1 - Math.pow(1 - q, 3); el.textContent = fmt(q < 1 ? de + (v - de) * e : v); if (q < 1) requestAnimationFrame(paso); };
+  requestAnimationFrame(paso);
+}
+function mesaTexto(M, R) {
+  const ls = [`Plan del Golómetro para ${M.m.name} (hasta la J${M.gw})`];
+  if (R.ven.length) ls.push("VENDER: " + R.ven.map(x => `${x.p.name} (${merEur(x.V)})`).join(", "));
+  if (R.com.length) ls.push("PUJAR: " + R.com.map(y => `${y.j.name} ${merEur(y.puja)} (${Math.round(y.pw * 100)} % de ganarla)`).join(", "));
+  if (R.cla.length) ls.push("CLAUSULAR: " + R.cla.map(z => `${z.p.name} a ${z.o.name} (${merEur(z.cl)})`).join(", "));
+  if (!R.ven.length && !R.com.length && !R.cla.length) ls.push("No hacer nada.");
+  ls.push(`Dinero esperado: ${merEurS(R.dinero)} · once J${M.gw}: ${nf1.format(R.pts)} pts${R.caja != null ? ` · caja si gano todas: ${merEur(Math.abs(R.caja))}${R.caja < 0 ? " EN NEGATIVO" : ""}` : ""}`);
+  return ls.join("\n");
+}
+function mesaPinta(barre) {
+  const M = MESA.d, hud = $("#msHud"); if (!M || !hud) return;
+  const R = mesaCalc(M, MESA.v, MESA.c, MESA_LAM[MESA.lam][0]), eur = v => (v < 0 ? "−" : "") + merEur(Math.abs(v));
+  const cj = $("#msCaja"); if (cj) { mesaNum(cj, R.caja, eur); cj.className = R.caja < 0 ? "dn" : ""; }
+  $("#msCajaS").textContent = M.saldo == null ? "pon tu saldo" : `saldo de hoy: ${merEur(M.saldo * 1e6)}`;
+  const dn = $("#msDin"); mesaNum(dn, R.dinero, v => Math.abs(v) < 5000 ? "0" : merEurS(Math.round(v / 1e4) * 1e4)); dn.className = R.dinero > 5000 ? "up" : R.dinero < -5000 ? "dn" : "";
+  mesaNum($("#msPts"), R.pts, v => nf1.format(v));
+  $("#msDp").textContent = Math.abs(R.dPts) < 0.05 ? "igual que ahora" : `${R.dPts > 0 ? "+" : "−"}${nf1.format(Math.abs(R.dPts))} pts${R.com.length ? " si los fichas" : ""}`;
+  $("#msTc").textContent = R.caja == null ? "–" : eur(R.caja); $("#msTc").className = R.caja < 0 ? "dn" : ""; $("#msTd").textContent = Math.abs(R.dinero) < 5000 ? "0" : merEurS(R.dinero); $("#msTd").className = dn.className; $("#msTp").textContent = nf1.format(R.pts);
+  const T = Math.max(1, (M.saldo != null ? M.saldo * 1e6 : R.gasto) + R.cobro), w = v => Math.max(0, Math.min(100, v / T * 100)).toFixed(1) + "%", mal = R.caja != null && R.caja < 0;
+  $("#msBg").style.setProperty("--w", mal ? "0%" : w(R.gasto)); $("#msBq").style.setProperty("--w", mal || R.caja == null ? "0%" : w(R.caja)); $("#msBf").style.setProperty("--w", mal ? "100%" : "0%");
+  $("#msLg").textContent = merEur(R.gasto); $("#msLq").textContent = R.caja == null ? "–" : eur(R.caja); $("#msLc").textContent = merEur(R.cobro);
+  const nv = R.ven.length, nc = R.com.length, nk = R.cla.length, quita = R.cla.reduce((t, z) => t + z.quita, 0);
+  $("#msRes").innerHTML = !nv && !nc && !nk ? "Toca jugadores para vender, pujar o clausular, o pulsa <b>Plan óptimo</b>."
+    : `${nk ? `Clausulas a ${nk === 1 ? esc(R.cla[0].p.short || R.cla[0].p.name) : nk + " jugadores"} por <b>${merEur(R.cla.reduce((t, z) => t + z.cl, 0))}</b>${quita > 0.05 ? ` y le quitas ${nf1.format(quita)} pts a ${nk === 1 ? esc(R.cla[0].o.name) : "sus dueños"}` : ""}. ` : ""}${nv ? `Vendes ${nv === 1 ? esc(R.ven[0].p.short || R.ven[0].p.name) : nv + " jugadores"} y cobras <b>${merEur(R.cobro)}</b>. ` : ""}${nc ? `Pujas por ${nc === 1 ? esc(R.com[0].j.name) : nc + " libres"} (hasta <b>${merEur(R.gasto)}</b>). ` : ""}${mal ? `<b class="dn">No te llega: te faltarían ${merEur(-R.caja)} si ganas todas.</b>` : `${R.dinero >= -5000 ? `Esperas ganar <b>${merEurS(Math.max(0, R.dinero))}</b>` : nk && !nc ? `Pagas <b class="dn">${merEur(-R.dinero)}</b> más de lo que ${nk === 1 ? "vale" : "valen"}` : `Te cuesta <b class="dn">${merEur(-R.dinero)}</b> de media`}${Math.abs(R.dPts) >= 0.05 ? ` y tu once ${R.dPts > 0 ? "sube" : "baja"} <b${R.dPts < 0 ? ` class="dn"` : ""}>${nf1.format(Math.abs(R.dPts))} pts</b>` : ""}.`}`;
+  document.querySelectorAll("#mesa [data-mesa-v]").forEach(b => { const on = MESA.v.has(b.dataset.mesaV); b.classList.toggle("v", on); b.setAttribute("aria-pressed", on); });
+  document.querySelectorAll("#mesa [data-mesa-c]").forEach(b => { const on = MESA.c.has(b.dataset.mesaC); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "PUJA PUESTA ✓" : "PUJAR"; });
+  document.querySelectorAll("#mesa [data-mesa-k]").forEach(b => { const on = MESA.k.has(b.dataset.mesaK); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "CLAUSULADO ✓" : "CLAUSULAR"; });
+  if (barre) { hud.classList.remove("barre"); void hud.offsetWidth; hud.classList.add("barre"); }
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("#mesa"); if (!c || !MESA.d) return;
+  const alt = (s, id) => { s.has(id) ? s.delete(id) : s.add(id); };
+  let b;
+  if ((b = e.target.closest("[data-mesa-v]"))) { alt(MESA.v, b.dataset.mesaV); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa-c]"))) { alt(MESA.c, b.dataset.mesaC); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa-k]"))) { alt(MESA.k, b.dataset.mesaK); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa]"))) { const q = b.dataset.mesa;
+    if (q === "opt") { const o = mesaOptimo(MESA.d, MESA_LAM[MESA.lam][0]); MESA.v = o.v; MESA.c = o.c; MESA.k = o.k; mesaPinta(true); if (navigator.vibrate) navigator.vibrate(12); }
+    else if (q === "limpia") { MESA.v = new Set(); MESA.c = new Set(); MESA.k = new Set(); mesaPinta(false); }
+    else if (q === "copia") { const t = mesaTexto(MESA.d, mesaCalc(MESA.d, MESA.v, MESA.c, MESA_LAM[MESA.lam][0])), ok = () => { b.textContent = "Copiado ✓"; setTimeout(() => { if (b.isConnected) b.textContent = "📋 Copiar"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, () => {}); } }
+});
+document.addEventListener("input", e => {
+  if (!e.target.matches || !e.target.matches("[data-mesa-lam]")) return;
+  MESA.lam = Math.max(0, Math.min(MESA_LAM.length - 1, Number(e.target.value) || 0)); $("#msLam").textContent = MESA_LAM[MESA.lam][1];
+});
 function bloquePlanParon(r) {
   const d = planDatos(r);
   if (!d) return "";
@@ -5440,6 +6041,52 @@ function bloqueLeerRivales(r) {
     <p class="note">«Pujará por» sale de un modelo con todas las pujas del último mes: en esta liga se puja sobre todo por los libres que suben de valor ese día (casi 3 de cada 10 rivales pujan por uno que sube más de un 2 %) y por los que puntúan; las carencias de la plantilla apenas influyen, salvo el portero.${LIGA && LIGA.pujas && LIGA.pujas.auc ? ` Prediciendo cada día con los demás, ordena bien quién puja el ${Math.round(LIGA.pujas.auc * 100)} % de las veces.` : ""} La caja fresca es lo que ha cobrado por ventas y cláusulas menos lo que ha gastado en 7 días: su saldo real no se ve.</p></details>`;
 }
 
+// ---------- Radar de pujas (Mercado, solo con PIN) ----------
+// Sónar: cada libre es un punto. Distancia al centro = lo que hay que pagar por encima de su valor con la puja ideal;
+// tamaño = su valor; opacidad = probabilidad de llevártelo con esa puja. Sectores: portero, defensa, medio, delantero.
+let RADP = { id: null, pts: {} };
+function bloqueRadarPujas(r) {
+  const L = r.lista.filter(x => x.prio !== "evitar" && x.V > 0 && capNum(x.puja) && x.pl && capNum(x.pl.p));
+  if (L.length < 3) return "";
+  const POS = ["PT", "DF", "MC", "DL"], NOM = { PT: "Porteros", DF: "Defensas", MC: "Medios", DL: "Delanteros" };
+  const sobre = x => Math.max(0, x.puja / x.V - 1), mx = Math.max(0.1, ...L.map(sobre)), Vmax = Math.max(...L.map(x => x.V));
+  RADP.pts = {};
+  const g = {}; POS.forEach(p => g[p] = L.filter(x => x.j.pos === p).sort((a, b) => b.V - a.V));
+  const puntos = [];
+  POS.forEach((pos, k) => g[pos].forEach((x, i, a) => {
+    const ang = (-90 + k * 90 + 45 + (a.length > 1 ? (i / (a.length - 1) - 0.5) * 70 : 0)) * Math.PI / 180;
+    const rad = 28 + sobre(x) / mx * 112, cx = 160 + rad * Math.cos(ang), cy = 160 + rad * Math.sin(ang), rr = 3 + 6 * Math.sqrt(x.V / Vmax), p = x.pl.p;
+    RADP.pts[String(x.j.id)] = { x, p };
+    puntos.push({ id: String(x.j.id), x, cx, cy, rr, p });
+  }));
+  if (!RADP.id || !RADP.pts[RADP.id]) RADP.id = puntos.slice().sort((a, b) => b.p * b.x.V - a.p * a.x.V)[0].id;
+  const aros = [0.33, 0.66, 1].map(f => `<circle class="rp-aro" cx="160" cy="160" r="${(28 + f * 112).toFixed(0)}"/><text class="rp-t" x="160" y="${(160 - 28 - f * 112 - 2).toFixed(0)}">+${Math.round(f * mx * 100)} %</text>`).join("");
+  const ejes = POS.map((pos, k) => { const a = (-90 + k * 90) * Math.PI / 180, b = (-45 + k * 90) * Math.PI / 180;
+    return `<line class="rp-eje" x1="160" y1="160" x2="${(160 + 146 * Math.cos(a)).toFixed(1)}" y2="${(160 + 146 * Math.sin(a)).toFixed(1)}"/><text class="rp-t" x="${(160 + 128 * Math.cos(b + Math.PI / 4 * 0)).toFixed(1)}" y="${(160 + 128 * Math.sin(b) + 3).toFixed(1)}" style="opacity:.0"></text>`; }).join("");
+  const rotulos = POS.map((pos, k) => { const a = (-90 + k * 90 + 45) * Math.PI / 180; return `<text class="rp-t" x="${(160 + 152 * Math.cos(a)).toFixed(1)}" y="${(160 + 152 * Math.sin(a) + 2).toFixed(1)}" style="font-weight:700">${NOM[pos]}</text>`; }).join("");
+  const dots = puntos.map(q => `<g class="rp-d ${q.p < 0.35 ? "b" : q.p < 0.6 ? "m" : ""} ${q.id === RADP.id ? "on" : ""}" data-rp="${esc(q.id)}" tabindex="0" role="button" aria-label="${esc(q.x.j.name)}, ${Math.round(q.p * 100)} % de llevártelo"><circle class="rp-h" cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${q.rr.toFixed(1)}"/><circle class="rp-p" cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${q.rr.toFixed(1)}"/><circle cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${(q.rr + 8).toFixed(1)}" fill="transparent"/></g>`).join("");
+  return `<section class="card" id="radarPujas"><div class="gh"><h2>📡 Radar de pujas</h2></div>
+    <p class="note" style="margin:0 0 6px">Cada punto es un libre. Cuanto más cerca del centro, menos hay que pagar por encima de su valor con la puja ideal; cuanto más grande, más vale; cuanto más fuerte, más probable es llevártelo. Toca uno.</p>
+    <svg class="rp-svg" viewBox="0 0 320 320" role="group" aria-label="Radar de pujas por posición">
+      <defs><linearGradient id="rpG" x1="0" x2="1"><stop offset="0" stop-color="var(--acc,#2fd46e)" stop-opacity="0"/><stop offset="1" stop-color="var(--acc,#2fd46e)" stop-opacity=".35"/></linearGradient></defs>
+      ${aros}${ejes}${rotulos}
+      <g class="rp-barre"><path d="M160 160 L160 18 A142 142 0 0 1 230 37 Z" fill="url(#rpG)"/></g>
+      <circle cx="160" cy="160" r="3" fill="var(--acc,#2fd46e)"/>${dots}</svg>
+    <div class="rp-ficha" id="rpFicha" aria-live="polite">${htmlFichaRadar()}</div></section>`;
+}
+function htmlFichaRadar() {
+  const o = RADP.pts[RADP.id]; if (!o) return "";
+  const x = o.x;
+  return `${cara(x.j.id, x.j.name, x.j.teamId, 40)}<span class="cq"><b>${esc(x.j.name)}</b><span>valor ${merEur(x.V)} · puja ideal ${merEur(x.puja)} · te lo llevas ${Math.round(o.p * 100)} %</span></span><button class="sp-ir" data-simsel="${esc(x.j.id)}">Probar pujas</button>`;
+}
+function elegirRadar(id) {
+  if (!RADP.pts[id]) return;
+  RADP.id = id;
+  document.querySelectorAll("#radarPujas .rp-d").forEach(g => g.classList.toggle("on", g.dataset.rp === id));
+  const f = $("#rpFicha"); if (f) f.innerHTML = htmlFichaRadar();
+}
+document.addEventListener("click", e => { const g = e.target.closest && e.target.closest("[data-rp]"); if (g) elegirRadar(g.dataset.rp); });
+document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.dataset && e.target.dataset.rp) { e.preventDefault(); elegirRadar(e.target.dataset.rp); } });
 function pintarMercado() {
   const cont = $("#mer");
   if (!iaOk) { cont.innerHTML = htmlBloqueo("Las pujas y recomendaciones del mercado son solo para el dueño de la web."); pin = ""; pintarPin(); return; }
@@ -5459,22 +6106,29 @@ function pintarMercado() {
   }).join("");
   const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
   const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
+  const mx = [["mesa", "🎛️", "Mesa", "Simula ventas y pujas", bloqueMesa(r)], ["plan", "🗓️", "Plan del parón", "Qué hacer con el saldo", bloquePlanParon(r)], ["hero", "🎯", "Mejor puja", "El libre que más compensa", mejor ? heroMer(mejor, cierre) : ""],
+    ["rad", "📡", "Radar", "Los libres en un sónar", bloqueRadarPujas(r)], ["esc", "🛡️", "Escudo", "Protege tus cláusulas", bloqueEscudo(r)], ["riv", "🔍", "Tus rivales", "Qué buscan los demás", bloqueLeerRivales(r)], ["cal", "📅", "Calendario", "Próximos partidos de los libres", bloqueCalendario()]].filter(x => x[4]);
+  const mb = k => { const x = mx.find(y => y[0] === k); return x ? `<div id="mex-${k}">${x[4]}</div>` : ""; };
+  const mexplora = `<nav class="indice bento" aria-label="Más del Mercado">${mx.map(x => `<button data-ir="mex-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
   cont.innerHTML = `
     <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
-    ${bloquePlanParon(r)}
-    ${mejor ? heroMer(mejor, cierre) : ""}
+    ${mexplora}
+    ${mb("mesa")}
+    ${mb("plan")}
+    ${mb("hero")}
+    ${mb("rad")}
     ${bloqueSimPuja(r, mejor)}
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
     ${bloqueInversion(r)}
-    ${bloqueEscudo(r)}
-    ${bloqueLeerRivales(r)}
+    ${mb("esc")}
+    ${mb("riv")}
     ${bloqueMercadoAyer(MER_DATA)}
     ${bloqueSubidas(MER_DATA)}
-    ${bloqueCalendario()}
+    ${mb("cal")}
     ${bloqueRacha(MER_DATA)}
     ${bloquePujanRivales()}
     ${bloquePujasLiga()}
@@ -5606,7 +6260,7 @@ function cargarCalendario() {
   cargarExternas();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
@@ -5652,9 +6306,54 @@ function bloqueEquipo(inf, enfoque) {
     <li><b>Últimos partidos:</b> ${u} <span class="note">(goles a favor-en contra)</span></li></ul>`;
 }
 
+// Distribución de puntos posible de un candidato: cada barra es la probabilidad de sacar esos puntos (colores de Mister).
+// La primera barra («no juega») es la probabilidad de no salir. Los mismos datos que el modelo (`ys`, `pj`).
+function curvaPuntos(c) {
+  if (!c.ys || !c.ys.length) return "";
+  const lo = Math.floor(Math.min(0, ...c.ys)), hi = Math.ceil(Math.max(...c.ys, 6));
+  const n = Math.max(1, Math.min(24, hi - lo + 1)), paso = (hi - lo + 1) / n;
+  const cubos = Array(n).fill(0), w = c.pj / c.ys.length;
+  c.ys.forEach(y => { cubos[Math.max(0, Math.min(n - 1, Math.floor((y - lo) / paso)))] += w; });
+  const pMax = Math.max(1 - c.pj, ...cubos, 0.01);
+  const W = 300, H = 64, bw = W / (n + 2);
+  const barra = (i, p, fill, et) => { const h = Math.max(p > 0 ? 1.5 : 0, p / pMax * (H - 4)); return `<rect x="${(i * bw + 1).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" style="fill:${fill}"><title>${et}: ${pc(p)}</title></rect>`; };
+  const barras = barra(0, 1 - c.pj, "var(--line)", "No juega") + cubos.map((p, i) => { const a = lo + i * paso; return barra(i + 2, p, colPts(a + paso / 2), `${nf1.format(a)} a ${nf1.format(a + paso)} pts`); }).join("");
+  const x0 = (2 + (0 - lo) / paso) * bw;
+  return `<div class="cdist"><div class="cdist-t">Reparto de sus puntos (sin capitanía)</div>
+    <svg viewBox="0 0 ${W} ${H + 14}" role="img" aria-label="Probabilidad de cada cantidad de puntos; no juega ${pc(1 - c.pj)}">${barras}
+      <line x1="${x0.toFixed(1)}" x2="${x0.toFixed(1)}" y1="0" y2="${H}" stroke="var(--mut)" stroke-dasharray="2 3" stroke-width="1"/>
+      <text x="${(bw / 2).toFixed(1)}" y="${H + 11}" text-anchor="middle" font-size="8" fill="var(--mut)">no juega</text>
+      <text x="${x0.toFixed(1)}" y="${H + 11}" text-anchor="middle" font-size="8" fill="var(--mut)">0</text>
+      <text x="${W - 2}" y="${H + 11}" text-anchor="end" font-size="8" fill="var(--mut)">${hi} pts</text></svg>
+    <p class="note" style="margin:2px 0 0">Altura = probabilidad. No juega: ${pc(1 - c.pj)} · más de ${CAP.UMBRAL_ALTO} pts: ${pc(c.pAlto)} · menos de 0: ${pc(c.pNeg)}.</p></div>`;
+}
+
+// «Duelo de curvas» (Capitán, con PIN): la distribución de puntos de los 4 mejores candidatos, superpuestas y suavizadas.
+// Eje = puntos que te darían como capitán (puntos × multiplicador), los mismos `ys` y `pj` del modelo; el área de cada
+// curva es su probabilidad de jugar (lo que falta hasta 100 % es «no juega» y vale 0 puntos).
+function bloqueCurvas(cands) {
+  const cs = cands.filter(c => c.ys && c.ys.length).slice(0, 4);
+  if (cs.length < 2) return "";
+  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"];
+  const xs = cs.map(c => c.ys.map(y => y * c.m)), hi = Math.ceil(Math.max(...xs.flat(), 8)), lo = Math.floor(Math.min(0, ...xs.flat()));
+  const N = 60, W = 320, H = 120, X = v => (v - lo) / (hi - lo) * W;
+  const dens = cs.map((c, k) => { const bw = Math.max(0.8, 0.45 * c.m), w = c.pj / xs[k].length;
+    return Array.from({ length: N + 1 }, (_, i) => { const x = lo + (hi - lo) * i / N; return xs[k].reduce((t, y) => t + Math.exp(-0.5 * ((x - y) / bw) ** 2), 0) * w / (bw * 2.5066); }); });
+  const pico = Math.max(...dens.flat(), 1e-6), Y = d => H - 4 - d / pico * (H - 14);
+  const trazo = d => d.map((v, i) => `${i ? "L" : "M"}${(i / N * W).toFixed(1)} ${Y(v).toFixed(1)}`).join("");
+  const curvas = dens.map((d, k) => `<path d="${trazo(d)}L${W} ${H - 4}L0 ${H - 4}Z" fill="${cols[k]}" opacity=".13"/>
+    <path class="cv-l" pathLength="1" d="${trazo(d)}" fill="none" stroke="${cols[k]}" stroke-width="2.2" stroke-linejoin="round" style="animation-delay:${k * 120}ms"/>`).join("");
+  const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
+  const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
+  const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
+  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+    <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
+    <ul class="cv-ley">${leyenda}</ul></div>`;
+}
+
 function clavesCandidato(c, r) {
   const inf = r.info(c.rival), ps = inf.pos[c.pos], pn = POSN[c.pos], nom = esc(c.rivalNombre || "el rival");
-  const cl = [];
+  const cl = [curvaPuntos(c)].filter(Boolean);
   // 1) Cómo puntúan los de su posición contra este rival
   {
     const ok = ps.n >= 3;
@@ -5981,12 +6680,16 @@ function pintarCapitan() {
     const util = r.candidatos.filter(c => c.score > -Infinity);
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
-    cuerpo = `<ul class="jplist">${top.length ? heroCap(top[0], r) : ""}</ul>
-      ${htmlOnceRec(r)}
-      ${bloqueCapGanar(r)}
-      ${htmlCapLiga(cg, gwVer)}
-      ${htmlHorario(r)}
-      ${top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""}
+    const cx = [["rec", "🏆", "Capitán", "El mejor para esta jornada", top.length ? `<ul class="jplist">${heroCap(top[0], r)}</ul>` : ""],
+      ["once", "🧩", "Tu once", "El mejor once posible", htmlOnceRec(r)],
+      ["ganar", "🎯", "Ganar la jornada", "Tus opciones con cada capitán", bloqueCapGanar(r)],
+      ["liga", "👥", "La liga", "A quién capitanean los demás", htmlCapLiga(cg, gwVer)],
+      ["cur", "📈", "Curvas", "Sus puntos posibles, frente a frente", bloqueCurvas(util)],
+      ["hor", "⏰", "Horario", "Cuándo juega cada uno", htmlHorario(r)],
+      ["alt", "🔁", "Alternativas", "Otras opciones y riesgo", top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""]].filter(x => x[4]);
+    const cb = k => { const x = cx.find(y => y[0] === k); return x ? `<div id="cpx-${k}">${x[4]}</div>` : ""; };
+    const cexplora = `<nav class="indice bento" aria-label="Más del Capitán">${cx.map(x => `<button data-ir="cpx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
+    cuerpo = `${cexplora}${cb("rec")}${cb("once")}${cb("ganar")}${cb("liga")}${cb("cur")}${cb("hor")}${cb("alt")}
       ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
       ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
       ${bloqueRivales(r, util)}
@@ -6539,8 +7242,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -6651,7 +7354,7 @@ function wrDiapos(t) {
       <p class="wr-k wr-a" style="--d:.35s">La temporada de</p>
       <h2 class="wr-nom wr-a" style="--d:.5s">${esc(m.name)}</h2>
       <p class="wr-p wr-a" style="--d:.8s">${t.n} jornadas en ${esc(liga)}. Esto es lo que ha pasado.</p></div>` });
-  S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Has sumado</p>
+  S.push({ html: `${t.pos === 1 ? `<svg class="ct-copa wr-copa wr-a" style="--d:.05s" viewBox="0 0 34 40" aria-label="Vas primero" role="img"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg>` : ""}<p class="wr-k wr-a" style="--d:.1s">Has sumado</p>
       <b class="wr-big wr-a" style="--d:.2s" data-cuenta="${t.total}">${nf0.format(t.total)}</b>
       <p class="wr-t wr-a" style="--d:.5s">puntos · vas ${wrOrd(t.pos)} de ${t.N}</p>
       ${wrSvgPuesto(t)}
@@ -6904,6 +7607,7 @@ function abrirComparador(idA, idB) {
 }
 let CMP_ULT = null;
 document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-dis-comp]")) { const L = disciplinaDatos(); if (L) { EST_DAT.dis = { L, n: Object.keys(D.matchdays).length }; abrirEstudio("dis", e.target.closest("[data-dis-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
@@ -7048,6 +7752,33 @@ async function esPabellon(d) {
   esPie(x, `El más sucio: ${L[0].m.name} · el más limpio: ${L[n - 1].m.name}`);
   return c;
 }
+// Lámina de la Bolsa de LaLiga (mismo mapa, mismos colores y cifras que la tarjeta de Equipos)
+async function esBolsa(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, B = d.B, cc = B.P.c;
+  esFondo(x);
+  esCabecera(x, { titulo: "LA BOLSA", kicker: "Valor de los jugadores de LaLiga", pag: 0, total: 1 });
+  const eqs = {}; B.J.forEach(j => { const e = (eqs[j.p.teamId] = eqs[j.p.teamId] || { id: j.p.teamId, v: 0, d: 0, J: [] }); e.v += j.v; e.d += j.d; e.J.push(j); });
+  const nom = {}; ((CAL && CAL.games) || []).forEach(g => { nom[g.home] = g.homeName; nom[g.away] = g.awayName; });
+  const gx = M, gy = 470, gw = W - 2 * M, gh = 1180 - gy;
+  cuadricula(Object.values(eqs).sort((a, b) => b.v - a.v), gx, gy, gw, gh).forEach(e => {
+    const cab = e.h > 50 && e.w > 90 ? 26 : 0, re = e.v - e.d > 0 ? e.d / (e.v - e.d) : 0;
+    x.fillStyle = "#0b1410"; x.fillRect(e.x, e.y, e.w, e.h);
+    cuadricula(e.J.slice().sort((a, b) => b.v - a.v), e.x + 2, e.y + 2 + cab, e.w - 4, e.h - 4 - cab).forEach(t => {
+      x.fillStyle = bolsaColor(t.r, cc); x.fillRect(t.x, t.y, Math.max(0, t.w - 2), Math.max(0, t.h - 2));
+      if (t.w > 74 && t.h > 40) { x.fillStyle = "#fff"; x.textAlign = "left"; x.font = esF(800, 20); x.fillText(esCorta(x, apellido(t.p.name), t.w - 12), t.x + 6, t.y + 22);
+        if (t.h > 60) { x.font = esF(600, 18); x.fillStyle = "rgba(255,255,255,.85)"; x.fillText(pctB(t.r), t.x + 6, t.y + 44); } }
+    });
+    if (cab) { x.fillStyle = "#fff"; x.textAlign = "left"; x.font = esF(800, 20); x.fillText(esCorta(x, (nom[e.id] || "").toUpperCase(), e.w - 90), e.x + 8, e.y + 20);
+      x.textAlign = "right"; x.fillStyle = re >= 0 ? ES.verde : ES.rojo; x.fillText(pctB(re), e.x + e.w - 8, e.y + 20); x.textAlign = "left"; }
+    x.strokeStyle = "#0b1410"; x.lineWidth = 3; x.strokeRect(e.x, e.y, e.w, e.h);
+  });
+  x.textAlign = "left"; x.fillStyle = B.cambio >= 0 ? ES.verde : ES.rojo; x.font = esF(900, 96, "condensed");
+  x.fillText(`${B.cambio >= 0 ? "▲" : "▼"} ${pctB(B.cambio)}`, M, 432);
+  x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(`Índice Golómetro · ${B.P.t}`, M + 400, 426);
+  esPie(x, "Tamaño = valor de hoy · color = cambio");
+  return c;
+}
+ES_SETS.bolsa = [["La Bolsa", esBolsa]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
 ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
@@ -7196,6 +7927,11 @@ function podioPlay() {
   const b = $(".po-play"); if (b) { b.innerHTML = PO_ICO.pausa; b.setAttribute("aria-label", "Pausar"); }
   PODIO.tm = setInterval(() => { if (!$(".pdx") || !PODIO.d || !PODIO.d.S || k >= PODIO.d.n - 1) { podioPara(); return; } podioIr(++k); if (k >= PODIO.d.n - 1) podioPara(); }, 850);
 }
+// Crónica: el partido de la jornada (ganador contra segundo) en el campo 3D
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest("[data-cr-pt]");
+  if (t) { const [a, c, j] = t.dataset.crPt.split("|"); ptAbrir(a, c, j); }
+});
 document.addEventListener("click", e => {
   const p = e.target.closest && e.target.closest(".pdx"); if (!p || !PODIO.d) return;
   const q = s => e.target.closest(s);
@@ -7369,6 +8105,7 @@ function bloqueBolsa() {
     <div class="bo-mapa" style="height:${H}px" role="img" aria-label="Mapa del mercado: ${B.J.length} jugadores por equipo, el tamaño es su valor y el color cuánto han cambiado">${cas.join("")}</div>
     <div class="bo-ley" aria-hidden="true">${[-3, -2, -1, 0, 1, 2, 3].map(n => `<i style="background:${bolsaColor(n === 0 ? 0 : Math.sign(n) * (c[Math.abs(n) - 1] + 1e-6), c)}">${n === 0 ? "0" : (n > 0 ? "+" : "−") + nf1c(c[Math.abs(n) - 1] * 100)}</i>`).join("")}</div>
     <div class="bo-top"><div><small>Más suben</small>${sube.map(chip).join("")}</div><div><small>Más bajan</small>${baja.map(chip).join("")}</div></div>
+    <div class="acciones"><button class="btn-cromo" data-bolsa-comp>📤 Compartir lámina</button></div>
     <p class="note">El tamaño de cada casilla es lo que vale el jugador hoy y el color, cuánto ha cambiado su valor desde el ${desde}. El índice sigue el valor de toda la liga (1.000 el ${ix[0].d.slice(8, 10)}/${ix[0].d.slice(5, 7)}). Toca un jugador para ver su ficha.</p></section>`;
 }
 function pintarBolsa() { const s = $("#bolsa"); if (s) s.outerHTML = bloqueBolsa(); }
@@ -7453,10 +8190,49 @@ function bloqueConquista() {
       <path d="${camino(sil)}" class="cq-halo" filter="url(#cqBrillo)"/>
       <g clip-path="url(#cqEsp)">${territorios}</g>
       <path d="${camino(sil)}" class="cq-sil"/>${escudos}</svg></div>
-    ${info}<ul class="cq-ley">${leyenda}</ul></section>`;
+    ${info}<ul class="cq-ley">${leyenda}</ul><div class="acciones"><button class="btn-cromo" data-conq-comp>📤 Compartir lámina</button></div></section>`;
 }
+// Lámina de la conquista: el mismo mapa (Voronoi recortado a España), mismos dueños y cifras que la tarjeta de Equipos
+async function esConquista(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, C = d.C;
+  const Wm = 780, Hm = 640, esc = 1.02, ox = (W - Wm * esc) / 2, oy = 395;
+  const pts = C.T.map(t => ESP_PX(t.c)), celdas = voronoi(pts, Wm, Hm);
+  const ims = await Promise.all(C.T.map(t => esImg(esEscudo(t.id))));
+  const mans = D.managers.map((m, i) => ({ m, i }));
+  const avs = await Promise.all(mans.map(o => esImg(o.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "LA CONQUISTA", kicker: "Quién manda en cada equipo de LaLiga", pag: 0, total: 1 });
+  const P = q => [ox + q[0] * esc, oy + q[1] * esc], trazo = L => { x.beginPath(); L.forEach((q, k) => { const [a, b] = P(q); k ? x.lineTo(a, b) : x.moveTo(a, b); }); x.closePath(); };
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.shadowColor = "rgba(47,212,110,.5)"; x.shadowBlur = 40; x.fillStyle = "#0b1410"; x.fill(); x.restore();
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.clip();
+  celdas.forEach((pol, k) => { if (pol.length < 3) return; const t = C.T[k]; trazo(pol);
+    x.globalAlpha = t.due ? 0.78 : 0.45; x.fillStyle = t.due ? col(t.due.i) : "#5d6b63"; x.fill(); x.globalAlpha = 1; x.strokeStyle = "#0b1410"; x.lineWidth = 3; x.stroke(); });
+  x.restore();
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.strokeStyle = ES.luz; x.lineWidth = 3; x.stroke(); x.restore();
+  const r = 27, pos = pts.map(p => [...p]);   // escudos separados entre sí, igual que en la tarjeta
+  for (let it = 0; it < 140; it++) pos.forEach((a, i) => { pos.forEach((b, j) => { if (i >= j) return; const dx = b[0] - a[0], dy = b[1] - a[1], dd = Math.hypot(dx, dy) || 0.01, m = 2 * r + 6 - dd;
+    if (m > 0) { const ux = dx / dd * m / 2, uy = dy / dd * m / 2; a[0] -= ux; a[1] -= uy; b[0] += ux; b[1] += uy; } });
+    a[0] += (pts[i][0] - a[0]) * 0.02; a[1] += (pts[i][1] - a[1]) * 0.02; });
+  C.T.forEach((t, k) => { const [X, Y] = P(pos[k]), R = r * esc;
+    x.beginPath(); x.arc(X, Y, R, 0, 2 * Math.PI); x.fillStyle = "rgba(8,16,12,.9)"; x.fill(); x.lineWidth = 4; x.strokeStyle = t.due ? col(t.due.i) : "#8a978f"; x.stroke();
+    if (ims[k]) x.drawImage(ims[k], X - R * 0.66, Y - R * 0.66, R * 1.32, R * 1.32); });
+  // marcador de territorios por manager
+  const cuenta = {}; C.T.forEach(t => { if (t.due) cuenta[t.due.i] = (cuenta[t.due.i] || 0) + 1; });
+  const rk = mans.map((o, j) => ({ ...o, im: avs[j], n: cuenta[o.i] || 0 })).sort((a, b) => b.n - a.n);
+  const cw = (W - 2 * M) / 4, ry = 1070;
+  rk.forEach((f, j) => { const cx = M + (j % 4) * cw + cw / 2, cy = ry + Math.floor(j / 4) * 92;
+    esAvatar(x, f.m, f.i, f.im, cx - cw / 2 + 40, cy + 30, 30, col(f.i));
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esF(800, 20); x.fillText(esCorta(x, f.m.name, cw - 92), cx - cw / 2 + 80, cy + 26);
+    x.fillStyle = ES.verde; x.font = esF(900, 38, "condensed"); x.fillText(String(f.n), cx - cw / 2 + 80, cy + 62); });
+  const libres = C.T.filter(t => !t.due).length;
+  esPie(x, `Manda quien más puntos suma${libres ? ` · ${libres} libres` : ""}`);
+  return c;
+}
+ES_SETS.conq = [["La conquista", esConquista]];
 function pintarConquista() { const s = $("#conq"); if (s) s.outerHTML = bloqueConquista(); }
 document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-conq-comp]");
+  if (b) { const C = conquistaDatos(); if (C) { EST_DAT.conq = { C, n: Object.keys(D.matchdays).length }; abrirEstudio("conq", b); } return; }
   const t = e.target.closest && e.target.closest("[data-conq]"); if (!t) return;
   conqSel = conqSel === t.dataset.conq ? null : t.dataset.conq; pintarConquista();
 });
@@ -7556,7 +8332,8 @@ function bloqueGalaxia() {
     <p class="note" style="margin:0 0 8px">Cada estrella es un jugador: a la derecha, más caro; arriba, más puntos por partido; más grande, más puntos en total. Por encima de la línea rinde más de lo que suele rendir alguien de su precio.</p>
     <div class="seg seg5" role="group" aria-label="Posición">${posB}</div>
     <div class="gal-ms" role="group" aria-label="Resaltar un manager">${manB}</div>
-    <div class="gal-c"><canvas id="galCv" role="img" aria-label="Galaxia de jugadores de LaLiga: valor frente a puntos por partido"></canvas><div class="gal-tip" id="galTip" hidden></div></div></section>`;
+    <div class="gal-c"><canvas id="galCv" role="img" aria-label="Galaxia de jugadores de LaLiga: valor frente a puntos por partido"></canvas><div class="gal-tip" id="galTip" hidden></div></div>
+    <div class="acciones"><button class="btn-cromo" data-gal-comp>📤 Compartir lámina</button></div></section>`;
 }
 // dibujo en canvas (con brillo); la primera vez las estrellas salen del centro como en una explosión
 function dibujaGalaxia(entrada) {
@@ -7598,6 +8375,47 @@ function dibujaGalaxia(entrada) {
   if (entrada && !matchMedia("(prefers-reduced-motion: reduce)").matches) { const t0 = performance.now(), paso = a => { const q = Math.min(1, (a - t0) / 1100); pinta(q); if (q < 1 && cv.isConnected) requestAnimationFrame(paso); }; requestAnimationFrame(paso); }
   else pinta(1);
 }
+
+// Lámina de la galaxia: las mismas estrellas (valor, puntos por partido, dueño) y los 3 jugadores que más rinden sobre su precio
+async function esGalaxia(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, G = d.G;
+  esFondo(x);
+  esCabecera(x, { titulo: "LA GALAXIA", kicker: "Valor frente a puntos por partido", pag: 0, total: 1 });
+  const L = M + 50, R = W - M, T = 390, B = 1000, J = G.J;
+  const X0 = Math.log10(Math.max(0.05, Math.min(...J.map(j => j.p.value / 1e6)) * 0.9)), X1 = Math.log10(Math.max(2, ...J.map(j => j.p.value / 1e6)) * 1.15), Y1 = Math.max(6, ...J.map(j => j.y)) * 1.08;
+  const sx = lx => L + (Math.max(X0, lx) - X0) / (X1 - X0) * (R - L), sy = y => T + (1 - Math.max(-1, y) / Y1) * (B - T);
+  x.fillStyle = "#050f0a"; x.fillRect(M, T - 20, W - 2 * M, B - T + 60);
+  x.strokeStyle = "#ffffff18"; x.fillStyle = "#9fc4ae"; x.font = esF(600, 20); x.lineWidth = 1;
+  [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50].forEach(v => { const X = sx(Math.log10(v)); if (X > R - 10 || X < L + 20) return; x.beginPath(); x.moveTo(X, T); x.lineTo(X, B); x.stroke(); x.textAlign = "center"; x.fillText(nf1c(v).replace(",0", "") + " M", X, B + 28); });
+  for (let v = 0; v <= Y1; v += 2) { const Y = sy(v); x.beginPath(); x.moveTo(L, Y); x.lineTo(R, Y); x.stroke(); x.textAlign = "right"; x.fillText(String(v), L - 10, Y + 7); }
+  x.textAlign = "left"; x.fillStyle = "#6f9a82"; x.fillText("pts por partido", L + 8, T + 22);
+  x.save(); x.strokeStyle = "#5cf096cc"; x.setLineDash([14, 10]); x.lineWidth = 3; x.beginPath();
+  for (let k = 0; k <= 40; k++) { const lx = X0 + (X1 - X0) * k / 40, X = sx(lx), Y = sy(G.a + G.b * lx); k ? x.lineTo(X, Y) : x.moveTo(X, Y); } x.stroke(); x.restore();
+  const cl = j => j.o ? col(j.o.i) : "#e9f5ee";
+  [false, true].forEach(dueno => J.filter(j => !!j.o === dueno).forEach(j => {
+    x.globalAlpha = dueno ? 0.95 : 0.5; x.shadowColor = cl(j); x.shadowBlur = dueno ? 16 : 6; x.fillStyle = cl(j);
+    x.beginPath(); x.arc(sx(j.lx), sy(j.y), 3.5 + Math.sqrt(j.p.points) * 0.6, 0, 6.2832); x.fill(); }));
+  x.globalAlpha = 1; x.shadowBlur = 0;
+  // los que más rinden sobre lo normal a su precio (con al menos 1 M para que no sean rarezas)
+  const top = J.filter(j => j.p.value >= 1e6).map(j => ({ j, e: j.y - (G.a + G.b * j.lx) })).sort((a, b) => b.e - a.e).slice(0, 3);
+  top.forEach((t, k) => { const px = sx(t.j.lx), py = sy(t.j.y);
+    x.strokeStyle = "#fff"; x.lineWidth = 3; x.beginPath(); x.arc(px, py, 3.5 + Math.sqrt(t.j.p.points) * 0.6 + 8, 0, 6.2832); x.stroke();
+    x.fillStyle = "#fff"; x.font = esF(800, 22); x.textAlign = px > W * 0.7 ? "right" : "left"; x.fillText(String(k + 1), px + (px > W * 0.7 ? -22 : 22), py - 14); });
+  x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esF(800, 28); x.fillText("Rinden más de lo que cuestan", M, 1085);
+  const cw = (W - 2 * M) / 3;
+  top.forEach((t, k) => { const X = M + k * cw, p = t.j.p;
+    x.fillStyle = ES.verde; x.font = esF(900, 44, "condensed"); x.fillText(String(k + 1), X, 1150);
+    x.fillStyle = ES.txt; x.font = esF(800, 26); x.fillText(esCorta(x, p.name, cw - 70), X + 44, 1146);
+    x.fillStyle = ES.mut; x.font = esF(600, 20); x.fillText(esCorta(x, `${eur(p.value)} · ${nf1c(p.avg)} pts/partido`, cw - 24), X + 44, 1178);
+    x.fillStyle = ES.luz; x.fillText(`+${nf1c(t.e)} sobre lo normal`, X + 44, 1208); });
+  esPie(x, "Sobre la línea: rinde más que lo normal a su precio");
+  return c;
+}
+ES_SETS.gal = [["La galaxia", esGalaxia]];
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-gal-comp]");
+  if (b) { const G = galDatos(); if (G) { EST_DAT.gal = { G, n: Object.keys(D.matchdays).length }; abrirEstudio("gal", b); } }
+});
 let GAL_VISTA = false;
 function pintarGalaxia() { const s = $("#gal"); if (s) s.outerHTML = bloqueGalaxia(); }
 // tocar cerca de una estrella: tarjeta con el jugador y acceso a su ficha
@@ -8006,7 +8824,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["plan", "🪑", "Plantones", "Alineados que no jugaron"], ["clubes", "🛡️", "Clubes", "De qué equipo viven tus puntos"], ["recs", "🏆", "Récords", "Las mejores actuaciones del año"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -8023,8 +8841,12 @@ function pintar() {
     <section class="card" id="mat"></section>
     <section class="card" id="rach"></section>
     <section class="card" id="sincap"></section>
+    <section class="card" id="ligad"></section>
     <section class="card" id="form"></section>
     <section class="card" id="rota"></section>
+    <section class="card" id="plan"></section>
+    <section class="card" id="clubes"></section>
+    <section class="card" id="recs"></section>
     <section class="card" id="premios"></section>`;
   cuentaPuntosFilas(); cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
@@ -8047,8 +8869,12 @@ function pintar() {
   pintarMatriz();
   pintarRachas();
   pintarSinCap();
+  pintarLigaDuelos();
   pintarFormaciones();
   pintarRotacion();
+  pintarPlantones();
+  pintarClubes();
+  pintarRecords();
   cuentaClasificacion();
 }
 // los puntos de la tabla suben desde 0 al entrar o al cambiar de jornada/orden (no al abrir un detalle); el valor final no cambia
