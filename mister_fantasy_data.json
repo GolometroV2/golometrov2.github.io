@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "09/11/2026 04:54",
-  "updatedAt": "2026-11-09T03:54:24Z",
+  "lastUpdated": "10/11/2026 06:29",
+  "updatedAt": "2026-11-10T05:29:21Z",
   "managers": [
     {
       "id": "8663482",
@@ -17563,8 +17563,8 @@
     },
     "J12": {
       "10303392": {
-        "points": 77,
-        "totalPoints": 749,
+        "points": 78,
+        "totalPoints": 750,
         "position": 1,
         "playersPlayed": 11,
         "squadValue": 104495000,
@@ -17702,11 +17702,11 @@
             "name": "Pedri",
             "teamId": 3,
             "pos": "MC",
-            "points": 7,
+            "points": 8,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 7,
+            "basePoints": 8,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -18698,8 +18698,8 @@
         ]
       },
       "8663449": {
-        "points": 46,
-        "totalPoints": 609,
+        "points": 47,
+        "totalPoints": 610,
         "position": 6,
         "playersPlayed": 11,
         "squadValue": 93208000,
@@ -18837,11 +18837,11 @@
             "name": "Giuliano Simeone",
             "teamId": 2,
             "pos": "MC",
-            "points": 10,
+            "points": 11,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 10,
+            "basePoints": 11,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
