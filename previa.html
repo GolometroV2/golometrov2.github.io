@@ -7987,7 +7987,8 @@ function bloqueGalaxia() {
     <p class="note" style="margin:0 0 8px">Cada estrella es un jugador: a la derecha, más caro; arriba, más puntos por partido; más grande, más puntos en total. Por encima de la línea rinde más de lo que suele rendir alguien de su precio.</p>
     <div class="seg seg5" role="group" aria-label="Posición">${posB}</div>
     <div class="gal-ms" role="group" aria-label="Resaltar un manager">${manB}</div>
-    <div class="gal-c"><canvas id="galCv" role="img" aria-label="Galaxia de jugadores de LaLiga: valor frente a puntos por partido"></canvas><div class="gal-tip" id="galTip" hidden></div></div></section>`;
+    <div class="gal-c"><canvas id="galCv" role="img" aria-label="Galaxia de jugadores de LaLiga: valor frente a puntos por partido"></canvas><div class="gal-tip" id="galTip" hidden></div></div>
+    <div class="acciones"><button class="btn-cromo" data-gal-comp>📤 Compartir lámina</button></div></section>`;
 }
 // dibujo en canvas (con brillo); la primera vez las estrellas salen del centro como en una explosión
 function dibujaGalaxia(entrada) {
@@ -8029,6 +8030,47 @@ function dibujaGalaxia(entrada) {
   if (entrada && !matchMedia("(prefers-reduced-motion: reduce)").matches) { const t0 = performance.now(), paso = a => { const q = Math.min(1, (a - t0) / 1100); pinta(q); if (q < 1 && cv.isConnected) requestAnimationFrame(paso); }; requestAnimationFrame(paso); }
   else pinta(1);
 }
+
+// Lámina de la galaxia: las mismas estrellas (valor, puntos por partido, dueño) y los 3 jugadores que más rinden sobre su precio
+async function esGalaxia(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, G = d.G;
+  esFondo(x);
+  esCabecera(x, { titulo: "LA GALAXIA", kicker: "Valor frente a puntos por partido", pag: 0, total: 1 });
+  const L = M + 50, R = W - M, T = 390, B = 1000, J = G.J;
+  const X0 = Math.log10(Math.max(0.05, Math.min(...J.map(j => j.p.value / 1e6)) * 0.9)), X1 = Math.log10(Math.max(2, ...J.map(j => j.p.value / 1e6)) * 1.15), Y1 = Math.max(6, ...J.map(j => j.y)) * 1.08;
+  const sx = lx => L + (Math.max(X0, lx) - X0) / (X1 - X0) * (R - L), sy = y => T + (1 - Math.max(-1, y) / Y1) * (B - T);
+  x.fillStyle = "#050f0a"; x.fillRect(M, T - 20, W - 2 * M, B - T + 60);
+  x.strokeStyle = "#ffffff18"; x.fillStyle = "#9fc4ae"; x.font = esF(600, 20); x.lineWidth = 1;
+  [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50].forEach(v => { const X = sx(Math.log10(v)); if (X > R - 10 || X < L + 20) return; x.beginPath(); x.moveTo(X, T); x.lineTo(X, B); x.stroke(); x.textAlign = "center"; x.fillText(nf1c(v).replace(",0", "") + " M", X, B + 28); });
+  for (let v = 0; v <= Y1; v += 2) { const Y = sy(v); x.beginPath(); x.moveTo(L, Y); x.lineTo(R, Y); x.stroke(); x.textAlign = "right"; x.fillText(String(v), L - 10, Y + 7); }
+  x.textAlign = "left"; x.fillStyle = "#6f9a82"; x.fillText("pts por partido", L + 8, T + 22);
+  x.save(); x.strokeStyle = "#5cf096cc"; x.setLineDash([14, 10]); x.lineWidth = 3; x.beginPath();
+  for (let k = 0; k <= 40; k++) { const lx = X0 + (X1 - X0) * k / 40, X = sx(lx), Y = sy(G.a + G.b * lx); k ? x.lineTo(X, Y) : x.moveTo(X, Y); } x.stroke(); x.restore();
+  const cl = j => j.o ? col(j.o.i) : "#e9f5ee";
+  [false, true].forEach(dueno => J.filter(j => !!j.o === dueno).forEach(j => {
+    x.globalAlpha = dueno ? 0.95 : 0.5; x.shadowColor = cl(j); x.shadowBlur = dueno ? 16 : 6; x.fillStyle = cl(j);
+    x.beginPath(); x.arc(sx(j.lx), sy(j.y), 3.5 + Math.sqrt(j.p.points) * 0.6, 0, 6.2832); x.fill(); }));
+  x.globalAlpha = 1; x.shadowBlur = 0;
+  // los que más rinden sobre lo normal a su precio (con al menos 1 M para que no sean rarezas)
+  const top = J.filter(j => j.p.value >= 1e6).map(j => ({ j, e: j.y - (G.a + G.b * j.lx) })).sort((a, b) => b.e - a.e).slice(0, 3);
+  top.forEach((t, k) => { const px = sx(t.j.lx), py = sy(t.j.y);
+    x.strokeStyle = "#fff"; x.lineWidth = 3; x.beginPath(); x.arc(px, py, 3.5 + Math.sqrt(t.j.p.points) * 0.6 + 8, 0, 6.2832); x.stroke();
+    x.fillStyle = "#fff"; x.font = esF(800, 22); x.textAlign = px > W * 0.7 ? "right" : "left"; x.fillText(String(k + 1), px + (px > W * 0.7 ? -22 : 22), py - 14); });
+  x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esF(800, 28); x.fillText("Rinden más de lo que cuestan", M, 1085);
+  const cw = (W - 2 * M) / 3;
+  top.forEach((t, k) => { const X = M + k * cw, p = t.j.p;
+    x.fillStyle = ES.verde; x.font = esF(900, 44, "condensed"); x.fillText(String(k + 1), X, 1150);
+    x.fillStyle = ES.txt; x.font = esF(800, 26); x.fillText(esCorta(x, p.name, cw - 70), X + 44, 1146);
+    x.fillStyle = ES.mut; x.font = esF(600, 20); x.fillText(esCorta(x, `${eur(p.value)} · ${nf1c(p.avg)} pts/partido`, cw - 24), X + 44, 1178);
+    x.fillStyle = ES.luz; x.fillText(`+${nf1c(t.e)} sobre lo normal`, X + 44, 1208); });
+  esPie(x, "Sobre la línea: rinde más que lo normal a su precio");
+  return c;
+}
+ES_SETS.gal = [["La galaxia", esGalaxia]];
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-gal-comp]");
+  if (b) { const G = galDatos(); if (G) { EST_DAT.gal = { G, n: Object.keys(D.matchdays).length }; abrirEstudio("gal", b); } }
+});
 let GAL_VISTA = false;
 function pintarGalaxia() { const s = $("#gal"); if (s) s.outerHTML = bloqueGalaxia(); }
 // tocar cerca de una estrella: tarjeta con el jugador y acceso a su ficha
