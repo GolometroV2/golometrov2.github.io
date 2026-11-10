@@ -3480,6 +3480,23 @@ function bloqueValor7(ms) {
     <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
 }
 
+// Disciplina: tarjetas y goles en propia que han sumado los onces de cada manager en la temporada (solo datos pasados)
+function bloqueDisciplina() {
+  if (!D || !D.managers || !D.matchdays) return "";
+  const L = D.managers.map((m, ci) => {
+    let am = 0, ro = 0, pp = 0;
+    Object.values(D.matchdays).forEach(j => { const x = j && j[m.id]; if (!x) return;
+      (x.players || []).forEach(p => { am += p.yellowCards || 0; ro += p.redCards || 0; pp += p.ownGoals || 0; }); });
+    return { m, ci, am, ro, pp, n: am + ro * 2 + pp * 2 };
+  }).sort((a, b) => b.n - a.n);
+  const mx = L[0] ? L[0].n : 0;
+  if (L.length < 3 || !mx) return "";
+  return `<section class="card"><div class="gh"><h2>Pabellón de la vergüenza</h2></div>
+    <p class="note" style="margin:0 0 8px">Tarjetas y goles en propia de los onces de cada manager en la temporada (roja y propia puerta cuentan doble para ordenar).</p>
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.ci)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.n / mx * 100).toFixed(1)}%;background:${col(x.ci)}"></i></span><small>🟨 ${x.am} · 🟥 ${x.ro} · PP ${x.pp}</small></span><span class="pp" style="font-size:16px">${x.n}</span></li>`).join("")}</ul>
+    <p class="note">El más sucio: <b>${esc(L[0].m.name)}</b>. El más limpio: <b>${esc(L[L.length - 1].m.name)}</b>.</p></section>`;
+}
+
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
 function bloqueEficiencia(ms) {
   if (!D || !D.managers) return "";
@@ -3651,6 +3668,7 @@ function resumenEq(ms, hp) {
     ${bloqueDependencia(ms)}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
+    ${bloqueDisciplina()}
     ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
