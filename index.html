@@ -1289,6 +1289,61 @@ body.wr-abierto{overflow:hidden}
 .cin-i::after{content:"";width:5px;height:5px;margin-left:18px;border-radius:50%;background:#2fd46e66}
 .ci-up{color:#5cf096;font-weight:800}.ci-dn{color:#ff8a8a;font-weight:800}
 @media (prefers-reduced-motion:reduce){.ci-pista{animation:none}.ci-v{overflow-x:auto;scrollbar-width:none}.ci-dup{display:none}}
+/* Mesa de operaciones (Mercado, con PIN): simulador de ventas y pujas con marcador en vivo */
+.ms-hud{position:relative;margin:0 0 12px;padding:14px 12px 12px;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
+  background:radial-gradient(90% 120% at 50% 0%,#17462d 0%,#0a2116 50%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e44,0 0 26px -8px #2fd46e88}
+.ms-hud::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(#2fd46e12 1px,#0000 1px) 0 0/100% 22px,linear-gradient(90deg,#2fd46e12 1px,#0000 1px) 0 0/22px 100%;-webkit-mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000);mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000)}
+.ms-hud::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;z-index:-1;pointer-events:none;opacity:0;background:linear-gradient(90deg,#0000,#9dffc633,#0000);transform:translateX(-100%)}
+.ms-hud.barre::after{animation:msBarre .9s ease-out}
+@keyframes msBarre{0%{opacity:1;transform:translateX(-100%)}100%{opacity:0;transform:translateX(260%)}}
+.ms-k{margin:0 0 10px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#a5ecc2}
+.ms-n{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ms-n>div{min-width:0;padding:10px 6px;border-radius:12px;background:#00000047;box-shadow:inset 0 0 0 1px #ffffff12;text-align:center}
+.ms-n small{display:block;font-size:10.5px;line-height:1.2;color:#a9c7b6}
+.ms-n b{display:block;margin:3px 0;font-family:var(--f-disp);font-weight:900;font-size:clamp(19px,6.2vw,26px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ms-n b.up{color:#6ff3a3;text-shadow:0 0 16px #2fd46e88}.ms-n b.dn{color:#ff8a8a}
+.ms-n em{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:#cfe3d7}
+.ms-n input{width:100%;min-height:36px;margin:2px 0;border-radius:8px;border:1px solid #2fd46e77;background:#04140c;color:#fff;font:inherit;font-weight:800;text-align:center}
+.ms-bar{display:flex;height:8px;margin:12px 0 6px;border-radius:4px;overflow:hidden;background:#ffffff1a}
+.ms-bar i{flex:0 0 auto;width:var(--w,0%);transition:width .5s cubic-bezier(.3,1,.4,1)}
+.ms-bar .g{background:#ffffffd9}.ms-bar .q{background:linear-gradient(90deg,#1c9c52,#6ff3a3)}.ms-bar .f{background:#ff6b6b}
+.ms-ley{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:#a9c7b6}
+.ms-ley i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:2px;vertical-align:-1px}
+.ms-res{margin:10px 0 0;font-size:13px;line-height:1.45;color:#eaf4ee}.ms-res b{color:#8dffb9}.ms-res b.dn{color:#ff8a8a}
+.ms-acc{display:flex;gap:8px;margin:0 0 10px}
+.ms-acc button{flex:1;min-width:0;min-height:46px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.ms-acc button:active{transform:scale(.97)}
+.ms-acc .ms-opt{flex:1.5;border:0;background:linear-gradient(120deg,#1fb85c,#5cf096);color:#03200e;box-shadow:0 0 22px -4px #2fd46eaa}
+.ms-lam{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:12px;color:var(--mut)}
+.ms-lam input{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc)}
+.ms-lam b{flex:none;min-width:118px;text-align:right;color:var(--txt);font-size:12px}
+.ms-tira{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);z-index:6;display:flex;justify-content:space-around;gap:6px;margin:6px 0 0;padding:9px 8px;border-radius:999px;background:#06170ef2;box-shadow:inset 0 0 0 1px #2fd46e66,0 8px 20px -8px #000;color:#a9c7b6;font-size:11.5px;white-space:nowrap}
+.ms-tira b{margin-left:3px;font-family:var(--f-disp);font-weight:900;font-size:14px;color:#fff;font-variant-numeric:tabular-nums}.ms-tira b.up{color:#6ff3a3}.ms-tira b.dn{color:#ff8a8a}
+.ms-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;perspective:700px}
+@media (min-width:560px){.ms-g{grid-template-columns:repeat(6,1fr)}}
+.ms-j{position:relative;height:112px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ms-ji{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.2,.4,1)}
+.ms-j.v .ms-ji{transform:rotateY(180deg)}
+.ms-f,.ms-b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 3px;border-radius:12px;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line)}
+.ms-f b,.ms-l b{max-width:100%;font-size:11.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-f small{font-size:10.5px;font-weight:800;white-space:nowrap}
+.ms-xi{position:absolute;left:5px;top:5px;padding:1px 5px;border-radius:6px;background:var(--accBg);color:var(--accFg);font-style:normal;font-size:9px;font-weight:900}
+.ms-b{transform:rotateY(180deg);background:linear-gradient(160deg,#14532f,#06170e);box-shadow:inset 0 0 0 1.5px #2fd46e;color:#eaf4ee}
+.ms-b b{font-family:var(--f-disp);font-weight:900;font-size:13px;letter-spacing:.06em;color:#8dffb9}
+.ms-b span{font-family:var(--f-disp);font-weight:900;font-size:14px;white-space:nowrap}
+.ms-b small{font-size:9px;line-height:1.15;text-align:center;color:#a9c7b6}
+.ms-j:focus-visible,.ms-l:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:12px}
+.ms-ls{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:4px;scroll-snap-type:x proximity}
+.ms-ls::-webkit-scrollbar{display:none}
+.ms-l{position:relative;flex:none;width:136px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;border:0;border-radius:14px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line);color:inherit;font:inherit;cursor:pointer;scroll-snap-align:start;transition:box-shadow .25s,transform .25s;-webkit-tap-highlight-color:transparent}
+.ms-l.on{box-shadow:inset 0 0 0 2px var(--acc),0 0 20px -6px var(--acc);transform:translateY(-3px)}
+.ms-l small{font-size:11px;color:var(--mut);white-space:nowrap}.ms-l small b{display:inline;font-size:11px;color:var(--txt)}
+.ms-l small.up{color:var(--pos)}.ms-l small.dn{color:var(--red)}
+.ms-ring{position:absolute;right:6px;top:6px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--acc) var(--p),var(--line) 0);font-size:10px;font-weight:900}
+.ms-ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--panel2)}.ms-ring span{position:relative}
+.ms-chk{display:block;width:100%;margin-top:4px;padding:5px 0;border-radius:8px;background:var(--panel);font-style:normal;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:var(--mut)}
+.ms-l.on .ms-chk{background:var(--acc);color:var(--accTxt)}
+@media (prefers-reduced-motion:reduce){.ms-ji,.ms-l,.ms-bar i{transition:none}.ms-hud.barre::after{animation:none}}
 /* Podio interactivo: fichas que saltan de pedestal al viajar por las jornadas, foco que sigue al dedo y ficha de cada manager al tocarlo */
 .pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
   background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
@@ -5343,6 +5398,130 @@ function planCalc(r, P, m) {
   return { P, m, h, mios, vender, dudas, suben, compras, sinDinero, saldo, cobroHoy, caja, c2, esp2,
     ahorro: vender.reduce((t, x) => t - x.d, 0), ganancia: compras.reduce((t, y) => t + y.esperado, 0), cartera: mios.reduce((t, x) => t + x.d, 0) };
 }
+/* ---------- Mesa de operaciones (Mercado, solo con PIN): simulador de ventas y pujas ----------
+   Parte del mismo cálculo que el Plan (planDatos: valor previsto de cada jugador hasta la víspera de la próxima jornada, puja y
+   probabilidad de ganarla). Aquí se eligen a mano ventas y pujas y se ve al momento cómo quedan la caja, el dinero esperado y el
+   once; «Plan óptimo» busca la combinación que más vale: dinero esperado + (puntos del once × lo que tú digas que vale un punto),
+   sin gastar más de lo que hay en caja aunque se ganen todas las pujas. */
+const MESA = { v: new Set(), c: new Set(), lam: 2, d: null };
+const MESA_LAM = [[0, "Solo dinero"], [1e5, "1 punto = 100 k"], [2.5e5, "1 punto = 250 k"], [5e5, "1 punto = 500 k"], [2e6, "Sobre todo puntos"]];
+// puntos esperados del mejor once posible con una lista de { pos, esp } (sin el extra del capitán)
+function mesaOnce(L) {
+  const por = pos => L.filter(c => c.pos === pos && c.esp > 0).map(c => c.esp).sort((a, b) => b - a), G = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  const s = (a, n) => a.slice(0, n).reduce((t, v) => t + v, 0);
+  return Math.max(...FORMACIONES.map(([d, m, f]) => s(G.PT, 1) + s(G.DF, d) + s(G.MC, m) + s(G.DL, f)));
+}
+function mesaDatos(r) {
+  const d = planDatos(r); if (!d) return null;
+  const mios = d.mios.map(x => ({ id: String(x.p.id), p: x.p, pos: x.p.pos, V: x.V, d: x.previsible ? x.d : 0, prev: x.previsible, en2: x.en2, esp: x.c && x.c.score > -Infinity && x.c.esp > 0 ? x.c.esp : 0 }));
+  const base = mesaOnce(mios), plan = new Map([...d.compras, ...d.sinDinero].map(y => [String(y.x.j.id), y]));
+  const libres = r.lista.filter(x => x.prio !== "evitar" && x.V > 0 && capNum(x.puja)).map(x => {
+    const y = plan.get(String(x.j.id)), g = x.jf ? capClamp(x.jf.g || 0, [-0.1, 0.1]) : 0;
+    const Vh = y ? y.Vh : x.V >= 1e6 ? planProyectar(x.V, g, d.h) : x.V, puja = y ? y.puja : x.puja, pw = y ? y.pw : x.pl && capNum(x.pl.p) ? x.pl.p : 0.5, esp = x.espProx || 0;
+    return { id: String(x.j.id), j: x.j, pos: x.pos, V: x.V, Vh, puja, pw, esp, ev: pw * (Vh - puja), dp: mesaOnce(mios.concat([{ pos: x.pos, esp }])) - base };
+  }).sort((a, b) => (b.ev + 2.5e5 * b.dp * b.pw) - (a.ev + 2.5e5 * a.dp * a.pw)).slice(0, 12);
+  return { m: d.m, mios, libres, saldo: d.saldo, h: d.h, gw: d.P.despues.gw, base };
+}
+function mesaCalc(M, v, c, lam) {
+  const ven = M.mios.filter(x => v.has(x.id)), com = M.libres.filter(y => c.has(y.id)), quedan = M.mios.filter(x => !v.has(x.id));
+  const cobro = ven.reduce((t, x) => t + x.V, 0), gasto = com.reduce((t, y) => t + y.puja, 0);
+  const dinero = ven.reduce((t, x) => t - x.d, 0) + com.reduce((t, y) => t + y.ev, 0);
+  const pts = mesaOnce(quedan.concat(com)), ptsE = mesaOnce(quedan.concat(com.map(y => ({ pos: y.pos, esp: y.esp * y.pw }))));
+  const caja = M.saldo != null ? M.saldo * 1e6 + cobro - gasto : null;
+  return { ven, com, cobro, gasto, dinero, pts, dPts: pts - M.base, caja, U: dinero + lam * (ptsE - M.base), ok: caja == null ? com.length <= PLAN.MAX_COMPRAS : caja >= 0 };
+}
+// búsqueda: desde no hacer nada, se aplica cada vez el cambio (una venta, una puja o una venta + una puja) que más mejora el resultado
+function mesaOptimo(M, lam) {
+  let v = new Set(), c = new Set(), mejor = mesaCalc(M, v, c, lam);
+  const alt = (s, id) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; };
+  for (let it = 0; it < 40; it++) {
+    let paso = null;
+    const prueba = (v2, c2) => { const r = mesaCalc(M, v2, c2, lam); if (r.ok && r.U > mejor.U + 5e4 && (!paso || r.U > paso.r.U)) paso = { v: v2, c: c2, r }; };
+    M.mios.forEach(x => prueba(alt(v, x.id), c)); M.libres.forEach(y => prueba(v, alt(c, y.id)));
+    M.mios.forEach(x => M.libres.forEach(y => prueba(alt(v, x.id), alt(c, y.id))));
+    if (!paso) break;
+    v = paso.v; c = paso.c; mejor = paso.r;
+  }
+  return { v, c };
+}
+function bloqueMesa(r) {
+  const M = MESA.d = mesaDatos(r); if (!M) return "";
+  MESA.v = new Set([...MESA.v].filter(id => M.mios.some(x => x.id === id))); MESA.c = new Set([...MESA.c].filter(id => M.libres.some(y => y.id === id)));
+  const chips = M.mios.slice().sort((a, b) => a.d - b.d).map(x => `<button class="ms-j${MESA.v.has(x.id) ? " v" : ""}" data-mesa-v="${esc(x.id)}" aria-pressed="${MESA.v.has(x.id)}" aria-label="Vender a ${esc(x.p.name)}">
+      <span class="ms-ji"><span class="ms-f">${x.en2 ? `<i class="ms-xi">XI</i>` : ""}${cara(x.p.id, x.p.name, x.p.teamId, 40)}<b>${esc(x.p.short || apellido(x.p.name))}</b><small class="${!x.prev || Math.abs(x.d) < 5000 ? "flat" : x.d > 0 ? "up" : "dn"}">${!x.prev ? "sin previsión" : Math.abs(x.d) < 5000 ? "= igual" : (x.d > 0 ? "▲ " : "▼ ") + merEur(Math.abs(x.d))}</small></span>
+      <span class="ms-b"><b>VENDIDO</b><span>+${merEur(x.V)}</span><small>${x.d < -5000 ? `evitas bajar ${merEur(-x.d)}` : x.d > 5000 ? `renuncias a ${merEur(x.d)}` : "a tu caja"}${x.en2 ? " · era titular" : ""}</small></span></span></button>`).join("");
+  const cartas = M.libres.map(y => `<button class="ms-l${MESA.c.has(y.id) ? " on" : ""}" data-mesa-c="${esc(y.id)}" aria-pressed="${MESA.c.has(y.id)}" aria-label="Pujar por ${esc(y.j.name)}">
+      <span class="ms-ring" style="--p:${Math.round(y.pw * 100)}%" title="Probabilidad de ganar la puja"><span>${Math.round(y.pw * 100)}%</span></span>${cara(y.j.id, y.j.name, y.j.teamId, 46)}
+      <b>${esc(y.j.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${y.pos.toLowerCase()})">${y.pos}</span>puja <b>${merEur(y.puja)}</b></small>
+      <small class="${y.ev >= 0 ? "up" : "dn"}">${merEurS(y.ev)} esperados</small><small>${y.dp > 0.05 ? `+${nf1.format(y.dp)} pts en tu once` : "no entra en tu once"}</small><i class="ms-chk">PUJAR</i></button>`).join("");
+  requestAnimationFrame(() => mesaPinta(false));
+  return `<section class="card mesa" id="mesa"><div class="gh"><h2>🎛️ Mesa de operaciones</h2></div>
+    <p class="note" style="margin:0 0 10px">Prueba ventas y pujas con la plantilla de ${esc(M.m.name)} y mira al momento cómo quedan tu caja, tu dinero y tu once de la jornada ${M.gw}. O deja que el Golómetro busque la mejor combinación.</p>
+    ${selectorM(merMan, "data-mm", null, "Plantilla")}
+    <div class="ms-hud" id="msHud"><p class="ms-k">De hoy a la víspera de la J${M.gw} · ${M.h} ${M.h === 1 ? "día" : "días"}</p>
+      <div class="ms-n"><div><small>Caja si ganas todas las pujas</small>${M.saldo == null ? `<input type="number" inputmode="decimal" step="0.1" placeholder="Tu saldo (M)" data-saldo aria-label="Tu saldo en millones">` : `<b id="msCaja"></b>`}<em id="msCajaS"></em></div>
+        <div><small>Dinero que esperas ganar</small><b id="msDin"></b><em>frente a no hacer nada</em></div>
+        <div><small>Tu once en la J${M.gw}</small><b id="msPts"></b><em id="msDp"></em></div></div>
+      <div class="ms-bar" aria-hidden="true"><i class="g" id="msBg"></i><i class="q" id="msBq"></i><i class="f" id="msBf"></i></div>
+      <div class="ms-ley"><span><i style="background:#ffffffd9"></i>Pujas <b id="msLg"></b></span><span><i style="background:#2fd46e"></i>Te queda <b id="msLq"></b></span><span>Cobras por ventas <b id="msLc"></b></span></div>
+      <p class="ms-res" id="msRes" aria-live="polite"></p></div>
+    <div class="ms-acc"><button class="ms-opt" data-mesa="opt">⚡ Plan óptimo</button><button data-mesa="limpia">Limpiar</button><button data-mesa="copia">📋 Copiar</button></div>
+    <label class="ms-lam"><span>Dinero</span><input type="range" min="0" max="${MESA_LAM.length - 1}" step="1" value="${MESA.lam}" data-mesa-lam aria-label="Qué pesa más en el plan óptimo: el dinero o los puntos"><span>Puntos</span><b id="msLam">${MESA_LAM[MESA.lam][1]}</b></label>
+    <div class="ms-tira" aria-hidden="true"><span>Caja <b id="msTc"></b></span><span>Dinero <b id="msTd"></b></span><span>Once <b id="msTp"></b></span></div>
+    <h3 class="sec">Tu plantilla · toca para vender</h3><div class="ms-g">${chips}</div>
+    <h3 class="sec">Libres de hoy · toca para pujar</h3>${cartas ? `<div class="ms-ls">${cartas}</div>` : `<p class="note">Hoy no hay libres con puja calculada.</p>`}
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></section>`;
+}
+function mesaNum(el, v, fmt) {
+  if (!el) return;
+  const de = el._v, red = matchMedia("(prefers-reduced-motion: reduce)").matches; el._v = v;
+  if (de == null || red || de === v) { el.textContent = fmt(v); return; }
+  const t0 = performance.now(), paso = t => { if (el._v !== v || !el.isConnected) return; const q = Math.min(1, (t - t0) / 450), e = 1 - Math.pow(1 - q, 3); el.textContent = fmt(q < 1 ? de + (v - de) * e : v); if (q < 1) requestAnimationFrame(paso); };
+  requestAnimationFrame(paso);
+}
+function mesaTexto(M, R) {
+  const ls = [`Plan del Golómetro para ${M.m.name} (hasta la J${M.gw})`];
+  if (R.ven.length) ls.push("VENDER: " + R.ven.map(x => `${x.p.name} (${merEur(x.V)})`).join(", "));
+  if (R.com.length) ls.push("PUJAR: " + R.com.map(y => `${y.j.name} ${merEur(y.puja)} (${Math.round(y.pw * 100)} % de ganarla)`).join(", "));
+  if (!R.ven.length && !R.com.length) ls.push("No hacer nada.");
+  ls.push(`Dinero esperado: ${merEurS(R.dinero)} · once J${M.gw}: ${nf1.format(R.pts)} pts${R.caja != null ? ` · caja si gano todas: ${merEur(Math.abs(R.caja))}${R.caja < 0 ? " EN NEGATIVO" : ""}` : ""}`);
+  return ls.join("\n");
+}
+function mesaPinta(barre) {
+  const M = MESA.d, hud = $("#msHud"); if (!M || !hud) return;
+  const R = mesaCalc(M, MESA.v, MESA.c, MESA_LAM[MESA.lam][0]), eur = v => (v < 0 ? "−" : "") + merEur(Math.abs(v));
+  const cj = $("#msCaja"); if (cj) { mesaNum(cj, R.caja, eur); cj.className = R.caja < 0 ? "dn" : ""; }
+  $("#msCajaS").textContent = M.saldo == null ? "pon tu saldo" : `saldo de hoy: ${merEur(M.saldo * 1e6)}`;
+  const dn = $("#msDin"); mesaNum(dn, R.dinero, v => Math.abs(v) < 5000 ? "0" : merEurS(Math.round(v / 1e4) * 1e4)); dn.className = R.dinero > 5000 ? "up" : R.dinero < -5000 ? "dn" : "";
+  mesaNum($("#msPts"), R.pts, v => nf1.format(v));
+  $("#msDp").textContent = Math.abs(R.dPts) < 0.05 ? "igual que ahora" : `${R.dPts > 0 ? "+" : "−"}${nf1.format(Math.abs(R.dPts))} pts${R.com.length ? " si los fichas" : ""}`;
+  $("#msTc").textContent = R.caja == null ? "–" : eur(R.caja); $("#msTc").className = R.caja < 0 ? "dn" : ""; $("#msTd").textContent = Math.abs(R.dinero) < 5000 ? "0" : merEurS(R.dinero); $("#msTd").className = dn.className; $("#msTp").textContent = nf1.format(R.pts);
+  const T = Math.max(1, (M.saldo != null ? M.saldo * 1e6 : R.gasto) + R.cobro), w = v => Math.max(0, Math.min(100, v / T * 100)).toFixed(1) + "%", mal = R.caja != null && R.caja < 0;
+  $("#msBg").style.setProperty("--w", mal ? "0%" : w(R.gasto)); $("#msBq").style.setProperty("--w", mal || R.caja == null ? "0%" : w(R.caja)); $("#msBf").style.setProperty("--w", mal ? "100%" : "0%");
+  $("#msLg").textContent = merEur(R.gasto); $("#msLq").textContent = R.caja == null ? "–" : eur(R.caja); $("#msLc").textContent = merEur(R.cobro);
+  const nv = R.ven.length, nc = R.com.length;
+  $("#msRes").innerHTML = !nv && !nc ? "Toca jugadores para vender o pujar, o pulsa <b>Plan óptimo</b>."
+    : `${nv ? `Vendes ${nv === 1 ? esc(R.ven[0].p.short || R.ven[0].p.name) : nv + " jugadores"} y cobras <b>${merEur(R.cobro)}</b>. ` : ""}${nc ? `Pujas por ${nc === 1 ? esc(R.com[0].j.name) : nc + " libres"} (hasta <b>${merEur(R.gasto)}</b>). ` : ""}${mal ? `<b class="dn">No te llega: te faltarían ${merEur(-R.caja)} si ganas todas.</b>` : `${R.dinero >= -5000 ? `Esperas ganar <b>${merEurS(Math.max(0, R.dinero))}</b>` : `Te cuesta <b class="dn">${merEur(-R.dinero)}</b> de media`}${Math.abs(R.dPts) >= 0.05 ? ` y tu once ${R.dPts > 0 ? "sube" : "baja"} <b${R.dPts < 0 ? ` class="dn"` : ""}>${nf1.format(Math.abs(R.dPts))} pts</b>` : ""}.`}`;
+  document.querySelectorAll("#mesa [data-mesa-v]").forEach(b => { const on = MESA.v.has(b.dataset.mesaV); b.classList.toggle("v", on); b.setAttribute("aria-pressed", on); });
+  document.querySelectorAll("#mesa [data-mesa-c]").forEach(b => { const on = MESA.c.has(b.dataset.mesaC); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "PUJA PUESTA ✓" : "PUJAR"; });
+  if (barre) { hud.classList.remove("barre"); void hud.offsetWidth; hud.classList.add("barre"); }
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("#mesa"); if (!c || !MESA.d) return;
+  const alt = (s, id) => { s.has(id) ? s.delete(id) : s.add(id); };
+  let b;
+  if ((b = e.target.closest("[data-mesa-v]"))) { alt(MESA.v, b.dataset.mesaV); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa-c]"))) { alt(MESA.c, b.dataset.mesaC); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa]"))) { const q = b.dataset.mesa;
+    if (q === "opt") { const o = mesaOptimo(MESA.d, MESA_LAM[MESA.lam][0]); MESA.v = o.v; MESA.c = o.c; mesaPinta(true); if (navigator.vibrate) navigator.vibrate(12); }
+    else if (q === "limpia") { MESA.v = new Set(); MESA.c = new Set(); mesaPinta(false); }
+    else if (q === "copia") { const t = mesaTexto(MESA.d, mesaCalc(MESA.d, MESA.v, MESA.c, MESA_LAM[MESA.lam][0])), ok = () => { b.textContent = "Copiado ✓"; setTimeout(() => { if (b.isConnected) b.textContent = "📋 Copiar"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, () => {}); } }
+});
+document.addEventListener("input", e => {
+  if (!e.target.matches || !e.target.matches("[data-mesa-lam]")) return;
+  MESA.lam = Math.max(0, Math.min(MESA_LAM.length - 1, Number(e.target.value) || 0)); $("#msLam").textContent = MESA_LAM[MESA.lam][1];
+});
 function bloquePlanParon(r) {
   const d = planDatos(r);
   if (!d) return "";
@@ -5463,6 +5642,7 @@ function pintarMercado() {
     <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
+    ${bloqueMesa(r)}
     ${bloquePlanParon(r)}
     ${mejor ? heroMer(mejor, cierre) : ""}
     ${bloqueSimPuja(r, mejor)}
