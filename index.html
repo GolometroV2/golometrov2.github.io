@@ -1293,8 +1293,6 @@ body.wr-abierto{overflow:hidden}
 .ciu-c{position:relative;border-radius:var(--r-l);overflow:hidden;background:#020806;box-shadow:inset 0 0 0 1px #2fd46e33;color-scheme:dark}
 #ciuCv{display:block;width:100%;touch-action:pan-y;cursor:grab;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 #ciuCv.arr{cursor:grabbing}
-.ciu-tour{flex:none;margin-left:auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2fd46e77;background:var(--accBg);color:var(--txt);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap}
-.ciu-tour:active{transform:scale(.95)}
 .ciu-tl{display:flex;align-items:center;gap:10px;margin:10px 0 2px}
 .ciu-tl .po-play{width:46px;height:46px}
 .ciu-dias{flex:1;min-width:0;display:flex;touch-action:pan-y}
@@ -7385,19 +7383,14 @@ function ciuDibuja(x, W, H, o) {
     if (sel || ((e.cerca < 0.6 || o.u) && !choca(cajaT) && cajaT[0] > 0 && cajaT[2] < W)) { x.fillStyle = "#cfe3d7"; x.fillText(txt, e.av[0], yy); ocup.push([...cajaT, e.cerca, 1]); yy -= 13 * u; }
     if (e.lider) { const cw = 8 * u, cy0 = yy; x.save(); x.fillStyle = "#5cf096"; x.shadowColor = "#2fd46e"; x.shadowBlur = 8 * u;
       cam("f", () => { x.moveTo(e.av[0] - cw, cy0); x.lineTo(e.av[0] - cw * 0.85, cy0 - cw * 0.9); x.lineTo(e.av[0] - cw * 0.4, cy0 - cw * 0.45); x.lineTo(e.av[0], cy0 - cw * 1.15); x.lineTo(e.av[0] + cw * 0.4, cy0 - cw * 0.45); x.lineTo(e.av[0] + cw * 0.85, cy0 - cw * 0.9); x.lineTo(e.av[0] + cw, cy0); x.closePath(); }); x.restore(); } });
-  x.globalAlpha = 1; x.shadowBlur = 0; x.textAlign = "left"; x.fillStyle = "#6ff3a3"; x.font = esF(900, 14 * u, "condensed");
-  if (!o.rotulo) { x.fillText(tf >= n ? `TRAS ${n} JORNADAS` : `JORNADA ${Math.max(1, Math.ceil(tf))}`, 12 * u, H - 12 * u); return; }
-  x.font = esF(900, 17 * u, "condensed"); const w1 = x.measureText(o.rotulo[0]).width; x.font = esS(600, 11.5 * u); const w2 = x.measureText(o.rotulo[1]).width, bw = Math.min(W - 16 * u, Math.max(w1, w2) + 28 * u), bx = (W - bw) / 2, by = H - 62 * u;
-  x.fillStyle = "rgba(2,12,7,.82)"; x.strokeStyle = "rgba(47,212,110,.6)"; x.lineWidth = u; esRect(x, bx, by, bw, 50 * u, 14 * u); x.fill(); x.stroke();
-  x.textAlign = "center"; x.fillStyle = "#fff"; x.font = esF(900, 17 * u, "condensed"); x.fillText(esCorta(x, o.rotulo[0], bw - 20 * u), W / 2, by + 22 * u);
-  x.fillStyle = "#a5ecc2"; x.font = esS(600, 11.5 * u); x.fillText(esCorta(x, o.rotulo[1], bw - 20 * u), W / 2, by + 40 * u); x.textAlign = "left";
+  x.globalAlpha = 1; x.shadowBlur = 0; x.textAlign = "left"; x.fillStyle = "#6ff3a3"; x.font = esF(900, 14 * u, "condensed"); x.fillText(tf >= n ? `TRAS ${n} JORNADAS` : `JORNADA ${Math.max(1, Math.ceil(tf))}`, 12 * u, H - 12 * u);
 }
 function ciuCuadro(ahora) {
   CIU.raf = 0;
   const cv = $("#ciuCv"), d = CIU.d; if (!cv || !d) return;
   const dt = CIU.ult ? Math.min(50, ahora - CIU.ult) : 16, red = matchMedia("(prefers-reduced-motion: reduce)").matches; CIU.ult = ahora;
   let vivo = !!CIU.arr;
-  if (CIU.play) { const k0 = Math.ceil(CIU.t); CIU.t = Math.min(d.n, CIU.t + dt / 1000 * CIU.vel); vivo = true; if (CIU.t >= d.n) { CIU.play = false; ciuFuegos(); ciuUI(); } else if (Math.ceil(CIU.t) !== k0) ciuUIj(); }
+  if (CIU.play) { const k0 = Math.ceil(CIU.t); CIU.t = Math.min(d.n, CIU.t + dt / 1000 * CIU.vel); vivo = true; if (CIU.t >= d.n) { CIU.play = false; ciuUI(); } else if (Math.ceil(CIU.t) !== k0) ciuUIj(); }
   if (CIU.thObj != null) { const dif = (((CIU.thObj - CIU.th + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
     if (Math.abs(dif) < 0.004 || red) { CIU.th = CIU.thObj; CIU.thObj = null; } else CIU.th += dif * Math.min(1, dt / 200); vivo = true; }
   else if (!CIU.arr && Math.abs(CIU.vth) > 0.00015) { CIU.th += CIU.vth * dt; CIU.vth *= Math.pow(0.995, dt); vivo = true; }
@@ -7406,32 +7399,8 @@ function ciuCuadro(ahora) {
   const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 340, H = Math.round(W * (W < 560 ? 1.14 : 0.72));
   if (CIU.w !== W || cv.width !== Math.round(W * dpr)) { CIU.w = W; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + "px"; }
   const x = cv.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const G = CIU.tour, gt = G && G.ord[G.i];
-  ciuDibuja(x, W, H, { th: CIU.th, t: CIU.t, sel: CIU.sel, piso: CIU.piso, ahora, zoom: CIU.zoom, reg: true,
-    rotulo: gt ? [`${d.N - G.i}.º · ${gt.m.name}`, `${d.S.cum[gt.x][d.n - 1]} puntos · su mejor planta, la ${d.S.js[CIU.piso]}: ${d.S.pts[gt.x][CIU.piso]}`] : null });
-  if (CIU.fx) { const u = Math.max(1, Math.min(1.35, W / 360)); let queda = false; x.save(); x.globalCompositeOperation = "lighter";
-    CIU.fx.forEach((f, i) => { const q = (ahora - f.t0) / 1500; if (q >= 1) return; queda = true; if (q < 0) return;
-      const e = 1 - Math.pow(1 - q, 3); x.fillStyle = `hsla(${f.hue} 90% 68% / ${(1 - q * q).toFixed(2)})`;
-      for (let k = 0; k < 56; k++) { const an = k / 56 * 6.2832 + ciuHash(i, k, 1, 1), rd = e * 80 * u * (0.45 + 0.55 * ciuHash(i, k, 2, 2)), s = (k % 4 ? 2.1 : 3.3) * u; x.fillRect(f.x * W + Math.cos(an) * rd, f.y * H + Math.sin(an) * rd + q * q * 34 * u, s, s); } });
-    x.restore(); if (queda) vivo = true; else CIU.fx = null; }
+  ciuDibuja(x, W, H, { th: CIU.th, t: CIU.t, sel: CIU.sel, piso: CIU.piso, ahora, zoom: CIU.zoom, reg: true });
   if (vivo && CIU.vis) CIU.raf = requestAnimationFrame(ciuCuadro); else CIU.ult = 0;
-}
-function ciuFuegos() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const t0 = performance.now(), s = Math.floor(t0) % 997;
-  CIU.fx = [150, 320, 190, 130, 285, 165, 205].map((hue, i) => ({ t0: t0 + i * 240, hue, x: 0.14 + ciuHash(i, s, 1, 1) * 0.72, y: 0.08 + ciuHash(i, 2, s, 1) * 0.3 }));
-  ciuDespierta();
-}
-// visita guiada: la cámara va de la torre más baja a la más alta, con un rótulo, y acaba con fuegos artificiales
-function ciuTourPara() { if (CIU.tour) { clearTimeout(CIU.tour.tm); CIU.tour = null; } }
-function ciuTour() {
-  const d = CIU.d; if (CIU.tour) { ciuTourPara(); ciuElige(null); return; }
-  const ord = d.T.slice().sort((p, q) => d.S.cum[p.x][d.n - 1] - d.S.cum[q.x][d.n - 1]);
-  CIU.play = false; CIU.t = d.n; CIU.tour = { ord, i: -1, tm: 0 };
-  const paso = () => { const G = CIU.tour; if (!G) return; if (!$("#ciuCv")) { CIU.tour = null; return; }
-    if (++G.i >= ord.length) { CIU.tour = null; ciuElige(null); ciuFuegos(); return; }
-    const t = ord[G.i], pts = d.S.pts[t.x]; ciuElige(t.x, pts.indexOf(Math.max(...pts))); G.tm = setTimeout(paso, 2700); };
-  paso();
 }
 function ciuDespierta() { if (!CIU.raf && $("#ciuCv")) CIU.raf = requestAnimationFrame(ciuCuadro); }
 function ciuInfoHTML() {
@@ -7454,7 +7423,6 @@ function ciuUIj() {
 function ciuUI() {
   const p = $("#ciudad [data-ciu=play]"); if (p) { p.innerHTML = CIU.play ? PO_ICO.pausa : PO_ICO.play; p.setAttribute("aria-label", CIU.play ? "Pausar" : "Construir la ciudad jornada a jornada"); }
   const inf = $("#ciuInfo"); if (inf) inf.innerHTML = ciuInfoHTML();
-  const tb = $("#ciudad [data-ciu=tour]"); if (tb) tb.textContent = CIU.tour ? "⏹ Parar la visita" : "🎬 Visita guiada";
   document.querySelectorAll("[data-ciu-m]").forEach(b => { const on = CIU.sel != null && Number(b.dataset.ciuM) === CIU.sel; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
   ciuUIj(); ciuDespierta();
 }
@@ -7470,7 +7438,7 @@ function pintarCiudad() {
   c.hidden = false;
   if (CIU.t == null || CIU.t > d.n || (!CIU.play && CIU.entrada && CIU.t === CIU.nAnt)) CIU.t = CIU.entrada ? d.n : 0;
   CIU.nAnt = d.n; if (CIU.sel != null && CIU.sel >= d.T.length) CIU.sel = null;
-  c.innerHTML = `<div class="gh"><h2>La ciudad de la liga</h2><button class="ciu-tour" data-ciu="tour">🎬 Visita guiada</button></div>
+  c.innerHTML = `<div class="gh"><h2>La ciudad de la liga</h2></div>
     <p class="note" style="margin:0 0 8px">Un rascacielos por manager. Cada planta es una jornada: cuanto más alta y con más ventanas encendidas, más puntos. Las plantas blancas son jornadas ganadas.</p>
     <div class="ciu-c"><canvas id="ciuCv" role="img" aria-label="Ciudad en 3D: ${d.T.slice().sort((p, q) => d.S.cum[q.x][d.n - 1] - d.S.cum[p.x][d.n - 1]).map(t => `${esc(t.m.name)}, ${d.S.cum[t.x][d.n - 1]} puntos`).join("; ")}"></canvas></div>
     <div class="ciu-tl"><button class="po-play" data-ciu="play"></button><div class="ciu-dias" id="ciuDias" role="group" aria-label="Construir hasta una jornada">${d.S.js.map((j, k) => `<button data-ciu-k="${k}" aria-label="Hasta la jornada ${esc(j.slice(1))}"><i></i></button>`).join("")}</div><span class="ciu-jl" id="ciuJl"></span></div>
@@ -7493,7 +7461,6 @@ function ciuToca(px, py) {
 }
 document.addEventListener("pointerdown", e => {
   if (e.target.id !== "ciuCv") return;
-  if (CIU.tour) { ciuTourPara(); ciuUI(); }
   CIU.arr = { x0: e.clientX, y0: e.clientY, x: e.clientX, th0: CIU.th, mov: 0, t: performance.now() }; CIU.thObj = null; CIU.vth = 0;
   e.target.classList.add("arr"); try { e.target.setPointerCapture(e.pointerId); } catch (_) {}
   ciuDespierta();
@@ -7515,12 +7482,10 @@ document.addEventListener("pointermove", e => {
 document.addEventListener("click", e => {
   const c = e.target.closest && e.target.closest("#ciudad"); if (!c || !CIU.d) return;
   const d = CIU.d, b = e.target.closest("[data-ciu]"), kb = e.target.closest("[data-ciu-k]"), mb = e.target.closest("[data-ciu-m]");
-  if (CIU.tour && (kb || mb || (b && b.dataset.ciu !== "tour"))) ciuTourPara();
   if (kb) { CIU.play = false; CIU.t = Number(kb.dataset.ciuK) + 1; if (CIU.sel != null) CIU.piso = Math.min(CIU.piso == null ? d.n : CIU.piso, CIU.t - 1); ciuUI(); }
   else if (mb) ciuElige(Number(mb.dataset.ciuM), null);
   else if (b) { const q = b.dataset.ciu;
     if (q === "play") { if (matchMedia("(prefers-reduced-motion: reduce)").matches) { CIU.t = d.n; CIU.play = false; } else { CIU.play = !CIU.play; if (CIU.play) { CIU.vel = 1.15; if (CIU.t >= d.n) CIU.t = 0; } } ciuUI(); }
-    else if (q === "tour") ciuTour();
     else if (q === "cerrar") ciuElige(null);
     else if (q === "baja" || q === "sube") { CIU.piso = Math.max(0, Math.min(d.n - 1, (CIU.piso == null ? d.n - 1 : CIU.piso) + (q === "sube" ? 1 : -1))); if (CIU.t < CIU.piso + 1) CIU.t = CIU.piso + 1; ciuUI(); }
     else if (q === "comp") { EST_DAT.ciu = { n: Number(d.S.js[d.n - 1].slice(1)), th: CIU.th }; abrirEstudio("ciu", b); } }
