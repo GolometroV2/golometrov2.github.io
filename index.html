@@ -1289,38 +1289,108 @@ body.wr-abierto{overflow:hidden}
 .cin-i::after{content:"";width:5px;height:5px;margin-left:18px;border-radius:50%;background:#2fd46e66}
 .ci-up{color:#5cf096;font-weight:800}.ci-dn{color:#ff8a8a;font-weight:800}
 @media (prefers-reduced-motion:reduce){.ci-pista{animation:none}.ci-v{overflow-x:auto;scrollbar-width:none}.ci-dup{display:none}}
-/* Podio: tres pedestales cilíndricos con luz de foco sobre el primero */
+/* Podio interactivo: fichas que saltan de pedestal al viajar por las jornadas, foco que sigue al dedo y ficha de cada manager al tocarlo */
 .pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
   background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
 .pdx::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 1px 1px,#ffffff14 1px,#0000 1.5px) 0 0/14px 14px;-webkit-mask-image:linear-gradient(#000,#0000 80%);mask-image:linear-gradient(#000,#0000 80%)}
+.pdx::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(circle at var(--mx,50%) var(--my,30%),#5cf09633,#0000 42%)}
+.pdx.toca::after{opacity:1}
 .po-t{margin:0 0 4px;text-align:center;font-size:12.5px;font-weight:700;color:#a5ecc2}
-.po-esc{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:6px}
-.po-c{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;--h:62px;--tono:#9fb2a8}
-.po-1{--h:96px;--tono:#2fd46e}.po-2{--h:70px;--tono:#c9d6cf}.po-3{--h:52px;--tono:#c98a5b}
-.po-1::before{content:"";position:absolute;left:50%;bottom:calc(var(--h) - 10px);width:170%;height:260px;transform:translateX(-50%);z-index:-1;pointer-events:none;
+.po-conf{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.po-esc{position:relative;height:250px;container-type:inline-size;touch-action:pan-y}
+.po-3d{position:absolute;inset:0;transform-origin:50% 100%;transform-style:preserve-3d;transform:perspective(720px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .6s cubic-bezier(.2,.8,.3,1)}
+.pdx.toca .po-3d{transition-duration:.12s}
+.po-haz{position:absolute;left:0;bottom:70px;width:33cqw;height:230px;pointer-events:none;transform:translate3d(var(--hx,33.5cqw),0,0) scaleX(1.7);transition:transform .7s cubic-bezier(.3,1,.4,1);
   background:linear-gradient(#e9fff200,#bfffd826 40%,#2fd46e2e 100%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
-.po-av{position:relative;display:grid;place-items:center;margin-bottom:6px}
-.po-av .av{width:56px;height:56px;font-size:20px;box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 10px 22px #000a}
-.po-1 .po-av .av{width:72px;height:72px;font-size:26px;box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 0 30px #2fd46e88,0 12px 26px #000a}
-.po-cor{position:absolute;top:-17px;width:30px;height:18px;fill:#5cf096;filter:drop-shadow(0 0 8px #2fd46e);z-index:2}
-.po-n{max-width:100%;padding:0 2px;font-size:12.5px;line-height:1.2;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.po-v{margin:1px 0 8px;font-size:11px;color:#b9d6c5}
-.po-v b{font-family:var(--f-disp);font-weight:900;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
-.po-1 .po-v b{font-size:28px;color:#6ff3a3;text-shadow:0 0 18px #2fd46e88}
-.po-ped{position:relative;width:100%;height:var(--h);transform-origin:50% 100%}
+.po-ped{position:absolute;bottom:0;left:var(--l);width:var(--w);height:var(--h);transform-origin:50% 100%}
+.po-p1{--l:32cqw;--w:36cqw;--h:96px;--tono:#2fd46e}.po-p2{--l:1cqw;--w:31cqw;--h:70px;--tono:#c9d6cf}.po-p3{--l:68cqw;--w:31cqw;--h:52px;--tono:#c98a5b}
 .po-ped::before{content:"";position:absolute;inset:9px 0 0;border-radius:0 0 6px 6px;
   background:linear-gradient(90deg,#00000070,#0000 30%,#ffffff12 50%,#0000 70%,#00000070),linear-gradient(color-mix(in srgb,var(--tono) 55%,#04100a),#04100a)}
 .po-tapa{position:absolute;left:0;right:0;top:0;height:18px;border-radius:50%;background:radial-gradient(60% 70% at 50% 40%,color-mix(in srgb,var(--tono) 90%,#fff),color-mix(in srgb,var(--tono) 55%,#04100a));
   box-shadow:0 0 18px color-mix(in srgb,var(--tono) 60%,transparent),inset 0 -2px 0 #0004}
 .po-num{position:absolute;left:0;right:0;top:22px;text-align:center;font-family:var(--f-disp);font-weight:900;font-size:30px;line-height:1;color:color-mix(in srgb,var(--tono) 70%,#fff);opacity:.9;text-shadow:0 2px 10px #000}
-.po-1 .po-num{font-size:40px}
+.po-p1 .po-num{font-size:40px}
+.po-f{position:absolute;left:0;bottom:0;width:33cqw;min-height:44px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;--tono:#9fb2a8;
+  transform:translate3d(var(--x,33.5cqw),var(--y,30px),var(--z,12px));transition:transform .75s cubic-bezier(.3,1.25,.4,1),opacity .35s}
+.po-f[data-l="1"]{--x:33.5cqw;--y:-86px;--z:22px;--tono:#2fd46e}
+.po-f[data-l="2"]{--x:0cqw;--y:-60px;--tono:#c9d6cf}
+.po-f[data-l="3"]{--x:67cqw;--y:-42px;--tono:#c98a5b}
+.po-f[data-l="0"]{opacity:0;pointer-events:none;visibility:hidden;transition:transform .75s,opacity .35s,visibility 0s .75s}
+.po-f:focus-visible{outline:2px solid #6ff3a3;outline-offset:2px;border-radius:12px}
+.po-fi{display:flex;flex-direction:column;align-items:center;min-width:0;transition:transform .15s}
+.po-f:active .po-fi{transform:scale(.94)}
+.po-av{position:relative;display:grid;place-items:center;margin-bottom:6px;transform-origin:50% 100%;transition:transform .6s cubic-bezier(.3,1.25,.4,1)}
+.po-f[data-l="1"] .po-av{transform:scale(1.28)}
+.po-f[data-l="1"] .po-n{font-size:13.5px}
+.po-av .av{width:56px;height:56px;font-size:20px;box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 10px 22px #000a;transition:box-shadow .4s}
+.po-f[data-l="1"] .po-av .av{box-shadow:0 0 0 3px #03100a,0 0 0 5px var(--tono),0 0 30px #2fd46e88,0 12px 26px #000a}
+.po-f.sel .po-av .av{box-shadow:0 0 0 3px #03100a,0 0 0 5px #fff,0 0 26px var(--c),0 12px 26px #000a}
+.po-cor{position:absolute;top:-17px;width:30px;height:18px;fill:#5cf096;filter:drop-shadow(0 0 8px #2fd46e);z-index:2;opacity:0;transform:translateY(10px) scale(.4);transition:transform .5s cubic-bezier(.3,1.6,.4,1) .25s,opacity .3s .25s}
+.po-f[data-l="1"] .po-cor{opacity:1;transform:none}
+.po-n{position:relative;z-index:1;text-shadow:0 1px 6px #000;max-width:100%;padding:0 2px;font-size:12.5px;line-height:1.2;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-v{margin:1px 0 8px;font-size:11px;color:#b9d6c5}
+.po-v b{display:inline-block;font-family:var(--f-disp);font-weight:900;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
+.po-f[data-l="1"] .po-v b{font-size:28px;color:#6ff3a3;text-shadow:0 0 18px #2fd46e88}
+.po-f.salta .po-fi{animation:poSalta .65s cubic-bezier(.3,.8,.4,1)}
+@keyframes poSalta{0%{transform:none}30%{transform:translateY(-22px) rotate(-5deg)}55%{transform:translateY(0) rotate(3deg)}75%{transform:translateY(-7px)}100%{transform:none}}
 .pdx.entra .po-ped{animation:poSube .8s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:var(--d)}
-.pdx.entra .po-av,.pdx.entra .po-n,.pdx.entra .po-v{animation:poCae .7s cubic-bezier(.2,1.2,.4,1) both;animation-delay:calc(var(--d) + .45s)}
-.pdx.entra .po-1::before{animation:poLuz 1.2s ease-out .9s both}
+.pdx.entra .po-f:not(.salta) .po-fi{animation:poCae .7s cubic-bezier(.2,1.2,.4,1) both;animation-delay:calc(var(--d) + .45s)}
+.pdx.entra .po-haz{animation:poLuz 1.2s ease-out .9s both}
 @keyframes poSube{from{transform:scaleY(0)}to{transform:none}}
 @keyframes poCae{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:none}}
 @keyframes poLuz{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.pdx.entra .po-ped,.pdx.entra .po-av,.pdx.entra .po-n,.pdx.entra .po-v,.pdx.entra .po-1::before,.ci-pt{animation:none}}
+.po-ay{margin:6px 0 0;text-align:center;font-size:11px;color:#8fb3a0}
+.po-tl{display:flex;align-items:center;gap:12px;padding:0 4px 6px}
+.po-play{position:relative;flex:none;display:grid;place-items:center;width:50px;height:50px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#03200e;
+  background:conic-gradient(#9dffc6 var(--p,0%),#ffffff1c 0);box-shadow:0 0 22px #2fd46e44;transition:transform .15s}
+.po-play::before{content:"";position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7dfab0,#2fd46e 55%,#178a47)}
+.po-play svg{position:relative;width:20px;height:20px;fill:currentColor}
+.po-play:active{transform:scale(.9)}
+.po-play:focus-visible,.po-rio:focus-visible{outline:2px solid #6ff3a3;outline-offset:3px}
+.po-rio{position:relative;flex:1;min-width:0;height:64px;container-type:inline-size;touch-action:pan-y;cursor:grab;border-radius:12px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.po-rio.arrastra{cursor:grabbing}
+.po-riel{position:absolute;left:14px;right:14px;top:41px;height:4px;border-radius:2px;background:#ffffff1a;overflow:hidden}
+.po-riel i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(var(--f,1));background:linear-gradient(90deg,#14532f,#2fd46e 70%,#b9ffd6);transition:transform .45s cubic-bezier(.3,1,.4,1)}
+.po-tk{position:absolute;top:43px;left:calc(14px + var(--i) * (100cqw - 28px));width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#071a10;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 40%,#0000);transition:background .3s,box-shadow .3s,transform .3s}
+.po-tk.ya{background:var(--c);box-shadow:0 0 0 2px #04100a,0 0 9px var(--c)}
+.po-tk.cambio{width:12px;height:12px;margin:-6px 0 0 -6px}
+.po-tk.cambio.ya{box-shadow:0 0 0 2px #04100a,0 0 0 3.5px #ffffffcc,0 0 12px var(--c)}
+.po-ext{position:absolute;left:0;right:0;top:60px;display:flex;justify-content:space-between;padding:0 4px;font-size:10px;font-weight:700;color:#7fa892;pointer-events:none}
+.po-cab{position:absolute;left:0;top:0;width:28px;height:100%;pointer-events:none;transform:translateX(calc(var(--f,1) * (100cqw - 28px)));transition:transform .45s cubic-bezier(.3,1.25,.4,1)}
+.po-rio.arrastra .po-cab,.po-rio.arrastra .po-riel i{transition-duration:.12s}
+.po-cab b{position:absolute;left:50%;top:0;padding:2px 8px;border-radius:999px;transform:translateX(-50%);white-space:nowrap;background:#2fd46e;color:#03200e;
+  font-family:var(--f-disp);font-weight:900;font-size:12px;line-height:16px;box-shadow:0 4px 14px #0008}
+.po-cab b::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;margin-left:-4px;background:inherit;transform:rotate(45deg);border-radius:1px;z-index:-1}
+.po-cab-av{position:absolute;left:-3px;top:27px;transition:transform .2s}
+.po-cab-av .av{width:34px;height:34px;font-size:12px;box-shadow:0 0 0 2px #04100a,0 0 0 4px var(--c),0 0 18px var(--c),0 6px 14px #000a}
+.po-rio.arrastra .po-cab-av{transform:scale(1.15)}
+.po-cab-av.nuevo{animation:poNuevo .5s cubic-bezier(.3,1.6,.4,1)}
+@keyframes poNuevo{from{transform:scale(.4) rotate(-20deg)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.po-cab,.po-riel i,.po-tk,.po-cab-av{transition:none}.po-cab-av.nuevo{animation:none}}
+.po-info{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.po-info.ab{grid-template-rows:1fr}
+.po-info>div{min-height:0;overflow:hidden}
+.po-in{margin:4px 0 12px;padding:12px;border-radius:14px;background:#ffffff10;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 50%,transparent)}
+.po-ih{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.po-ih b{flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.po-ih small{display:block;font-weight:500;font-size:11.5px;color:#a9c7b6}
+.po-ih .av{flex:none;width:36px;height:36px;font-size:13px}
+.po-x{flex:none;width:44px;height:44px;margin:-8px -8px -8px 0;border:0;border-radius:50%;background:none;color:#cfe3d7;font-size:16px;cursor:pointer}
+.po-bar{display:block;width:100%;height:54px;overflow:visible}
+.po-bar rect.b{fill:var(--c);opacity:.3;transition:opacity .3s}
+.po-bar rect.b.ya{opacity:.9}.po-bar rect.b.hoy{opacity:1;fill:#fff}
+.po-bar rect.h{fill:#0000;cursor:pointer}
+.po-bl{display:flex;justify-content:space-between;gap:8px;margin:2px 0 10px;font-size:10.5px;color:#8fb3a0}
+.po-st{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.po-st div{padding:8px 2px;border-radius:10px;background:#00000040;text-align:center;min-width:0}
+.po-st b{display:block;font-family:var(--f-disp);font-weight:900;font-size:20px;color:#fff;font-variant-numeric:tabular-nums}
+.po-st small{display:block;font-size:10px;line-height:1.15;color:#a9c7b6}
+.po-bs{display:flex;gap:8px}
+.po-bs button{flex:1;min-width:0;min-height:44px;padding:6px 8px;border-radius:12px;border:1px solid #2fd46e66;background:#2fd46e1f;color:#eaf4ee;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.po-bs button:active{transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){.pdx.entra .po-ped,.pdx.entra .po-f .po-fi,.pdx.entra .po-haz,.po-f.salta .po-fi,.ci-pt{animation:none!important}
+  .po-f,.po-f[data-l="0"],.po-av,.po-cor,.po-3d,.po-haz,.po-info{transition:none}}
 /* La Bolsa de LaLiga: mapa del mercado */
 .bo-cab{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 0 10px}
 .bo-cab small{display:block;font-size:12px;font-weight:700;color:var(--mut)}
@@ -6990,20 +7060,167 @@ ES_SETS.cron.splice(3, 0, ["Jugador de la jornada", esCromoMvp]);
 /* ---------- Podio de la clasificación: los tres primeros sobre pedestales iluminados ---------- */
 // Sale de la misma lista que la tabla (la vista y el orden que estén elegidos), así que nunca dice otra cosa.
 // La entrada animada solo se repite si cambia quién está en el podio o sus puntos (abrir un manager no la repite).
+/* ---------- Podio interactivo (estadístico, para todos) ----------
+   Se toca: cada manager salta, suelta confeti de su color y abre su ficha (puntos por jornada, jornadas de líder y en el podio).
+   En la general por puntos, la barra de tiempo recorre la temporada y las fichas saltan de pedestal jornada a jornada. */
 let PODIO_K = "";
-function htmlPodio(rank, valor, unidad, titulo) {
-  const t = rank.slice(0, 3); if (t.length < 3) return "";
-  const k = titulo + "|" + t.map(m => m.id + ":" + valor(m)).join("|"), anima = k !== PODIO_K; PODIO_K = k;
-  const corona = `<svg class="po-cor" viewBox="0 0 40 24" aria-hidden="true"><path d="M3 21 6 6l8 7 6-11 6 11 8-7 3 15z"/></svg>`;
-  return `<div class="pdx${anima ? " entra" : ""}" role="img" aria-label="${esc(titulo)}: ${t.map((m, i) => `${i + 1}.º ${esc(m.name)} con ${valor(m)} ${unidad}`).join("; ")}">
-    <p class="po-t">${esc(titulo)}</p>
-    <div class="po-esc" aria-hidden="true">${[1, 0, 2].map(i => { const m = t[i];
-      return `<div class="po-c po-${i + 1}" style="--d:${[0.35, 0.15, 0.5][i]}s">
-        <div class="po-av">${i === 0 ? corona : ""}${avatar(m, m.idx)}</div>
-        <b class="po-n">${esc(m.name)}</b>
-        <span class="po-v"><b data-po="${valor(m)}">${valor(m)}</b> ${esc(unidad)}</span>
-        <div class="po-ped"><span class="po-tapa"></span><span class="po-num">${i + 1}</span></div></div>`; }).join("")}</div></div>`;
+const PODIO = { k: null, sel: null, tm: 0, d: null };
+const PODIO_X = ["33.5cqw", "33.5cqw", "0cqw", "67cqw"];
+// los tres primeros tras la jornada de índice k (la última sale de la tabla que se está viendo, para que cuadre siempre)
+function podioEstado(k) {
+  const d = PODIO.d;
+  if (!d.S || k >= d.n - 1) return d.fin.slice(0, 3);
+  return d.S.ms.map((o, x) => ({ id: String(o.m.id), val: d.S.cum[x][k], p: d.S.rank[k][x] })).sort((a, b) => a.p - b.p).slice(0, 3);
 }
+function podioVal(id, k) {
+  const d = PODIO.d;
+  if (!d.S || k >= d.n - 1) return (d.fin.find(f => f.id === id) || {}).val;
+  return d.S.cum[d.S.ms.findIndex(o => String(o.m.id) === id)][k];
+}
+const podioTitulo = k => { const d = PODIO.d; return d.S && k < d.n - 1 ? `Así iba la liga tras la jornada ${d.S.js[k].slice(1)}` : d.titulo; };
+function htmlPodio(rank, valor, unidad, titulo, tiempo) {
+  const t = rank.slice(0, 3); if (t.length < 3) return "";
+  const clave = titulo + "|" + t.map(m => m.id + ":" + valor(m)).join("|"), anima = clave !== PODIO_K; PODIO_K = clave;
+  const S = tiempo ? serieLiga() : null, n = S ? S.js.length : 0, hayT = n >= 2;
+  if (!hayT) { clearInterval(PODIO.tm); PODIO.tm = 0; PODIO.k = null; }
+  PODIO.d = { S: hayT ? S : null, n, fin: rank.map(m => ({ id: String(m.id), val: valor(m) })), unidad, titulo, ms: rank };
+  const k = hayT && PODIO.k != null ? Math.min(PODIO.k, n - 1) : n - 1, est = podioEstado(k);
+  const ids = new Set(est.map(e => e.id)); t.forEach(m => ids.add(String(m.id)));
+  if (hayT) S.rank.forEach(r => r.forEach((p, x) => { if (p <= 3) ids.add(String(S.ms[x].m.id)); }));
+  if (PODIO.sel && !ids.has(PODIO.sel)) PODIO.sel = null;
+  const corona = `<svg class="po-cor" viewBox="0 0 40 24" aria-hidden="true"><path d="M3 21 6 6l8 7 6-11 6 11 8-7 3 15z"/></svg>`;
+  const fichas = rank.filter(m => ids.has(String(m.id))).map(m => { const id = String(m.id), l = est.findIndex(e => e.id === id) + 1, v = podioVal(id, k);
+    return `<button class="po-f${PODIO.sel === id ? " sel" : ""}" data-po-m="${esc(id)}" data-l="${l}"${l ? "" : ` tabindex="-1"`} style="--c:${col(m.idx)};--d:${[0, 0.35, 0.15, 0.5][l]}s" aria-label="${esc(m.name)}: ver sus datos" aria-pressed="${PODIO.sel === id}">
+      <span class="po-fi"><span class="po-av">${corona}${avatar(m, m.idx)}</span><b class="po-n">${esc(m.name)}</b><span class="po-v"><b data-po="${v}">${v}</b> ${esc(unidad)}</span></span></button>`; }).join("");
+  const selL = PODIO.sel ? est.findIndex(e => e.id === PODIO.sel) + 1 : 1;
+  return `<div class="pdx${anima ? " entra" : ""}" role="group" aria-label="${esc(titulo)}: ${t.map((m, i) => `${i + 1}.º ${esc(m.name)} con ${valor(m)} ${unidad}`).join("; ")}">
+    <canvas class="po-conf" aria-hidden="true"></canvas>
+    <p class="po-t" id="poT" aria-live="polite">${esc(podioTitulo(k))}</p>
+    <div class="po-esc"><div class="po-3d"><span class="po-haz" style="--hx:${PODIO_X[selL || 1]}"></span>
+      ${[2, 1, 3].map(p => `<div class="po-ped po-p${p}" style="--d:${[0, 0.35, 0.15, 0.5][p]}s" aria-hidden="true"><span class="po-tapa"></span><span class="po-num">${p}</span></div>`).join("")}${fichas}</div></div>
+    ${hayT ? podioTlHTML(k) : ""}
+
+    <div class="po-info${PODIO.sel ? " ab" : ""}" id="poInfo"><div>${PODIO.sel ? podioInfoHTML(PODIO.sel, k) : ""}</div></div>
+    ${PODIO.sel ? "" : `<p class="po-ay" id="poAy">Toca a un manager${hayT ? " · arrastra la línea: cada punto es una jornada, del color de quien iba líder" : ""}</p><div style="height:10px"></div>`}</div>`;
+}
+// ficha del manager tocado: sus puntos jornada a jornada y su historia en la general (todo ya ocurrido)
+function podioInfoHTML(id, k) {
+  const d = PODIO.d, m = d.ms.find(x => String(x.id) === id), S = serieLiga(), n = S.js.length, x = S.ms.findIndex(o => String(o.m.id) === id);
+  if (!m || x < 0 || !n) return "";
+  const kk = d.S ? Math.max(0, k) : n - 1, pts = S.pts[x], r = S.rank.map(a => a[x]), mx = Math.max(...pts, 1), pos = r[kk];
+  const otros = S.cum.map(a => a[kk]).filter((_, y) => y !== x), dif = S.cum[x][kk] - Math.max(...otros);
+  const rival = S.ms[S.rank[n - 1].findIndex((p, y) => y !== x && p === (r[n - 1] === 1 ? 2 : 1))];
+  const w = 100 / n, barras = pts.map((v, i) => { const h = Math.max(2, v / mx * 44);
+    return `<rect class="b${i <= kk ? " ya" : ""}${i === kk ? " hoy" : ""}" x="${(i * w + w * 0.14).toFixed(2)}" y="${(48 - h).toFixed(1)}" width="${(w * 0.72).toFixed(2)}" height="${h.toFixed(1)}" rx="1.2"><title>${esc(S.js[i])}: ${v} puntos</title></rect>${d.S ? `<rect class="h" data-po-k="${i}" x="${(i * w).toFixed(2)}" y="0" width="${w.toFixed(2)}" height="54"/>` : ""}`; }).join("");
+  const st = [[`${pos}.º`, kk < n - 1 ? `tras la ${S.js[kk]}` : "en la general"], [r.filter(p => p === 1).length, r.filter(p => p === 1).length === 1 ? "jornada de líder" : "jornadas de líder"], [r.filter(p => p <= 3).length, r.filter(p => p <= 3).length === 1 ? "jornada en el podio" : "jornadas en el podio"], [(dif > 0 ? "+" : "") + dif, pos === 1 ? "sobre el 2.º" : "del líder"]];
+  return `<div class="po-in" style="--c:${col(m.idx)}">
+    <div class="po-ih">${avatar(m, m.idx)}<b>${esc(m.name)}<small>Mejor jornada: ${Math.max(...pts)} puntos (${esc(S.js[pts.indexOf(Math.max(...pts))])})</small></b><button class="po-x" data-po-x aria-label="Cerrar">✕</button></div>
+    <svg class="po-bar" viewBox="0 0 100 54" preserveAspectRatio="none" role="img" aria-label="Puntos de ${esc(m.name)} en cada jornada">${barras}</svg>
+    <div class="po-bl"><span>${esc(S.js[0])}</span><span>${d.S ? "Toca una jornada para viajar a ella" : "Puntos de cada jornada"}</span><span>${esc(S.js[n - 1])}</span></div>
+    <div class="po-st">${st.map(([a, b]) => `<div><b>${esc(String(a))}</b><small>${esc(b)}</small></div>`).join("")}</div>
+    <div class="po-bs"><button data-po-wr="${m.idx}">📖 Su temporada</button>${rival ? `<button data-po-pt="${esc(id)}|${esc(rival.m.id)}|${esc(S.js[kk])}">🏟️ Partido 3D contra ${esc(rival.m.name)}</button>` : ""}</div></div>`;
+}
+// recoloca las fichas sin repintar la página (al mover la barra, al reproducir o al tocar una barra de la ficha)
+function podioColoca() {
+  const p = $(".pdx"), d = PODIO.d; if (!p || !d) return;
+  const k = d.S && PODIO.k != null ? PODIO.k : d.n - 1, est = podioEstado(k), antes = p.querySelector('.po-f[data-l="1"]');
+  p.querySelectorAll(".po-f").forEach(f => { const id = f.dataset.poM, l = est.findIndex(e => e.id === id) + 1, b = f.querySelector("[data-po]"), v = podioVal(id, k);
+    f.dataset.l = l; if (l) f.removeAttribute("tabindex"); else f.tabIndex = -1;
+    b.dataset.po = v; b.textContent = v; });
+  const lider = p.querySelector('.po-f[data-l="1"]');
+  if (lider && antes && lider !== antes) { podioSalta(lider); if (navigator.vibrate) navigator.vibrate(12); }
+  $("#poT").textContent = podioTitulo(k);
+  podioRio(k);
+  const selL = PODIO.sel ? est.findIndex(e => e.id === PODIO.sel) + 1 : 1;
+  p.querySelector(".po-haz").style.setProperty("--hx", PODIO_X[selL || 1]);
+  p.querySelectorAll(".po-f").forEach(f => { const s = f.dataset.poM === PODIO.sel; f.classList.toggle("sel", s); f.setAttribute("aria-pressed", s); });
+  const inf = $("#poInfo"); if (PODIO.sel) inf.firstElementChild.innerHTML = podioInfoHTML(PODIO.sel, k);
+  inf.classList.toggle("ab", !!PODIO.sel);
+  const ay = $("#poAy"); if (ay) ay.hidden = !!PODIO.sel;
+}
+// la línea de la temporada: un punto por jornada del color de quien iba líder (los grandes, cambios de líder) y el líder viajando encima
+const PO_ICO = { play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.2v13.6L19 12z"/></svg>`, pausa: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>` };
+const podioLider = k => { const id = podioEstado(k)[0].id; return PODIO.d.ms.find(m => String(m.id) === id); };
+function podioTlHTML(k) {
+  const d = PODIO.d, n = d.n, L = d.S.js.map((_, i) => podioLider(i)), m = L[k];
+  const tk = L.map((l, i) => `<i class="po-tk${i <= k ? " ya" : ""}${i && l !== L[i - 1] ? " cambio" : ""}" style="--i:${(i / (n - 1)).toFixed(4)};--c:${col(l.idx)}"></i>`).join("");
+  return `<div class="po-tl"><button class="po-play" data-po-play style="--p:${(k / (n - 1) * 100).toFixed(1)}%" aria-label="${PODIO.tm ? "Pausar" : "Reproducir la temporada"}">${PODIO.tm ? PO_ICO.pausa : PO_ICO.play}</button>
+    <div class="po-rio" id="poRio" role="slider" tabindex="0" aria-label="Viajar por la temporada" aria-valuemin="0" aria-valuemax="${n - 1}" aria-valuenow="${k}" aria-valuetext="${esc(d.S.js[k])}, líder ${esc(m.name)}" style="--f:${(k / (n - 1)).toFixed(4)}">
+      <span class="po-riel"><i></i></span>${tk}
+      <span class="po-cab"><b id="poJ">${esc(d.S.js[k])}</b><span class="po-cab-av" id="poCabAv" data-id="${esc(m.id)}" style="--c:${col(m.idx)}">${avatar(m, m.idx)}</span></span></div></div>`;
+}
+function podioRio(k) {
+  const r = $("#poRio"), d = PODIO.d; if (!r) return;
+  const f = (k / (d.n - 1)).toFixed(4), m = podioLider(k), av = $("#poCabAv");
+  r.style.setProperty("--f", f); r.setAttribute("aria-valuenow", k); r.setAttribute("aria-valuetext", `${d.S.js[k]}, líder ${m.name}`);
+  r.querySelectorAll(".po-tk").forEach((e, i) => e.classList.toggle("ya", i <= k));
+  $("#poJ").textContent = d.S.js[k];
+  const pl = $(".po-play"); if (pl) pl.style.setProperty("--p", (f * 100).toFixed(1) + "%");
+  if (av.dataset.id !== String(m.id)) { av.dataset.id = m.id; av.style.setProperty("--c", col(m.idx)); av.innerHTML = avatar(m, m.idx); av.classList.remove("nuevo"); void av.offsetWidth; av.classList.add("nuevo"); }
+}
+// arrastrar por la línea (dedo o ratón) y flechas del teclado
+let PO_ARR = null;
+function podioDesdeX(r, x) { const b = r.getBoundingClientRect(), f = Math.max(0, Math.min(1, (x - b.left - 14) / (b.width - 28))); return Math.round(f * (PODIO.d.n - 1)); }
+function podioK() { return PODIO.k == null ? PODIO.d.n - 1 : PODIO.k; }
+document.addEventListener("pointerdown", e => {
+  const r = e.target.closest && e.target.closest("#poRio"); if (!r || !PODIO.d || !PODIO.d.S) return;
+  PO_ARR = r; r.classList.add("arrastra"); try { r.setPointerCapture(e.pointerId); } catch (_) {}
+  podioPara(); const k = podioDesdeX(r, e.clientX); if (k !== podioK()) podioIr(k);
+});
+document.addEventListener("pointermove", e => { if (!PO_ARR || !PO_ARR.isConnected) return; const k = podioDesdeX(PO_ARR, e.clientX); if (k !== podioK()) podioIr(k); }, { passive: true });
+["pointerup", "pointercancel"].forEach(ev => document.addEventListener(ev, () => { if (PO_ARR) { PO_ARR.classList.remove("arrastra"); PO_ARR = null; } }));
+document.addEventListener("keydown", e => {
+  if (!e.target.id || e.target.id !== "poRio" || !PODIO.d) return;
+  const k = podioK(), n = PODIO.d.n, nk = { ArrowLeft: k - 1, ArrowDown: k - 1, ArrowRight: k + 1, ArrowUp: k + 1, Home: 0, End: n - 1 }[e.key];
+  if (nk == null) return; e.preventDefault(); podioPara(); podioIr(nk);
+});
+function podioSalta(f) { const p = f.closest(".pdx"); if (p) p.classList.remove("entra"); f.classList.remove("salta"); void f.offsetWidth; f.classList.add("salta"); setTimeout(() => f.classList.remove("salta"), 700); }
+function podioConfeti(f, color) {
+  const cv = $(".po-conf"); if (!cv || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const R = cv.getBoundingClientRect(), r = f.querySelector(".av").getBoundingClientRect(), W = cv.width = R.width, H = cv.height = R.height, x = cv.getContext("2d"), t0 = performance.now();
+  const ox = r.left + r.width / 2 - R.left, oy = r.top + r.height / 2 - R.top;
+  const P = Array.from({ length: 54 }, (_, i) => { const a = Math.random() * 6.283, v = 2.5 + Math.random() * 5.5;
+    return { x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 3, r: 2.5 + Math.random() * 3.5, a, va: (Math.random() - 0.5) * 0.4, c: i % 3 === 0 ? "#ffffff" : i % 3 === 1 ? color : "#2fd46e" }; });
+  const paso = t => { if (!cv.isConnected) return; const q = (t - t0) / 1300; x.clearRect(0, 0, W, H);
+    if (q >= 1) return;
+    P.forEach(o => { o.vy += 0.22; o.vx *= 0.985; o.x += o.vx; o.y += o.vy; o.a += o.va; x.save(); x.translate(o.x, o.y); x.rotate(o.a); x.globalAlpha = Math.max(0, 1 - q * q); x.fillStyle = o.c; x.fillRect(-o.r, -o.r / 2, o.r * 2, o.r); x.restore(); });
+    requestAnimationFrame(paso); };
+  requestAnimationFrame(paso);
+}
+function podioPara() { clearInterval(PODIO.tm); PODIO.tm = 0; const b = $(".po-play"); if (b) { b.innerHTML = PO_ICO.play; b.setAttribute("aria-label", "Reproducir la temporada"); } }
+function podioIr(k) { const d = PODIO.d; if (!d || !d.S) return; const p = $(".pdx.entra"); if (p) p.classList.remove("entra"); k = Math.max(0, Math.min(d.n - 1, k)); PODIO.k = k >= d.n - 1 ? null : k; podioColoca(); }
+function podioPlay() {
+  const d = PODIO.d; if (!d || !d.S) return;
+  if (PODIO.tm) { podioPara(); return; }
+  let k = PODIO.k == null ? 0 : PODIO.k + 1; podioIr(k);
+  const b = $(".po-play"); if (b) { b.innerHTML = PO_ICO.pausa; b.setAttribute("aria-label", "Pausar"); }
+  PODIO.tm = setInterval(() => { if (!$(".pdx") || !PODIO.d || !PODIO.d.S || k >= PODIO.d.n - 1) { podioPara(); return; } podioIr(++k); if (k >= PODIO.d.n - 1) podioPara(); }, 850);
+}
+document.addEventListener("click", e => {
+  const p = e.target.closest && e.target.closest(".pdx"); if (!p || !PODIO.d) return;
+  const q = s => e.target.closest(s);
+  let b;
+  if ((b = q("[data-po-m]"))) { const id = b.dataset.poM; PODIO.sel = PODIO.sel === id ? null : id; podioColoca(); podioSalta(b);
+    if (PODIO.sel) { podioConfeti(b, getComputedStyle(b).getPropertyValue("--c").trim() || "#2fd46e"); if (navigator.vibrate) navigator.vibrate(8); } }
+  else if (q("[data-po-x]")) { PODIO.sel = null; podioColoca(); }
+  else if (q("[data-po-play]")) podioPlay();
+  else if ((b = q("[data-po-k]"))) { podioPara(); podioIr(Number(b.dataset.poK)); }
+  else if ((b = q("[data-po-wr]"))) abrirWrapped(Number(b.dataset.poWr));
+  else if ((b = q("[data-po-pt]"))) { const [a, c, j] = b.dataset.poPt.split("|"); ptAbrir(a, c, j); }
+});
+// el podio se inclina y el foco sigue al dedo o al ratón; al soltar vuelve suave a su sitio
+document.addEventListener("pointermove", e => {
+  const p = e.target.closest && e.target.closest(".pdx"); if (!p || e.target.closest(".po-tl,.po-info") || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const r = p.getBoundingClientRect(), x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+  p.classList.add("toca");
+  p.style.setProperty("--ry", ((x - 0.5) * 16).toFixed(1) + "deg"); p.style.setProperty("--rx", ((0.5 - y) * 9).toFixed(1) + "deg");
+  p.style.setProperty("--mx", (x * 100).toFixed(0) + "%"); p.style.setProperty("--my", (y * 100).toFixed(0) + "%");
+}, { passive: true });
+["pointerout", "pointerup", "pointercancel"].forEach(ev => document.addEventListener(ev, e => {
+  const p = e.target.closest && e.target.closest(".pdx"); if (!p || (ev === "pointerout" && e.relatedTarget && p.contains(e.relatedTarget))) return;
+  if (ev === "pointerup" && e.pointerType === "mouse") return;
+  p.classList.remove("toca"); p.style.setProperty("--rx", "0deg"); p.style.setProperty("--ry", "0deg");
+}, { passive: true }));
 // cifras del podio que suben desde 0 (solo en la entrada; respeta «reducir movimiento»)
 // Los puntos de la clasificación suben contando desde 0, solo la primera vez que se pinta
 let CUENTA_FILAS_HECHA = false;
@@ -7023,7 +7240,7 @@ function cuentaPuntosFilas() {
   requestAnimationFrame(paso);
 }
 function cuentaPodio() {
-  const p = $(".pdx.entra"); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const p = $(".pdx.entra"); if (p) setTimeout(() => p.classList.remove("entra"), 2000); if (!p || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   p.querySelectorAll("[data-po]").forEach((el, k) => {
     const fin = Number(el.dataset.po); if (!isFinite(fin) || fin <= 0) return;
     const t0 = performance.now() + 450 + k * 120, dur = 900;
@@ -7780,7 +7997,7 @@ function pintar() {
 
   const tituloPodio = (vista === "General" ? "Clasificación general" : vista === "Ult3" ? "Forma: últimas 3 jornadas" : /^J\d+$/.test(vista) ? `Jornada ${vista.slice(1)}` : vista) + (orden.k !== "points" ? ` · ${meta[1]}` : "");
   $("#app").innerHTML = `
-    ${!orden.asc ? htmlPodio(rank, m => m[orden.k], meta[2].toLowerCase(), tituloPodio) : ""}
+    ${!orden.asc ? htmlPodio(rank, m => m[orden.k], meta[2].toLowerCase(), tituloPodio, vista === "General" && orden.k === "points") : ""}
     <div role="group" aria-label="Jornada">${pills}</div>
     <p class="ordlbl">Ordenar por</p>
     <div class="tabs ord" role="group" aria-label="Ordenar por">${tabs}</div>
