@@ -371,6 +371,7 @@ code{color:var(--accFg)}
 .ct-hero{position:relative;overflow:hidden}
 .ct-hero .av{width:52px;height:52px;font-size:17px}
 .ct-copa{flex:none;width:34px;height:40px;transform-origin:50% 100%;animation:copaEnt .7s cubic-bezier(.2,1.4,.4,1) .15s both}
+.wr-copa{width:68px;height:80px;margin:0 auto 6px;display:block;filter:drop-shadow(0 0 18px #2fd46e66)}
 .ct-copa .brillo{animation:copaBrillo 3.2s ease-in-out 1s infinite}
 .ct-hero::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,#ffffff2e,transparent);transform:translateX(-120%) skewX(-18deg);animation:heroBrillo 3.2s ease-in-out .9s infinite;pointer-events:none}
 @keyframes copaEnt{from{transform:translateY(14px) scale(.3) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
@@ -7239,7 +7240,7 @@ function wrDiapos(t) {
       <p class="wr-k wr-a" style="--d:.35s">La temporada de</p>
       <h2 class="wr-nom wr-a" style="--d:.5s">${esc(m.name)}</h2>
       <p class="wr-p wr-a" style="--d:.8s">${t.n} jornadas en ${esc(liga)}. Esto es lo que ha pasado.</p></div>` });
-  S.push({ html: `<p class="wr-k wr-a" style="--d:.1s">Has sumado</p>
+  S.push({ html: `${t.pos === 1 ? `<svg class="ct-copa wr-copa wr-a" style="--d:.05s" viewBox="0 0 34 40" aria-label="Vas primero" role="img"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg>` : ""}<p class="wr-k wr-a" style="--d:.1s">Has sumado</p>
       <b class="wr-big wr-a" style="--d:.2s" data-cuenta="${t.total}">${nf0.format(t.total)}</b>
       <p class="wr-t wr-a" style="--d:.5s">puntos · vas ${wrOrd(t.pos)} de ${t.N}</p>
       ${wrSvgPuesto(t)}
