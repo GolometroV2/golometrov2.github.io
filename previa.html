@@ -1422,6 +1422,27 @@ body.wr-abierto{overflow:hidden}
 .pf-ps span{margin-left:6px;white-space:nowrap}
 .pf-pc{flex:none;min-width:50px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:19px;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){.pf-av,.pf-av .av,.pf-b i,.pf-g .lin{transition:none}}
+/* Rayos X de la plantilla (Equipos) */
+.rx-capas{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:0 4px}.rx-capas::-webkit-scrollbar{display:none}.rx-capas .pill{flex:none;min-height:40px}
+.rx-campo{position:relative;border-radius:var(--r-l);overflow:hidden}
+.rx-scan{position:absolute;left:0;right:0;top:0;height:16%;z-index:300;pointer-events:none;opacity:0;background:linear-gradient(#0000,#6ff3a340 75%,#eafff1cc);border-bottom:2px solid #eafff1}
+.rx-campo.barre .rx-scan{animation:rxScan .85s cubic-bezier(.4,0,.6,1)}
+@keyframes rxScan{0%{opacity:1;transform:translateY(-100%)}85%{opacity:1}100%{opacity:0;transform:translateY(540%)}}
+.rx-ban{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px 6px;padding:4px}.rx-ban::-webkit-scrollbar{display:none}
+.rx-b{flex:none;width:78px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:0;border-radius:12px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line);color:inherit;font:inherit;cursor:pointer}
+.rx-b b{max-width:100%;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rx-v{min-width:30px;padding:1px 6px;border-radius:7px;background:var(--panel);font-family:var(--f-disp);font-weight:900;font-size:13px;text-align:center}
+.rx-b small{font-size:9.5px;color:var(--mut);white-space:nowrap}
+.rx-lin{display:flex;flex-direction:column;gap:7px;margin:4px 0 10px}
+.rx-lin>div{display:flex;align-items:center;gap:8px;font-size:12px}
+.rx-lin .jp-pos2{flex:none;width:30px;text-align:center}
+.rx-lb{flex:1;height:9px;border-radius:5px;background:var(--panel2);overflow:hidden}
+.rx-lb i{display:block;height:100%;border-radius:5px;transform-origin:0 50%;transform:scaleX(var(--w))}
+.rx-lin b{flex:none;min-width:34px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:15px}
+.rx-lin small{flex:none;min-width:58px;text-align:right;color:var(--mut)}
+.rx-ins{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.4}
+.rx-ins li{padding:8px 10px;border-radius:10px;background:var(--panel2)}.rx-ins b{color:var(--accFg)}
+@media (prefers-reduced-motion:reduce){.rx-campo.barre .rx-scan{animation:none}}
 /* Podio interactivo: fichas que saltan de pedestal al viajar por las jornadas, foco que sigue al dedo y ficha de cada manager al tocarlo */
 .pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
   background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
@@ -2384,7 +2405,7 @@ function htmlCampo3D(js, opts = {}) {
     const [X, Y, s] = c3dProy(j.u, j.v), pos = `left:${(X * 100).toFixed(2)}cqw;top:${(Y * 100).toFixed(2)}cqw;--s:${s.toFixed(3)};z-index:${Math.round(Y * 100)};--d:${(0.55 + k * 0.05).toFixed(2)}s`;
     const datos = `data-u="${j.u.toFixed(3)}" data-v="${j.v.toFixed(3)}"`;
     if (j.vacio) return `<div class="c3d-j vac" style="${pos}" ${datos}><span class="c3d-base"></span><span class="c3d-tk"><span class="c3d-bu">${C3D_CAMISETA}</span><span class="c3d-np"><span class="c3d-n">${esc(j.name || "Hueco")}</span></span></span></div>`;
-    const pc = j.pts == null ? "" : opts.fuego === "max" ? `<b class="c3d-p${j.pts === tope ? " fuego" : ""}">${esc(j.pts)}</b>` : `<b class="c3d-p mp-${tramoPts(j.off ? null : j.pts)}">${esc(j.pts)}</b>`;
+    const pc = j.pts == null && j.txt == null ? "" : opts.fuego === "max" ? `<b class="c3d-p${j.pts === tope && tope != null ? " fuego" : ""}">${esc(j.txt ?? j.pts)}</b>` : `<b class="c3d-p mp-${tramoPts(j.off ? null : j.pts)}">${esc(j.txt ?? j.pts)}</b>`;
     const foto = (FOTOS && j.id && FOTOS[String(j.id)]) || (j.id ? fotoDe(j.id) : "");
     return `<div class="c3d-j${j.cap ? " cap" : ""}${j.off ? " off" : ""}${foto ? "" : " sin"}" style="${pos}" ${datos}${j.id ? ` data-ficha="${esc(j.id)}"` : ""}>
       <span class="c3d-base"></span>
@@ -3529,8 +3550,31 @@ function htmlOnceTemporada() {
     { titulo: "Once ideal de la temporada", pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
 }
 
-/* Equipos: el mejor once de la temporada que sale de la plantilla de hoy (puntos ya hechos, nada de previsión) */
-let eqOnceAbierto = false;
+/* Equipos: rayos X de una plantilla. Su mejor once de la temporada (puntos ya hechos, nada de previsión) en el campo, con capas que cambian
+   lo que se lee de cada jugador (puntos, forma, valor, cláusula, puntos por millón), el banquillo y un diagnóstico por líneas frente al
+   resto de la liga. Sirve para estudiar a un rival: dónde es fuerte, dónde flojea y qué cuesta quitarle a cada uno. */
+let rxCapa = "pts", rxBarre = false;
+const RX_CAPAS = [["pts", "Puntos", "Puntos de cada uno en la temporada. Brilla el que más lleva."], ["forma", "Forma", "Media de puntos en sus últimas 5 jornadas (solo las que jugó), con los colores de Mister. Debajo, su media de toda la temporada."],
+  ["valor", "Valor", "Lo que vale hoy (en millones) y cuánto ha cambiado desde ayer. Brilla el más caro."], ["cl", "Cláusula", "Lo que cuesta clausularlo (en millones) y, debajo, cuántas veces su valor es (🔒 = recién fichado, aún no se puede). Brilla el que más puntos por jornada da por cada millón de cláusula."],
+  ["renta", "Pts por M", "Puntos de la temporada por cada millón que vale. Brilla el más rentable."]];
+const rxForma = p => { const u = (p.streak || []).filter(capNum); return u.length ? u.reduce((a, b) => a + b, 0) / u.length : null; };
+const rxM = v => nf1.format(v / 1e6);
+function rxDato(p, capa) {
+  const V = Number(p.value) || 0, pts = Number(p.points) || 0, f = rxForma(p), dl = V - (Number(p.prev) || V), cl = Number(p.clause) || 0;
+  if (capa === "forma") return { pts: f == null ? null : Math.round(f * 10) / 10, txt: f == null ? "–" : nf1.format(f), sub: p.avg != null ? `temp. ${nf1.format(p.avg)}` : "", v: f == null ? -1 : f };
+  if (capa === "valor") return { pts: V, txt: rxM(V), sub: Math.abs(dl) < 500 ? "= hoy" : `${dl > 0 ? "▲" : "▼"} ${merEur(Math.abs(dl))}`, v: V };
+  if (capa === "cl") { const adq = capTsMadrid(p.acquired), prot = adq && adq + PLAN.PROTEGIDO_DIAS * 86400 > Date.now() / 1000, r = cl > 0 ? (p.avg || 0) / (cl / 1e6) : 0;
+    return { pts: cl > 0 && !prot ? r : null, txt: cl > 0 ? rxM(cl) : "–", sin: !(cl > 0 && !prot), sub: prot ? "🔒" : cl > 0 && V > 0 ? `×${nf1.format(cl / V)}` : "", v: cl > 0 ? -cl : -Infinity, cl: prot ? 0 : cl }; }
+  if (capa === "renta") { const r = V >= 3e5 ? pts / (V / 1e6) : null; return { pts: r, txt: r == null ? "–" : nf1.format(r), sub: eur(V), v: r == null ? -1 : r }; }
+  return { pts, txt: String(pts), sub: eur(V), v: pts };
+}
+// puntos de cada línea de cada manager en la temporada: lo que alineó de verdad, sin el extra del capitán (como «¿De dónde salen los puntos?»)
+function rxLineas() {
+  const js = jornadas();
+  return D.managers.map(m => { const s = { PT: 0, DF: 0, MC: 0, DL: 0 };
+    js.forEach(j => (((D.matchdays[j] || {})[m.id] || {}).players || []).forEach(p => { if (s[p.pos] != null) s[p.pos] += p.basePoints ?? p.points ?? 0; }));
+    return { id: String(m.id), s }; });
+}
 function bloqueOnceEq(m) {
   const c = m.players.filter(p => p.pos && capNum(Number(p.points))).map(p => ({ ...p, pts: Number(p.points) }));
   const por = pos => c.filter(x => x.pos === pos).sort((a, b) => b.pts - a.pts);
@@ -3544,16 +3588,37 @@ function bloqueOnceEq(m) {
     x.valor = ["PT", "DF", "MC", "DL"].reduce((t, k) => t + x[k].reduce((s2, p) => s2 + (Number(p.value) || 0), 0), 0);
     if (!o || x.huecos < o.huecos || (x.huecos === o.huecos && x.total > o.total)) o = x; });
   if (!o || o.huecos > 3) return "";
-  let cuerpo = "";
-  if (eqOnceAbierto) {
-    const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
-    const nota = `<p class="note" style="margin:6px 0 8px">${o.form} · <b>${o.total} puntos</b> en la temporada entre ${n === 11 ? "los 11" : `estos ${n}`} · valen ${eur(o.valor)} hoy.${o.huecos ? ` <b>Le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"}</b> para completar el once.` : ""}</p>`;
-    cuerpo = nota + htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: p.pts, sub: eur(Number(p.value) || 0) })).concat(hueco(k))),
-      { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos`, fuego: "max" });
+  const capa = RX_CAPAS.find(x => x[0] === rxCapa) || RX_CAPAS[0], k0 = capa[0];
+  const n = 11 - o.huecos, hueco = k => Array.from({ length: o["h" + k] }, () => ({ pos: k, vacio: true, name: "Hueco" }));
+  const once = ["PT", "DF", "MC", "DL"].flatMap(k => o[k]), enOnce = new Set(once.map(p => String(p.id))), ban = c.filter(p => !enOnce.has(String(p.id)));
+  const campo = htmlCampo3D(["PT", "DF", "MC", "DL"].flatMap(k => o[k].map(p => { const d = rxDato(p, k0); return { id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, pts: d.pts, txt: d.txt, sub: d.sub }; }).concat(hueco(k))),
+    { titulo: `Mejor once de ${m.name}`, pie: `${o.form} · ${o.total} puntos · ${eur(o.valor)}`, fuego: k0 === "forma" ? null : "max" });
+  const banco = ban.map(p => ({ p, d: rxDato(p, k0) })).sort((a, b) => b.d.v - a.d.v).map(({ p, d }) => `<button class="rx-b" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 38)}<b>${esc(p.short || apellido(p.name))}</b><span class="rx-v${k0 === "forma" && d.pts != null ? " mp-" + tramoPts(d.pts) : ""}">${esc(d.txt)}</span><small>${esc(d.sub)}</small></button>`).join("");
+  // diagnóstico por líneas frente al resto de la liga
+  const LN = rxLineas(), yo = LN.find(x => x.id === String(m.id)), NOM = { PT: "Portería", DF: "Defensa", MC: "Medio campo", DL: "Delantera" };
+  let lineas = "", frases = [];
+  if (yo && LN.length > 1) {
+    const filas = ["PT", "DF", "MC", "DL"].map(k => { const vs = LN.map(x => x.s[k]), v = yo.s[k], mx = Math.max(...vs, 1), puesto = 1 + vs.filter(z => z > v).length; return { k, v, puesto, w: v / mx }; });
+    lineas = `<div class="rx-lin">${filas.map(f => `<div><span class="jp-pos2" style="margin:0;background:var(--${f.k.toLowerCase()})">${f.k}</span><span class="rx-lb"><i style="--w:${f.w.toFixed(3)};background:var(--${f.k.toLowerCase()})"></i></span><b>${f.v}</b><small>${f.puesto}.º de ${LN.length}</small></div>`).join("")}</div>`;
+    const ord = filas.slice().sort((a, b) => a.puesto - b.puesto || b.w - a.w), fu = ord[0], de = ord[ord.length - 1];
+    frases.push(`Su fuerte: <b>${NOM[fu.k].toLowerCase()}</b> (${fu.puesto}.ª de la liga, ${fu.v} puntos).` + (de.puesto > fu.puesto ? ` Su punto débil: <b>${NOM[de.k].toLowerCase()}</b> (${de.puesto}.ª, ${de.v}).` : ""));
   }
-  return `<details class="cdet" data-eqo="1" ${eqOnceAbierto ? "open" : ""}><summary>Su mejor once de la temporada</summary>${cuerpo}</details>`;
+  const conF = c.map(p => ({ p, f: rxForma(p) })).filter(x => x.f != null && (x.p.streak || []).filter(capNum).length >= 3).sort((a, b) => b.f - a.f);
+  if (conF.length > 1) frases.push(`En forma: <b>${esc(conF[0].p.short || conF[0].p.name)}</b> (${nf1.format(conF[0].f)} de media en sus últimas jornadas). El más flojo: ${esc(conF[conF.length - 1].p.short || conF[conF.length - 1].p.name)} (${nf1.format(conF[conF.length - 1].f)}).`);
+  if (k0 === "cl") { const cs = once.map(p => rxDato(p, "cl")), tot = cs.reduce((t, d) => t + d.cl, 0), mej = once.map(p => ({ p, d: rxDato(p, "cl") })).filter(x => x.d.pts != null).sort((a, b) => b.d.pts - a.d.pts)[0];
+    frases.push(`Clausular a los ${cs.filter(d => d.cl).length} del once que se pueden costaría <b>${eur(tot)}</b>.${mej ? ` El que más da por lo que cuesta: <b>${esc(mej.p.short || mej.p.name)}</b> (${rxM(mej.p.clause)} M, ${nf1.format(mej.p.avg || 0)} de media).` : ""}`); }
+  if (k0 === "valor") frases.push(`El once vale <b>${eur(o.valor)}</b> y el banquillo ${eur(ban.reduce((t, p) => t + (Number(p.value) || 0), 0))} (${ban.length} ${ban.length === 1 ? "jugador" : "jugadores"}).`);
+  if (k0 === "renta") { const rs = c.map(p => ({ p, d: rxDato(p, "renta") })).filter(x => x.d.pts != null).sort((a, b) => b.d.pts - a.d.pts); if (rs.length > 1) frases.push(`El más rentable: <b>${esc(rs[0].p.short || rs[0].p.name)}</b> (${rs[0].d.txt} puntos por millón). El menos: ${esc(rs[rs.length - 1].p.short || rs[rs.length - 1].p.name)} (${rs[rs.length - 1].d.txt}).`); }
+  const barre = rxBarre; rxBarre = false;
+  return `<section class="card rx"><div class="gh"><h2>Rayos X de la plantilla</h2></div>
+    <div class="pills rx-capas" role="group" aria-label="Qué se lee de cada jugador">${RX_CAPAS.map(([k, t]) => `<button class="pill ${k === k0 ? "on" : ""}" data-rx="${k}" aria-pressed="${k === k0}">${t}</button>`).join("")}</div>
+    <p class="note" style="margin:8px 0">Su mejor once de la temporada${o.huecos ? ` (le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"} para completarlo)` : ""}. ${capa[2]}</p>
+    <div class="rx-campo${barre ? " barre" : ""}">${campo}<i class="rx-scan" aria-hidden="true"></i></div>
+    ${banco ? `<p class="ordlbl">Banquillo · ${ban.length}</p><div class="rx-ban">${banco}</div>` : ""}
+    ${lineas ? `<p class="ordlbl">Puntos de cada línea esta temporada, frente a la liga</p>${lineas}` : ""}
+    ${frases.length ? `<ul class="rx-ins">${frases.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}</section>`;
 }
-document.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details[data-eqo]") && e.target.open !== eqOnceAbierto) { eqOnceAbierto = e.target.open; if (eqOnceAbierto) pintarEquipos(); } }, true);
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-rx]"); if (!b || b.dataset.rx === rxCapa) return; rxCapa = b.dataset.rx; rxBarre = true; pintarEquipos(); });
 
 /* ---------- Equipos: seguimiento de plantillas ---------- */
 const nf = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 2 });
