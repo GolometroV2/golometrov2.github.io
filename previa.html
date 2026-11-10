@@ -6902,8 +6902,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7267,6 +7267,7 @@ function abrirComparador(idA, idB) {
 }
 let CMP_ULT = null;
 document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-dis-comp]")) { const L = disciplinaDatos(); if (L) { EST_DAT.dis = { L, n: Object.keys(D.matchdays).length }; abrirEstudio("dis", e.target.closest("[data-dis-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
@@ -7411,6 +7412,33 @@ async function esPabellon(d) {
   esPie(x, `El más sucio: ${L[0].m.name} · el más limpio: ${L[n - 1].m.name}`);
   return c;
 }
+// Lámina de la Bolsa de LaLiga (mismo mapa, mismos colores y cifras que la tarjeta de Equipos)
+async function esBolsa(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, B = d.B, cc = B.P.c;
+  esFondo(x);
+  esCabecera(x, { titulo: "LA BOLSA", kicker: "Valor de los jugadores de LaLiga", pag: 0, total: 1 });
+  const eqs = {}; B.J.forEach(j => { const e = (eqs[j.p.teamId] = eqs[j.p.teamId] || { id: j.p.teamId, v: 0, d: 0, J: [] }); e.v += j.v; e.d += j.d; e.J.push(j); });
+  const nom = {}; ((CAL && CAL.games) || []).forEach(g => { nom[g.home] = g.homeName; nom[g.away] = g.awayName; });
+  const gx = M, gy = 470, gw = W - 2 * M, gh = 1180 - gy;
+  cuadricula(Object.values(eqs).sort((a, b) => b.v - a.v), gx, gy, gw, gh).forEach(e => {
+    const cab = e.h > 50 && e.w > 90 ? 26 : 0, re = e.v - e.d > 0 ? e.d / (e.v - e.d) : 0;
+    x.fillStyle = "#0b1410"; x.fillRect(e.x, e.y, e.w, e.h);
+    cuadricula(e.J.slice().sort((a, b) => b.v - a.v), e.x + 2, e.y + 2 + cab, e.w - 4, e.h - 4 - cab).forEach(t => {
+      x.fillStyle = bolsaColor(t.r, cc); x.fillRect(t.x, t.y, Math.max(0, t.w - 2), Math.max(0, t.h - 2));
+      if (t.w > 74 && t.h > 40) { x.fillStyle = "#fff"; x.textAlign = "left"; x.font = esF(800, 20); x.fillText(esCorta(x, apellido(t.p.name), t.w - 12), t.x + 6, t.y + 22);
+        if (t.h > 60) { x.font = esF(600, 18); x.fillStyle = "rgba(255,255,255,.85)"; x.fillText(pctB(t.r), t.x + 6, t.y + 44); } }
+    });
+    if (cab) { x.fillStyle = "#fff"; x.textAlign = "left"; x.font = esF(800, 20); x.fillText(esCorta(x, (nom[e.id] || "").toUpperCase(), e.w - 90), e.x + 8, e.y + 20);
+      x.textAlign = "right"; x.fillStyle = re >= 0 ? ES.verde : ES.rojo; x.fillText(pctB(re), e.x + e.w - 8, e.y + 20); x.textAlign = "left"; }
+    x.strokeStyle = "#0b1410"; x.lineWidth = 3; x.strokeRect(e.x, e.y, e.w, e.h);
+  });
+  x.textAlign = "left"; x.fillStyle = B.cambio >= 0 ? ES.verde : ES.rojo; x.font = esF(900, 96, "condensed");
+  x.fillText(`${B.cambio >= 0 ? "▲" : "▼"} ${pctB(B.cambio)}`, M, 432);
+  x.fillStyle = ES.mut; x.font = esF(600, 26); x.fillText(`Índice Golómetro · ${B.P.t}`, M + 400, 426);
+  esPie(x, "Tamaño = valor de hoy · color = cambio");
+  return c;
+}
+ES_SETS.bolsa = [["La Bolsa", esBolsa]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
 ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
@@ -7732,6 +7760,7 @@ function bloqueBolsa() {
     <div class="bo-mapa" style="height:${H}px" role="img" aria-label="Mapa del mercado: ${B.J.length} jugadores por equipo, el tamaño es su valor y el color cuánto han cambiado">${cas.join("")}</div>
     <div class="bo-ley" aria-hidden="true">${[-3, -2, -1, 0, 1, 2, 3].map(n => `<i style="background:${bolsaColor(n === 0 ? 0 : Math.sign(n) * (c[Math.abs(n) - 1] + 1e-6), c)}">${n === 0 ? "0" : (n > 0 ? "+" : "−") + nf1c(c[Math.abs(n) - 1] * 100)}</i>`).join("")}</div>
     <div class="bo-top"><div><small>Más suben</small>${sube.map(chip).join("")}</div><div><small>Más bajan</small>${baja.map(chip).join("")}</div></div>
+    <div class="acciones"><button class="btn-cromo" data-bolsa-comp>📤 Compartir lámina</button></div>
     <p class="note">El tamaño de cada casilla es lo que vale el jugador hoy y el color, cuánto ha cambiado su valor desde el ${desde}. El índice sigue el valor de toda la liga (1.000 el ${ix[0].d.slice(8, 10)}/${ix[0].d.slice(5, 7)}). Toca un jugador para ver su ficha.</p></section>`;
 }
 function pintarBolsa() { const s = $("#bolsa"); if (s) s.outerHTML = bloqueBolsa(); }
