@@ -2918,6 +2918,31 @@ function pintarRachas() {
     <p class="note">${top.sg > 0 ? `En racha: <b>${esc(top.m.name)}</b>, ${top.ac} jornada${top.ac > 1 ? "s" : ""} por encima de la mediana.` : "Nadie está ahora en racha positiva."}${bajo ? ` Al revés, <b>${esc(bajo.m.name)}</b> lleva ${bajo.ac} por debajo.` : ""}</p>`;
 }
 
+
+// «Sin capitán»: cómo quedaría la tabla si el brazalete no diera puntos extra (suma de las jornadas jugadas)
+function pintarSinCap() {
+  const cont = $("#sincap"); if (!cont || !D || !D.matchdays) return;
+  const R = D.managers.map((m, i) => {
+    let tot = 0, ext = 0, n = 0;
+    Object.values(D.matchdays).forEach(j => { const x = j && j[m.id]; if (!x || !capNum(x.points)) return; tot += x.points; n++;
+      const c = x.captain; if (c && capNum(c.basePoints)) ext += c.basePoints * ((c.multiplier || 2) - 1); });
+    return { m, i, tot, ext, sin: tot - ext, n };
+  }).filter(r => r.n > 0);
+  if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const pos = (k, q) => { const o = R.slice().sort((a, b) => b[k] - a[k]); R.forEach(r => { r[q] = o.indexOf(r) + 1; }); return o; };
+  pos("tot", "p0"); const sinOrd = pos("sin", "p1");
+  const mx = Math.max(1, ...R.map(r => r.tot));
+  const filas = sinOrd.map(r => { const d = r.p0 - r.p1;
+    return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${r.p1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.sin} puntos sin capitán, ${r.tot} con capitán"><i style="width:${Math.max(0, r.sin / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.ext} pts del capitán · hoy ${r.p0}.º</small></span>
+      <span class="pts"><b>${r.sin}</b><em class="${d > 0 ? "up" : d < 0 ? "dn" : ""}" style="${d ? "" : "color:var(--mut)"}">${d > 0 ? "▲ " + d : d < 0 ? "▼ " + -d : "="}</em></span></li>`; }).join("");
+  const cambian = R.filter(r => r.p1 !== r.p0).length, ayuda = R.slice().sort((a, b) => b.ext - a.ext)[0];
+  cont.innerHTML = `<div class="gh"><h2>¿Y si no hubiera capitán?</h2></div>
+    <p class="note" style="margin:0 0 10px">La tabla quitando los puntos extra del brazalete en todas las jornadas jugadas. La flecha dice cuántos puestos ganaría o perdería cada uno frente a la clasificación real.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.` : "Nadie cambiaría de puesto: el capitán no decide la liga."} Al que más le ha dado el capitán: <b>${esc(ayuda.m.name)}</b> (+${ayuda.ext}).</p>`;
+}
+
 /* ---------- Premios de la temporada ---------- */
 /* ---------- Repetición de la liga: carrera de barras jornada a jornada ---------- */
 // Cada manager es una fila que sube o baja de sitio (transform) y una barra que crece (scaleX): nada de layout. Es la
@@ -7678,7 +7703,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -7694,6 +7719,7 @@ function pintar() {
     <section class="card" id="alti"></section>
     <section class="card" id="mat"></section>
     <section class="card" id="rach"></section>
+    <section class="card" id="sincap"></section>
     <section class="card" id="premios"></section>`;
   cuentaPuntosFilas(); cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
   pintarPrevia();
@@ -7715,6 +7741,7 @@ function pintar() {
   pintarAltibajos();
   pintarMatriz();
   pintarRachas();
+  pintarSinCap();
   cuentaClasificacion();
 }
 // los puntos de la tabla suben desde 0 al entrar o al cambiar de jornada/orden (no al abrir un detalle); el valor final no cambia
