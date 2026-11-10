@@ -2989,7 +2989,12 @@ function pintarRotacion() {
       const ids = new Set(x.players.filter(p => p.played !== false).map(p => p.id)); ids.forEach(id => vistos.add(id));
       if (ant) { let c = 0; ids.forEach(id => { if (!ant.has(id)) c++; }); ch += c; n++; }
       ant = ids; });
-    return { m, i, med: n ? ch / n : null, dist: vistos.size, n };
+    // «el fijo»: el jugador que más jornadas ha estado en su once (y los puntos base que le dio)
+    const ap = {};
+    js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x || !Array.isArray(x.players)) return;
+      x.players.filter(p => p.played !== false).forEach(p => { const o = ap[p.id] || (ap[p.id] = { id: p.id, name: p.name, teamId: p.teamId, n: 0, pts: 0 }); o.n++; o.pts += p.basePoints != null ? p.basePoints : (p.points || 0); }); });
+    const fijo = Object.values(ap).sort((a, b) => b.n - a.n || b.pts - a.pts)[0] || null;
+    return { m, i, med: n ? ch / n : null, dist: vistos.size, n, fijo };
   }).filter(r => r.med != null);
   if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
@@ -3001,6 +3006,9 @@ function pintarRotacion() {
   cont.innerHTML = `<div class="gh"><h2>Rotación del once</h2></div>
     <p class="note" style="margin:0 0 10px">Jugadores nuevos que mete cada manager en su once, de media, respecto a la jornada anterior. Más barra = más cambios; menos, un once más estable.</p>
     <ul class="pron">${filas}</ul>
+    <h3 class="sec">Los fijos</h3>
+    <ul class="pron">${R.filter(r => r.fijo).map(r => `<li data-ficha="${r.fijo.id}">${cara(r.fijo.id, r.fijo.name, r.fijo.teamId, 36)}<span class="pq"><b>${esc(r.fijo.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · en ${r.fijo.n} de ${r.n + 1} onces</span></span><span class="pts"><b>${nf0.format(r.fijo.pts)}</b> pts</span></li>`).join("")}</ul>
+    <p class="note">El jugador que más veces ha estado en el once de cada manager y los puntos (sin capitán) que le ha dado.</p>
     <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>`;
 }
 
