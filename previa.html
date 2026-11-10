@@ -3481,20 +3481,24 @@ function bloqueValor7(ms) {
 }
 
 // Disciplina: tarjetas y goles en propia que han sumado los onces de cada manager en la temporada (solo datos pasados)
-function bloqueDisciplina() {
-  if (!D || !D.managers || !D.matchdays) return "";
+function disciplinaDatos() {
+  if (!D || !D.managers || !D.matchdays) return null;
   const L = D.managers.map((m, ci) => {
     let am = 0, ro = 0, pp = 0;
     Object.values(D.matchdays).forEach(j => { const x = j && j[m.id]; if (!x) return;
       (x.players || []).forEach(p => { am += p.yellowCards || 0; ro += p.redCards || 0; pp += p.ownGoals || 0; }); });
     return { m, ci, am, ro, pp, n: am + ro * 2 + pp * 2 };
   }).sort((a, b) => b.n - a.n);
-  const mx = L[0] ? L[0].n : 0;
-  if (L.length < 3 || !mx) return "";
+  return L.length < 3 || !L[0].n ? null : L;
+}
+function bloqueDisciplina() {
+  const L = disciplinaDatos(); if (!L) return "";
+  const mx = L[0].n;
   return `<section class="card"><div class="gh"><h2>Pabellón de la vergüenza</h2></div>
     <p class="note" style="margin:0 0 8px">Tarjetas y goles en propia de los onces de cada manager en la temporada (roja y propia puerta cuentan doble para ordenar).</p>
     <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.ci)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(x.n / mx * 100).toFixed(1)}%;background:${col(x.ci)}"></i></span><small>🟨 ${x.am} · 🟥 ${x.ro} · PP ${x.pp}</small></span><span class="pp" style="font-size:16px">${x.n}</span></li>`).join("")}</ul>
-    <p class="note">El más sucio: <b>${esc(L[0].m.name)}</b>. El más limpio: <b>${esc(L[L.length - 1].m.name)}</b>.</p></section>`;
+    <p class="note">El más sucio: <b>${esc(L[0].m.name)}</b>. El más limpio: <b>${esc(L[L.length - 1].m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-dis-comp>📤 Compartir lámina</button></div></section>`;
 }
 
 // Valor de la plantilla frente a los puntos de la temporada: quién saca más con menos
@@ -6333,8 +6337,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -6698,6 +6702,7 @@ function abrirComparador(idA, idB) {
 }
 let CMP_ULT = null;
 document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("[data-dis-comp]")) { const L = disciplinaDatos(); if (L) { EST_DAT.dis = { L, n: Object.keys(D.matchdays).length }; abrirEstudio("dis", e.target.closest("[data-dis-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
   if (c) { const ofi = $("#ovFicha"); if (ofi) ofi.hidden = true; const oc = $("#ovCmp"); if (oc) oc.hidden = true; abrirBuscador(String(c.dataset.comparar)); return; }
@@ -6821,6 +6826,27 @@ async function esComparar(d) {
   esPie(x, "Solo lo ya jugado, sin previsiones");
   return c;
 }
+// Lámina del Pabellón de la vergüenza (mismos números que la tarjeta de Equipos)
+async function esPabellon(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, L = d.L;
+  const ims = await Promise.all(L.map(f => esImg(f.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "VERGÜENZA", kicker: "Pabellón de la temporada", pag: 0, total: 1 });
+  const n = L.length, fh = Math.min(118, (1210 - 372) / n), y0 = 372, mx = L[0].n;
+  L.forEach((f, j) => {
+    const Y = y0 + j * fh, h = fh - 14, sucio = j === 0;
+    esPanel(x, M, Y, W - 2 * M, h, sucio ? "rgba(255,90,90,.6)" : ES.linea, 24);
+    esAvatar(x, f.m, f.ci, ims[j], M + 70, Y + h / 2, h * 0.36, sucio ? ES.rojo : null);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, f.m.name, 420, 700, 34, 26), M + 134, Y + h / 2 - 6);
+    x.fillStyle = ES.mut; x.font = esS(400, 24); x.fillText(`🟨 ${f.am}  🟥 ${f.ro}  PP ${f.pp}`, M + 134, Y + h / 2 + 28);
+    x.fillStyle = "rgba(255,255,255,.08)"; esRect(x, W - M - 330, Y + h / 2 - 8, 200, 14, 7); x.fill();
+    x.fillStyle = sucio ? ES.rojo : ES.verde; esRect(x, W - M - 330, Y + h / 2 - 8, Math.max(14, 200 * f.n / mx), 14, 7); x.fill();
+    x.textAlign = "right"; x.fillStyle = sucio ? ES.rojo : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(f.n), W - M - 28, Y + h / 2 + 19); x.textAlign = "left";
+  });
+  esPie(x, `El más sucio: ${L[0].m.name} · el más limpio: ${L[n - 1].m.name}`);
+  return c;
+}
+ES_SETS.dis = [["Pabellón", esPabellon]];
 ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
 async function esCromoMvp(d) {
