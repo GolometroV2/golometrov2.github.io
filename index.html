@@ -1250,6 +1250,20 @@ body.wr-abierto{overflow:hidden}
 .cm-f{display:grid;grid-template-columns:1fr 1.3fr 1fr;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);text-align:center}
 .cm-f span{font-size:12px;color:var(--mut)}.cm-f b{font-size:18px;font-variant-numeric:tabular-nums;opacity:.7}.cm-f b.gana{color:var(--acc);opacity:1}
 .cm-v{margin-top:12px}
+.fh{position:relative;overflow:hidden;display:flex;align-items:flex-end;gap:14px;margin:-14px -16px 4px;padding:62px 16px 16px;background:linear-gradient(160deg,hsl(var(--h) 42% 24%),hsl(var(--h) 30% 11%) 70%),var(--panel2);color:#fff}
+.fh::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,#2fd46e33,transparent 60%);pointer-events:none}
+.fh-esc{position:absolute;right:-18px;top:-10px;width:170px;height:170px;object-fit:contain;opacity:.13;transform:rotate(-12deg);pointer-events:none}
+.fh-ph,.fh-tx{position:relative;z-index:1}
+.fh-ph .cara{box-shadow:0 0 0 3px #ffffff40,0 8px 24px #0006;background:#ffffff1f}
+.fh-ph .cara-i{color:#fff}
+.fh-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.fh-tx small{font-size:12px;font-weight:700;color:#bff5d3}
+.fh-tx b{font-size:26px;line-height:1.1;letter-spacing:-.6px;font-family:var(--f-disp)}
+.fh-r{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.fh-r .ch-vs{color:#e6f5ec}
+.fh-x{position:relative;z-index:2;height:0;margin:0;overflow:visible}
+.fh-x .ov-x{position:relative;top:0;background:#0007;color:#fff;border-color:#fff3}
+@media(prefers-reduced-motion:no-preference){.fh-ph{animation:sube .3s ease-out}}
 .btn-cromo{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:12px 0 2px;padding:0 16px;border-radius:999px;border:1px solid #2fd46e66;background:linear-gradient(120deg,#2fd46e26,#2fd46e0a);color:var(--txt);font-weight:800;cursor:pointer}
 .crv{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px calc(20px + env(safe-area-inset-bottom));color-scheme:dark;
   background:radial-gradient(60% 45% at 50% 40%,#0f3a24 0%,#03100a 70%,#010402 100%);color:#eaf4ee;overflow:hidden}
@@ -2310,9 +2324,14 @@ function abrirFicha(id) {
   let ov = $("#ovFicha");
   if (!ov) { ov = document.createElement("div"); ov.id = "ovFicha"; ov.className = "ov"; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(p.name)}">
-    <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
-    <div class="ch-top">${cara(p.id, p.name, p.teamId, 84)}<div class="ch-q"><small>${esc(nombreEq[p.teamId] || "")}</small><b>${esc(p.name)} <span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? ` <span class="st st-injury">✚</span>` : ""}</b>
-      <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></div></div>
+    <div class="ov-h fh-x"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
+    <div class="fh" style="--h:${(Number(p.teamId) * 47) % 360}">
+      <img class="fh-esc" src="${esc(merUrlEscudo(p.teamId))}" alt="" aria-hidden="true" onerror="this.remove()">
+      <div class="fh-ph">${cara(p.id, p.name, p.teamId, 112)}</div>
+      <div class="fh-tx"><small>${esc(nombreEq[p.teamId] || "")}</small>
+        <b>${esc(p.name)}</b>
+        <span class="fh-r"><span class="jp-pos2" style="background:var(--${esc(String(p.pos).toLowerCase())})">${esc(p.pos)}</span>${p.status === "injury" ? `<span class="st st-injury">✚</span>` : ""}
+        <span class="ch-vs">${libre ? `<span class="rc-e libre">Libre en el mercado de hoy</span>` : p.onMarket ? `En venta · ${esc(p.ownerName || "")}` : p.owner ? `De ${esc(p.ownerName || "")}` : "Sin dueño en la liga"}</span></span></div></div>
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
