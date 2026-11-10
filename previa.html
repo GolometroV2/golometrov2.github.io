@@ -577,6 +577,13 @@ code{color:var(--accFg)}
 .mx-g .av{width:26px;height:26px;font-size:10px;justify-self:center}
 .mx-c{display:flex;align-items:center;justify-content:center;height:36px;border-radius:8px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--acc) calc(var(--w)*70%),var(--panel2));color:var(--txt)}
 .mx-c.d{background:transparent;opacity:.3}
+button.mx-c{border:0;font-family:inherit;cursor:pointer;min-height:44px;padding:0}
+.mx-c.sel{outline:2px solid var(--txt);outline-offset:-2px}
+.mx-det{margin-top:10px;padding:10px;border-radius:12px;background:var(--panel2);font-size:13px}
+.mx-ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mx-ch span{display:flex;flex-direction:column;align-items:center;min-width:44px;padding:4px 6px;border-radius:8px;background:var(--panel);font-weight:700;font-size:12px}
+.mx-ch span.g{color:var(--acc)}.mx-ch span.r{color:var(--red,#e5484d)}
+.mx-ch small{font-size:11px;color:var(--mut);font-weight:600}
 .dp-f{display:grid;grid-template-columns:30px 1fr 44px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line,rgba(128,128,128,.18))}
 .dp-f .av{width:26px;height:26px;font-size:10px}
 .dp-f b{text-align:right;font-variant-numeric:tabular-nums}
@@ -2887,11 +2894,20 @@ function pintarMatriz() {
     const c = g[x][y]; if (x === y) return `<span class="mx-c d">·</span>`;
     if (!c.t) return `<span class="mx-c d">–</span>`;
     const w = c.w / c.t;
-    return `<span class="mx-c${w < .5 ? " p" : ""}" style="--w:${w.toFixed(2)}" role="img" aria-label="${esc(m.name)} gana a ${esc(b.name)} en ${c.w} de ${c.t} jornadas">${c.w}-${c.t - c.w}</span>`;
+    return `<button type="button" class="mx-c${w < .5 ? " p" : ""}" data-mx="${x},${y}" style="--w:${w.toFixed(2)}" aria-label="${esc(m.name)} gana a ${esc(b.name)} en ${c.w} de ${c.t} jornadas; ver detalle">${c.w}-${c.t - c.w}</button>`;
   }).join("")}`).join("");
+  cont.onclick = e => {
+    const b = e.target.closest("[data-mx]"); if (!b) return;
+    const [x, y] = b.dataset.mx.split(",").map(Number), A = M[x], B = M[y], det = $("#mxDet");
+    const lis = js.map(j => ({ j, pa: pt(j, A), pb: pt(j, B) })).filter(r => capNum(r.pa) && capNum(r.pb));
+    cont.querySelectorAll(".mx-c.sel").forEach(c => c.classList.remove("sel")); b.classList.add("sel");
+    det.hidden = false;
+    det.innerHTML = `<b>${esc(A.name)} contra ${esc(B.name)}</b><div class="mx-ch">${lis.map(r => `<span class="${r.pa > r.pb ? "g" : r.pa < r.pb ? "r" : ""}">J${String(r.j).replace(/\D/g, "")}<small>${r.pa}-${r.pb}</small></span>`).join("")}</div>`;
+  };
   cont.innerHTML = `<div class="gh"><h2>Cara a cara de todos</h2></div>
     <p class="note" style="margin:0 0 10px">Cada casilla dice en cuántas jornadas ganó el de la izquierda al de arriba (ganadas-perdidas). Verde: le gana más veces; rojo: pierde más.</p>
     <div class="mx-g" style="grid-template-columns:30px repeat(${n},minmax(0,1fr))"><span></span>${cab}${filas}</div>
+    <div class="mx-det" id="mxDet" aria-live="polite" hidden></div>
     <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>`;
 }
 
