@@ -1289,39 +1289,61 @@ body.wr-abierto{overflow:hidden}
 .cin-i::after{content:"";width:5px;height:5px;margin-left:18px;border-radius:50%;background:#2fd46e66}
 .ci-up{color:#5cf096;font-weight:800}.ci-dn{color:#ff8a8a;font-weight:800}
 @media (prefers-reduced-motion:reduce){.ci-pista{animation:none}.ci-v{overflow-x:auto;scrollbar-width:none}.ci-dup{display:none}}
-/* La ciudad de la liga: skyline 3D en canvas que se gira con el dedo */
-.ciu-c{position:relative;border-radius:var(--r-l);overflow:hidden;background:#020806;box-shadow:inset 0 0 0 1px #2fd46e33;color-scheme:dark}
-#ciuCv{display:block;width:100%;touch-action:pan-y;cursor:grab;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-#ciuCv.arr{cursor:grabbing}
-.ciu-tour{flex:none;margin-left:auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2fd46e77;background:var(--accBg);color:var(--txt);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap}
-.ciu-tour:active{transform:scale(.95)}
-.ciu-tl{display:flex;align-items:center;gap:10px;margin:10px 0 2px}
-.ciu-tl .po-play{width:46px;height:46px}
-.ciu-dias{flex:1;min-width:0;display:flex;touch-action:pan-y}
-.ciu-dias button{position:relative;flex:1;min-width:0;height:44px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ciu-dias button::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1.5px;background:var(--line)}
-.ciu-dias button:first-child::before{left:50%}.ciu-dias button:last-child::before{right:50%}
-.ciu-dias button.ya::before{background:var(--acc)}
-.ciu-dias i{position:relative;width:9px;height:9px;border-radius:50%;background:var(--panel2);box-shadow:0 0 0 2px var(--line);transition:transform .2s,background .2s,box-shadow .2s}
-.ciu-dias button.ya i{background:var(--acc);box-shadow:0 0 0 2px var(--panel)}
-.ciu-dias button.hoy i{transform:scale(1.7);box-shadow:0 0 0 2px var(--panel),0 0 12px var(--acc)}
-.ciu-jl{flex:none;min-width:34px;text-align:right;font-family:var(--f-disp);font-weight:900;font-size:18px;color:var(--accFg);font-variant-numeric:tabular-nums}
-.ciu-ms{margin:8px 0 6px}
-.ciu-in{padding:12px;border-radius:14px;background:var(--panel2);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
-.ciu-ih{display:flex;align-items:center;gap:10px}
-.ciu-ih .av{flex:none;width:40px;height:40px;font-size:14px}
-.ciu-ih b{flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ciu-ih small{display:block;font-weight:500;font-size:12px;color:var(--mut);white-space:normal}
-.ciu-x{flex:none;width:44px;height:44px;margin:-6px -8px -6px 0;border:0;border-radius:50%;background:none;color:var(--mut);font-size:16px;cursor:pointer}
-.ciu-pl{display:flex;align-items:center;gap:8px;margin:10px 0;padding:8px;border-radius:12px;background:var(--panel)}
-.ciu-pl>button{flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--txt);font-size:14px;cursor:pointer}
-.ciu-pl>button:disabled{opacity:.3}
-.ciu-pl div{flex:1;min-width:0;text-align:center}
-.ciu-pl b{display:block;font-family:var(--f-disp);font-weight:900;font-size:17px}
-.ciu-pl span{display:block;font-size:13px}.ciu-pl small{display:block;font-size:11.5px;color:var(--mut)}
-.ciu-bs{display:flex;gap:8px}
-.ciu-bs button{flex:1;min-width:0;min-height:44px;padding:6px 8px;border-radius:12px;border:1px solid #2fd46e66;background:var(--accBg);color:var(--txt);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
-@media (prefers-reduced-motion:reduce){.ciu-dias i{transition:none}}
+/* Mesa de operaciones (Mercado, con PIN): simulador de ventas y pujas con marcador en vivo */
+.ms-hud{position:relative;margin:0 0 12px;padding:14px 12px 12px;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
+  background:radial-gradient(90% 120% at 50% 0%,#17462d 0%,#0a2116 50%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e44,0 0 26px -8px #2fd46e88}
+.ms-hud::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(#2fd46e12 1px,#0000 1px) 0 0/100% 22px,linear-gradient(90deg,#2fd46e12 1px,#0000 1px) 0 0/22px 100%;-webkit-mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000);mask-image:radial-gradient(80% 90% at 50% 0%,#000,#0000)}
+.ms-hud::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;z-index:-1;pointer-events:none;opacity:0;background:linear-gradient(90deg,#0000,#9dffc633,#0000);transform:translateX(-100%)}
+.ms-hud.barre::after{animation:msBarre .9s ease-out}
+@keyframes msBarre{0%{opacity:1;transform:translateX(-100%)}100%{opacity:0;transform:translateX(260%)}}
+.ms-k{margin:0 0 10px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#a5ecc2}
+.ms-n{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ms-n>div{min-width:0;padding:10px 6px;border-radius:12px;background:#00000047;box-shadow:inset 0 0 0 1px #ffffff12;text-align:center}
+.ms-n small{display:block;font-size:10.5px;line-height:1.2;color:#a9c7b6}
+.ms-n b{display:block;margin:3px 0;font-family:var(--f-disp);font-weight:900;font-size:clamp(19px,6.2vw,26px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ms-n b.up{color:#6ff3a3;text-shadow:0 0 16px #2fd46e88}.ms-n b.dn{color:#ff8a8a}
+.ms-n em{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:#cfe3d7}
+.ms-n input{width:100%;min-height:36px;margin:2px 0;border-radius:8px;border:1px solid #2fd46e77;background:#04140c;color:#fff;font:inherit;font-weight:800;text-align:center}
+.ms-bar{display:flex;height:8px;margin:12px 0 6px;border-radius:4px;overflow:hidden;background:#ffffff1a}
+.ms-bar i{flex:0 0 auto;width:var(--w,0%);transition:width .5s cubic-bezier(.3,1,.4,1)}
+.ms-bar .g{background:#ffffffd9}.ms-bar .q{background:linear-gradient(90deg,#1c9c52,#6ff3a3)}.ms-bar .f{background:#ff6b6b}
+.ms-ley{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:#a9c7b6}
+.ms-ley i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:2px;vertical-align:-1px}
+.ms-res{margin:10px 0 0;font-size:13px;line-height:1.45;color:#eaf4ee}.ms-res b{color:#8dffb9}.ms-res b.dn{color:#ff8a8a}
+.ms-acc{display:flex;gap:8px;margin:0 0 10px}
+.ms-acc button{flex:1;min-width:0;min-height:46px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.ms-acc button:active{transform:scale(.97)}
+.ms-acc .ms-opt{flex:1.5;border:0;background:linear-gradient(120deg,#1fb85c,#5cf096);color:#03200e;box-shadow:0 0 22px -4px #2fd46eaa}
+.ms-lam{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:12px;color:var(--mut)}
+.ms-lam input{flex:1;min-width:0;height:44px;margin:0;accent-color:var(--acc)}
+.ms-lam b{flex:none;min-width:118px;text-align:right;color:var(--txt);font-size:12px}
+.ms-tira{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);z-index:6;display:flex;justify-content:space-around;gap:6px;margin:6px 0 0;padding:9px 8px;border-radius:999px;background:#06170ef2;box-shadow:inset 0 0 0 1px #2fd46e66,0 8px 20px -8px #000;color:#a9c7b6;font-size:11.5px;white-space:nowrap}
+.ms-tira b{margin-left:3px;font-family:var(--f-disp);font-weight:900;font-size:14px;color:#fff;font-variant-numeric:tabular-nums}.ms-tira b.up{color:#6ff3a3}.ms-tira b.dn{color:#ff8a8a}
+.ms-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;perspective:700px}
+@media (min-width:560px){.ms-g{grid-template-columns:repeat(6,1fr)}}
+.ms-j{position:relative;height:112px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ms-ji{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.2,.4,1)}
+.ms-j.v .ms-ji{transform:rotateY(180deg)}
+.ms-f,.ms-b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 3px;border-radius:12px;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line)}
+.ms-f b,.ms-l b{max-width:100%;font-size:11.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-f small{font-size:10.5px;font-weight:800;white-space:nowrap}
+.ms-xi{position:absolute;left:5px;top:5px;padding:1px 5px;border-radius:6px;background:var(--accBg);color:var(--accFg);font-style:normal;font-size:9px;font-weight:900}
+.ms-b{transform:rotateY(180deg);background:linear-gradient(160deg,#14532f,#06170e);box-shadow:inset 0 0 0 1.5px #2fd46e;color:#eaf4ee}
+.ms-b b{font-family:var(--f-disp);font-weight:900;font-size:13px;letter-spacing:.06em;color:#8dffb9}
+.ms-b span{font-family:var(--f-disp);font-weight:900;font-size:14px;white-space:nowrap}
+.ms-b small{font-size:9px;line-height:1.15;text-align:center;color:#a9c7b6}
+.ms-j:focus-visible,.ms-l:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:12px}
+.ms-ls{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:4px;scroll-snap-type:x proximity}
+.ms-ls::-webkit-scrollbar{display:none}
+.ms-l{position:relative;flex:none;width:136px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;border:0;border-radius:14px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line);color:inherit;font:inherit;cursor:pointer;scroll-snap-align:start;transition:box-shadow .25s,transform .25s;-webkit-tap-highlight-color:transparent}
+.ms-l.on{box-shadow:inset 0 0 0 2px var(--acc),0 0 20px -6px var(--acc);transform:translateY(-3px)}
+.ms-l small{font-size:11px;color:var(--mut);white-space:nowrap}.ms-l small b{display:inline;font-size:11px;color:var(--txt)}
+.ms-l small.up{color:var(--pos)}.ms-l small.dn{color:var(--red)}
+.ms-ring{position:absolute;right:6px;top:6px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--acc) var(--p),var(--line) 0);font-size:10px;font-weight:900}
+.ms-ring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--panel2)}.ms-ring span{position:relative}
+.ms-chk{display:block;width:100%;margin-top:4px;padding:5px 0;border-radius:8px;background:var(--panel);font-style:normal;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:var(--mut)}
+.ms-l.on .ms-chk{background:var(--acc);color:var(--accTxt)}
+@media (prefers-reduced-motion:reduce){.ms-ji,.ms-l,.ms-bar i{transition:none}.ms-hud.barre::after{animation:none}}
 /* Podio interactivo: fichas que saltan de pedestal al viajar por las jornadas, foco que sigue al dedo y ficha de cada manager al tocarlo */
 .pdx{position:relative;margin:0 0 14px;padding:14px 10px 0;border-radius:var(--r-l);overflow:hidden;isolation:isolate;color:#eaf4ee;color-scheme:dark;
   background:radial-gradient(70% 70% at 50% 0%,#1a4a30 0%,#0a2116 45%,#04100a 100%);box-shadow:inset 0 0 0 1px #2fd46e33}
@@ -5376,6 +5398,130 @@ function planCalc(r, P, m) {
   return { P, m, h, mios, vender, dudas, suben, compras, sinDinero, saldo, cobroHoy, caja, c2, esp2,
     ahorro: vender.reduce((t, x) => t - x.d, 0), ganancia: compras.reduce((t, y) => t + y.esperado, 0), cartera: mios.reduce((t, x) => t + x.d, 0) };
 }
+/* ---------- Mesa de operaciones (Mercado, solo con PIN): simulador de ventas y pujas ----------
+   Parte del mismo cálculo que el Plan (planDatos: valor previsto de cada jugador hasta la víspera de la próxima jornada, puja y
+   probabilidad de ganarla). Aquí se eligen a mano ventas y pujas y se ve al momento cómo quedan la caja, el dinero esperado y el
+   once; «Plan óptimo» busca la combinación que más vale: dinero esperado + (puntos del once × lo que tú digas que vale un punto),
+   sin gastar más de lo que hay en caja aunque se ganen todas las pujas. */
+const MESA = { v: new Set(), c: new Set(), lam: 2, d: null };
+const MESA_LAM = [[0, "Solo dinero"], [1e5, "1 punto = 100 k"], [2.5e5, "1 punto = 250 k"], [5e5, "1 punto = 500 k"], [2e6, "Sobre todo puntos"]];
+// puntos esperados del mejor once posible con una lista de { pos, esp } (sin el extra del capitán)
+function mesaOnce(L) {
+  const por = pos => L.filter(c => c.pos === pos && c.esp > 0).map(c => c.esp).sort((a, b) => b - a), G = { PT: por("PT"), DF: por("DF"), MC: por("MC"), DL: por("DL") };
+  const s = (a, n) => a.slice(0, n).reduce((t, v) => t + v, 0);
+  return Math.max(...FORMACIONES.map(([d, m, f]) => s(G.PT, 1) + s(G.DF, d) + s(G.MC, m) + s(G.DL, f)));
+}
+function mesaDatos(r) {
+  const d = planDatos(r); if (!d) return null;
+  const mios = d.mios.map(x => ({ id: String(x.p.id), p: x.p, pos: x.p.pos, V: x.V, d: x.previsible ? x.d : 0, prev: x.previsible, en2: x.en2, esp: x.c && x.c.score > -Infinity && x.c.esp > 0 ? x.c.esp : 0 }));
+  const base = mesaOnce(mios), plan = new Map([...d.compras, ...d.sinDinero].map(y => [String(y.x.j.id), y]));
+  const libres = r.lista.filter(x => x.prio !== "evitar" && x.V > 0 && capNum(x.puja)).map(x => {
+    const y = plan.get(String(x.j.id)), g = x.jf ? capClamp(x.jf.g || 0, [-0.1, 0.1]) : 0;
+    const Vh = y ? y.Vh : x.V >= 1e6 ? planProyectar(x.V, g, d.h) : x.V, puja = y ? y.puja : x.puja, pw = y ? y.pw : x.pl && capNum(x.pl.p) ? x.pl.p : 0.5, esp = x.espProx || 0;
+    return { id: String(x.j.id), j: x.j, pos: x.pos, V: x.V, Vh, puja, pw, esp, ev: pw * (Vh - puja), dp: mesaOnce(mios.concat([{ pos: x.pos, esp }])) - base };
+  }).sort((a, b) => (b.ev + 2.5e5 * b.dp * b.pw) - (a.ev + 2.5e5 * a.dp * a.pw)).slice(0, 12);
+  return { m: d.m, mios, libres, saldo: d.saldo, h: d.h, gw: d.P.despues.gw, base };
+}
+function mesaCalc(M, v, c, lam) {
+  const ven = M.mios.filter(x => v.has(x.id)), com = M.libres.filter(y => c.has(y.id)), quedan = M.mios.filter(x => !v.has(x.id));
+  const cobro = ven.reduce((t, x) => t + x.V, 0), gasto = com.reduce((t, y) => t + y.puja, 0);
+  const dinero = ven.reduce((t, x) => t - x.d, 0) + com.reduce((t, y) => t + y.ev, 0);
+  const pts = mesaOnce(quedan.concat(com)), ptsE = mesaOnce(quedan.concat(com.map(y => ({ pos: y.pos, esp: y.esp * y.pw }))));
+  const caja = M.saldo != null ? M.saldo * 1e6 + cobro - gasto : null;
+  return { ven, com, cobro, gasto, dinero, pts, dPts: pts - M.base, caja, U: dinero + lam * (ptsE - M.base), ok: caja == null ? com.length <= PLAN.MAX_COMPRAS : caja >= 0 };
+}
+// búsqueda: desde no hacer nada, se aplica cada vez el cambio (una venta, una puja o una venta + una puja) que más mejora el resultado
+function mesaOptimo(M, lam) {
+  let v = new Set(), c = new Set(), mejor = mesaCalc(M, v, c, lam);
+  const alt = (s, id) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; };
+  for (let it = 0; it < 40; it++) {
+    let paso = null;
+    const prueba = (v2, c2) => { const r = mesaCalc(M, v2, c2, lam); if (r.ok && r.U > mejor.U + 5e4 && (!paso || r.U > paso.r.U)) paso = { v: v2, c: c2, r }; };
+    M.mios.forEach(x => prueba(alt(v, x.id), c)); M.libres.forEach(y => prueba(v, alt(c, y.id)));
+    M.mios.forEach(x => M.libres.forEach(y => prueba(alt(v, x.id), alt(c, y.id))));
+    if (!paso) break;
+    v = paso.v; c = paso.c; mejor = paso.r;
+  }
+  return { v, c };
+}
+function bloqueMesa(r) {
+  const M = MESA.d = mesaDatos(r); if (!M) return "";
+  MESA.v = new Set([...MESA.v].filter(id => M.mios.some(x => x.id === id))); MESA.c = new Set([...MESA.c].filter(id => M.libres.some(y => y.id === id)));
+  const chips = M.mios.slice().sort((a, b) => a.d - b.d).map(x => `<button class="ms-j${MESA.v.has(x.id) ? " v" : ""}" data-mesa-v="${esc(x.id)}" aria-pressed="${MESA.v.has(x.id)}" aria-label="Vender a ${esc(x.p.name)}">
+      <span class="ms-ji"><span class="ms-f">${x.en2 ? `<i class="ms-xi">XI</i>` : ""}${cara(x.p.id, x.p.name, x.p.teamId, 40)}<b>${esc(x.p.short || apellido(x.p.name))}</b><small class="${!x.prev || Math.abs(x.d) < 5000 ? "flat" : x.d > 0 ? "up" : "dn"}">${!x.prev ? "sin previsión" : Math.abs(x.d) < 5000 ? "= igual" : (x.d > 0 ? "▲ " : "▼ ") + merEur(Math.abs(x.d))}</small></span>
+      <span class="ms-b"><b>VENDIDO</b><span>+${merEur(x.V)}</span><small>${x.d < -5000 ? `evitas bajar ${merEur(-x.d)}` : x.d > 5000 ? `renuncias a ${merEur(x.d)}` : "a tu caja"}${x.en2 ? " · era titular" : ""}</small></span></span></button>`).join("");
+  const cartas = M.libres.map(y => `<button class="ms-l${MESA.c.has(y.id) ? " on" : ""}" data-mesa-c="${esc(y.id)}" aria-pressed="${MESA.c.has(y.id)}" aria-label="Pujar por ${esc(y.j.name)}">
+      <span class="ms-ring" style="--p:${Math.round(y.pw * 100)}%" title="Probabilidad de ganar la puja"><span>${Math.round(y.pw * 100)}%</span></span>${cara(y.j.id, y.j.name, y.j.teamId, 46)}
+      <b>${esc(y.j.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${y.pos.toLowerCase()})">${y.pos}</span>puja <b>${merEur(y.puja)}</b></small>
+      <small class="${y.ev >= 0 ? "up" : "dn"}">${merEurS(y.ev)} esperados</small><small>${y.dp > 0.05 ? `+${nf1.format(y.dp)} pts en tu once` : "no entra en tu once"}</small><i class="ms-chk">PUJAR</i></button>`).join("");
+  requestAnimationFrame(() => mesaPinta(false));
+  return `<section class="card mesa" id="mesa"><div class="gh"><h2>🎛️ Mesa de operaciones</h2></div>
+    <p class="note" style="margin:0 0 10px">Prueba ventas y pujas con la plantilla de ${esc(M.m.name)} y mira al momento cómo quedan tu caja, tu dinero y tu once de la jornada ${M.gw}. O deja que el Golómetro busque la mejor combinación.</p>
+    ${selectorM(merMan, "data-mm", null, "Plantilla")}
+    <div class="ms-hud" id="msHud"><p class="ms-k">De hoy a la víspera de la J${M.gw} · ${M.h} ${M.h === 1 ? "día" : "días"}</p>
+      <div class="ms-n"><div><small>Caja si ganas todas las pujas</small>${M.saldo == null ? `<input type="number" inputmode="decimal" step="0.1" placeholder="Tu saldo (M)" data-saldo aria-label="Tu saldo en millones">` : `<b id="msCaja"></b>`}<em id="msCajaS"></em></div>
+        <div><small>Dinero que esperas ganar</small><b id="msDin"></b><em>frente a no hacer nada</em></div>
+        <div><small>Tu once en la J${M.gw}</small><b id="msPts"></b><em id="msDp"></em></div></div>
+      <div class="ms-bar" aria-hidden="true"><i class="g" id="msBg"></i><i class="q" id="msBq"></i><i class="f" id="msBf"></i></div>
+      <div class="ms-ley"><span><i style="background:#ffffffd9"></i>Pujas <b id="msLg"></b></span><span><i style="background:#2fd46e"></i>Te queda <b id="msLq"></b></span><span>Cobras por ventas <b id="msLc"></b></span></div>
+      <p class="ms-res" id="msRes" aria-live="polite"></p></div>
+    <div class="ms-acc"><button class="ms-opt" data-mesa="opt">⚡ Plan óptimo</button><button data-mesa="limpia">Limpiar</button><button data-mesa="copia">📋 Copiar</button></div>
+    <label class="ms-lam"><span>Dinero</span><input type="range" min="0" max="${MESA_LAM.length - 1}" step="1" value="${MESA.lam}" data-mesa-lam aria-label="Qué pesa más en el plan óptimo: el dinero o los puntos"><span>Puntos</span><b id="msLam">${MESA_LAM[MESA.lam][1]}</b></label>
+    <div class="ms-tira" aria-hidden="true"><span>Caja <b id="msTc"></b></span><span>Dinero <b id="msTd"></b></span><span>Once <b id="msTp"></b></span></div>
+    <h3 class="sec">Tu plantilla · toca para vender</h3><div class="ms-g">${chips}</div>
+    <h3 class="sec">Libres de hoy · toca para pujar</h3>${cartas ? `<div class="ms-ls">${cartas}</div>` : `<p class="note">Hoy no hay libres con puja calculada.</p>`}
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></section>`;
+}
+function mesaNum(el, v, fmt) {
+  if (!el) return;
+  const de = el._v, red = matchMedia("(prefers-reduced-motion: reduce)").matches; el._v = v;
+  if (de == null || red || de === v) { el.textContent = fmt(v); return; }
+  const t0 = performance.now(), paso = t => { if (el._v !== v || !el.isConnected) return; const q = Math.min(1, (t - t0) / 450), e = 1 - Math.pow(1 - q, 3); el.textContent = fmt(q < 1 ? de + (v - de) * e : v); if (q < 1) requestAnimationFrame(paso); };
+  requestAnimationFrame(paso);
+}
+function mesaTexto(M, R) {
+  const ls = [`Plan del Golómetro para ${M.m.name} (hasta la J${M.gw})`];
+  if (R.ven.length) ls.push("VENDER: " + R.ven.map(x => `${x.p.name} (${merEur(x.V)})`).join(", "));
+  if (R.com.length) ls.push("PUJAR: " + R.com.map(y => `${y.j.name} ${merEur(y.puja)} (${Math.round(y.pw * 100)} % de ganarla)`).join(", "));
+  if (!R.ven.length && !R.com.length) ls.push("No hacer nada.");
+  ls.push(`Dinero esperado: ${merEurS(R.dinero)} · once J${M.gw}: ${nf1.format(R.pts)} pts${R.caja != null ? ` · caja si gano todas: ${merEur(Math.abs(R.caja))}${R.caja < 0 ? " EN NEGATIVO" : ""}` : ""}`);
+  return ls.join("\n");
+}
+function mesaPinta(barre) {
+  const M = MESA.d, hud = $("#msHud"); if (!M || !hud) return;
+  const R = mesaCalc(M, MESA.v, MESA.c, MESA_LAM[MESA.lam][0]), eur = v => (v < 0 ? "−" : "") + merEur(Math.abs(v));
+  const cj = $("#msCaja"); if (cj) { mesaNum(cj, R.caja, eur); cj.className = R.caja < 0 ? "dn" : ""; }
+  $("#msCajaS").textContent = M.saldo == null ? "pon tu saldo" : `saldo de hoy: ${merEur(M.saldo * 1e6)}`;
+  const dn = $("#msDin"); mesaNum(dn, R.dinero, v => Math.abs(v) < 5000 ? "0" : merEurS(Math.round(v / 1e4) * 1e4)); dn.className = R.dinero > 5000 ? "up" : R.dinero < -5000 ? "dn" : "";
+  mesaNum($("#msPts"), R.pts, v => nf1.format(v));
+  $("#msDp").textContent = Math.abs(R.dPts) < 0.05 ? "igual que ahora" : `${R.dPts > 0 ? "+" : "−"}${nf1.format(Math.abs(R.dPts))} pts${R.com.length ? " si los fichas" : ""}`;
+  $("#msTc").textContent = R.caja == null ? "–" : eur(R.caja); $("#msTc").className = R.caja < 0 ? "dn" : ""; $("#msTd").textContent = Math.abs(R.dinero) < 5000 ? "0" : merEurS(R.dinero); $("#msTd").className = dn.className; $("#msTp").textContent = nf1.format(R.pts);
+  const T = Math.max(1, (M.saldo != null ? M.saldo * 1e6 : R.gasto) + R.cobro), w = v => Math.max(0, Math.min(100, v / T * 100)).toFixed(1) + "%", mal = R.caja != null && R.caja < 0;
+  $("#msBg").style.setProperty("--w", mal ? "0%" : w(R.gasto)); $("#msBq").style.setProperty("--w", mal || R.caja == null ? "0%" : w(R.caja)); $("#msBf").style.setProperty("--w", mal ? "100%" : "0%");
+  $("#msLg").textContent = merEur(R.gasto); $("#msLq").textContent = R.caja == null ? "–" : eur(R.caja); $("#msLc").textContent = merEur(R.cobro);
+  const nv = R.ven.length, nc = R.com.length;
+  $("#msRes").innerHTML = !nv && !nc ? "Toca jugadores para vender o pujar, o pulsa <b>Plan óptimo</b>."
+    : `${nv ? `Vendes ${nv === 1 ? esc(R.ven[0].p.short || R.ven[0].p.name) : nv + " jugadores"} y cobras <b>${merEur(R.cobro)}</b>. ` : ""}${nc ? `Pujas por ${nc === 1 ? esc(R.com[0].j.name) : nc + " libres"} (hasta <b>${merEur(R.gasto)}</b>). ` : ""}${mal ? `<b class="dn">No te llega: te faltarían ${merEur(-R.caja)} si ganas todas.</b>` : `${R.dinero >= -5000 ? `Esperas ganar <b>${merEurS(Math.max(0, R.dinero))}</b>` : `Te cuesta <b class="dn">${merEur(-R.dinero)}</b> de media`}${Math.abs(R.dPts) >= 0.05 ? ` y tu once ${R.dPts > 0 ? "sube" : "baja"} <b${R.dPts < 0 ? ` class="dn"` : ""}>${nf1.format(Math.abs(R.dPts))} pts</b>` : ""}.`}`;
+  document.querySelectorAll("#mesa [data-mesa-v]").forEach(b => { const on = MESA.v.has(b.dataset.mesaV); b.classList.toggle("v", on); b.setAttribute("aria-pressed", on); });
+  document.querySelectorAll("#mesa [data-mesa-c]").forEach(b => { const on = MESA.c.has(b.dataset.mesaC); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.querySelector(".ms-chk").textContent = on ? "PUJA PUESTA ✓" : "PUJAR"; });
+  if (barre) { hud.classList.remove("barre"); void hud.offsetWidth; hud.classList.add("barre"); }
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("#mesa"); if (!c || !MESA.d) return;
+  const alt = (s, id) => { s.has(id) ? s.delete(id) : s.add(id); };
+  let b;
+  if ((b = e.target.closest("[data-mesa-v]"))) { alt(MESA.v, b.dataset.mesaV); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa-c]"))) { alt(MESA.c, b.dataset.mesaC); mesaPinta(false); }
+  else if ((b = e.target.closest("[data-mesa]"))) { const q = b.dataset.mesa;
+    if (q === "opt") { const o = mesaOptimo(MESA.d, MESA_LAM[MESA.lam][0]); MESA.v = o.v; MESA.c = o.c; mesaPinta(true); if (navigator.vibrate) navigator.vibrate(12); }
+    else if (q === "limpia") { MESA.v = new Set(); MESA.c = new Set(); mesaPinta(false); }
+    else if (q === "copia") { const t = mesaTexto(MESA.d, mesaCalc(MESA.d, MESA.v, MESA.c, MESA_LAM[MESA.lam][0])), ok = () => { b.textContent = "Copiado ✓"; setTimeout(() => { if (b.isConnected) b.textContent = "📋 Copiar"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, () => {}); } }
+});
+document.addEventListener("input", e => {
+  if (!e.target.matches || !e.target.matches("[data-mesa-lam]")) return;
+  MESA.lam = Math.max(0, Math.min(MESA_LAM.length - 1, Number(e.target.value) || 0)); $("#msLam").textContent = MESA_LAM[MESA.lam][1];
+});
 function bloquePlanParon(r) {
   const d = planDatos(r);
   if (!d) return "";
@@ -5496,6 +5642,7 @@ function pintarMercado() {
     <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
+    ${bloqueMesa(r)}
     ${bloquePlanParon(r)}
     ${mejor ? heroMer(mejor, cierre) : ""}
     ${bloqueSimPuja(r, mejor)}
@@ -6572,8 +6719,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "ciu" ? "Imagen de la ciudad" : clave === "dis" ? "Pabellón de la vergüenza" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "ciu" ? "La ciudad de la liga" : clave === "dis" ? "Pabellón de la vergüenza" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7282,262 +7429,6 @@ function cuentaPodio() {
     el.textContent = "0"; requestAnimationFrame(paso);
   });
 }
-
-/* ---------- La ciudad de la liga (estadístico, para todos): un rascacielos por manager, en 3D ----------
-   Cada planta es una jornada: su altura son los puntos de esa jornada y cuantos más puntos, más ventanas encendidas.
-   Las plantas blancas son jornadas ganadas. Se gira con el dedo, se toca una planta para ver esa jornada y ▶ la construye
-   jornada a jornada. Canvas 2D con proyección propia (sin librerías); la misma función dibuja la lámina para compartir. */
-const CIU = { d: null, th: -0.9, vth: 0, t: null, vel: 1.1, play: false, sel: null, piso: null, thObj: null, zoom: 0, raf: 0, ult: 0, vis: false, arr: null, quieto: 0, entrada: false, img: {}, caras: [], avs: [], w: 0 };
-const ciuHash = (a, b, c, d) => { let h = Math.imul(a + 1, 73856093) ^ Math.imul(b + 1, 19349663) ^ Math.imul(c + 1, 83492791) ^ Math.imul(d + 1, 2971215); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
-function ciuDatos() {
-  const S = serieLiga(), n = S.js.length, N = S.ms.length; if (n < 2 || N < 2) return null;
-  const todos = S.pts.flat(), paso = [3, 2, 5, 1].find(p => { let a = p, b = N; while (b) [a, b] = [b, a % b]; return a === 1; });
-  const orden = S.ms.map((_, x) => x).sort((a, b) => S.cum[b][n - 1] - S.cum[a][n - 1]);
-  const T = S.ms.map((o, x) => { const ang = ((orden.indexOf(x) * paso) % N) / N * 2 * Math.PI;   // repartidos en círculo, alternando altos y bajos
-    return { x, m: o.m, i: o.i, hue: Math.round((o.i * 360 / N + 200) % 360), ang, px: Math.cos(ang) * 2.6, pz: Math.sin(ang) * 2.6 }; });
-  return { S, n, N, T, H: 5.2, maxCum: Math.max(...S.cum.map(a => a[n - 1]), 1), lo: Math.min(...todos), hi: Math.max(...todos), gana: S.js.map((_, k) => Math.max(...S.pts.map(a => a[k]))) };
-}
-function ciuImg(m) {
-  let im = CIU.img[m.id];
-  if (!im && m.avatarUrl) { im = CIU.img[m.id] = new Image(); im.onload = () => ciuDespierta(); im.src = m.avatarUrl; }
-  return im && im.complete && im.naturalWidth ? im : null;
-}
-// o = { th: giro, t: jornadas construidas (con decimales), sel, piso, ahora (ms, para el parpadeo), zoom 0-1, reg: guardar las zonas que se pueden tocar, u: escala de textos }
-function ciuDibuja(x, W, H, o) {
-  const d = CIU.d, { S, n, T } = d, u = o.u || Math.max(1, Math.min(1.35, W / 360)), PI2 = 2 * Math.PI;
-  const F = Math.min(0.94 * H, 1.3 * W) * (1 + 0.08 * o.zoom), dist = 12, ph = 0.2, cph = Math.cos(ph), sph = Math.sin(ph), ct = Math.cos(o.th), st = Math.sin(o.th), cx = W / 2, cy = H * 0.84;
-  const P = (X, Y, Z) => { const xr = X * ct - Z * st, zr = X * st + Z * ct, s = F / (dist + zr * cph - Y * sph); return [cx + xr * s, cy - (Y * cph + zr * sph) * s, s]; };
-  const hy = cy - F * Math.tan(ph), cam = (x_, f) => { x.beginPath(); f(); x_ === "f" ? x.fill() : x.stroke(); };
-  if (o.reg) { CIU.caras = []; CIU.avs = []; }
-  // cielo, estrellas (se mueven al girar) y la ciudad lejana en el horizonte
-  let g = x.createLinearGradient(0, 0, 0, hy); g.addColorStop(0, "#010504"); g.addColorStop(1, "#072016"); x.fillStyle = g; x.fillRect(0, 0, W, hy + 1);
-  g = x.createRadialGradient(cx, hy, 0, cx, hy, W * 0.75); g.addColorStop(0, "rgba(47,212,110,.30)"); g.addColorStop(1, "rgba(47,212,110,0)"); x.fillStyle = g; x.fillRect(0, 0, W, hy + 1);
-  x.fillStyle = "#dfffee";
-  for (let i = 0; i < 80; i++) { const sx = ((((ciuHash(i, 7, 1, 3) + o.th / PI2 * 0.5) % 1) + 1) % 1) * W, b = ciuHash(i, 3, 9, 1), sy = b * b * hy * 0.92;
-    x.globalAlpha = (0.25 + 0.75 * ciuHash(i, 1, 1, 1)) * (0.5 + 0.5 * Math.abs(Math.sin(o.ahora / 1100 + i))); const r = (i % 9 ? 1 : 1.9) * u; x.fillRect(sx, sy, r, r); }
-  x.globalAlpha = 1;
-  for (let i = 0; i < 64; i++) { let r = (i / 64 * PI2 + o.th) % PI2; if (r > Math.PI) r -= PI2; if (r < -Math.PI) r += PI2; if (Math.abs(r) > 1.3) continue;
-    const sx = cx + r / 1.3 * W * 0.62, bw = W / 30 * (0.7 + ciuHash(i, 2, 2, 2) * 0.8), bh = (5 + ciuHash(i, 5, 5, 5) * 26) * u;
-    x.fillStyle = "#06170f"; x.fillRect(sx - bw / 2, hy - bh, bw, bh + 1);
-    x.fillStyle = "rgba(111,243,163,.38)"; for (let k = 0; k < 3; k++) if (ciuHash(i, k, 4, 4) > 0.45) x.fillRect(sx - bw / 2 + ciuHash(i, k, 6, 1) * (bw - 2 * u), hy - ciuHash(i, k, 1, 6) * bh * 0.9 - u, 1.4 * u, 1.4 * u); }
-  // suelo: plaza con anillos de neón y una calle hacia cada torre
-  g = x.createLinearGradient(0, hy, 0, H); g.addColorStop(0, "#0c2c1c"); g.addColorStop(0.5, "#06150d"); g.addColorStop(1, "#020705"); x.fillStyle = g; x.fillRect(0, hy, W, H - hy);
-  x.lineWidth = u;
-  [[1.1, 0.34], [2.6, 0.3], [4.1, 0.2], [5.9, 0.12]].forEach(([r, al]) => { x.strokeStyle = `rgba(47,212,110,${al})`; cam("s", () => { for (let k = 0; k <= 56; k++) { const a = k / 56 * PI2, p = P(Math.cos(a) * r, 0, Math.sin(a) * r); k ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); } }); });
-  x.strokeStyle = "rgba(47,212,110,.14)"; T.forEach(t => cam("s", () => { const a = P(Math.cos(t.ang) * 1.1, 0, Math.sin(t.ang) * 1.1), b = P(Math.cos(t.ang) * 5.9, 0, Math.sin(t.ang) * 5.9); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); }));
-  const tf = Math.max(0, Math.min(n, o.t)), fr = k => { const f = Math.max(0, Math.min(1, tf - k)); return 1 - Math.pow(1 - f, 3); };
-  const cumT = T.map(t => S.pts[t.x].reduce((s, v, k) => s + v * Math.max(0, Math.min(1, tf - k)), 0)), lid = Math.max(...cumT);
-  T.forEach(t => { const p = P(t.px, 0, t.pz), r = 1.25 * p[2]; x.save(); x.translate(p[0], p[1]); x.scale(1, 0.24);
-    g = x.createRadialGradient(0, 0, 0, 0, 0, r); g.addColorStop(0, `hsla(${t.hue} 85% 60% / .5)`); g.addColorStop(1, `hsla(${t.hue} 85% 60% / 0)`); x.fillStyle = g; cam("f", () => x.arc(0, 0, r, 0, PI2)); x.restore(); });
-  // torres, de la más lejana a la más cercana
-  const rot = [], a = 0.52, Q = [[-a, -a, 0, -1], [a, -a, 1, 0], [a, a, 0, 1], [-a, a, -1, 0]];
-  T.map((_, q) => q).sort((p, q) => (T[q].px * st + T[q].pz * ct) - (T[p].px * st + T[p].pz * ct)).forEach(q => {
-    const t = T[q], xr0 = t.px * ct - t.pz * st, zr0 = t.px * st + t.pz * ct;
-    const niebla = Math.max(0, Math.min(1, (zr0 + 2.6) / 5.2)) * 0.42 + (o.sel != null && o.sel !== t.x ? 0.3 : 0), L = v => (v * (1 - niebla)).toFixed(1);
-    const caras = Q.map((c, f) => { const c2 = Q[(f + 1) % 4], nrx = c[2] * ct - c[3] * st, nrz = c[2] * st + c[3] * ct;
-      return { f, ax: t.px + c[0], az: t.pz + c[1], bx: t.px + c2[0], bz: t.pz + c2[1], ve: (xr0 + nrx * a) * nrx + (zr0 + nrz * a + dist * cph) * nrz < 0, lf: Math.max(0, -0.8 * nrx - 0.6 * nrz) }; }).filter(c => c.ve);
-    let y = 0;
-    for (let k = 0; k < n && k < tf; k++) {
-      const pts = S.pts[t.x][k], h = Math.max(0.02, pts / d.maxCum * d.H * fr(k)), y1 = y + h, hecho = tf - k >= 1, gan = hecho && pts === d.gana[k], selP = o.sel === t.x && o.piso === k;
-      const lr = hecho ? 0.08 + 0.9 * (pts - d.lo) / Math.max(1, d.hi - d.lo) : 0, filas = h > 0.4 ? 3 : 2;
-      caras.forEach(c => { const A = P(c.ax, y, c.az), B = P(c.bx, y, c.bz), C = P(c.bx, y1, c.bz), D = P(c.ax, y1, c.az);
-        x.fillStyle = `hsl(${t.hue} ${selP ? 65 : 45}% ${L((selP ? 22 : 7) + 11 * c.lf)}%)`; cam("f", () => { x.moveTo(A[0], A[1]); x.lineTo(B[0], B[1]); x.lineTo(C[0], C[1]); x.lineTo(D[0], D[1]); x.closePath(); });
-        const pt = (uu, vv) => { const x0 = A[0] + (B[0] - A[0]) * uu, y0 = A[1] + (B[1] - A[1]) * uu, x1 = D[0] + (C[0] - D[0]) * uu, y1_ = D[1] + (C[1] - D[1]) * uu; return [x0 + (x1 - x0) * vv, y0 + (y1_ - y0) * vv]; };
-        [1, 0].forEach(enc => { x.fillStyle = enc ? (gan ? `hsl(${t.hue} 70% ${L(92)}%)` : `hsl(${t.hue} 88% ${L(60 + 10 * c.lf)}%)`) : `hsl(${t.hue} 35% ${L(13 + 9 * c.lf)}%)`;
-          cam("f", () => { for (let r = 0; r < filas; r++) for (let w = 0; w < 3; w++) { const h2 = ciuHash(t.x * 4 + c.f, k, r, w + 9); let luz = ciuHash(t.x * 4 + c.f, k, r, w) < lr;
-            if (hecho && h2 > 0.9 && Math.floor(o.ahora / 1300 + h2 * 60) % 6 === 0) luz = !luz;
-            if (luz !== !!enc) continue;
-            const u0 = 0.13 + w * 0.2467 + 0.045, u1 = u0 + 0.157, v0 = 0.2 + r * (0.6 / filas) + 0.04, v1 = v0 + 0.6 / filas - 0.1, p0 = pt(u0, v0), p1 = pt(u1, v0), p2 = pt(u1, v1), p3 = pt(u0, v1);
-            x.moveTo(p0[0], p0[1]); x.lineTo(p1[0], p1[1]); x.lineTo(p2[0], p2[1]); x.lineTo(p3[0], p3[1]); x.closePath(); } }); });
-        x.lineWidth = (gan ? 1.6 : 1) * u; x.strokeStyle = gan ? `hsl(${t.hue} 90% ${L(86)}%)` : "rgba(0,0,0,.5)"; cam("s", () => { x.moveTo(D[0], D[1]); x.lineTo(C[0], C[1]); });
-        if (selP) { x.lineWidth = 2 * u; x.strokeStyle = "#fff"; cam("s", () => { x.moveTo(A[0], A[1]); x.lineTo(B[0], B[1]); x.lineTo(C[0], C[1]); x.lineTo(D[0], D[1]); x.closePath(); }); }
-        if (o.reg) CIU.caras.push({ x: t.x, k, q: [A, B, C, D] }); });
-      y = y1;
-    }
-    const R4 = Q.map(c => P(t.px + c[0], y, t.pz + c[1])), top = P(t.px, y, t.pz), lider = tf > 0 && cumT[q] >= lid - 1e-6;
-    x.fillStyle = `hsl(${t.hue} 50% ${L(26)}%)`; x.strokeStyle = `hsl(${t.hue} 85% ${L(70)}%)`; x.lineWidth = u;
-    x.beginPath(); R4.forEach((p, k) => k ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.closePath(); x.fill(); x.stroke();
-    if (lider) { const bw = 0.13 * top[2]; g = x.createLinearGradient(0, top[1], 0, 0); g.addColorStop(0, "rgba(150,255,195,.55)"); g.addColorStop(1, "rgba(150,255,195,0)"); x.fillStyle = g;
-      cam("f", () => { x.moveTo(top[0] - bw, top[1]); x.lineTo(top[0] + bw, top[1]); x.lineTo(top[0] + bw * 3.4, 0); x.lineTo(top[0] - bw * 3.4, 0); x.closePath(); }); }
-    // avatar flotando sobre la azotea, con los puntos que lleva
-    const av = P(t.px, y + 0.66, t.pz), r = Math.max(11 * u, 0.4 * av[2]), im = ciuImg(t.m), al = 1 - niebla * 0.75;
-    x.save(); x.globalAlpha = al;
-    x.shadowColor = `hsl(${t.hue} 85% 60%)`; x.shadowBlur = (lider || o.sel === t.x ? 16 : 6) * u; x.fillStyle = o.sel === t.x ? "#fff" : `hsl(${t.hue} 80% 62%)`; cam("f", () => x.arc(av[0], av[1], r + 2.2 * u, 0, PI2)); x.shadowBlur = 0;
-    x.save(); x.beginPath(); x.arc(av[0], av[1], r, 0, PI2); x.clip(); x.fillStyle = `hsl(${t.hue} 55% 30%)`; x.fillRect(av[0] - r, av[1] - r, 2 * r, 2 * r);
-    if (im) x.drawImage(im, av[0] - r, av[1] - r, 2 * r, 2 * r); else { x.fillStyle = "#fff"; x.font = esF(800, r * 0.85); x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(t.m.avatar || iniciales(t.m.name), av[0], av[1] + 1); }
-    x.restore(); x.restore(); x.textAlign = "left";
-    const bs = Q.map(c => P(t.px + c[0], 0, t.pz + c[1])).concat(R4);
-    rot.push({ q, t, av, r, lider, al, cerca: zr0, caja: [Math.min(...bs.map(p => p[0])), Math.min(...bs.map(p => p[1])), Math.max(...bs.map(p => p[0])), Math.max(...bs.map(p => p[1])), zr0] });
-    if (o.reg) CIU.avs.push({ x: t.x, cx: av[0], cy: av[1], r: r + 9 * u });
-  });
-  // rótulos al final, del más cercano al más lejano: si uno pisa a otro ya escrito (o a un avatar más cercano), no se escribe
-  const ocup = rot.map(e => [e.av[0] - e.r, e.av[1] - e.r, e.av[0] + e.r, e.av[1] + e.r, e.cerca, 2]).concat(rot.map(e => e.caja));
-  x.textAlign = "center"; x.textBaseline = "alphabetic"; x.shadowColor = "#000"; x.shadowBlur = 5 * u;
-  const pri = e => (o.sel === e.t.x ? -200 : 0) + (e.lider ? -100 : 0) + e.cerca;
-  rot.slice().sort((p, q) => pri(p) - pri(q)).forEach(e => { const sel = o.sel === e.t.x, tam = (e.lider ? 19 : 15) * u, ty = e.av[1] - e.r - 7 * u, num = String(Math.round(cumT[e.q]));
-    x.font = esF(900, tam, "condensed"); const wn = x.measureText(num).width / 2 + 3 * u, cajaN = [e.av[0] - wn, ty - tam, e.av[0] + wn, ty + 2 * u];
-    const choca = c => ocup.some(r => r[4] !== e.cerca && c[0] < r[2] && c[2] > r[0] && c[1] < r[3] && c[3] > r[1] && (r[5] || r[4] < e.cerca));
-    if (!sel && choca(cajaN)) return;
-    x.globalAlpha = sel ? 1 : e.al; x.fillStyle = e.lider ? "#8dffb9" : "#fff"; x.fillText(num, e.av[0], ty); ocup.push([...cajaN, e.cerca, 1]);
-    let yy = ty - tam - 1 * u;
-    const nm = [...e.t.m.name], txt = nm.length > 15 ? nm.slice(0, 14).join("").trim() + "…" : e.t.m.name; x.font = esS(700, 10 * u);
-    const wt = x.measureText(txt).width / 2 + 2 * u, cajaT = [e.av[0] - wt, yy - 10 * u, e.av[0] + wt, yy + 2 * u];
-    if (sel || ((e.cerca < 0.6 || o.u) && !choca(cajaT) && cajaT[0] > 0 && cajaT[2] < W)) { x.fillStyle = "#cfe3d7"; x.fillText(txt, e.av[0], yy); ocup.push([...cajaT, e.cerca, 1]); yy -= 13 * u; }
-    if (e.lider) { const cw = 8 * u, cy0 = yy; x.save(); x.fillStyle = "#5cf096"; x.shadowColor = "#2fd46e"; x.shadowBlur = 8 * u;
-      cam("f", () => { x.moveTo(e.av[0] - cw, cy0); x.lineTo(e.av[0] - cw * 0.85, cy0 - cw * 0.9); x.lineTo(e.av[0] - cw * 0.4, cy0 - cw * 0.45); x.lineTo(e.av[0], cy0 - cw * 1.15); x.lineTo(e.av[0] + cw * 0.4, cy0 - cw * 0.45); x.lineTo(e.av[0] + cw * 0.85, cy0 - cw * 0.9); x.lineTo(e.av[0] + cw, cy0); x.closePath(); }); x.restore(); } });
-  x.globalAlpha = 1; x.shadowBlur = 0; x.textAlign = "left"; x.fillStyle = "#6ff3a3"; x.font = esF(900, 14 * u, "condensed");
-  if (!o.rotulo) { x.fillText(tf >= n ? `TRAS ${n} JORNADAS` : `JORNADA ${Math.max(1, Math.ceil(tf))}`, 12 * u, H - 12 * u); return; }
-  x.font = esF(900, 17 * u, "condensed"); const w1 = x.measureText(o.rotulo[0]).width; x.font = esS(600, 11.5 * u); const w2 = x.measureText(o.rotulo[1]).width, bw = Math.min(W - 16 * u, Math.max(w1, w2) + 28 * u), bx = (W - bw) / 2, by = H - 62 * u;
-  x.fillStyle = "rgba(2,12,7,.82)"; x.strokeStyle = "rgba(47,212,110,.6)"; x.lineWidth = u; esRect(x, bx, by, bw, 50 * u, 14 * u); x.fill(); x.stroke();
-  x.textAlign = "center"; x.fillStyle = "#fff"; x.font = esF(900, 17 * u, "condensed"); x.fillText(esCorta(x, o.rotulo[0], bw - 20 * u), W / 2, by + 22 * u);
-  x.fillStyle = "#a5ecc2"; x.font = esS(600, 11.5 * u); x.fillText(esCorta(x, o.rotulo[1], bw - 20 * u), W / 2, by + 40 * u); x.textAlign = "left";
-}
-function ciuCuadro(ahora) {
-  CIU.raf = 0;
-  const cv = $("#ciuCv"), d = CIU.d; if (!cv || !d) return;
-  const dt = CIU.ult ? Math.min(50, ahora - CIU.ult) : 16, red = matchMedia("(prefers-reduced-motion: reduce)").matches; CIU.ult = ahora;
-  let vivo = !!CIU.arr;
-  if (CIU.play) { const k0 = Math.ceil(CIU.t); CIU.t = Math.min(d.n, CIU.t + dt / 1000 * CIU.vel); vivo = true; if (CIU.t >= d.n) { CIU.play = false; ciuFuegos(); ciuUI(); } else if (Math.ceil(CIU.t) !== k0) ciuUIj(); }
-  if (CIU.thObj != null) { const dif = (((CIU.thObj - CIU.th + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
-    if (Math.abs(dif) < 0.004 || red) { CIU.th = CIU.thObj; CIU.thObj = null; } else CIU.th += dif * Math.min(1, dt / 200); vivo = true; }
-  else if (!CIU.arr && Math.abs(CIU.vth) > 0.00015) { CIU.th += CIU.vth * dt; CIU.vth *= Math.pow(0.995, dt); vivo = true; }
-  else if (!CIU.arr && !red && CIU.sel == null) { if (ahora > CIU.quieto) CIU.th += dt * 0.00011; vivo = true; }
-  const zo = CIU.sel != null ? 1 : 0; if (Math.abs(zo - CIU.zoom) > 0.01) { CIU.zoom = red ? zo : CIU.zoom + (zo - CIU.zoom) * Math.min(1, dt / 220); vivo = true; }
-  const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 340, H = Math.round(W * (W < 560 ? 1.14 : 0.72));
-  if (CIU.w !== W || cv.width !== Math.round(W * dpr)) { CIU.w = W; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + "px"; }
-  const x = cv.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const G = CIU.tour, gt = G && G.ord[G.i];
-  ciuDibuja(x, W, H, { th: CIU.th, t: CIU.t, sel: CIU.sel, piso: CIU.piso, ahora, zoom: CIU.zoom, reg: true,
-    rotulo: gt ? [`${d.N - G.i}.º · ${gt.m.name}`, `${d.S.cum[gt.x][d.n - 1]} puntos · su mejor planta, la ${d.S.js[CIU.piso]}: ${d.S.pts[gt.x][CIU.piso]}`] : null });
-  if (CIU.fx) { const u = Math.max(1, Math.min(1.35, W / 360)); let queda = false; x.save(); x.globalCompositeOperation = "lighter";
-    CIU.fx.forEach((f, i) => { const q = (ahora - f.t0) / 1500; if (q >= 1) return; queda = true; if (q < 0) return;
-      const e = 1 - Math.pow(1 - q, 3); x.fillStyle = `hsla(${f.hue} 90% 68% / ${(1 - q * q).toFixed(2)})`;
-      for (let k = 0; k < 56; k++) { const an = k / 56 * 6.2832 + ciuHash(i, k, 1, 1), rd = e * 80 * u * (0.45 + 0.55 * ciuHash(i, k, 2, 2)), s = (k % 4 ? 2.1 : 3.3) * u; x.fillRect(f.x * W + Math.cos(an) * rd, f.y * H + Math.sin(an) * rd + q * q * 34 * u, s, s); } });
-    x.restore(); if (queda) vivo = true; else CIU.fx = null; }
-  if (vivo && CIU.vis) CIU.raf = requestAnimationFrame(ciuCuadro); else CIU.ult = 0;
-}
-function ciuFuegos() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const t0 = performance.now(), s = Math.floor(t0) % 997;
-  CIU.fx = [150, 320, 190, 130, 285, 165, 205].map((hue, i) => ({ t0: t0 + i * 240, hue, x: 0.14 + ciuHash(i, s, 1, 1) * 0.72, y: 0.08 + ciuHash(i, 2, s, 1) * 0.3 }));
-  ciuDespierta();
-}
-// visita guiada: la cámara va de la torre más baja a la más alta, con un rótulo, y acaba con fuegos artificiales
-function ciuTourPara() { if (CIU.tour) { clearTimeout(CIU.tour.tm); CIU.tour = null; } }
-function ciuTour() {
-  const d = CIU.d; if (CIU.tour) { ciuTourPara(); ciuElige(null); return; }
-  const ord = d.T.slice().sort((p, q) => d.S.cum[p.x][d.n - 1] - d.S.cum[q.x][d.n - 1]);
-  CIU.play = false; CIU.t = d.n; CIU.tour = { ord, i: -1, tm: 0 };
-  const paso = () => { const G = CIU.tour; if (!G) return; if (!$("#ciuCv")) { CIU.tour = null; return; }
-    if (++G.i >= ord.length) { CIU.tour = null; ciuElige(null); ciuFuegos(); return; }
-    const t = ord[G.i], pts = d.S.pts[t.x]; ciuElige(t.x, pts.indexOf(Math.max(...pts))); G.tm = setTimeout(paso, 2700); };
-  paso();
-}
-function ciuDespierta() { if (!CIU.raf && $("#ciuCv")) CIU.raf = requestAnimationFrame(ciuCuadro); }
-function ciuInfoHTML() {
-  const d = CIU.d;
-  if (CIU.sel == null) return `<p class="note" style="margin:0">Gira la ciudad con el dedo y toca una planta para ver esa jornada.</p>`;
-  const t = d.T[CIU.sel], S = d.S, k = Math.max(0, Math.min(d.n - 1, CIU.piso == null ? d.n - 1 : CIU.piso)), pts = S.pts[t.x][k], j = S.js[k];
-  const pos = 1 + S.pts.filter(a => a[k] > pts).length, cap = ((D.matchdays[j] || {})[t.m.id] || {}).captain, gan = S.js.filter((_, q) => S.pts[t.x][q] === d.gana[q]).length;
-  return `<div class="ciu-in" style="--c:${col(t.i)}">
-    <div class="ciu-ih">${avatar(t.m, t.i)}<b>${esc(t.m.name)}<small>${S.cum[t.x][d.n - 1]} puntos · ${d.n} plantas · ${gan} ${gan === 1 ? "jornada ganada" : "jornadas ganadas"}</small></b><button class="ciu-x" data-ciu="cerrar" aria-label="Cerrar">✕</button></div>
-    <div class="ciu-pl" aria-live="polite"><button data-ciu="baja" aria-label="Planta de abajo"${k <= 0 ? " disabled" : ""}>▼</button>
-      <div><b>Planta ${k + 1} · ${esc(j)}</b><span>${pts} puntos · ${pos}.º de la jornada${pos === 1 ? " 🏆" : ""}</span>${cap && cap.name ? `<small>Capitán: ${esc(cap.name)}${cap.played === false ? " (no jugó)" : ` ×${cap.multiplier || 2} → ${cap.points} pts`}</small>` : ""}</div>
-      <button data-ciu="sube" aria-label="Planta de arriba"${k >= d.n - 1 ? " disabled" : ""}>▲</button></div>
-    <div class="ciu-bs"><button data-wr-abre="${t.i}">📖 Su temporada</button><button data-ciu="comp">📤 Compartir la ciudad</button></div></div>`;
-}
-function ciuUIj() {
-  const d = CIU.d, k = Math.max(0, Math.min(d.n, Math.ceil(CIU.t))) - 1;
-  document.querySelectorAll("#ciuDias button").forEach((b, i) => { b.classList.toggle("ya", i <= k); b.classList.toggle("hoy", i === k); });
-  const l = $("#ciuJl"); if (l) l.textContent = k >= 0 ? d.S.js[k] : "–";
-}
-function ciuUI() {
-  const p = $("#ciudad [data-ciu=play]"); if (p) { p.innerHTML = CIU.play ? PO_ICO.pausa : PO_ICO.play; p.setAttribute("aria-label", CIU.play ? "Pausar" : "Construir la ciudad jornada a jornada"); }
-  const inf = $("#ciuInfo"); if (inf) inf.innerHTML = ciuInfoHTML();
-  const tb = $("#ciudad [data-ciu=tour]"); if (tb) tb.textContent = CIU.tour ? "⏹ Parar la visita" : "🎬 Visita guiada";
-  document.querySelectorAll("[data-ciu-m]").forEach(b => { const on = CIU.sel != null && Number(b.dataset.ciuM) === CIU.sel; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
-  ciuUIj(); ciuDespierta();
-}
-function ciuElige(xm, k) {
-  const d = CIU.d;
-  if (xm == null || (CIU.sel === xm && k == null)) { CIU.sel = null; CIU.piso = null; CIU.quieto = performance.now() + 2500; }
-  else { CIU.sel = xm; CIU.piso = k != null ? k : Math.max(0, Math.min(d.n, Math.ceil(CIU.t)) - 1); CIU.thObj = -Math.PI / 2 - d.T[xm].ang; CIU.vth = 0; }
-  ciuUI();
-}
-function pintarCiudad() {
-  const c = $("#ciudad"); if (!c) return;
-  const d = CIU.d = ciuDatos(); if (!d) { c.hidden = true; return; }
-  c.hidden = false;
-  if (CIU.t == null || CIU.t > d.n || (!CIU.play && CIU.entrada && CIU.t === CIU.nAnt)) CIU.t = CIU.entrada ? d.n : 0;
-  CIU.nAnt = d.n; if (CIU.sel != null && CIU.sel >= d.T.length) CIU.sel = null;
-  c.innerHTML = `<div class="gh"><h2>La ciudad de la liga</h2><button class="ciu-tour" data-ciu="tour">🎬 Visita guiada</button></div>
-    <p class="note" style="margin:0 0 8px">Un rascacielos por manager. Cada planta es una jornada: cuanto más alta y con más ventanas encendidas, más puntos. Las plantas blancas son jornadas ganadas.</p>
-    <div class="ciu-c"><canvas id="ciuCv" role="img" aria-label="Ciudad en 3D: ${d.T.slice().sort((p, q) => d.S.cum[q.x][d.n - 1] - d.S.cum[p.x][d.n - 1]).map(t => `${esc(t.m.name)}, ${d.S.cum[t.x][d.n - 1]} puntos`).join("; ")}"></canvas></div>
-    <div class="ciu-tl"><button class="po-play" data-ciu="play"></button><div class="ciu-dias" id="ciuDias" role="group" aria-label="Construir hasta una jornada">${d.S.js.map((j, k) => `<button data-ciu-k="${k}" aria-label="Hasta la jornada ${esc(j.slice(1))}"><i></i></button>`).join("")}</div><span class="ciu-jl" id="ciuJl"></span></div>
-    <div class="gal-ms ciu-ms" role="group" aria-label="Ir al rascacielos de un manager">${d.T.slice().sort((p, q) => d.S.cum[q.x][d.n - 1] - d.S.cum[p.x][d.n - 1]).map(t => `<button class="gal-m" data-ciu-m="${t.x}" aria-label="Rascacielos de ${esc(t.m.name)}" style="--c:${col(t.i)}">${avatar(t.m, t.i)}</button>`).join("")}</div>
-    <div id="ciuInfo"></div>`;
-  CIU.w = 0; ciuUI();
-  const cv = $("#ciuCv"), red = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (CIU.io) CIU.io.disconnect();
-  if (!("IntersectionObserver" in window)) { CIU.vis = true; CIU.entrada = true; CIU.t = d.n; ciuUI(); return; }
-  CIU.io = new IntersectionObserver(es => { CIU.vis = es.some(e => e.isIntersecting);
-    if (CIU.vis && !CIU.entrada) { CIU.entrada = true; if (red) CIU.t = d.n; else { CIU.t = 0; CIU.vel = d.n / 2.8; CIU.play = true; } ciuUI(); }
-    if (CIU.vis) ciuDespierta(); }, { threshold: 0.25 });
-  CIU.io.observe(cv);
-}
-const ciuDentro = (q, px, py) => { let s = 0; for (let i = 0; i < 4; i++) { const a = q[i], b = q[(i + 1) % 4], c = (b[0] - a[0]) * (py - a[1]) - (b[1] - a[1]) * (px - a[0]); if (c !== 0) { if (s && Math.sign(c) !== s) return false; s = Math.sign(c); } } return true; };
-function ciuToca(px, py) {
-  for (let i = CIU.avs.length - 1; i >= 0; i--) { const a = CIU.avs[i]; if (Math.hypot(px - a.cx, py - a.cy) <= a.r) return { x: a.x }; }
-  for (let i = CIU.caras.length - 1; i >= 0; i--) if (ciuDentro(CIU.caras[i].q, px, py)) return CIU.caras[i];
-  return null;
-}
-document.addEventListener("pointerdown", e => {
-  if (e.target.id !== "ciuCv") return;
-  if (CIU.tour) { ciuTourPara(); ciuUI(); }
-  CIU.arr = { x0: e.clientX, y0: e.clientY, x: e.clientX, th0: CIU.th, mov: 0, t: performance.now() }; CIU.thObj = null; CIU.vth = 0;
-  e.target.classList.add("arr"); try { e.target.setPointerCapture(e.pointerId); } catch (_) {}
-  ciuDespierta();
-});
-document.addEventListener("pointermove", e => {
-  const A = CIU.arr; if (!A) return;
-  const ahora = performance.now(), dx = e.clientX - A.x; A.mov = Math.max(A.mov, Math.abs(e.clientX - A.x0), Math.abs(e.clientY - A.y0));
-  if (ahora > A.t) CIU.vth = CIU.vth * 0.5 + (dx * 0.008 / (ahora - A.t)) * 0.5;
-  A.x = e.clientX; A.t = ahora; CIU.th = A.th0 + (e.clientX - A.x0) * 0.008;
-}, { passive: true });
-["pointerup", "pointercancel"].forEach(ev => document.addEventListener(ev, e => {
-  const A = CIU.arr; if (!A) return; CIU.arr = null;
-  const cv = $("#ciuCv"); if (cv) cv.classList.remove("arr");
-  CIU.quieto = performance.now() + 3500;
-  if (ev === "pointerup" && A.mov < 7 && cv) { CIU.vth = 0; const r = cv.getBoundingClientRect(), h = ciuToca(e.clientX - r.left, e.clientY - r.top); if (h) ciuElige(h.x, h.k == null ? null : h.k); else if (CIU.sel != null) ciuElige(null); }
-  else if (performance.now() - A.t > 80 || matchMedia("(prefers-reduced-motion: reduce)").matches) CIU.vth = 0;
-  ciuDespierta();
-}));
-document.addEventListener("click", e => {
-  const c = e.target.closest && e.target.closest("#ciudad"); if (!c || !CIU.d) return;
-  const d = CIU.d, b = e.target.closest("[data-ciu]"), kb = e.target.closest("[data-ciu-k]"), mb = e.target.closest("[data-ciu-m]");
-  if (CIU.tour && (kb || mb || (b && b.dataset.ciu !== "tour"))) ciuTourPara();
-  if (kb) { CIU.play = false; CIU.t = Number(kb.dataset.ciuK) + 1; if (CIU.sel != null) CIU.piso = Math.min(CIU.piso == null ? d.n : CIU.piso, CIU.t - 1); ciuUI(); }
-  else if (mb) ciuElige(Number(mb.dataset.ciuM), null);
-  else if (b) { const q = b.dataset.ciu;
-    if (q === "play") { if (matchMedia("(prefers-reduced-motion: reduce)").matches) { CIU.t = d.n; CIU.play = false; } else { CIU.play = !CIU.play; if (CIU.play) { CIU.vel = 1.15; if (CIU.t >= d.n) CIU.t = 0; } } ciuUI(); }
-    else if (q === "tour") ciuTour();
-    else if (q === "cerrar") ciuElige(null);
-    else if (q === "baja" || q === "sube") { CIU.piso = Math.max(0, Math.min(d.n - 1, (CIU.piso == null ? d.n - 1 : CIU.piso) + (q === "sube" ? 1 : -1))); if (CIU.t < CIU.piso + 1) CIU.t = CIU.piso + 1; ciuUI(); }
-    else if (q === "comp") { EST_DAT.ciu = { n: Number(d.S.js[d.n - 1].slice(1)), th: CIU.th }; abrirEstudio("ciu", b); } }
-});
-window.addEventListener("resize", ciuDespierta);
-async function esCiudad(dd) {
-  const c = esCanvas(), x = c.getContext("2d"), { W, H, M } = ES, d = CIU.d; if (!d) return null;
-  await Promise.all(d.T.map(t => esImg(t.m.avatarUrl).then(im => { if (im && !CIU.img[t.m.id]) CIU.img[t.m.id] = im; })));
-  esFondo(x);
-  esCabecera(x, { titulo: "LA CIUDAD", kicker: "Un rascacielos por manager · una planta por jornada", pag: 0, total: 1 });
-  const y0 = 370, h = 800; x.save(); esRect(x, M / 2, y0, W - M, h, 36); x.clip(); x.translate(M / 2, y0);
-  ciuDibuja(x, W - M, h, { th: dd.th, t: d.n, sel: null, piso: null, ahora: 0, zoom: 0, u: 2.5 }); x.restore();
-  x.strokeStyle = "rgba(47,212,110,.4)"; x.lineWidth = 3; esRect(x, M / 2, y0, W - M, h, 36); x.stroke();
-  esPie(x, "Más alta y con más luces, más puntos · plantas blancas, jornadas ganadas");
-  return c;
-}
-ES_SETS.ciu = [["La ciudad", esCiudad]];
 
 /* ---------- La cinta: lo último de la liga pasando bajo la cabecera, como en las retransmisiones ---------- */
 // Solo datos ya ocurridos (líder, última jornada, valores de hoy, fichajes, rachas): es lo estadístico, para todos.
@@ -8295,10 +8186,9 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button class="pt-ent" data-ir="ciudad"><i>🏙️</i><b>La ciudad en 3D</b><small>Un rascacielos por manager: gírala con el dedo</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
-    <section class="card" id="ciudad" aria-label="La ciudad de la liga"></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
     <section class="card" id="graf"></section>
     <section class="card" id="rep"></section>
@@ -8324,7 +8214,6 @@ function pintar() {
   if (!ENTRADA_HECHA) entradaMarcador();
   pintarCronica();
   pintarGrafico();
-  pintarCiudad();
   pintarRepeticion();
   pintarLinea();
   pintarRed();
