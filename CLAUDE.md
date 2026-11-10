@@ -62,7 +62,7 @@ Los 8 puntos de arriba ya están hechos. El dueño: «modernizar toda la web y c
 1. «Explora» también en Equipos (y en Capitán y Mercado con PIN): tarjetas deslizables arriba que llevan a cada bloque, para que las pestañas no sean una lista interminable.
 2. Láminas para compartir de la Bolsa, el mapa de la conquista y la galaxia (estudio de imágenes, `ES_SETS`).
 3. Ficha del jugador como pantalla de app: cabecera con la foto grande sobre el color de su equipo, cifras grandes y el cromo arriba.
-4. Duelo de onces: los dos onces de un cara a cara en el mismo campo 3D (`htmlCampo3D`), uno en cada mitad.
+4. (Hecho: «El partido en 3D», `ptAbrir`.) Ampliarlo: partido de la jornada en la Crónica (1.º contra 2.º), y una «liga de partidos» (clasificación si cada jornada fuese un cara a cara).
 5. Jornada en directo como «actividad en vivo»: tarjeta fija arriba mientras se juega, con los puntos de cada manager subiendo y quién va ganando.
 6. Mercado (con PIN): radar de pujas, un sónar animado con los libres según su puja ideal y la probabilidad de llevárselos.
 7. Capitán (con PIN): la distribución de puntos posible de cada candidato (curva o violín) en vez de solo techo y suelo.
