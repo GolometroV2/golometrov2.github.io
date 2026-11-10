@@ -482,6 +482,7 @@ code{color:var(--accFg)}
 .pq small{font-size:11px;color:var(--mut)}
 .pb{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
 .pb i{display:block;height:100%;border-radius:4px;min-width:2px}
+.pb.dos{display:flex}.pb.dos i{flex:none}
 .pp{flex:none;min-width:52px;text-align:right;font-size:19px;font-weight:800}
 .posw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}
 .mov{font-size:10px;font-weight:800;line-height:1}
@@ -3463,6 +3464,25 @@ function bloqueDependencia(ms) {
     <p class="note">Más dependiente: <b>${esc(a.m.name)}</b> (${Math.round(a.pct * 100)} % en 3 jugadores). Más repartido: <b>${esc(z.m.name)}</b> (${Math.round(z.pct * 100)} %).</p></section>`;
 }
 
+// Acierto con el capitán: puntos extra que dio el capitán frente al mejor del once (solo jornadas pasadas)
+function bloqueAciertoCap() {
+  if (!D || !D.managers || !D.matchdays) return "";
+  const L = D.managers.map((m, ci) => {
+    let ganado = 0, perdido = 0, aciertos = 0, n = 0;
+    Object.values(D.matchdays).forEach(j => { const x = j && j[m.id]; if (!x || !x.captain || !x.players || !x.players.length) return;
+      const k = (x.captain.multiplier || 2) - 1, bp = p => capNum(p.basePoints) ? p.basePoints : (p.points || 0);
+      const mejor = Math.max(...x.players.map(bp)), cb = capNum(x.captain.basePoints) ? x.captain.basePoints : 0;
+      ganado += cb * k; perdido += Math.max(0, mejor - cb) * k; n++; if (cb >= mejor) aciertos++; });
+    return { m, ci, ganado, perdido, aciertos, n };
+  }).filter(r => r.n > 0).sort((a, b) => (b.ganado - b.perdido) - (a.ganado - a.perdido));
+  if (L.length < 3) return "";
+  const mx = Math.max(1, ...L.map(r => r.ganado + r.perdido));
+  return `<section class="card"><div class="gh"><h2>Acierto con el capitán</h2></div>
+    <p class="note" style="margin:0 0 8px">Puntos extra que dio el capitán (verde) y los que se dejó por no elegir al mejor de su once (rojo) en cada jornada ya jugada.</p>
+    <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb dos" role="img" aria-label="${r.ganado} puntos extra y ${r.perdido} perdidos"><i style="width:${(r.ganado / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i><i style="width:${(r.perdido / mx * 100).toFixed(1)}%;background:var(--red);opacity:.55"></i></span><small>Mejor capitán en ${r.aciertos} de ${r.n} jornadas · se dejó ${r.perdido}</small></span><span class="pp ${cl(r.ganado - r.perdido)}" style="font-size:15px">${r.ganado}</span></li>`).join("")}</ul>
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p></section>`;
+}
+
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
@@ -3670,6 +3690,7 @@ function resumenEq(ms, hp) {
     ${bloqueGalaxia()}
     ${bloqueRadar(ms)}
     ${bloqueDependencia(ms)}
+    ${bloqueAciertoCap()}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${bloqueDisciplina()}
