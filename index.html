@@ -3577,6 +3577,22 @@ function bloqueAciertoCap() {
     <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p></section>`;
 }
 
+// Banquillo de la temporada: puntos que cada manager se dejó fuera del once sumando las jornadas (reutiliza banquilloJornada)
+function bloqueBanquilloTemp() {
+  if (!D || !D.matchdays || !LIGAJ || LIGAJ.cargando) return "";
+  const T = {}; let nj = 0;
+  jornadas().forEach(j => { const b = banquilloJornada(j); if (!b) return; nj++;
+    D.managers.forEach(m => { if (!b[m.id]) return; const t = T[m.id] || (T[m.id] = { perd: 0, real: 0, max: 0, clav: 0 });
+      t.perd += b[m.id].perdidos; t.real += b[m.id].real; t.max += b[m.id].max; if (!b[m.id].perdidos) t.clav++; }); });
+  const L = D.managers.map((m, ci) => ({ m, ci, ...(T[m.id] || {}) })).filter(r => r.max > 0).sort((a, b) => a.perd - b.perd);
+  if (nj < 2 || L.length < 3) return "";
+  const mx = Math.max(1, ...L.map(r => r.perd));
+  return `<section class="card"><div class="gh"><h2>Banquillo de la temporada</h2></div>
+    <p class="note" style="margin:0 0 8px">Puntos (sin capitán) que cada manager se dejó fuera de su once sumando ${nj} jornadas, frente al mejor once que podía hacer con su plantilla de entonces. Menos barra = mejores alineaciones.</p>
+    <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.perd} puntos dejados en el banquillo"><i style="width:${Math.max(2, r.perd / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i></span><small>${Math.round(r.real / r.max * 100)} % del once perfecto${r.clav ? ` · ${r.clav} ${r.clav === 1 ? "jornada" : "jornadas"} perfecta${r.clav === 1 ? "" : "s"}` : ""}</small></span><span class="pts"><b>${r.perd}</b></span></li>`).join("")}</ul>
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L[L.length - 1].m.name)}</b> (${L[L.length - 1].perd}).</p></section>`;
+}
+
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
   if (PAR && !LIGA) capAplicarLiga(PAR.liga);
@@ -3785,6 +3801,7 @@ function resumenEq(ms, hp) {
     ${bloqueRadar(ms)}
     ${bloqueDependencia(ms)}
     ${bloqueAciertoCap()}
+    ${bloqueBanquilloTemp()}
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${bloqueDisciplina()}
