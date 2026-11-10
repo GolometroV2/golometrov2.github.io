@@ -5643,23 +5643,28 @@ function pintarMercado() {
   }).join("");
   const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
   const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
+  const mx = [["mesa", "🎛️", "Mesa", "Simula ventas y pujas", bloqueMesa(r)], ["plan", "🗓️", "Plan del parón", "Qué hacer con el saldo", bloquePlanParon(r)], ["hero", "🎯", "Mejor puja", "El libre que más compensa", mejor ? heroMer(mejor, cierre) : ""],
+    ["esc", "🛡️", "Escudo", "Protege tus cláusulas", bloqueEscudo(r)], ["riv", "🔍", "Tus rivales", "Qué buscan los demás", bloqueLeerRivales(r)], ["cal", "📅", "Calendario", "Próximos partidos de los libres", bloqueCalendario()]].filter(x => x[4]);
+  const mb = k => { const x = mx.find(y => y[0] === k); return x ? `<div id="mex-${k}">${x[4]}</div>` : ""; };
+  const mexplora = `<nav class="indice bento" aria-label="Más del Mercado">${mx.map(x => `<button data-ir="mex-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
   cont.innerHTML = `
     <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
       <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
       ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
-    ${bloqueMesa(r)}
-    ${bloquePlanParon(r)}
-    ${mejor ? heroMer(mejor, cierre) : ""}
+    ${mexplora}
+    ${mb("mesa")}
+    ${mb("plan")}
+    ${mb("hero")}
     ${bloqueSimPuja(r, mejor)}
     ${bloqueParaTi(r)}
     ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
     ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
     ${bloqueInversion(r)}
-    ${bloqueEscudo(r)}
-    ${bloqueLeerRivales(r)}
+    ${mb("esc")}
+    ${mb("riv")}
     ${bloqueMercadoAyer(MER_DATA)}
     ${bloqueSubidas(MER_DATA)}
-    ${bloqueCalendario()}
+    ${mb("cal")}
     ${bloqueRacha(MER_DATA)}
     ${bloquePujanRivales()}
     ${bloquePujasLiga()}
