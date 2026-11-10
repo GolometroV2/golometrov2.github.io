@@ -7845,10 +7845,49 @@ function bloqueConquista() {
       <path d="${camino(sil)}" class="cq-halo" filter="url(#cqBrillo)"/>
       <g clip-path="url(#cqEsp)">${territorios}</g>
       <path d="${camino(sil)}" class="cq-sil"/>${escudos}</svg></div>
-    ${info}<ul class="cq-ley">${leyenda}</ul></section>`;
+    ${info}<ul class="cq-ley">${leyenda}</ul><div class="acciones"><button class="btn-cromo" data-conq-comp>📤 Compartir lámina</button></div></section>`;
 }
+// Lámina de la conquista: el mismo mapa (Voronoi recortado a España), mismos dueños y cifras que la tarjeta de Equipos
+async function esConquista(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, C = d.C;
+  const Wm = 780, Hm = 640, esc = 1.02, ox = (W - Wm * esc) / 2, oy = 395;
+  const pts = C.T.map(t => ESP_PX(t.c)), celdas = voronoi(pts, Wm, Hm);
+  const ims = await Promise.all(C.T.map(t => esImg(esEscudo(t.id))));
+  const mans = D.managers.map((m, i) => ({ m, i }));
+  const avs = await Promise.all(mans.map(o => esImg(o.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "LA CONQUISTA", kicker: "Quién manda en cada equipo de LaLiga", pag: 0, total: 1 });
+  const P = q => [ox + q[0] * esc, oy + q[1] * esc], trazo = L => { x.beginPath(); L.forEach((q, k) => { const [a, b] = P(q); k ? x.lineTo(a, b) : x.moveTo(a, b); }); x.closePath(); };
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.shadowColor = "rgba(47,212,110,.5)"; x.shadowBlur = 40; x.fillStyle = "#0b1410"; x.fill(); x.restore();
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.clip();
+  celdas.forEach((pol, k) => { if (pol.length < 3) return; const t = C.T[k]; trazo(pol);
+    x.globalAlpha = t.due ? 0.78 : 0.45; x.fillStyle = t.due ? col(t.due.i) : "#5d6b63"; x.fill(); x.globalAlpha = 1; x.strokeStyle = "#0b1410"; x.lineWidth = 3; x.stroke(); });
+  x.restore();
+  x.save(); trazo(ESP_SIL.map(ESP_PX)); x.strokeStyle = ES.luz; x.lineWidth = 3; x.stroke(); x.restore();
+  const r = 27, pos = pts.map(p => [...p]);   // escudos separados entre sí, igual que en la tarjeta
+  for (let it = 0; it < 140; it++) pos.forEach((a, i) => { pos.forEach((b, j) => { if (i >= j) return; const dx = b[0] - a[0], dy = b[1] - a[1], dd = Math.hypot(dx, dy) || 0.01, m = 2 * r + 6 - dd;
+    if (m > 0) { const ux = dx / dd * m / 2, uy = dy / dd * m / 2; a[0] -= ux; a[1] -= uy; b[0] += ux; b[1] += uy; } });
+    a[0] += (pts[i][0] - a[0]) * 0.02; a[1] += (pts[i][1] - a[1]) * 0.02; });
+  C.T.forEach((t, k) => { const [X, Y] = P(pos[k]), R = r * esc;
+    x.beginPath(); x.arc(X, Y, R, 0, 2 * Math.PI); x.fillStyle = "rgba(8,16,12,.9)"; x.fill(); x.lineWidth = 4; x.strokeStyle = t.due ? col(t.due.i) : "#8a978f"; x.stroke();
+    if (ims[k]) x.drawImage(ims[k], X - R * 0.66, Y - R * 0.66, R * 1.32, R * 1.32); });
+  // marcador de territorios por manager
+  const cuenta = {}; C.T.forEach(t => { if (t.due) cuenta[t.due.i] = (cuenta[t.due.i] || 0) + 1; });
+  const rk = mans.map((o, j) => ({ ...o, im: avs[j], n: cuenta[o.i] || 0 })).sort((a, b) => b.n - a.n);
+  const cw = (W - 2 * M) / 4, ry = 1070;
+  rk.forEach((f, j) => { const cx = M + (j % 4) * cw + cw / 2, cy = ry + Math.floor(j / 4) * 92;
+    esAvatar(x, f.m, f.i, f.im, cx - cw / 2 + 40, cy + 30, 30, col(f.i));
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esF(800, 20); x.fillText(esCorta(x, f.m.name, cw - 92), cx - cw / 2 + 80, cy + 26);
+    x.fillStyle = ES.verde; x.font = esF(900, 38, "condensed"); x.fillText(String(f.n), cx - cw / 2 + 80, cy + 62); });
+  const libres = C.T.filter(t => !t.due).length;
+  esPie(x, `Manda quien más puntos suma${libres ? ` · ${libres} libres` : ""}`);
+  return c;
+}
+ES_SETS.conq = [["La conquista", esConquista]];
 function pintarConquista() { const s = $("#conq"); if (s) s.outerHTML = bloqueConquista(); }
 document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-conq-comp]");
+  if (b) { const C = conquistaDatos(); if (C) { EST_DAT.conq = { C, n: Object.keys(D.matchdays).length }; abrirEstudio("conq", b); } return; }
   const t = e.target.closest && e.target.closest("[data-conq]"); if (!t) return;
   conqSel = conqSel === t.dataset.conq ? null : t.dataset.conq; pintarConquista();
 });
