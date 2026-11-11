@@ -3487,8 +3487,12 @@ function pintarRentables() {
     <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${rentPos === k ? "on" : ""}" data-rpos="${k}" aria-pressed="${rentPos === k}">${t}</button>`).join("")}</div>
     <ul class="pron">${bien.map((x, k) => fila(x, k, true)).join("")}</ul>
     ${mal.length ? `<h3 class="sec">Los caros que menos rinden (8 M o más)</h3>
-    <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}`;
+    <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}
+    <div class="acciones"><button class="btn-cromo" data-rent-comp>📤 Compartir lámina</button></div>`;
+  const nom = x => ({ n: x.p.name, pts: x.p.points, v: x.p.value, r: x.r, d: x.p.owner ? (x.p.ownerName || "") : x.p.onMarket ? "en el mercado" : "libre" });
+  RENT_D = { pos: rentPos, bien: bien.slice(0, 7).map(nom), mal: mal.slice(0, 3).map(nom), tot: J.length };
 }
+let RENT_D = null;
 
 /* ---------- Termómetro del valor: quién más ha subido y bajado en 7 días en toda LaLiga (estadístico, lee LIGAJ.val) ---------- */
 function pintarTermometro() {
@@ -7826,6 +7830,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-clu-comp]")) { if (CLUBES_D) { EST_DAT.clu = { ...CLUBES_D }; abrirEstudio("clu", e.target.closest("[data-clu-comp]")); } return; }
@@ -8023,6 +8028,26 @@ async function esRecords(d) {
   esPie(x, `Peor jornada: ${d.peorJ.m.name} (${d.peorJ.p}) en la ${d.peorJ.j}`);
   return c;
 }
+async function esRentables(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const pn = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }[d.pos] || "todas las posiciones";
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MÁS RENTABLES", kicker: "Puntos por millón · " + pn, pag: 0, total: 1 });
+  const mx = Math.max(1, ...d.bien.map(r => r.r)), h = 84;
+  d.bien.forEach((r, k) => {
+    const Y = 380 + k * (h + 12);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 28);
+    x.fillText(esAjusta(x, `${k + 1}.º ${r.n}`, 560, 700, 28, 21), M + 26, Y + 33);
+    x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(esCorta(x, `${r.pts} pts · vale ${f1(r.v / 1e6)} M · ${r.d}`, 560), M + 26, Y + 58);
+    x.fillStyle = ES.linea; x.fillRect(M + 26, Y + 68, 560, 6);
+    x.fillStyle = ES.verde; x.fillRect(M + 26, Y + 68, Math.max(6, 560 * r.r / mx), 6);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 48, "condensed"); x.fillText(f1(r.r), W - M - 24, Y + 56); x.textAlign = "left";
+  });
+  esPie(x, d.mal.length ? `Caros que no rinden: ${d.mal.map(r => r.n).join(", ")}` : `${d.tot} jugadores comparados · ${d.n} jornadas`);
+  return c;
+}
 async function esClubes(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7);
@@ -8123,6 +8148,7 @@ async function esFotos(d) {
   return c;
 }
 ES_SETS.foto = [["Finales de foto", esFotos]];
+ES_SETS.rent = [["Los más rentables", esRentables]];
 ES_SETS.clu = [["Clubes", esClubes]];
 ES_SETS.rec = [["Récords", esRecords]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
