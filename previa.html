@@ -3408,14 +3408,17 @@ function pintarRotacion() {
   const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${f1(r.med)} cambios de media por jornada"><i style="width:${Math.max(3, r.med / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.dist} jugadores distintos en ${r.n + 1} jornadas</small></span>
       <span class="pts"><b>${f1(r.med)}</b></span></li>`).join("");
   const a = R[0], z = R[R.length - 1];
+  ROTA_D = { L: R.map(r => ({ m: r.m, i: r.i, med: r.med, dist: r.dist, n: r.n + 1, fijo: r.fijo ? { name: r.fijo.name, n: r.fijo.n, pts: r.fijo.pts } : null })), mx };
   cont.innerHTML = `<div class="gh"><h2>Rotación del once</h2></div>
     <p class="note" style="margin:0 0 10px">Jugadores nuevos que mete cada manager en su once, de media, respecto a la jornada anterior. Más barra = más cambios; menos, un once más estable.</p>
     <ul class="pron">${filas}</ul>
     <h3 class="sec">Los fijos</h3>
     <ul class="pron">${R.filter(r => r.fijo).map(r => `<li data-ficha="${r.fijo.id}">${cara(r.fijo.id, r.fijo.name, r.fijo.teamId, 36)}<span class="pq"><b>${esc(r.fijo.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · en ${r.fijo.n} de ${r.n + 1} onces</span></span><span class="pts"><b>${nf0.format(r.fijo.pts)}</b> pts</span></li>`).join("")}</ul>
     <p class="note">El jugador que más veces ha estado en el once de cada manager y los puntos (sin capitán) que le ha dado.</p>
-    <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>`;
+    <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>
+    <div class="acciones"><button class="btn-cromo" data-rota-comp>📤 Compartir lámina</button></div>`;
 }
+let ROTA_D = null;
 
 /* ---------- Plantones: alineados que no llegaron a jugar (estadístico, solo lee D.matchdays) ---------- */
 function pintarPlantones() {
@@ -7529,7 +7532,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7899,6 +7902,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rota-comp]")) { if (ROTA_D) { EST_DAT.rota = { ...ROTA_D }; abrirEstudio("rota", e.target.closest("[data-rota-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-lib-comp]")) { if (LIB_D && LIB_D.L.length) { EST_DAT.lib = { ...LIB_D }; abrirEstudio("lib", e.target.closest("[data-lib-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-term-comp]")) { if (TERM_D) { EST_DAT.term = { ...TERM_D }; abrirEstudio("term", e.target.closest("[data-term-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
@@ -8304,6 +8308,27 @@ async function esAltibajos(d) {
   return c;
 }
 ES_SETS.alti = [["Altibajos", esAltibajos]];
+async function esRotacion(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56 - 150, f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "ROTACIÓN", kicker: "Cambios de once por jornada", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, r.fijo ? `el fijo: ${r.fijo.name} (${r.fijo.n} de ${r.n} onces)` : `${r.dist} jugadores distintos`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(X0, Y + 78, AN, 8);
+    x.fillStyle = k === 0 ? ES.verde : ES.mut; x.fillRect(X0, Y + 78, Math.max(6, r.med / d.mx * AN), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(f1(r.med), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El que más rota: ${d.L[0].m.name} · el más fiel a su once: ${d.L[d.L.length - 1].m.name}`);
+  return c;
+}
+ES_SETS.rota = [["Rotación", esRotacion]];
 async function esFotos(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R, mx = Math.max(1, ...R.map(r => r.d));
