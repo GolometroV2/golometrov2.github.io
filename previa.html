@@ -3242,7 +3242,7 @@ function pintarMatriz() {
   js.forEach(j => M.forEach((a, x) => M.forEach((b, y) => {
     const pa = pt(j, a), pb = pt(j, b);
     if (x === y || !capNum(pa) || !capNum(pb)) return;
-    g[x][y].t++; if (pa > pb) g[x][y].w++;
+    g[x][y].t++; if (pa > pb) g[x][y].w++; else if (pa === pb) g[x][y].e = (g[x][y].e || 0) + 1;
   })));
   if (n < 2 || !g.some(f => f.some(c => c.t))) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
@@ -3263,11 +3263,18 @@ function pintarMatriz() {
     det.hidden = false;
     det.innerHTML = `<b>${esc(A.name)} contra ${esc(B.name)}</b><div class="mx-ch">${lis.map(r => `<span class="${r.pa > r.pb ? "g" : r.pa < r.pb ? "r" : ""}">J${String(r.j).replace(/\D/g, "")}<small>${r.pa}-${r.pb}</small></span>`).join("")}</div>`;
   };
+  // Liga de duelos: 3 puntos por victoria y 1 por empate en cada duelo jornada a jornada; se compara con el puesto real
+  const real = M.map((m, x) => js.reduce((t, j) => t + (pt(j, m) || 0), 0));
+  const ordReal = M.map((_, x) => x).sort((a, b) => real[b] - real[a]);
+  const liga = M.map((m, x) => { const w = g[x].reduce((t, c) => t + c.w, 0), e = g[x].reduce((t, c) => t + (c.e || 0), 0), t = g[x].reduce((s, c) => s + c.t, 0); return { m, x, w, e, l: t - w - e, p: 3 * w + e }; }).sort((a, b) => b.p - a.p || b.w - a.w);
+  const mxp = Math.max(1, ...liga.map(r => r.p));
+  const ligaHtml = `<h3 class="sec">Liga de duelos</h3><p class="note" style="margin:0 0 8px">Como si cada jornada fuese un partido contra todos los demás: 3 puntos por ganar y 1 por empatar. La flecha compara con la clasificación real.</p>
+    <ul class="pron">${liga.map((r, k) => { const d = ordReal.indexOf(r.x) - k; return `<li>${avatar(r.m, r.x)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.p} puntos de duelos"><i style="width:${(r.p / mxp * 100).toFixed(0)}%"></i></span><small>${r.w} ganados · ${r.e} empates · ${r.l} perdidos${d ? ` · <span class="${d > 0 ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${Math.abs(d)} ${d > 0 ? "mejor" : "peor"} que en la clasificación real</span>` : ""}</small></span><span class="pts"><b>${r.p}</b> pts</span></li>`; }).join("")}</ul>`;
   cont.innerHTML = `<div class="gh"><h2>Cara a cara de todos</h2></div>
     <p class="note" style="margin:0 0 10px">Cada casilla dice en cuántas jornadas ganó el de la izquierda al de arriba (ganadas-perdidas). Verde: le gana más veces; rojo: pierde más.</p>
     <div class="mx-g" style="grid-template-columns:30px repeat(${n},minmax(0,1fr))"><span></span>${cab}${filas}</div>
     <div class="mx-det" id="mxDet" aria-live="polite" hidden></div>
-    <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>`;
+    <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>${ligaHtml}`;
 }
 
 /* ---------- Rachas: jornadas seguidas por encima o por debajo de la mediana ---------- */
