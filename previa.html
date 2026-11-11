@@ -3352,8 +3352,11 @@ function pintarLigaDuelos() {
   cont.innerHTML = `<div class="gh"><h2>Liga de duelos</h2></div>
     <p class="note" style="margin:0 0 10px">Y si cada jornada fuese un todos contra todos: cada manager gana 3 por cada rival al que supera ese fin de semana y 1 por cada empate. Premia ganar muchas jornadas, no sumar muchos puntos. La flecha compara con la clasificación real.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>`;
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>
+    <div class="acciones"><button class="btn-cromo" data-duel-comp>📤 Compartir lámina</button></div>`;
+  LD_D = { n: js.length, cambian, R: duel.map((r, k) => ({ m: r.m, g: r.g, e: r.e, p: r.p, pt: r.pt, d: real.indexOf(r) - k })) };
 }
+let LD_D = null;
 
 /* ---------- Formaciones: qué esquema da más puntos (estadístico) ---------- */
 function pintarFormaciones() {
@@ -7831,6 +7834,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-clu-comp]")) { if (CLUBES_D) { EST_DAT.clu = { ...CLUBES_D }; abrirEstudio("clu", e.target.closest("[data-clu-comp]")); } return; }
@@ -8147,6 +8151,27 @@ async function esFotos(d) {
   esPie(x, `Ventaja media ${d.med.toFixed(1).replace(".", ",")} pts · mayor paliza: ${d.paliza.j} (${d.paliza.d})`);
   return c;
 }
+async function esDuelos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(1, ...R.map(r => r.pt));
+  esFondo(x);
+  esCabecera(x, { titulo: "LIGA DE DUELOS", kicker: "Todos contra todos cada jornada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, `${k + 1}.º ${r.m.name}`, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.g} ganados · ${r.e} empates · ${r.p} perdidos · ${r.d > 0 ? "▲ " + r.d : r.d < 0 ? "▼ " + -r.d : "="} vs. real`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.pt / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.pt), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, d.cambian ? `Cambiarían de puesto ${d.cambian} managers` : "La clasificación sería la misma");
+  return c;
+}
+ES_SETS.duel = [["Liga de duelos", esDuelos]];
 ES_SETS.foto = [["Finales de foto", esFotos]];
 ES_SETS.rent = [["Los más rentables", esRentables]];
 ES_SETS.clu = [["Clubes", esClubes]];
