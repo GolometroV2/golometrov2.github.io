@@ -3651,6 +3651,7 @@ function pintarPersecucion() {
 let PERS_D = null;
 
 /* ---------- Goleadores y asistentes de la liga: los jugadores con más goles y pases de gol entre los once de los managers (estadístico, solo lee D.matchdays) ---------- */
+let GOL_D = null;
 function pintarGoleadores() {
   const cont = $("#gole"); if (!cont || !D || !D.matchdays) return;
   const J = new Map(), M = D.managers;
@@ -3672,10 +3673,13 @@ function pintarGoleadores() {
   const porMin = () => { const t = L.filter(r => r.mn >= 270).map(r => ({ r, v: r.bp / r.mn * 90 })).sort((a, b) => b.v - a.v).slice(0, 5); if (!t.length) return "";
     const mx = t[0].v || 1;
     return `<h3 class="sec">⏱️ Más puntos por 90 minutos</h3><ul class="pron">${t.map((x, k) => `<li data-ficha="${x.r.id}">${cara(x.r.id, x.r.name, x.r.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.r.name)}</b><span class="pb" role="img" aria-label="${x.v.toFixed(1)}"><i style="width:${(x.v / mx * 100).toFixed(1)}%"></i></span><small>${x.r.mn} minutos en total</small></span><span class="pts"><b>${x.v.toFixed(1).replace(".", ",")}</b> pts/90</span></li>`).join("")}</ul>`; };
+  const top3 = c => L.filter(r => r[c] > 0).sort((a, b) => b[c] - a[c] || b.vistos.size - a.vistos.size).slice(0, 5).map(r => ({ n: r.name, v: r[c], j: r.vistos.size }));
+  GOL_D = { g: top3("g"), a: top3("a"), c: top3("c"), n: jornadas().length };
   cont.innerHTML = `<div class="gh"><h2>Goleadores de la liga</h2></div>
     <p class="note" style="margin:0 0 10px">Los jugadores con más goles, asistencias y porterías a cero (portero con 60 minutos o más sin encajar) contando solo las jornadas en las que algún manager los alineó (una jornada cuenta una vez aunque lo tengan varios). Tocar uno abre su ficha.</p>
     <h3 class="sec">⚽ Más goles</h3>${lista("g", "goles")}
-    <h3 class="sec">👟 Más asistencias</h3>${lista("a", "asist.")}${porMin()}${L.some(r => r.c > 0) ? `<h3 class="sec">🧤 Porterías a cero</h3>${lista("c", "a cero")}` : ""}`;
+    <h3 class="sec">👟 Más asistencias</h3>${lista("a", "asist.")}${porMin()}${L.some(r => r.c > 0) ? `<h3 class="sec">🧤 Porterías a cero</h3>${lista("c", "a cero")}` : ""}
+    <div class="acciones"><button class="btn-cromo" data-gol-comp>📤 Compartir lámina</button></div>`;
 }
 
 /* ---------- Récords de la temporada: las mejores actuaciones individuales y de manager (solo lee D.matchdays) ---------- */
@@ -7836,6 +7840,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
@@ -8056,6 +8061,28 @@ async function esRentables(d) {
   esPie(x, d.mal.length ? `Caros que no rinden: ${d.mal.map(r => r.n).join(", ")}` : `${d.tot} jugadores comparados · ${d.n} jornadas`);
   return c;
 }
+async function esGoleadores(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "GOLEADORES", kicker: "Goles, asistencias y porterías a cero · " + d.n + " jornadas", pag: 0, total: 1 });
+  const grupos = [["⚽ GOLES", d.g], ["👟 ASISTENCIAS", d.a], ["🧤 A CERO", d.c]].filter(g => g[1].length);
+  const filas = Math.min(3, Math.max(...grupos.map(g => g[1].length)));
+  const h = 56, gap = 8, bloque = 44 + filas * (h + gap) + 14;
+  grupos.forEach(([tit, L], gi) => {
+    const Y0 = 340 + gi * bloque, mx = Math.max(1, L[0].v);
+    x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(800, 26); x.fillText(tit, M, Y0 + 28);
+    L.slice(0, filas).forEach((r, k) => {
+      const Y = Y0 + 44 + k * (h + gap);
+      esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 16);
+      x.fillStyle = ES.txt; x.font = esS(700, 26); x.fillText(esAjusta(x, `${k + 1}.º ${r.n}`, 520, 700, 26, 20), M + 22, Y + 28);
+      x.fillStyle = ES.linea; x.fillRect(M + 22, Y + 40, 520, 6);
+      x.fillStyle = ES.verde; x.fillRect(M + 22, Y + 40, Math.max(6, 520 * r.v / mx), 6);
+      x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 40, "condensed"); x.fillText(String(r.v), W - M - 22, Y + 42); x.textAlign = "left";
+    });
+  });
+  esPie(x, "Jornadas con algún manager que los alineó");
+  return c;
+}
 async function esClubes(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7);
@@ -8197,6 +8224,7 @@ ES_SETS.rach = [["Rachas", esRachas]];
 ES_SETS.duel = [["Liga de duelos", esDuelos]];
 ES_SETS.foto = [["Finales de foto", esFotos]];
 ES_SETS.rent = [["Los más rentables", esRentables]];
+ES_SETS.gol = [["Goleadores", esGoleadores]];
 ES_SETS.clu = [["Clubes", esClubes]];
 ES_SETS.rec = [["Récords", esRecords]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
