@@ -1,7 +1,43 @@
 {
-"updatedAt": "2026-11-10T04:03:46Z",
+"updatedAt": "2026-11-11T04:03:53Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-11T04:03:53Z",
+"playerId": "5523151",
+"name": "Aimar Blazquez",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 191000,
+"listado": 160000,
+"precio": null,
+"clausulaMinima": true
+},
+{
+"ts": "2026-11-11T04:03:53Z",
+"playerId": "64031",
+"name": "Hugo Rincón",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 1296000,
+"listado": 1248000,
+"precio": 2048000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-11T04:03:53Z",
+"playerId": "19562",
+"name": "Takefusa Kubo",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 5083000,
+"listado": 5121000,
+"precio": 5213000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-10T04:03:46Z",
 "playerId": "70941",
