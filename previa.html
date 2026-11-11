@@ -3456,9 +3456,10 @@ function pintarClubes() {
 }
 
 /* ---------- Rentabilidad: puntos por millón de valor en toda LaLiga (estadístico, lee jugadores.json vía LIGAJ) ---------- */
+let rentPos = "";
 function pintarRentables() {
   const cont = $("#rent"); if (!cont) return;
-  const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => capNum(p.value) && p.value >= 1e6 && capNum(p.points) && p.points >= 20) : [];
+  const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => (!rentPos || p.pos === rentPos) && capNum(p.value) && p.value >= 1e6 && capNum(p.points) && p.points >= 20) : [];
   if (J.length < 20) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
   const R = J.map(p => ({ p, r: p.points / (p.value / 1e6) }));
@@ -3468,9 +3469,10 @@ function pintarRentables() {
   const fila = (x, k, barra) => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.p.name)}</b>${barra ? `<span class="pb" role="img" aria-label="${nf1.format(x.r)} puntos por millón"><i style="width:${(x.r / mx * 100).toFixed(1)}%"></i></span>` : ""}<small>${x.p.points} pts · vale ${eur(x.p.value)} · ${dueno(x.p)}</small></span><span class="pts"><b>${nf1.format(x.r)}</b> pts/M</span></li>`;
   cont.innerHTML = `<div class="gh"><h2>Los más rentables</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos de la temporada por cada millón de valor actual, en todos los jugadores de LaLiga con 1 M o más y 20 puntos o más. Cuanto más alto, más rinde lo que cuesta.</p>
+    <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${rentPos === k ? "on" : ""}" data-rpos="${k}" aria-pressed="${rentPos === k}">${t}</button>`).join("")}</div>
     <ul class="pron">${bien.map((x, k) => fila(x, k, true)).join("")}</ul>
-    <h3 class="sec">Los caros que menos rinden (8 M o más)</h3>
-    <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>`;
+    ${mal.length ? `<h3 class="sec">Los caros que menos rinden (8 M o más)</h3>
+    <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}`;
 }
 
 /* ---------- Termómetro del valor: quién más ha subido y bajado en 7 días en toda LaLiga (estadístico, lee LIGAJ.val) ---------- */
@@ -9008,9 +9010,10 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg],[data-rpos]");
   if (!t) return;
   const d = t.dataset;
+  if (d.rpos !== undefined) { rentPos = d.rpos; pintarRentables(); return; }
   if (d.s) {
     // cambio de pestaña con un fundido corto si el navegador lo permite (y sin movimiento si se ha pedido así)
     if (document.startViewTransition && d.s !== seccion && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(() => ir(d.s));
