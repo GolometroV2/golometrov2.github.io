@@ -619,6 +619,10 @@ button.mx-c{border:0;font-family:inherit;cursor:pointer;min-height:44px;padding:
 .fb i{display:block;width:16px;border-radius:4px}
 .fb small{font-size:11px;font-weight:700}.fb em{font-style:normal;font-size:9.5px;color:var(--mut)}
 .fsp{width:100%;height:60px;display:block}
+.fr{display:grid;gap:7px}.fr-f{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:9px;font-size:13px}
+.fr-b{height:10px;border-radius:99px;background:var(--line);overflow:hidden}.fr-b i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 55%,transparent),var(--acc));transform-origin:left;animation:frIn .6s ease-out}
+.fr-f b{min-width:74px;text-align:right;font-variant-numeric:tabular-nums}.fr-f small{font-weight:500;color:var(--mut)}
+@keyframes frIn{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.fr-b i{animation:none}}
 li[data-ficha]{cursor:pointer}
 li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 @media(max-width:380px){.nav>div{gap:6px}.logo{font-size:17px;gap:6px}.acciones{gap:6px}.refresh{padding:7px 11px}}
@@ -2326,6 +2330,11 @@ function abrirFicha(id) {
     spark = `<h3 class="sec">Valor desde el ${vh[0][0].slice(8, 10)}/${vh[0][0].slice(5, 7)}</h3><svg viewBox="0 0 ${W} ${H}" class="fsp" role="img" aria-label="Evolución del valor"><polyline points="${pt}" fill="none" stroke="${d >= 0 ? "var(--pos)" : "var(--red)"}" stroke-width="2.5" stroke-linejoin="round"/></svg>
       <p class="note" style="margin:2px 0 0">${merEur(vs[0])} → ${merEur(vs[vs.length - 1])} (<span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${eur(Math.abs(d))}</span>)</p>`;
   }
+  // puesto entre los jugadores de su misma posición (solo estadístico): puntos, media (con 5 jornadas o más) y valor
+  const mismos = Object.values(LIGAJ.jug).filter(q => q.pos === p.pos);
+  const puesto = (k, ok = () => true) => { const v = p[k]; if (!capNum(v) || !ok(p)) return null; const L = mismos.filter(q => capNum(q[k]) && ok(q)); return L.length < 5 ? null : { r: L.filter(q => q[k] > v).length + 1, n: L.length }; };
+  const rangos = [["Puntos", puesto("points")], ["Media", puesto("avg", q => q.avg > 0 && q.points / q.avg >= 5)], ["Valor", puesto("value")]].filter(x => x[1]);
+  const bloqueRango = rangos.length ? `<h3 class="sec">Entre los ${{ PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }[p.pos] || "de su puesto"} de LaLiga</h3><div class="fr">${rangos.map(([t, x]) => { const pc = Math.max(4, 100 - (x.r - 1) / x.n * 100); return `<div class="fr-f"><span>${t}</span><span class="fr-b" role="img" aria-label="${t}: puesto ${x.r} de ${x.n}"><i style="width:${pc.toFixed(0)}%"></i></span><b>${x.r}.º<small> de ${x.n}</small></b></div>`; }).join("")}</div>` : "";
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2342,6 +2351,7 @@ function abrirFicha(id) {
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
+    ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
     ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
