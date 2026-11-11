@@ -4415,6 +4415,17 @@ function bloqueValor7(ms) {
     <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
 }
 
+// Enfermería: jugadores de cada plantilla con aviso de lesión, duda o sanción hoy (dato de Mister, sin previsión)
+function bloqueEnfermeria(ms) {
+  const L = ms.map(m => ({ m, ps: m.players.map(p => ({ p, e: ESTADO(p.status) })).filter(x => x.e).sort((a, b) => (a.e[0] === "doubt") - (b.e[0] === "doubt") || b.p.value - a.p.value) }))
+    .filter(x => x.ps.length).sort((a, b) => b.ps.reduce((s, x) => s + x.p.value, 0) - a.ps.reduce((s, x) => s + x.p.value, 0));
+  if (!L.length) return `<section class="card"><div class="gh"><h2>Enfermería</h2></div>${vacioHTML("Enfermería vacía", "Ningún jugador de las plantillas está lesionado, en duda o sancionado.")}</section>`;
+  const tot = L.reduce((s, x) => s + x.ps.reduce((t, y) => t + y.p.value, 0), 0);
+  return `<section class="card"><div class="gh"><h2>Enfermería</h2></div>
+    <p class="note" style="margin:0 0 8px">Jugadores con aviso de lesión, duda o sanción en Mister. Suman <b>${eur(tot)}</b> de valor parado.</p>
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><small>${x.ps.map(y => `<span data-ficha="${esc(y.p.id)}">${y.e[1]} ${esc(apellido(y.p.short || y.p.name))} (${y.e[2].toLowerCase()}, ${eur(y.p.value)})</span>`).join(" · ")}</small></span><span class="pp" style="font-size:16px">${x.ps.length}</span></li>`).join("")}</ul></section>`;
+}
+
 // Disciplina: tarjetas y goles en propia que han sumado los onces de cada manager en la temporada (solo datos pasados)
 function disciplinaDatos() {
   if (!D || !D.managers || !D.matchdays) return null;
@@ -4637,7 +4648,7 @@ function resumenEq(ms, hp) {
   const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   const ex = [["gvalor", "📈", "Evolución", "Cuánto vale cada plantilla", graficaValor(ms)], ["bolsa", "🟩", "La Bolsa", "El mercado de LaLiga en un mapa", bloqueBolsa()], ["conquista", "🗺️", "Conquista", "Quién domina cada equipo", bloqueConquista()], ["galaxia", "✨", "Galaxia", "Valor frente a puntos, jugador a jugador", bloqueGalaxia()],
-    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()]]
+    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)]]
     .filter(x => x[4]);
   const bl = k => { const x = ex.find(y => y[0] === k); return x ? `<div id="eqx-${k}">${x[4]}</div>` : ""; };
   const explora = `<nav class="indice bento" aria-label="Más de Equipos">${ex.map(x => `<button data-ir="eqx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
@@ -4653,6 +4664,7 @@ function resumenEq(ms, hp) {
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${bl("exdis")}
+    ${bl("exenf")}
     ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
