@@ -3523,8 +3523,12 @@ function pintarTermometro() {
   cont.innerHTML = `<div class="gh"><h2>Termómetro del valor</h2></div>
     <p class="note" style="margin:0 0 10px">Lo que ha cambiado el valor de cada jugador de LaLiga (1 M o más) en los últimos 7 días.</p>
     <h3 class="sec">Los que más suben</h3><ul class="pron">${sube.map(fila).join("")}</ul>
-    <h3 class="sec">Los que más bajan</h3><ul class="pron">${baja.map(fila).join("")}</ul>`;
+    <h3 class="sec">Los que más bajan</h3><ul class="pron">${baja.map(fila).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-term-comp>📤 Compartir lámina</button></div>`;
+  const nm = x => ({ n: x.p.name, v: x.p.value, d: x.d, pc: x.pc });
+  TERM_D = { sube: sube.slice(0, 4).map(nm), baja: baja.slice(0, 3).map(nm) };
 }
+let TERM_D = null;
 
 /* ---------- Mejores libres: jugadores sin dueño que más puntos llevan (estadístico, lee jugadores.json vía LIGAJ) ---------- */
 let libPos = "";
@@ -7491,7 +7495,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7860,6 +7864,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-term-comp]")) { if (TERM_D) { EST_DAT.term = { ...TERM_D }; abrirEstudio("term", e.target.closest("[data-term-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
@@ -8122,6 +8127,27 @@ async function esRegulares(d) {
   return c;
 }
 ES_SETS.reg = [["Regulares", esRegulares]];
+async function esTermometro(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const L = [...d.sube.map(r => ({ ...r, up: true })), ...d.baja.map(r => ({ ...r, up: false }))];
+  const mx = Math.max(1, ...L.map(r => Math.abs(r.d)));
+  esFondo(x);
+  esCabecera(x, { titulo: "TERMÓMETRO", kicker: "Valor en 7 días · toda LaLiga", pag: 0, total: 1 });
+  const h = 92;
+  L.forEach((r, k) => {
+    const Y = 380 + k * (h + 12) + (k >= d.sube.length ? 24 : 0);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (r.up ? "▲ " : "▼ ") + r.n, 560, 700, 30, 22), M + 28, Y + 36);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `vale ${eur(r.v)} · ${nf1.format(Math.abs(r.pc))} % en 7 días`, 560), M + 28, Y + 62);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 72, 560, 8);
+    x.globalAlpha = r.up ? 1 : 0.45; x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 72, Math.max(6, 560 * Math.abs(r.d) / mx), 8); x.globalAlpha = 1;
+    x.textAlign = "right"; x.fillStyle = r.up ? ES.verde : ES.txt; x.font = esF(800, 44, "condensed"); x.fillText((r.up ? "+" : "−") + eur(Math.abs(r.d)), W - M - 24, Y + 58); x.textAlign = "left";
+  });
+  esPie(x, "Cambio de valor en los últimos 7 días");
+  return c;
+}
+ES_SETS.term = [["Termómetro", esTermometro]];
 async function esClubes(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7);
