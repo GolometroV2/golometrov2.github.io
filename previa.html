@@ -3486,9 +3486,10 @@ function pintarGoleadores() {
   const J = new Map(), M = D.managers;
   jornadas().forEach(j => M.forEach((m, i) => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
     (x.players || []).forEach(p => { if (p.played === false) return;
-      let r = J.get(p.id); if (!r) J.set(p.id, r = { id: p.id, name: p.name, teamId: p.teamId, g: 0, a: 0, vistos: new Set(), uso: {} });
+      let r = J.get(p.id); if (!r) J.set(p.id, r = { id: p.id, name: p.name, teamId: p.teamId, g: 0, a: 0, c: 0, mn: 0, bp: 0, pt: p.pos === "PT", vistos: new Set(), uso: {} });
       r.uso[i] = (r.uso[i] || 0) + 1;
-      if (r.vistos.has(j)) return; r.vistos.add(j); r.g += p.goals || 0; r.a += p.assists || 0; }); }));
+      if (r.vistos.has(j)) return; r.vistos.add(j); r.g += p.goals || 0; r.a += p.assists || 0; r.mn += p.minutes || 0; r.bp += capNum(p.basePoints != null ? p.basePoints : p.points) ? (p.basePoints != null ? p.basePoints : p.points) : 0;
+      if (p.pos === "PT" && p.goalsConceded === 0 && (p.minutes || 0) >= 60) r.c++; }); }));
   const L = [...J.values()];
   if (L.reduce((t, r) => t + r.g, 0) < 5) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
@@ -3497,10 +3498,14 @@ function pintarGoleadores() {
     const t = L.filter(r => r[campo] > 0).sort((a, b) => b[campo] - a[campo] || b.vistos.size - a.vistos.size).slice(0, 5), mx = t.length ? t[0][campo] : 1;
     return `<ul class="pron">${t.map((r, k) => `<li data-ficha="${r.id}">${cara(r.id, r.name, r.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(r.name)}</b><span class="pb" role="img" aria-label="${r[campo]}"><i style="width:${(r[campo] / mx * 100).toFixed(1)}%"></i></span><small>${r.vistos.size} jornadas con él alineado${dueno(r)}</small></span><span class="pts"><b>${r[campo]}</b> ${ico}</span></li>`).join("")}</ul>`;
   };
+  // puntos por 90 minutos (sin capitán), solo jugadores con 270 minutos o más
+  const porMin = () => { const t = L.filter(r => r.mn >= 270).map(r => ({ r, v: r.bp / r.mn * 90 })).sort((a, b) => b.v - a.v).slice(0, 5); if (!t.length) return "";
+    const mx = t[0].v || 1;
+    return `<h3 class="sec">⏱️ Más puntos por 90 minutos</h3><ul class="pron">${t.map((x, k) => `<li data-ficha="${x.r.id}">${cara(x.r.id, x.r.name, x.r.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.r.name)}</b><span class="pb" role="img" aria-label="${x.v.toFixed(1)}"><i style="width:${(x.v / mx * 100).toFixed(1)}%"></i></span><small>${x.r.mn} minutos en total</small></span><span class="pts"><b>${x.v.toFixed(1).replace(".", ",")}</b> pts/90</span></li>`).join("")}</ul>`; };
   cont.innerHTML = `<div class="gh"><h2>Goleadores de la liga</h2></div>
-    <p class="note" style="margin:0 0 10px">Los jugadores con más goles y asistencias contando solo las jornadas en las que algún manager los alineó (una jornada cuenta una vez aunque lo tengan varios). Tocar uno abre su ficha.</p>
+    <p class="note" style="margin:0 0 10px">Los jugadores con más goles, asistencias y porterías a cero (portero con 60 minutos o más sin encajar) contando solo las jornadas en las que algún manager los alineó (una jornada cuenta una vez aunque lo tengan varios). Tocar uno abre su ficha.</p>
     <h3 class="sec">⚽ Más goles</h3>${lista("g", "goles")}
-    <h3 class="sec">👟 Más asistencias</h3>${lista("a", "asist.")}`;
+    <h3 class="sec">👟 Más asistencias</h3>${lista("a", "asist.")}${porMin()}${L.some(r => r.c > 0) ? `<h3 class="sec">🧤 Porterías a cero</h3>${lista("c", "a cero")}` : ""}`;
 }
 
 /* ---------- Récords de la temporada: las mejores actuaciones individuales y de manager (solo lee D.matchdays) ---------- */
