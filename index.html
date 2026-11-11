@@ -183,7 +183,7 @@ ul{list-style:none;margin:0;padding:0}
 .alerta{margin:8px 0 0;background:var(--redBg);color:var(--red);border-radius:var(--r-s);padding:5px 10px;font-size:12.5px;font-weight:600}
 .cv-l{stroke-dasharray:1;stroke-dashoffset:0;animation:cvDib .9s ease-out both}@keyframes cvDib{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @media(prefers-reduced-motion:reduce){.cv-l{animation:none}}
-.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
+.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-t{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 8px;border-radius:var(--r-m);cursor:pointer;font-size:13px;opacity:.6}.cv-t.on{opacity:1;background:var(--accBg)}.cv-t:focus-visible{outline:2px solid var(--acc)}.cv-t i{border:2px solid var(--line);box-sizing:border-box}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
 .cdist{padding:8px 2px 2px}.cdist-t{font-size:12px;font-weight:600;margin-bottom:4px}.cdist svg{width:100%;height:auto;display:block}
 .claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .clave,.rv{background:var(--panel2);border-radius:var(--r-m);overflow:hidden}
@@ -6561,10 +6561,24 @@ function curvaPuntos(c) {
 // «Duelo de curvas» (Capitán, con PIN): la distribución de puntos de los 4 mejores candidatos, superpuestas y suavizadas.
 // Eje = puntos que te darían como capitán (puntos × multiplicador), los mismos `ys` y `pj` del modelo; el área de cada
 // curva es su probabilidad de jugar (lo que falta hasta 100 % es «no juega» y vale 0 puntos).
+let CURVAS_C = [], CURVAS_SEL = null;
 function bloqueCurvas(cands) {
-  const cs = cands.filter(c => c.ys && c.ys.length).slice(0, 4);
-  if (cs.length < 2) return "";
-  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"];
+  CURVAS_C = cands.filter(c => c.ys && c.ys.length).slice(0, 8);
+  if (CURVAS_C.length < 2) return "";
+  CURVAS_SEL = CURVAS_C.slice(0, Math.min(4, CURVAS_C.length)).map((_, k) => k);
+  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box" id="cv-box">${curvasInterior()}</div>`;
+}
+// Elegir candidatos: tocar uno de la lista lo añade o lo quita (entre 2 y 4 a la vez).
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest(".cv-t"); if (!t || !CURVAS_SEL) return;
+  const k = +t.dataset.k, i = CURVAS_SEL.indexOf(k);
+  if (i >= 0) { if (CURVAS_SEL.length > 2) CURVAS_SEL.splice(i, 1); }
+  else { if (CURVAS_SEL.length >= 4) CURVAS_SEL.shift(); CURVAS_SEL.push(k); }
+  const box = document.getElementById("cv-box"); if (box) box.innerHTML = curvasInterior();
+});
+function curvasInterior() {
+  const orden = [...CURVAS_SEL].sort((a, b) => a - b), cs = orden.map(k => CURVAS_C[k]);
+  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"], col = k => cols[orden.indexOf(k)];
   const xs = cs.map(c => c.ys.map(y => y * c.m)), hi = Math.ceil(Math.max(...xs.flat(), 8)), lo = Math.floor(Math.min(0, ...xs.flat()));
   const N = 60, W = 320, H = 120, X = v => (v - lo) / (hi - lo) * W;
   const dens = cs.map((c, k) => { const bw = Math.max(0.8, 0.45 * c.m), w = c.pj / xs[k].length;
@@ -6575,10 +6589,11 @@ function bloqueCurvas(cands) {
     <path class="cv-l" pathLength="1" d="${trazo(d)}" fill="none" stroke="${cols[k]}" stroke-width="2.2" stroke-linejoin="round" style="animation-delay:${k * 120}ms"/>`).join("");
   const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
   const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
-  const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
-  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+  const leyenda = CURVAS_C.map((c, k) => { const on = CURVAS_SEL.includes(k);
+    return `<li><button type="button" class="cv-t${on ? " on" : ""}" data-k="${k}" aria-pressed="${on}"><i style="background:${on ? col(k) : "transparent"}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></button></li>`; }).join("");
+  return `<p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada. Toca a los candidatos de abajo para elegir cuáles comparar (de 2 a 4).</p>
     <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
-    <ul class="cv-ley">${leyenda}</ul></div>`;
+    <ul class="cv-ley">${leyenda}</ul>`;
 }
 
 function clavesCandidato(c, r) {
