@@ -4549,6 +4549,11 @@ function graficaSobreprecio(compras) {
   const med = P.map(d => d.s).sort((a, b) => a - b)[Math.floor(P.length / 2)];
   const media = L => L.length ? L.reduce((s, d) => s + d.g, 0) / L.length : 0;
   const caros = P.filter(d => d.s > med), baratos = P.filter(d => d.s <= med);
+  // por vía de compra: cláusula frente a puja en el mercado
+  const fila_ = (nom, L) => { if (L.length < 2) return ""; const sm = L.reduce((a, d) => a + d.s, 0) / L.length;
+    return `<li><span class="pq"><b>${nom}</b><small>${L.length} compras · sobreprecio medio ${sm >= 0 ? "+" : "−"}${nf1.format(Math.abs(sm))} %</small></span><span class="pp ${cl(media(L))}" style="font-size:15px">${sig(media(L) * 1e6)}</span></li>`; };
+  const fc = fila_("Por cláusula", P.filter(d => d.x.tipo === "clausula")), fm = fila_("Por puja en el mercado", P.filter(d => d.x.tipo === "mercado"));
+  const porTipo = fc || fm ? `<ul class="pron">${fc}${fm}</ul><p class="note">Ganancia media de valor hasta hoy según cómo se fichó.</p>` : "";
   const W = 320, H = 190, l = 34, r = 8, t = 10, b = 24;
   const q85 = f => { const v = P.map(d => Math.abs(f(d))).sort((a, b) => a - b); return v[Math.floor((v.length - 1) * 0.85)]; };
   const sx = Math.max(5, q85(d => d.s)) * 1.15, sy = Math.max(0.2, q85(d => d.g)) * 1.15;     // los extremos se quedan en el borde
@@ -4561,7 +4566,7 @@ function graficaSobreprecio(compras) {
       ${pts}
       <text x="${l}" y="${H - 8}" font-size="10" fill="currentColor" fill-opacity=".6">← pagó menos del valor</text><text x="${W - r}" y="${H - 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">pagó más →</text>
       <text x="${l - 4}" y="${t + 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">+${nf1.format(sy)}</text><text x="${l - 4}" y="${H - b}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">−${nf1.format(sy)}</text></svg>
-    <p class="note">Cada punto es una compra: a la derecha pagó por encima del valor, arriba hoy vale más de lo que costó (millones). Las ${caros.length} compras con más sobreprecio han ganado de media <b class="${cl(media(caros))}">${sig(media(caros) * 1e6)}</b> y las ${baratos.length} más ajustadas <b class="${cl(media(baratos))}">${sig(media(baratos) * 1e6)}</b>.</p>`;
+    <p class="note">Cada punto es una compra: a la derecha pagó por encima del valor, arriba hoy vale más de lo que costó (millones). Las ${caros.length} compras con más sobreprecio han ganado de media <b class="${cl(media(caros))}">${sig(media(caros) * 1e6)}</b> y las ${baratos.length} más ajustadas <b class="${cl(media(baratos))}">${sig(media(baratos) * 1e6)}</b>.</p>${porTipo}`;
 }
 
 function resumenEq(ms, hp) {
