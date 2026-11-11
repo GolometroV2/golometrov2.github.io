@@ -4538,7 +4538,30 @@ function bloqueOjo(ms) {
     ${peores.length ? `<p class="ordlbl" style="margin-top:12px">Compras que hoy valen menos de lo pagado</p><ul class="clist">${peores.map(fila).join("")}</ul>` : ""}
     <p class="ordlbl" style="margin-top:12px">Balance por manager</p>
     <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.gan) / mx * 100).toFixed(1)}%;background:${x.gan >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · ${x.pts} pts desde el fichaje</small></span><span class="pp ${cl(x.gan)}" style="font-size:15px">${sig(x.gan)}</span></li>`).join("")}</ul>
+    ${graficaSobreprecio(compras)}
     <p class="note">Solo las compras de los últimos ${(E.transfers || []).length} movimientos guardados cuyo jugador sigue en el equipo.</p></section>`;
+}
+
+// ¿Pagar de más compensa? Cada compra reciente: sobreprecio (lo pagado frente al valor del día) y ganancia de valor hasta hoy
+function graficaSobreprecio(compras) {
+  const P = compras.filter(x => x.t.value > 0 && x.coste > 0).map(x => ({ x, s: (x.coste / x.t.value - 1) * 100, g: x.gan / 1e6 }));
+  if (P.length < 6) return "";
+  const med = P.map(d => d.s).sort((a, b) => a - b)[Math.floor(P.length / 2)];
+  const media = L => L.length ? L.reduce((s, d) => s + d.g, 0) / L.length : 0;
+  const caros = P.filter(d => d.s > med), baratos = P.filter(d => d.s <= med);
+  const W = 320, H = 190, l = 34, r = 8, t = 10, b = 24;
+  const q85 = f => { const v = P.map(d => Math.abs(f(d))).sort((a, b) => a - b); return v[Math.floor((v.length - 1) * 0.85)]; };
+  const sx = Math.max(5, q85(d => d.s)) * 1.15, sy = Math.max(0.2, q85(d => d.g)) * 1.15;     // los extremos se quedan en el borde
+  const cl_ = (v, m) => Math.max(-m, Math.min(m, v));
+  const X = v => l + (cl_(v, sx) + sx) / (2 * sx) * (W - l - r), Y = v => t + (1 - (cl_(v, sy) + sy) / (2 * sy)) * (H - t - b);
+  const pts = P.map(d => `<circle cx="${X(d.s).toFixed(1)}" cy="${Y(d.g).toFixed(1)}" r="5" fill="${col(d.x.m.i)}" fill-opacity=".8" stroke="var(--card,#fff)" stroke-width="1"><title>${esc(d.x.p.name)}: ${d.s >= 0 ? "+" : ""}${nf1.format(d.s)} % sobre el valor, ${sig(d.x.gan)} hoy</title></circle>`).join("");
+  return `<p class="ordlbl" style="margin-top:12px">¿Pagar de más compensa?</p>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sobreprecio pagado frente a ganancia de valor de cada compra" style="width:100%;height:auto;display:block">
+      <line x1="${X(0)}" y1="${t}" x2="${X(0)}" y2="${H - b}" stroke="currentColor" stroke-opacity=".2"/><line x1="${l}" y1="${Y(0)}" x2="${W - r}" y2="${Y(0)}" stroke="currentColor" stroke-opacity=".3"/>
+      ${pts}
+      <text x="${l}" y="${H - 8}" font-size="10" fill="currentColor" fill-opacity=".6">← pagó menos del valor</text><text x="${W - r}" y="${H - 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">pagó más →</text>
+      <text x="${l - 4}" y="${t + 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">+${nf1.format(sy)}</text><text x="${l - 4}" y="${H - b}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">−${nf1.format(sy)}</text></svg>
+    <p class="note">Cada punto es una compra: a la derecha pagó por encima del valor, arriba hoy vale más de lo que costó (millones). Las ${caros.length} compras con más sobreprecio han ganado de media <b class="${cl(media(caros))}">${sig(media(caros) * 1e6)}</b> y las ${baratos.length} más ajustadas <b class="${cl(media(baratos))}">${sig(media(baratos) * 1e6)}</b>.</p>`;
 }
 
 function resumenEq(ms, hp) {
