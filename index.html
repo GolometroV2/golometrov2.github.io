@@ -4396,11 +4396,14 @@ function bloqueBanquilloTemp() {
   const L = D.managers.map((m, ci) => ({ m, ci, ...(T[m.id] || {}) })).filter(r => r.max > 0).sort((a, b) => a.perd - b.perd);
   if (nj < 2 || L.length < 3) return "";
   const mx = Math.max(1, ...L.map(r => r.perd));
+  BANQ_D = { nj, mx, L: L.slice(0, 7).map(r => ({ nom: r.m.name, perd: r.perd, pct: Math.round(r.real / r.max * 100), clav: r.clav })) };
   return `<section class="card"><div class="gh"><h2>Banquillo de la temporada</h2></div>
     <p class="note" style="margin:0 0 8px">Puntos (sin capitán) que cada manager se dejó fuera de su once sumando ${nj} jornadas, frente al mejor once que podía hacer con su plantilla de entonces. Menos barra = mejores alineaciones.</p>
     <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.perd} puntos dejados en el banquillo"><i style="width:${Math.max(2, r.perd / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i></span><small>${Math.round(r.real / r.max * 100)} % del once perfecto${r.clav ? ` · ${r.clav} ${r.clav === 1 ? "jornada" : "jornadas"} perfecta${r.clav === 1 ? "" : "s"}` : ""}</small></span><span class="pts"><b>${r.perd}</b></span></li>`).join("")}</ul>
-    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L[L.length - 1].m.name)}</b> (${L[L.length - 1].perd}).</p></section>`;
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L[L.length - 1].m.name)}</b> (${L[L.length - 1].perd}).</p>
+    <div class="acciones"><button class="btn-cromo" data-banq-comp>📤 Compartir lámina</button></div></section>`;
 }
+let BANQ_D = null;
 
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
@@ -7608,7 +7611,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", capac: "Acierto con el capitán", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7988,6 +7991,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rach-comp]")) { if (RACH_D) { EST_DAT.rach = { ...RACH_D }; abrirEstudio("rach", e.target.closest("[data-rach-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-clv-comp]")) { if (CLV_D) { EST_DAT.clv = { ...CLV_D }; abrirEstudio("clv", e.target.closest("[data-clv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-banq-comp]")) { if (BANQ_D) { EST_DAT.banq = { ...BANQ_D }; abrirEstudio("banq", e.target.closest("[data-banq-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
@@ -8494,6 +8498,27 @@ async function esCapAcierto(d) {
   return c;
 }
 ES_SETS.capac = [["Acierto con el capitán", esCapAcierto]];
+async function esBanquillo(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, AN = 560;
+  esFondo(x);
+  esCabecera(x, { titulo: "EL BANQUILLO", kicker: `Puntos que se dejaron fuera en ${d.nj} jornadas`, pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.pct} % del mejor once · perfecto ${r.clav} veces`, 600), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, AN, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(r.perd ? 6 : 0, AN * r.perd / Math.max(1, d.mx)), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.perd), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Menos puntos perdidos = mejor ojo");
+  return c;
+}
+ES_SETS.banq = [["Banquillo de la temporada", esBanquillo]];
 async function esEnf(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R, mx = Math.max(1, ...R.map(r => r.val));
