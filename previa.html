@@ -3226,13 +3226,16 @@ function pintarAltibajos() {
   const todos = L.flatMap(x => x.v.map(y => y.p)), mn = Math.min(...todos), mx = Math.max(...todos), rg = Math.max(1, mx - mn);
   const X = p => (4 + (p - mn) / rg * 92).toFixed(2);
   const fiable = L[0], loco = L[L.length - 1];
+  ALTI_D = { L: L.map(x => ({ m: x.m, i: x.i, sd: x.sd, med: x.med, mejor: x.mejor, peor: x.peor })), mn, mx, n: js.length };
   cont.innerHTML = `<div class="gh"><h2>Altibajos</h2></div>
     <p class="note" style="margin:0 0 10px">Cada punto es una jornada. Cuanto más juntos, más regular; la rayita es su jornada típica (mediana). Ordenados del más regular al más irregular.</p>
     <ul class="al">${L.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b>
       <span class="al-t" role="img" aria-label="${esc(x.m.name)}: de ${x.peor.p} a ${x.mejor.p} puntos, típica ${nf1.format(x.med)}"><u style="left:${X(Math.min(...x.v.map(y => y.p)))}%;width:${(X(x.mejor.p) - X(x.peor.p)).toFixed(2)}%"></u><s style="left:${X(x.med)}%"></s>${x.v.map(y => `<i class="${y === x.mejor ? "mx" : y === x.peor ? "mn" : ""}" style="left:${X(y.p)}%" title="J${y.j.slice(1)}: ${y.p}"></i>`).join("")}</span>
       <small>Mejor J${x.mejor.j.slice(1)} · ${x.mejor.p} · peor J${x.peor.j.slice(1)} · ${x.peor.p} · típica ${nf1.format(x.med)}</small></span><span class="pp" style="font-size:14px">±${Math.round(x.sd)}</span></li>`).join("")}</ul>
-    <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>`;
+    <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>
+    <div class="acciones"><button class="btn-cromo" data-alti-comp>📤 Compartir lámina</button></div>`;
 }
+let ALTI_D = null;
 
 /* ---------- Cara a cara de todos: matriz de enfrentamientos (jornadas ganadas a cada rival) ---------- */
 // Cada casilla es en cuántas jornadas el manager de la fila sumó más puntos que el de la columna. Solo lee D.matchdays.
@@ -7526,7 +7529,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7891,6 +7894,7 @@ function abrirComparador(idA, idB) {
 let CMP_ULT = null;
 document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-alti-comp]")) { if (ALTI_D) { EST_DAT.alti = { ...ALTI_D }; abrirEstudio("alti", e.target.closest("[data-alti-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
@@ -8280,6 +8284,26 @@ async function esPlantones(d) {
   return c;
 }
 ES_SETS.plan = [["Plantones", esPlantones]];
+async function esAltibajos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), rg = Math.max(1, d.mx - d.mn), X0 = M + 28, AN = W - 2 * M - 56 - 120;
+  esFondo(x);
+  esCabecera(x, { titulo: "ALTIBAJOS", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100, px = p => X0 + (p - d.mn) / rg * AN;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `de ${r.peor.p} a ${r.mejor.p} puntos · típica ${Math.round(r.med)}`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(px(r.peor.p), Y + 78, Math.max(4, px(r.mejor.p) - px(r.peor.p)), 8);
+    x.fillStyle = ES.verde; x.fillRect(px(r.med) - 3, Y + 72, 6, 20);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText("±" + Math.round(r.sd), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El más regular: ${d.L[0].m.name} · el de más altibajos: ${d.L[d.L.length - 1].m.name}`);
+  return c;
+}
+ES_SETS.alti = [["Altibajos", esAltibajos]];
 async function esFotos(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R, mx = Math.max(1, ...R.map(r => r.d));
