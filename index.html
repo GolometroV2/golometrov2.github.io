@@ -3561,8 +3561,11 @@ function pintarRegulares() {
   cont.innerHTML = `<div class="gh"><h2>Los más regulares</h2></div>
     <p class="note" style="margin:0 0 10px">Jugadores que casi siempre dan lo mismo: los que menos cambian sus puntos de una jornada a otra (con 5 jornadas o más y 4 puntos de media o más).</p>
     <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${regPos === k ? "on" : ""}" data-gpos="${k}" aria-pressed="${regPos === k}">${t}</button>`).join("")}</div>
-    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie cumple en esta posición.</small></span></li>'}</ul>`;
+    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie cumple en esta posición.</small></span></li>'}</ul>
+    ${L.length ? '<div class="acciones"><button class="btn-cromo" data-reg-comp>📤 Compartir lámina</button></div>' : ""}`;
+  REG_D = { L: L.slice(0, 7).map(r => ({ n: r.p.name, pos: r.p.pos, m: r.m, sd: r.sd, mn: r.mn, mx: r.mx, j: r.n })), filtro: regPos, nj: Math.max(...R.map(r => r.n)) };
 }
+let REG_D = null;
 
 /* ---------- Los reyes de cada jornada: los mejores jugadores de toda LaLiga y quién los alineó (estadístico, para todos) ---------- */
 // Puntos de todos los jugadores (jugadores_historial.json) frente a los onces de cada manager (D.matchdays): quién tuvo ojo.
@@ -7488,7 +7491,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7855,6 +7858,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
@@ -8098,6 +8102,26 @@ async function esGoleadores(d) {
   esPie(x, "Jornadas con algún manager que los alineó");
   return c;
 }
+async function esRegulares(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, nombres = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" };
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MÁS REGULARES", kicker: (d.filtro ? nombres[d.filtro] : "Toda LaLiga") + " · " + d.nj + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.n, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.pos} · ${r.j} jornadas · entre ${r.mn} y ${r.mx} pts`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * Math.max(0.03, 1 - r.sd / (R[R.length - 1].sd * 1.25 || 1)), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.m.toFixed(1).replace(".", ","), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Puntos de media · los que menos varían de una jornada a otra");
+  return c;
+}
+ES_SETS.reg = [["Regulares", esRegulares]];
 async function esClubes(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7);
