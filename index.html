@@ -4639,8 +4639,9 @@ function resumenEq(ms, hp) {
     const d = m.squadValue - m.squadPrev;
     const ts = m.players.map(p => tendencia(hp(p.id), p).k);
     const sube = ts.filter(t => t.startsWith("sube")).length, baja = ts.filter(t => t.startsWith("baja")).length, frena = ts.filter(t => t === "sube_frena").length;
+    const enf = m.players.filter(p => ESTADO(p.status)), enfV = enf.reduce((t, p) => t + (p.value || 0), 0);
     return `<li class="row${k === 0 ? " lider" : ""}"><button class="rowbtn" data-e="${esc(m.id)}"><span class="pos">${k + 1}</span>${avatar(m, m.i)}
-      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jug. · <span class="up">▲${sube}</span> <span class="dn">▼${baja}</span>${frena ? " · ⚠ " + frena + " frenando" : ""}</span>
+      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jug. · <span class="up">▲${sube}</span> <span class="dn">▼${baja}</span>${frena ? " · ⚠ " + frena + " frenando" : ""}${enf.length ? ` · <span class="dn" title="Lesionados, dudas o sancionados: ${eur(enfV)} parados">✚ ${enf.length} en la enfermería</span>` : ""}</span>
         <span class="rbar" aria-hidden="true"><i style="width:${maxV > 0 ? Math.max(0, Math.min(100, m.squadValue / maxV * 100)).toFixed(1) : 0}%"></i></span></span>
       <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
   }).join("");
