@@ -1633,6 +1633,8 @@ body.wr-abierto{overflow:hidden}
 .gal-tip small{font-size:11px;color:#b9d6c5;line-height:1.3}
 .gal-tip button{flex:none;min-height:36px;padding:0 10px;border:0;border-radius:10px;background:#2fd46e;color:#03200e;font-weight:800;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.gal-m{transition:none}}
+/* Persecución: curva de distancia al líder */
+.pers-c{display:block;width:120px;max-width:100%;height:26px;margin-top:4px}
 /* «Explora la liga»: el índice de la Clasificación como tarjetas en dos filas que se deslizan */
 .ind-t{margin:18px 0 8px;font-family:var(--f-disp);font-weight:800;font-size:18px}
 .indice.bento{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(210px,64%);gap:8px;margin:0 -16px;padding:2px 16px 6px;scroll-snap-type:x proximity;scroll-padding:0 16px}
@@ -3586,9 +3588,16 @@ function pintarPersecucion() {
   cont.hidden = false;
   const ord = S.ms.map((_, x) => x).sort((a, b) => S.cum[b][n - 1] - S.cum[a][n - 1]);
   const med = x => S.cum[x][n - 1] / n;
+  // distancia al líder de cada jornada (el líder de entonces); escala común para comparar a todos
+  const lid = S.js.map((_, j) => Math.max(...S.cum.map(c => c[j]))), gmax = Math.max(1, ...S.cum.map(c => Math.max(...c.map((v, j) => lid[j] - v))));
+  const curva = x => {
+    const W = 120, H = 26, px = j => (j / (n - 1) * (W - 4) + 2).toFixed(1), py = j => (2 + (lid[j] - S.cum[x][j]) / gmax * (H - 4)).toFixed(1);
+    const pts = S.js.map((_, j) => px(j) + "," + py(j)).join(" "), fin = lid[n - 1] - S.cum[x][n - 1];
+    return `<svg class="pers-c" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distancia al líder jornada a jornada: ${fin === 0 ? "es líder" : "ahora a " + nf0.format(fin) + " puntos"}"><line x1="0" x2="${W}" y1="2" y2="2" stroke="var(--line)" stroke-dasharray="2 3"/><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${px(n - 1)}" cy="${py(n - 1)}" r="2.6" fill="var(--acc)"/></svg>`;
+  };
   const filas = ord.map((x, k) => {
     const o = S.ms[x], t = S.cum[x][n - 1];
-    if (k === 0) return `<li>${avatar(o.m, o.i)}<span class="pq"><b>1.º ${esc(o.m.name)}</b><small>Líder · media ${nf1.format(med(x))} por jornada</small></span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
+    if (k === 0) return `<li>${avatar(o.m, o.i)}<span class="pq"><b>1.º ${esc(o.m.name)}</b><small>Líder · media ${nf1.format(med(x))} por jornada</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
     const arr = ord[k - 1], ld = ord[0], dA = S.cum[arr][n - 1] - t, dL = S.cum[ld][n - 1] - t;
     // puntos por jornada que debe sacarle de media al de arriba para alcanzarlo al acabar la temporada
     const nec = quedan ? dA / quedan : null;
@@ -3596,10 +3605,10 @@ function pintarPersecucion() {
     const ritmo = nec == null ? "" : ` · le tiene que sacar ${nf1.format(nec)} pts por jornada al ${k}.º`;
     const ult = Math.min(5, n - 1), gan = S.pts[x].slice(-ult).reduce((a, v) => a + v, 0) - S.pts[arr].slice(-ult).reduce((a, v) => a + v, 0);
     const tend = gan > 0 ? `<span class="up">▲ ${nf0.format(gan)} en las últimas ${ult}</span>` : gan < 0 ? `<span class="dn">▼ ${nf0.format(-gan)} en las últimas ${ult}</span>` : `<span>igual en las últimas ${ult}</span>`;
-    return `<li>${avatar(o.m, o.i)}<span class="pq"><b>${k + 1}.º ${esc(o.m.name)}</b><small>${txt}${ritmo}</small><small>${tend}</small></span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
+    return `<li>${avatar(o.m, o.i)}<span class="pq"><b>${k + 1}.º ${esc(o.m.name)}</b><small>${txt}${ritmo}</small><small>${tend}</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
   }).join("");
   cont.innerHTML = `<div class="gh"><h2>Persecución</h2></div>
-    <p class="note" style="margin:0 0 10px">Distancia de cada manager al de arriba y cuántos puntos por jornada tendría que ganarle de media en las ${quedan} que quedan (de ${TOT}). Las flechas comparan las últimas jornadas con el de delante.</p>
+    <p class="note" style="margin:0 0 10px">Distancia de cada manager al de arriba y cuántos puntos por jornada tendría que ganarle de media en las ${quedan} que quedan (de ${TOT}). Las flechas comparan las últimas jornadas con el de delante. La curva de cada uno es su distancia al líder jornada a jornada (arriba = líder; si baja hacia la línea, se acerca).</p>
     <ul class="pron">${filas}</ul>`;
 }
 
