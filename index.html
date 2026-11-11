@@ -2357,6 +2357,19 @@ function abrirFicha(id) {
     ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
       return mv.length ? `<h3 class="sec">Sus últimos movimientos en la liga</h3><ul class="clist">${mv.map(t => `<li class="mv mv2" style="padding:6px 0"><span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>` : ""; })()}</div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
+  cuentaEnteros(ov.querySelectorAll(".ch-kpi b"));
+}
+// cifras enteras que suben desde 0 al abrir una ficha (el valor final no cambia; respeta «reducir movimiento»)
+function cuentaEnteros(els) {
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const l = [...els].filter(e => /^\d+$/.test(e.textContent.trim())); if (!l.length) return;
+  const fin = l.map(e => e.textContent.trim()), t0 = performance.now(), dur = 650;
+  const paso = t => {
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    l.forEach((el, i) => { if (el.isConnected) el.textContent = k >= 1 ? fin[i] : Math.round(+fin[i] * e); });
+    if (k < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
 }
 function cerrarOv() { ["#ovBusc", "#ovFicha", "#ovCmp"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
 document.addEventListener("click", e => {
