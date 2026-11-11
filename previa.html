@@ -3543,8 +3543,11 @@ function pintarLibres() {
   cont.innerHTML = `<div class="gh"><h2>Los mejores libres</h2></div>
     <p class="note" style="margin:0 0 10px">Jugadores que no tiene ningún manager, ordenados por los puntos de la temporada.</p>
     <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${libPos === k ? "on" : ""}" data-lpos="${k}" aria-pressed="${libPos === k}">${t}</button>`).join("")}</div>
-    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie libre en esta posición.</small></span></li>'}</ul>`;
+    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie libre en esta posición.</small></span></li>'}</ul>
+    ${L.length ? '<div class="acciones"><button class="btn-cromo" data-lib-comp>📤 Compartir lámina</button></div>' : ""}`;
+  LIB_D = { L: L.slice(0, 7).map(p => ({ n: p.name, pos: p.pos, pts: p.points, v: p.value, m: !!p.onMarket })), filtro: libPos };
 }
+let LIB_D = null;
 
 /* ---------- Los más regulares: jugadores de toda LaLiga que menos varían de una jornada a otra (estadístico, para todos) ---------- */
 // Desviación típica de sus puntos por jornada (jugadores_historial.json); solo con 5 jornadas o más y 4 puntos de media o más.
@@ -7495,7 +7498,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7864,6 +7867,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-lib-comp]")) { if (LIB_D && LIB_D.L.length) { EST_DAT.lib = { ...LIB_D }; abrirEstudio("lib", e.target.closest("[data-lib-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-term-comp]")) { if (TERM_D) { EST_DAT.term = { ...TERM_D }; abrirEstudio("term", e.target.closest("[data-term-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
@@ -8147,6 +8151,26 @@ async function esTermometro(d) {
   esPie(x, "Cambio de valor en los últimos 7 días");
   return c;
 }
+async function esLibres(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, nombres = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }, mx = R[0].pts || 1;
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MEJORES LIBRES", kicker: (d.filtro ? nombres[d.filtro] : "Todas las posiciones") + " · sin dueño", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.n, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.pos} · vale ${eur(r.v)} · ${r.m ? "en el mercado" : "libre"}`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.pts / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.pts + " pts", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Puntos de la temporada de jugadores que nadie tiene");
+  return c;
+}
+ES_SETS.lib = [["Libres", esLibres]];
 ES_SETS.term = [["Termómetro", esTermometro]];
 async function esClubes(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
