@@ -4377,11 +4377,14 @@ function bloqueAciertoCap() {
   }).filter(r => r.n > 0).sort((a, b) => (b.ganado - b.perdido) - (a.ganado - a.perdido));
   if (L.length < 3) return "";
   const mx = Math.max(1, ...L.map(r => r.ganado + r.perdido));
+  CAPAC_D = { L: L.slice(0, 7).map(r => ({ nom: r.m.name, g: r.ganado, p: r.perdido, a: r.aciertos, n: r.n })), mx };
   return `<section class="card"><div class="gh"><h2>Acierto con el capitán</h2></div>
     <p class="note" style="margin:0 0 8px">Puntos extra que dio el capitán (verde) y los que se dejó por no elegir al mejor de su once (rojo) en cada jornada ya jugada.</p>
     <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb dos" role="img" aria-label="${r.ganado} puntos extra y ${r.perdido} perdidos"><i style="width:${(r.ganado / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i><i style="width:${(r.perdido / mx * 100).toFixed(1)}%;background:var(--red);opacity:.55"></i></span><small>Mejor capitán en ${r.aciertos} de ${r.n} jornadas · se dejó ${r.perdido}</small></span><span class="pp ${cl(r.ganado - r.perdido)}" style="font-size:15px">${r.ganado}</span></li>`).join("")}</ul>
-    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p></section>`;
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-capac-comp>📤 Compartir lámina</button></div></section>`;
 }
+let CAPAC_D = null;
 
 // Banquillo de la temporada: puntos que cada manager se dejó fuera del once sumando las jornadas (reutiliza banquilloJornada)
 function bloqueBanquilloTemp() {
@@ -7605,7 +7608,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", capac: "Acierto con el capitán", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7985,6 +7988,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rach-comp]")) { if (RACH_D) { EST_DAT.rach = { ...RACH_D }; abrirEstudio("rach", e.target.closest("[data-rach-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-clv-comp]")) { if (CLV_D) { EST_DAT.clv = { ...CLV_D }; abrirEstudio("clv", e.target.closest("[data-clv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
@@ -8468,6 +8472,28 @@ async function esTrono(d) {
   return c;
 }
 ES_SETS.trono = [["El trono", esTrono]];
+async function esCapAcierto(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, AN = 560;
+  esFondo(x);
+  esCabecera(x, { titulo: "EL CAPITÁN", kicker: "Acierto con el brazalete: lo dado y lo perdido", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), t = Math.max(1, d.mx);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `Mejor capitán en ${r.a} de ${r.n} jornadas · se dejó ${r.p}`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, AN, 8);
+    const g = Math.min(AN, Math.max(r.g ? 6 : 0, AN * r.g / t)); x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, g, 8);
+    x.fillStyle = "#c0504d"; x.globalAlpha = .6; x.fillRect(M + 28 + g, Y + 78, Math.min(AN - g, AN * r.p / t), 8); x.globalAlpha = 1;
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.g), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Verde = extra · rojo = perdido");
+  return c;
+}
+ES_SETS.capac = [["Acierto con el capitán", esCapAcierto]];
 async function esEnf(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R, mx = Math.max(1, ...R.map(r => r.val));
