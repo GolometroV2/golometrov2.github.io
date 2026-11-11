@@ -4410,10 +4410,13 @@ function bloqueValor7(ms) {
     return { m, d, mejor, peor };
   }).sort((a, b) => b.d - a.d);
   const mx = Math.max(1, ...L.map(x => Math.abs(x.d)));
+  V7_D = { R: L.slice(0, 7).map(x => ({ nom: x.m.name, d: x.d, txt: [x.mejor && x.mejor.x > 0 ? "tira " + apellido(x.mejor.p.short || x.mejor.p.name) : "", x.peor && x.peor.x < 0 ? "lastra " + apellido(x.peor.p.short || x.peor.p.name) : ""].filter(Boolean).join(" · ") })), tot: L.reduce((t, x) => t + x.d, 0) };
   return `<section class="card"><div class="gh"><h2>Valor dentro de una semana</h2></div>
     <p class="note" style="margin:0 0 8px">Cuánto se espera que gane o pierda cada plantilla en 7 días si nadie ficha ni vende (previsión con la inercia del valor; los jugadores de menos de 1 M se dejan igual). Los partidos del fin de semana la cambiarán: tómalo como tendencia.</p>
-    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-v7-comp>📤 Compartir lámina</button></div></section>`;
 }
+let V7_D = null;
 
 // Enfermería: jugadores de cada plantilla con aviso de lesión, duda o sanción hoy (dato de Mister, sin previsión)
 function bloqueEnfermeria(ms) {
@@ -7601,7 +7604,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", v7: "Valor a 7 días" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7979,6 +7982,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rach-comp]")) { if (RACH_D) { EST_DAT.rach = { ...RACH_D }; abrirEstudio("rach", e.target.closest("[data-rach-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
@@ -8482,6 +8486,27 @@ async function esEnf(d) {
   return c;
 }
 ES_SETS.enf = [["Enfermería", esEnf]];
+
+async function esValor7(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = Math.max(1, ...R.map(r => Math.abs(r.d)));
+  esFondo(x);
+  esCabecera(x, { titulo: "VALOR A 7 DÍAS", kicker: "Previsión · " + (d.tot >= 0 ? "+" : "−") + eur(Math.abs(d.tot)) + " en la liga", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.txt, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = r.d >= 0 ? ES.verde : ES.rojo; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * Math.abs(r.d) / mx), 8);
+    x.textAlign = "right"; x.fillStyle = r.d >= 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed"); x.fillText((r.d >= 0 ? "+" : "−") + eur(Math.abs(r.d)), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Tendencia con la inercia del valor; los partidos la cambiarán");
+  return c;
+}
+ES_SETS.v7 = [["Valor a 7 días", esValor7]];
 
 async function esDuelos(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
