@@ -3578,6 +3578,7 @@ function pintarGoleadores() {
 }
 
 /* ---------- Récords de la temporada: las mejores actuaciones individuales y de manager (solo lee D.matchdays) ---------- */
+let RECS_D = null;
 function pintarRecords() {
   const cont = $("#recs"); if (!cont || !D || !D.matchdays) return;
   const js = jornadas(), M = D.managers;
@@ -3592,6 +3593,7 @@ function pintarRecords() {
   const topP = [...jg.values()].sort((a, b) => b.b - a.b || a.j.localeCompare(b.j, "es", { numeric: true })).slice(0, 5);
   // mayor paliza: más diferencia entre el mejor y el peor de una misma jornada
   let pal = null; js.forEach(j => { const v = mj.filter(r => r.j === j); if (v.length < 2) return; const a = v.reduce((x, y) => y.p > x.p ? y : x), z = v.reduce((x, y) => y.p < x.p ? y : x); if (!pal || a.p - z.p > pal.d) pal = { j, a, z, d: a.p - z.p }; });
+  RECS_D = { topJ, topP, peorJ, pal, n: js.length };
   const medalla = k => ["🥇", "🥈", "🥉"][k] || (k + 1) + ".º";
   const fm = topJ.map((r, k) => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${medalla(k)} ${esc(r.m.name)}</b><small>${esc(r.j)}</small></span><span class="pts"><b>${r.p}</b> pts</span></li>`).join("");
   const fp = topP.map((r, k) => `<li data-ficha="${r.id}">${cara(r.id, r.name, r.teamId, 36)}<span class="pq"><b>${medalla(k)} ${esc(r.name)}</b><small>${esc(r.j)} · en el once de ${esc(r.m.name)}</small></span><span class="pts"><b>${r.b}</b> pts</span></li>`).join("");
@@ -3599,6 +3601,7 @@ function pintarRecords() {
     <h3 class="sec">Mejores jornadas de un manager</h3><ul class="pron">${fm}</ul>
     <h3 class="sec">Mejores actuaciones de un jugador</h3><ul class="pron">${fp}</ul>
     <p class="note">Puntos del jugador sin contar el capitán; tocar uno abre su ficha.</p>
+    <div class="acciones"><button class="btn-cromo" data-rec-comp>📤 Compartir lámina</button></div>
     <p class="note">La peor jornada fue la de <b>${esc(peorJ.m.name)}</b> en la ${esc(peorJ.j)}: ${peorJ.p} puntos.${pal ? ` La mayor paliza: ${esc(pal.j)}, <b>${esc(pal.a.m.name)}</b> (${pal.a.p}) contra <b>${esc(pal.z.m.name)}</b> (${pal.z.p}), ${pal.d} puntos de diferencia.` : ""}</p>`;
 }
 
@@ -7364,8 +7367,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7730,6 +7733,7 @@ function abrirComparador(idA, idB) {
 let CMP_ULT = null;
 document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rec-comp]")) { if (RECS_D) { EST_DAT.rec = { ...RECS_D }; abrirEstudio("rec", e.target.closest("[data-rec-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-dis-comp]")) { const L = disciplinaDatos(); if (L) { EST_DAT.dis = { L, n: Object.keys(D.matchdays).length }; abrirEstudio("dis", e.target.closest("[data-dis-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
@@ -7901,6 +7905,29 @@ async function esBolsa(d) {
   return c;
 }
 ES_SETS.bolsa = [["La Bolsa", esBolsa]];
+// Lámina de los récords de la temporada (mismos datos que la tarjeta de Clasificación)
+async function esRecords(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const ims = await Promise.all(d.topJ.map(r => esImg(r.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "RÉCORDS", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const med = k => ["🥇", "🥈", "🥉"][k] || (k + 1) + ".º";
+  const fila = (Y, k, h, izq, sub, val, pri) => {
+    esPanel(x, M, Y, W - 2 * M, h, pri ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30); x.fillText(med(k), M + 22, Y + h / 2 + 11);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, izq, 520, 700, 30, 22), M + 110, Y + h / 2 - 4);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, sub, 520), M + 110, Y + h / 2 + 24);
+    x.textAlign = "right"; x.fillStyle = pri ? ES.verde : ES.txt; x.font = esF(800, 50, "condensed"); x.fillText(String(val), W - M - 24, Y + h / 2 + 17); x.textAlign = "left";
+  };
+  const t = (txt, Y) => { x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(700, 26); x.fillText(txt.toUpperCase(), M, Y); };
+  t("Mejores jornadas de un manager", 392);
+  d.topJ.forEach((r, k) => fila(410 + k * 84, k, 72, r.m.name, r.j, r.p + " pts", k === 0));
+  t("Mejores actuaciones de un jugador", 858);
+  d.topP.forEach((r, k) => fila(876 + k * 70, k, 60, r.name, `${r.j} · en el once de ${r.m.name}`, r.b + " pts", k === 0));
+  esPie(x, `Peor jornada: ${d.peorJ.m.name} (${d.peorJ.p}) en la ${d.peorJ.j}`);
+  return c;
+}
+ES_SETS.rec = [["Récords", esRecords]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
 ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
