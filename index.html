@@ -3401,11 +3401,14 @@ function pintarFormaciones() {
   const filas = L.map(f => { const me = f.t / f.n, top = Object.entries(f.q).sort((a, b) => b[1] - a[1])[0];
     return `<li><span class="pq"><b>${esc(nom(f.f))}</b><span class="pb" role="img" aria-label="${me.toFixed(1)} puntos de media con ${esc(nom(f.f))}"><i style="width:${Math.max(4, me / mx * 100).toFixed(1)}%;background:var(--acc)"></i></span><small>${f.n} ${f.n === 1 ? "vez" : "veces"} · la usa más ${esc(D.managers[top[0]].name)} (${top[1]})</small></span><span class="pts"><b>${me.toFixed(1).replace(".", ",")}</b></span></li>`; }).join("");
   const a = L[0], z = L.filter(f => f.n >= 3).slice(-1)[0];
+  FORM_D = { L: L.map(f => { const top = Object.entries(f.q).sort((p, q) => q[1] - p[1])[0]; return { f: nom(f.f), n: f.n, me: f.t / f.n, quien: D.managers[top[0]].name, qn: top[1] }; }), mx };
   cont.innerHTML = `<div class="gh"><h2>Formaciones</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos medios que han sacado los onces según su esquema (defensas-medios-delanteros) en todas las jornadas jugadas. Ojo: las poco usadas dicen poco.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">La mejor media es la de <b>${esc(nom(a.f))}</b> (${a.n} ${a.n === 1 ? "vez" : "veces"})${z && z !== a ? `; la más floja entre las usadas 3 o más veces, <b>${esc(nom(z.f))}</b> (${(z.t / z.n).toFixed(1).replace(".", ",")}).` : "."}</p>`;
+    <p class="note">La mejor media es la de <b>${esc(nom(a.f))}</b> (${a.n} ${a.n === 1 ? "vez" : "veces"})${z && z !== a ? `; la más floja entre las usadas 3 o más veces, <b>${esc(nom(z.f))}</b> (${(z.t / z.n).toFixed(1).replace(".", ",")}).` : "."}</p>
+    <div class="acciones"><button class="btn-cromo" data-form-comp>📤 Compartir lámina</button></div>`;
 }
+let FORM_D = null;
 
 /* ---------- Rotación: cuánto cambia cada manager su once de una jornada a la siguiente (estadístico) ---------- */
 function pintarRotacion() {
@@ -7555,7 +7558,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7925,6 +7928,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-form-comp]")) { if (FORM_D) { EST_DAT.form = { ...FORM_D }; abrirEstudio("form", e.target.closest("[data-form-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rota-comp]")) { if (ROTA_D) { EST_DAT.rota = { ...ROTA_D }; abrirEstudio("rota", e.target.closest("[data-rota-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-lib-comp]")) { if (LIB_D && LIB_D.L.length) { EST_DAT.lib = { ...LIB_D }; abrirEstudio("lib", e.target.closest("[data-lib-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-term-comp]")) { if (TERM_D) { EST_DAT.term = { ...TERM_D }; abrirEstudio("term", e.target.closest("[data-term-comp]")); } return; }
@@ -8352,6 +8356,27 @@ async function esRotacion(d) {
   return c;
 }
 ES_SETS.rota = [["Rotación", esRotacion]];
+async function esFormaciones(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56 - 150, f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "FORMACIONES", kicker: "Qué esquema da más puntos", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(r.f, X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.n} ${r.n === 1 ? "vez" : "veces"} · la usa más ${r.quien} (${r.qn})`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(X0, Y + 78, AN, 8);
+    x.fillStyle = k === 0 ? ES.verde : ES.mut; x.fillRect(X0, Y + 78, Math.max(6, r.me / d.mx * AN), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(f1(r.me), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Puntos medios por esquema · la mejor media: ${d.L[0].f}`);
+  return c;
+}
+ES_SETS.form = [["Formaciones", esFormaciones]];
 async function esFotos(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R, mx = Math.max(1, ...R.map(r => r.d));
