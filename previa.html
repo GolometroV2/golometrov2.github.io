@@ -3299,8 +3299,11 @@ function pintarRachas() {
   cont.innerHTML = `<div class="gh"><h2>Rachas</h2></div>
     <p class="note" style="margin:0 0 10px">Cada cuadro es una jornada: verde si el manager puntuó por encima de la mediana de la liga y rojo si por debajo. A la derecha, la racha actual (🔥 seguidas por encima, ❄️ seguidas por debajo) y su mejor racha.</p>
     ${filas}
-    <p class="note">${top.sg > 0 ? `En racha: <b>${esc(top.m.name)}</b>, ${top.ac} jornada${top.ac > 1 ? "s" : ""} por encima de la mediana.` : "Nadie está ahora en racha positiva."}${bajo ? ` Al revés, <b>${esc(bajo.m.name)}</b> lleva ${bajo.ac} por debajo.` : ""}</p>`;
+    <p class="note">${top.sg > 0 ? `En racha: <b>${esc(top.m.name)}</b>, ${top.ac} jornada${top.ac > 1 ? "s" : ""} por encima de la mediana.` : "Nadie está ahora en racha positiva."}${bajo ? ` Al revés, <b>${esc(bajo.m.name)}</b> lleva ${bajo.ac} por debajo.` : ""}</p>
+    <div class="acciones"><button class="btn-cromo" data-rach-comp>📤 Compartir lámina</button></div>`;
+  RACH_D = { n: js.length, R: R.slice(0, 7).map(r => ({ nom: r.m.name, st: r.st, mejor: r.mejor, ac: r.ac, sg: r.sg })) };
 }
+let RACH_D = null;
 
 
 // «Sin capitán»: cómo quedaría la tabla si el brazalete no diera puntos extra (suma de las jornadas jugadas)
@@ -7836,6 +7839,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rach-comp]")) { if (RACH_D) { EST_DAT.rach = { ...RACH_D }; abrirEstudio("rach", e.target.closest("[data-rach-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-clu-comp]")) { if (CLUBES_D) { EST_DAT.clu = { ...CLUBES_D }; abrirEstudio("clu", e.target.closest("[data-clu-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rec-comp]")) { if (RECS_D) { EST_DAT.rec = { ...RECS_D }; abrirEstudio("rec", e.target.closest("[data-rec-comp]")); } return; }
@@ -8171,6 +8175,25 @@ async function esDuelos(d) {
   esPie(x, d.cambian ? `Cambiarían de puesto ${d.cambian} managers` : "La clasificación sería la misma");
   return c;
 }
+async function esRachas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "RACHAS", kicker: "Sobre la mediana · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100, cw = Math.min(26, 560 / d.n);
+  d.R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    r.st.forEach((v, j) => { x.fillStyle = v > 0 ? ES.verde : v < 0 ? ES.rojo : ES.linea; x.fillRect(M + 28 + j * cw, Y + 54, Math.max(2, cw - 3), 28); });
+    x.textAlign = "right"; x.fillStyle = r.sg > 0 ? ES.verde : r.sg < 0 ? ES.rojo : ES.txt; x.font = esF(800, 54, "condensed");
+    x.fillText(r.sg ? (r.sg > 0 ? "+" : "-") + r.ac : "–", W - M - 24, Y + 56);
+    x.fillStyle = ES.mut; x.font = esS(400, 20); x.fillText("mejor: " + r.mejor, W - M - 24, Y + 84); x.textAlign = "left";
+  });
+  esPie(x, "Verde: sobre la mediana · rojo: bajo ella");
+  return c;
+}
+ES_SETS.rach = [["Rachas", esRachas]];
 ES_SETS.duel = [["Liga de duelos", esDuelos]];
 ES_SETS.foto = [["Finales de foto", esFotos]];
 ES_SETS.rent = [["Los más rentables", esRentables]];
