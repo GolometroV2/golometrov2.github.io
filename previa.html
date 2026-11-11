@@ -3583,6 +3583,25 @@ function pintarReyes() {
 }
 let REY_D = null;
 
+/* ---------- Finales de foto: cuánto ganó el ganador de cada jornada al segundo (estadístico, solo lee D.matchdays) ---------- */
+function pintarFotos() {
+  const cont = $("#foto"); if (!cont || !D || !D.matchdays) return;
+  const S = serieLiga(), R = [];
+  S.js.forEach((j, k) => {
+    const o = S.ms.map((m, x) => ({ m, x, v: S.pts[x][k] })).filter(r => S.pts[r.x][k] > 0).sort((a, b) => b.v - a.v);
+    if (o.length >= 2) R.push({ j, k, g: o[0], s: o[1], d: o[0].v - o[1].v });
+  });
+  if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const mx = Math.max(1, ...R.map(r => r.d)), med = R.reduce((t, r) => t + r.d, 0) / R.length;
+  const ajust = R.slice().sort((a, b) => a.d - b.d)[0], paliza = R.slice().sort((a, b) => b.d - a.d)[0];
+  const filas = R.slice().reverse().map(r => `<li>${avatar(r.g.m.m, r.g.m.i)}<span class="pq"><b>${esc(r.g.m.m.name)}</b><span class="pb" role="img" aria-label="Ganó por ${r.d} puntos"><i style="width:${Math.max(3, r.d / mx * 100).toFixed(1)}%;background:${col(r.g.m.i)}"></i></span><small>${esc(r.j)} · ${r.g.v} frente a ${r.s.v} de ${esc(r.s.m.m.name)}</small></span><span class="pts"><b>+${r.d}</b></span></li>`).join("");
+  cont.innerHTML = `<div class="gh"><h2>Finales de foto</h2></div>
+    <p class="note" style="margin:0 0 10px">Por cuántos puntos ganó cada jornada su ganador al segundo. Barra corta = final apretado.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">Ventaja media: <b>${nf1.format(med)}</b> puntos. La más ajustada fue la <b>${esc(ajust.j)}</b> (${ajust.d} pts, ${esc(ajust.g.m.m.name)}) y la mayor paliza, la <b>${esc(paliza.j)}</b> (${paliza.d} pts, ${esc(paliza.g.m.m.name)}).</p>`;
+}
+
 /* ---------- Persecución: cuánto le falta a cada manager para alcanzar al de arriba (estadístico, solo lee D.matchdays) ---------- */
 function pintarPersecucion() {
   const cont = $("#pers"); if (!cont || !D || !D.matchdays) return;
@@ -9127,7 +9146,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["plan", "🪑", "Plantones", "Alineados que no jugaron"], ["clubes", "🛡️", "Clubes", "De qué equipo viven tus puntos"], ["rent", "💎", "Rentables", "Puntos por millón en toda LaLiga"], ["term", "🌡️", "Termómetro", "Quién sube y baja de valor esta semana"], ["libres", "🆓", "Libres", "Los sin dueño que más puntos suman"], ["reyes", "👑", "Reyes", "Los mejores de cada jornada y quién los tuvo"], ["regul", "🧊", "Regulares", "Los que siempre dan lo mismo"], ["pers", "🎯", "Persecución", "Cuánto te falta para alcanzar al de arriba"], ["gole", "⚽", "Goleadores", "Quién marca y da más pases de gol"], ["recs", "🏆", "Récords", "Las mejores actuaciones del año"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["plan", "🪑", "Plantones", "Alineados que no jugaron"], ["clubes", "🛡️", "Clubes", "De qué equipo viven tus puntos"], ["rent", "💎", "Rentables", "Puntos por millón en toda LaLiga"], ["term", "🌡️", "Termómetro", "Quién sube y baja de valor esta semana"], ["libres", "🆓", "Libres", "Los sin dueño que más puntos suman"], ["reyes", "👑", "Reyes", "Los mejores de cada jornada y quién los tuvo"], ["regul", "🧊", "Regulares", "Los que siempre dan lo mismo"], ["foto", "📸", "Finales de foto", "Por cuántos puntos se gana cada jornada"], ["pers", "🎯", "Persecución", "Cuánto te falta para alcanzar al de arriba"], ["gole", "⚽", "Goleadores", "Quién marca y da más pases de gol"], ["recs", "🏆", "Récords", "Las mejores actuaciones del año"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -9154,6 +9173,7 @@ function pintar() {
     <section class="card" id="libres" hidden></section>
     <section class="card" id="reyes" hidden></section>
     <section class="card" id="regul" hidden></section>
+    <section class="card" id="foto" hidden></section>
     <section class="card" id="pers"></section>
     <section class="card" id="gole"></section>
     <section class="card" id="recs"></section>
@@ -9190,6 +9210,7 @@ function pintar() {
   pintarReyes();
   pintarRegulares();
   pintarPersecucion();
+  pintarFotos();
   pintarGoleadores();
   pintarRecords();
   cuentaClasificacion();
