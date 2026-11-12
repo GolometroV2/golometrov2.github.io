@@ -4449,6 +4449,27 @@ function bloqueValor7(ms) {
 }
 let V7_D = null, CLV_D = null;
 
+// Protegidos: fichados hace menos de 3 días (regla de Mister dicha por el dueño: no se pueden clausular). Solo datos y regla, sin previsión
+function bloqueProtegidos(ms) {
+  const ahora = Date.now(), PROT = 72 * 3600e3, vistos = new Set(), L = [];
+  (E.transfers || []).filter(t => t.to && t.ts).forEach(t => {
+    const fin = Date.parse(t.ts) + PROT, k = t.playerId + "|" + t.to;
+    if (!isFinite(fin) || fin <= ahora || vistos.has(k)) return; vistos.add(k);
+    const m = ms.find(x => String(x.id) === String(t.to)), p = m && m.players.find(q => String(q.id) === String(t.playerId));
+    if (p) L.push({ m, p, fin, falta: fin - ahora });
+  });
+  L.sort((a, b) => a.falta - b.falta);
+  const cuenta = f => { const h = Math.ceil(f / 3600e3); return h >= 24 ? Math.floor(h / 24) + " d " + (h % 24) + " h" : h + " h"; };
+  const cab = `<div class="gh"><h2>Protegidos</h2></div>`;
+  if (!L.length) return `<section class="card">${cab}${vacioHTML("Nadie protegido", "Ningún fichaje de los últimos 3 días sigue en su plantilla: todo se puede clausular.")}</section>`;
+  return `<section class="card">${cab}
+    <p class="note" style="margin:0 0 8px">Fichados hace menos de 3 días: no se pueden clausular hasta que acabe la cuenta atrás.</p>
+    <ul class="pron">${L.map(x => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${esc(x.p.short || x.p.name)}</b><small>${esc(x.m.name)} · ${eur(x.p.value)}${x.p.clause ? " · cláusula " + eur(x.p.clause) : ""}</small>
+      <span class="pb"><i style="width:${Math.max(3, (1 - x.falta / PROT) * 100).toFixed(1)}%;background:${col(x.m.i)}"></i></span></span>
+      <span class="pp">🔒 ${cuenta(x.falta)}</span></li>`).join("")}</ul>
+    <p class="note">Tres días contados desde la hora del fichaje; la barra se llena a medida que pasa el tiempo.</p></section>`;
+}
+
 // Enfermería: jugadores de cada plantilla con aviso de lesión, duda o sanción hoy (dato de Mister, sin previsión)
 function bloqueEnfermeria(ms) {
   const L = ms.map(m => ({ m, ps: m.players.map(p => ({ p, e: ESTADO(p.status) })).filter(x => x.e).sort((a, b) => (a.e[0] === "doubt") - (b.e[0] === "doubt") || b.p.value - a.p.value) }))
@@ -4692,7 +4713,7 @@ function resumenEq(ms, hp) {
   const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   const ex = [["gvalor", "📈", "Evolución", "Cuánto vale cada plantilla", graficaValor(ms)], ["bolsa", "🟩", "La Bolsa", "El mercado de LaLiga en un mapa", bloqueBolsa()], ["conquista", "🗺️", "Conquista", "Quién domina cada equipo", bloqueConquista()], ["galaxia", "✨", "Galaxia", "Valor frente a puntos, jugador a jugador", bloqueGalaxia()],
-    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)]]
+    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exprot", "🔒", "Protegidos", "Aún no se pueden clausular", bloqueProtegidos(ms)], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)]]
     .filter(x => x[4]);
   const bl = k => { const x = ex.find(y => y[0] === k); return x ? `<div id="eqx-${k}">${x[4]}</div>` : ""; };
   const explora = `<nav class="indice bento" aria-label="Más de Equipos">${ex.map(x => `<button data-ir="eqx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
@@ -4708,6 +4729,7 @@ function resumenEq(ms, hp) {
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${bl("exdis")}
+    ${bl("exprot")}
     ${bl("exenf")}
     ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
