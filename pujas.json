@@ -1,7 +1,43 @@
 {
-"updatedAt": "2026-11-11T04:03:53Z",
+"updatedAt": "2026-11-12T04:01:10Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-12T04:01:10Z",
+"playerId": "29163",
+"name": "Omar El Hilali",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 6339000,
+"listado": 6339000,
+"precio": 6674000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-12T04:01:10Z",
+"playerId": "55743",
+"name": "Carlos Romero",
+"from": null,
+"to": "8658507",
+"tipo": "mercado",
+"valor": 2977000,
+"listado": 2977000,
+"precio": 3889900,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-12T04:01:10Z",
+"playerId": "28776",
+"name": "Beñat Turrientes",
+"from": null,
+"to": "8658507",
+"tipo": "mercado",
+"valor": 1042000,
+"listado": 1042000,
+"precio": 2189900,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-11T04:03:53Z",
 "playerId": "5523151",
