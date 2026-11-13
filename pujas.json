@@ -1,7 +1,43 @@
 {
-"updatedAt": "2026-11-12T04:01:10Z",
+"updatedAt": "2026-11-13T04:04:12Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-13T04:04:12Z",
+"playerId": "28612",
+"name": "Mathew Ryan",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 6651000,
+"listado": 6578000,
+"precio": 7650000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-13T04:04:12Z",
+"playerId": "40089",
+"name": "Umar Sadiq",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 921000,
+"listado": 855000,
+"precio": 1950000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-13T04:04:12Z",
+"playerId": "56926",
+"name": "Pau Cubarsi",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 15603000,
+"listado": 15583000,
+"precio": 15639000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-12T04:01:10Z",
 "playerId": "29163",
