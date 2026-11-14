@@ -3619,12 +3619,13 @@ function pintarCasaFuera() {
   const loc = {}; // equipo -> jornada -> true si jugó en casa
   CAL.games.filter(g => g.status === "played").forEach(g => { (loc[g.home] = loc[g.home] || {})[g.gw] = true; (loc[g.away] = loc[g.away] || {})[g.gw] = false; });
   const med = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
-  let H = [], A = []; const R = [];
+  let H = [], A = []; const R = [], EQ = {};
   Object.entries(LIGAJ.pts).forEach(([id, v]) => {
     const p = LIGAJ.jug[id]; if (!p || !loc[p.teamId]) return;
     const h = [], a = [];
     Object.entries(v).forEach(([gw, x]) => { if (!capNum(x) || loc[p.teamId][gw] === undefined) return; (loc[p.teamId][gw] ? h : a).push(x); });
     H = H.concat(h); A = A.concat(a);
+    const te = EQ[p.teamId] = EQ[p.teamId] || { h: [], a: [] }; te.h = te.h.concat(h); te.a = te.a.concat(a);
     if (h.length >= 3 && a.length >= 3 && med(h.concat(a)) >= 3) R.push({ p, mh: med(h), ma: med(a), nh: h.length, na: a.length, d: med(h) - med(a) });
   });
   if (H.length < 50 || A.length < 50 || R.length < 6) { cont.innerHTML = ""; cont.hidden = true; return; }
@@ -3637,13 +3638,19 @@ function pintarCasaFuera() {
   const fila = (r, k, casa) => `<li data-ficha="${esc(r.p.id)}">${cara(r.p.id, r.p.name, r.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(r.p.name)}</b><small>${r.p.pos} · en casa ${nf1.format(r.mh)} (${r.nh}) · fuera ${nf1.format(r.ma)} (${r.na})</small></span><span class="pts"><b>+${nf1.format(Math.abs(r.d))}</b> ${casa ? "en casa" : "fuera"}</span></li>`;
   const caseros = R.filter(r => r.d > 0).sort((a, b) => b.d - a.d).slice(0, 5), viajeros = R.filter(r => r.d < 0).sort((a, b) => a.d - b.d).slice(0, 5);
   const dif = mH - mA;
+  const nomEq = {}; CAL.games.forEach(g => { nomEq[g.home] = g.homeName; nomEq[g.away] = g.awayName; });
+  const E = Object.entries(EQ).filter(([, t]) => t.h.length >= 15 && t.a.length >= 15).map(([id, t]) => ({ id, n: nomEq[id] || id, mh: med(t.h), ma: med(t.a), d: med(t.h) - med(t.a) })).sort((x, y) => y.d - x.d);
+  const filaE = (e, casa) => `<li>${cara("", e.n, e.id, 36)}<span class="pq"><b>${esc(e.n)}</b><small>en casa ${nf1.format(e.mh)} · fuera ${nf1.format(e.ma)} por jugador</small></span><span class="pts"><b>+${nf1.format(Math.abs(e.d))}</b> ${casa ? "en casa" : "fuera"}</span></li>`;
+  const eqHtml = E.length >= 8 ? `<h3 class="sec">Equipos que más se crecen en casa</h3><ul class="pron">${E.filter(e => e.d > 0).slice(0, 4).map(e => filaE(e, true)).join("")}</ul>
+    <h3 class="sec">Equipos que mejor rinden fuera</h3><ul class="pron">${E.filter(e => e.d < 0).slice(-4).reverse().map(e => filaE(e, false)).join("")}</ul>` : "";
   cont.innerHTML = `<div class="gh"><h2>Casa y fuera</h2></div>
     <p class="note" style="margin:0 0 10px">Media de puntos de todos los jugadores de LaLiga que han jugado, según su partido fuese en casa o fuera.</p>
     ${barra("En casa", mH, H.length, "var(--acc)")}${barra("Fuera", mA, A.length, "var(--mut)")}
     <p class="note">${Math.abs(dif) < 0.15 ? "Prácticamente da igual" : dif > 0 ? `Jugar en casa vale <b>${nf1.format(dif)}</b> puntos más por jugador` : `Jugar fuera vale <b>${nf1.format(-dif)}</b> puntos más por jugador`}. Resultados: ${vl} victorias locales, ${em} empates y ${vv} visitantes (${nf1.format(gl)} goles de media en casa y ${nf1.format(gv)} fuera).</p>
     <h3 class="sec">Los que más rinden en casa</h3><ul class="pron">${caseros.map((r, k) => fila(r, k, true)).join("")}</ul>
     <h3 class="sec">Los que más rinden fuera</h3><ul class="pron">${viajeros.map((r, k) => fila(r, k, false)).join("")}</ul>
-    <p class="note">Solo jugadores con 3 partidos o más en casa y fuera y 3 puntos de media. Con pocos partidos, parte de la diferencia es casualidad.</p>
+    ${eqHtml}
+    <p class="note">Solo jugadores con 3 partidos o más en casa y fuera y 3 puntos de media (los equipos, con 15 actuaciones en cada sitio). Con pocos partidos, parte de la diferencia es casualidad.</p>
     <div class="acciones"><button class="btn-cromo" data-casa-comp>📤 Compartir lámina</button></div>`;
   const rc = r => ({ n: r.p.name, pos: r.p.pos, mh: r.mh, ma: r.ma, d: Math.abs(r.d) });
   CASA_D = { mH, mA, nH: H.length, nA: A.length, vl, em, vv, L: caseros.slice(0, 3).map(rc), V: viajeros.slice(0, 3).map(rc) };
