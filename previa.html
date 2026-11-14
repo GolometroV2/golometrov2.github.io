@@ -4115,6 +4115,7 @@ function bloqueOnceEq(m) {
   if (k0 === "valor") frases.push(`El once vale <b>${eur(o.valor)}</b> y el banquillo ${eur(ban.reduce((t, p) => t + (Number(p.value) || 0), 0))} (${ban.length} ${ban.length === 1 ? "jugador" : "jugadores"}).`);
   if (k0 === "renta") { const rs = c.map(p => ({ p, d: rxDato(p, "renta") })).filter(x => x.d.pts != null).sort((a, b) => b.d.pts - a.d.pts); if (rs.length > 1) frases.push(`El más rentable: <b>${esc(rs[0].p.short || rs[0].p.name)}</b> (${rs[0].d.txt} puntos por millón). El menos: ${esc(rs[rs.length - 1].p.short || rs[rs.length - 1].p.name)} (${rs[rs.length - 1].d.txt}).`); }
   const barre = rxBarre; rxBarre = false;
+  RX_D = { m, i: (E.managers || []).indexOf(m), o, tit: capa[1], once: ["PT", "DF", "MC", "DL"].map(k => o[k].map(p => ({ id: p.id, name: p.short || p.name, teamId: p.teamId, pos: k, chapa: rxDato(p, k0).txt }))) };
   return `<section class="card rx"><div class="gh"><h2>Rayos X de la plantilla</h2></div>
     <div class="pills rx-capas" role="group" aria-label="Qué se lee de cada jugador">${RX_CAPAS.map(([k, t]) => `<button class="pill ${k === k0 ? "on" : ""}" data-rx="${k}" aria-pressed="${k === k0}">${t}</button>`).join("")}</div>
     <p class="note" style="margin:8px 0">Su mejor once de la temporada${o.huecos ? ` (le ${o.huecos > 1 ? `faltan ${o.huecos} jugadores` : "falta un jugador"} para completarlo)` : ""}. ${capa[2]}</p>
@@ -4122,6 +4123,7 @@ function bloqueOnceEq(m) {
     ${banco ? `<p class="ordlbl">Banquillo · ${ban.length}</p><div class="rx-ban">${banco}</div>` : ""}
     ${lineas ? `<p class="ordlbl">Puntos de cada línea esta temporada, frente a la liga</p>${lineas}` : ""}
     ${frases.length ? `<ul class="rx-ins">${frases.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}
+    ${o.huecos ? "" : `<div class="acciones"><button class="btn-cromo" data-rx-comp>📤 Compartir su once</button></div>`}
     ${rxVersus(m, LN)}</section>`;
 }
 // Rayos X: plantilla frente a plantilla. Puntos de cada línea (lo alineado de verdad, sin capitán) y valor de las dos; solo datos ya ocurridos
@@ -4144,7 +4146,7 @@ function rxVersus(m, LN) {
     <p class="note">${gan === per ? "Empate a líneas" : gan > per ? `${esc(m.name)} gana en ${gan} de 4 líneas` : `${esc(r.name)} gana en ${per} de 4 líneas`} (puntos alineados en la temporada, sin el extra del capitán).</p>
     <div class="acciones"><button class="btn-cromo" data-rv-comp>📤 Compartir lámina</button></div>`;
 }
-let RV_D = null;
+let RV_D = null, RX_D = null;
 document.addEventListener("change", e => { const t = e.target.closest && e.target.closest("[data-rxvs]"); if (!t) return; rxVs = t.value; pintarEquipos(); });
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-rx]"); if (!b || b.dataset.rx === rxCapa) return; rxCapa = b.dataset.rx; rxBarre = true; pintarEquipos(); });
 
@@ -7807,7 +7809,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8197,6 +8199,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rx-comp]")) { if (RX_D) { EST_DAT.rx = { ...RX_D }; abrirEstudio("rx", e.target.closest("[data-rx-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pro-comp]")) { if (PRO_D && PRO_D.L.length) { EST_DAT.pro = { ...PRO_D }; abrirEstudio("pro", e.target.closest("[data-pro-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
@@ -8629,6 +8632,16 @@ async function esPlantones(d) {
   return c;
 }
 ES_SETS.plan = [["Plantones", esPlantones]];
+// lámina del Rayos X: el mejor once de la temporada de un manager, con la capa elegida (puntos, forma, valor...) como chapa; estadístico
+async function esRayosOnce(d) {
+  const c = esCanvas(), x = c.getContext("2d"), o = d.o;
+  esFondo(x, col(d.i));
+  esCabecera(x, { titulo: "SU MEJOR ONCE", kicker: `${d.m.name} · ${o.form} · ${o.total} puntos`, pag: 0, total: 1 });
+  await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map((k, n) => [k, d.once[n]])));
+  esPie(x, `Rayos X · ${d.tit} de cada uno · vale ${eur(o.valor)}`);
+  return c;
+}
+ES_SETS.rx = [["Su mejor once", esRayosOnce]];
 async function esVersus(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const [imA, imB] = await Promise.all([esImg(d.a.avatarUrl), esImg(d.b.avatarUrl)]);
