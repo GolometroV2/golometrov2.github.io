@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-13T04:04:12Z",
+"updatedAt": "2026-11-14T04:05:29Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-14T04:05:29Z",
+"playerId": "616",
+"name": "Rodri Hernández",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 16881000,
+"listado": 16927000,
+"precio": 23000000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-13T04:04:12Z",
 "playerId": "28612",
