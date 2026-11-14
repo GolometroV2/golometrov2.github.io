@@ -4701,6 +4701,7 @@ function bloqueQuienClausula(ms) {
     <details class="cdet"><summary>Todas las cláusulas (${C.length})</summary><ul class="clist" style="margin-top:6px">${C.map(fila).join("")}</ul></details>
     <p class="note">«Por punto»: lo que ha perdido en dinero (lo pagado menos lo que vale hoy o lo que cobró) dividido entre los puntos que le ha dado. Con pocas jornadas una cláusula cara sale muy cara por punto; si el jugador sigue sumando, cada día sale más barata. Si se lo vuelven a clausular, cobra 1,5 veces lo que pagó. Las cláusulas salen de las compras guardadas y de las noticias de Mister (últimos 30 días cada vez que se leen).</p></section>`;
 }
+let FIC_D = null;
 function bloqueFichajes(ms) {
   cargarPujas();      // lo pagado de verdad (cláusulas incluidas) sale de pujas.json
   const T = (E.transfers || []).filter(t => t.value && t.to);
@@ -4712,6 +4713,8 @@ function bloqueFichajes(ms) {
     return { m, i, n: c.length, cl: c.filter(t => (pagoDe(t) || {}).tipo === "clausula").length, gasto: c.reduce((s, t) => s + importeMov(t), 0), ing: v.reduce((s, t) => s + (t.to ? importeMov(t) : t.value), 0) };
   }).filter(x => x.n).sort((a, b) => b.gasto - a.gasto);
   const mx = Math.max(1, ...act.map(x => x.gasto));
+  FIC_D = { top: top.map(t => ({ nom: t.name, a: (ms.find(m => String(m.id) === String(t.to)) || {}).name || "", de: t.from ? ((ms.find(m => String(m.id) === String(t.from)) || {}).name || "otro manager") : "el mercado", imp: importeMov(t) })),
+    act: act.slice(0, 5).map(x => ({ nom: x.m.name, n: x.n, gasto: x.gasto })) };
   return `<section class="card"><div class="gh"><h2>Mayores fichajes</h2></div>
     <ul>${top.map(t => `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>
     <p class="ordlbl" style="margin-top:12px">Quién ha gastado más</p>
@@ -4726,6 +4729,7 @@ function bloqueFichajes(ms) {
       <ul class="pron">${so.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.max(0, x.p) / mp * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} pujas ganadas en el mercado · ${x.ex >= 0 ? "ha pagado de más " : "ha ahorrado "}${eur(Math.abs(x.ex))} en total</small></span><span class="pp" style="font-size:15px">${x.p >= 0 ? "+" : "−"}${nf1.format(Math.abs(x.p) * 100)} %</span></li>`).join("")}</ul>
       <p class="note">Sobreprecio medio: lo pagado frente al valor del jugador el día que salió al mercado. Solo pujas ganadas con precio conocido (mínimo 2).</p>`;
     })()}
+    <div class="acciones"><button class="btn-cromo" data-fic-comp>📤 Compartir lámina</button></div>
     <p class="note">Importes pagados de verdad: en las cláusulas, la cláusula; en el mercado, la puja ganadora (Mister pone la cláusula nueva en 1,5 veces lo pagado). Si no se sabe, el valor del jugador ese día. Solo cuenta los últimos ${(E.transfers || []).length} movimientos guardados.</p></section>`;
 }
 
@@ -8183,6 +8187,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rx-comp]")) { if (RX_D) { EST_DAT.rx = { ...RX_D }; abrirEstudio("rx", e.target.closest("[data-rx-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-fic-comp]")) { if (FIC_D && FIC_D.top.length) { EST_DAT.fic = { ...FIC_D }; abrirEstudio("fic", e.target.closest("[data-fic-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pro-comp]")) { if (PRO_D && PRO_D.L.length) { EST_DAT.pro = { ...PRO_D }; abrirEstudio("pro", e.target.closest("[data-pro-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
@@ -8908,6 +8913,33 @@ async function esPro(d) {
   esPie(x, "Fichados hace menos de 3 días");
   return c;
 }
+async function esFichajes(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "MAYORES FICHAJES", kicker: "Lo más caro de la liga", pag: 0, total: 1 });
+  const h = 96, mx = Math.max(1, ...d.act.map(r => r.gasto));
+  d.top.forEach((r, k) => {
+    const Y = 380 + k * (h + 12);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 40);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.a + (r.de === "el mercado" ? " lo ficha del mercado" : " se lo quita a " + r.de), 560), M + 28, Y + 72);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed");
+    x.fillText(eur(r.imp), W - M - 24, Y + 62); x.textAlign = "left";
+  });
+  const Y0 = 380 + d.top.length * (h + 12) + 36;
+  x.fillStyle = ES.mut; x.font = esS(700, 24); x.fillText("QUIÉN HA GASTADO MÁS", M + 4, Y0);
+  d.act.forEach((r, k) => {
+    const Y = Y0 + 20 + k * 50;
+    x.fillStyle = ES.txt; x.font = esS(600, 24); x.fillText(esAjusta(x, r.nom, 260, 600, 24, 18), M + 4, Y + 28);
+    x.fillStyle = ES.linea; x.fillRect(M + 280, Y + 12, 480, 10);
+    x.fillStyle = k === 0 ? ES.verde : ES.mut; x.fillRect(M + 280, Y + 12, Math.max(6, r.gasto / mx * 480), 10);
+    x.textAlign = "right"; x.fillStyle = ES.txt; x.font = esS(700, 24); x.fillText(eur(r.gasto), W - M - 4, Y + 28); x.textAlign = "left";
+  });
+  esPie(x, "Importes pagados de verdad en los últimos movimientos");
+  return c;
+}
+ES_SETS.fic = [["Mayores fichajes", esFichajes]];
 ES_SETS.pro = [["Protegidos", esPro]];
 async function esVentas(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
