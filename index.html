@@ -6542,12 +6542,21 @@ function bloqueLeerRivales(r) {
     let su2 = null;
     try { const oq = onceQuiniela(recomendarCapitanes({ cal: CAL, D, E, managerId: o.id, gw: P.despues.gw }).candidatos || []); su2 = oq ? oq.total : null; } catch (e) {}
     const act = LIGA && LIGA.pujas && LIGA.pujas.manager ? LIGA.pujas.manager[id] : null;
-    return { o, rr, sob, cls, aMi, flujo, ints, su2, act };
+    // Fichados por este rival cuya protección de 3 días acaba en menos de 24 h (regla de Mister; dato, sin previsión)
+    const ahora = Date.now(), vistosD = new Set(), desb = [];
+    (E.transfers || []).filter(t => t.ts && String(t.to) === id).forEach(t => {
+      const fin = Date.parse(t.ts) + 72 * 3600e3, falta = fin - ahora, pj = (o.players || []).find(q => String(q.id) === String(t.playerId));
+      if (!pj || !isFinite(fin) || falta <= 0 || falta > 24 * 3600e3 || vistosD.has(pj.id)) return; vistosD.add(pj.id);
+      desb.push({ pj, h: Math.max(1, Math.ceil(falta / 3600e3)) });
+    });
+    desb.sort((a, b) => a.h - b.h);
+    return { o, rr, sob, cls, aMi, flujo, ints, su2, act, desb };
   }).sort((a, b) => (b.cls.length * 2 + (b.rr ? b.rr.n : 0) / 5) - (a.cls.length * 2 + (a.rr ? a.rr.n : 0) / 5));
   const perfil = f => f.act == null ? "" : f.act >= 0.15 ? "muy activo en el mercado" : f.act <= -0.25 ? "casi no puja" : "puja con normalidad";
   const li = f => `<li class="rvl2"><b>${esc(f.o.name)}</b>
     <span>${[perfil(f), f.rr ? `${f.rr.n} pujas en 30 días${f.sob != null ? `, suele pagar un ${Math.round(f.sob * 100)} % sobre el valor` : ""}` : "", f.cls.length ? `${f.cls.length} clausulazo${f.cls.length > 1 ? "s" : ""} (${merEur(f.cls.reduce((t, c) => t + c.precio, 0))})${f.aMi ? `, ${f.aMi} a ti` : ""}` : "no ha clausulado"].filter(Boolean).join(" · ")}</span>
     <span>Últimos 7 días: ${f.flujo >= 0 ? `ha ingresado ${merEur(f.flujo)} netos (tiene caja fresca)` : `ha gastado ${merEur(-f.flujo)} netos`}${f.su2 != null ? ` · su mejor once para la J${P.despues.gw}: ${nf1.format(f.su2)} pts${mi2 != null ? ` (el tuyo ${nf1.format(mi2)})` : ""}` : ""}</span>
+    ${f.desb.length ? `<span>🔓 Clausulable pronto: ${f.desb.map(y => `${esc(apellido(y.pj.short || y.pj.name))} (${y.pj.clause ? merEur(y.pj.clause) + ", " : ""}en ${y.h} h)`).join(", ")}</span>` : ""}
     ${f.ints.length ? `<span>Hoy pujará probablemente por: ${f.ints.map(y => `${esc(y.x.j.name)} (${pc(y.p)})`).join(", ")}</span>` : ""}</li>`;
   return `<details class="card cdet-card"><summary class="sumh">🕵️ Tus rivales</summary>
     <p class="note" style="margin:6px 0 8px">Qué hace cada uno y qué va a hacer: cómo puja, cuánto paga de más, si clausula, si tiene dinero fresco y por qué libres de hoy pujará.</p>
