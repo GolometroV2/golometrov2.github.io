@@ -4700,6 +4700,34 @@ function graficaSobreprecio(compras) {
     <p class="note">Cada punto es una compra: a la derecha pagó por encima del valor, arriba hoy vale más de lo que costó (millones). Las ${caros.length} compras con más sobreprecio han ganado de media <b class="${cl(media(caros))}">${sig(media(caros) * 1e6)}</b> y las ${baratos.length} más ajustadas <b class="${cl(media(baratos))}">${sig(media(baratos) * 1e6)}</b>.</p>${porTipo}`;
 }
 
+// Ventas que dolieron: el espejo de «¿Quién ficha mejor?». Ventas guardadas (al mercado o por cláusula): cuánto vale hoy el
+// jugador frente a lo que cobró el vendedor y los puntos que ha dado desde la venta (equipos.json -> transfers + LIGAJ)
+function bloqueVentas(ms) {
+  if (!LIGAJ || LIGAJ.cargando) return "";
+  const ini = {}; ((CAL && CAL.gameweeks) || []).forEach(g => { if (g.first) ini[g.gw] = Date.parse(g.first.replace(" ", "T") + "+01:00"); });
+  const vistos = new Set(), ventas = [];
+  (E.transfers || []).filter(t => t.from && t.value && t.ts).forEach(t => {
+    const k = t.playerId + "|" + t.from + "|" + t.ts; if (vistos.has(k)) return; vistos.add(k);
+    const m = ms.find(x => String(x.id) === String(t.from)), jg = LIGAJ.jug[String(t.playerId)];
+    if (!m || !jg || !(+jg.value > 0)) return;
+    const cobro = importeMov(t), desde = Date.parse(t.ts), pj = LIGAJ.pts[String(t.playerId)] || {};
+    const jor = Object.keys(pj).filter(g => ini[g] && ini[g] > desde);
+    ventas.push({ m, t, nombre: t.name || jg.name, teamId: jg.teamId, cobro, dif: +jg.value - cobro, pts: jor.reduce((s, g) => s + (+pj[g] || 0), 0), nj: jor.length });
+  });
+  if (ventas.length < 4) return "";
+  const dolieron = ventas.filter(x => x.dif > 0).sort((a, b) => b.dif - a.dif).slice(0, 5), aciertos = ventas.filter(x => x.dif < 0).sort((a, b) => a.dif - b.dif).slice(0, 3);
+  const bal = ms.map(m => { const c = ventas.filter(x => x.m === m); return { m, n: c.length, dif: c.reduce((s, x) => s + x.dif, 0) }; }).filter(x => x.n).sort((a, b) => b.dif - a.dif);
+  const mx = Math.max(1, ...bal.map(x => Math.abs(x.dif)));
+  const fila = x => `<li class="crow" data-ficha="${esc(x.t.playerId)}">${avatar(x.m, x.m.i)}${cara(x.t.playerId, x.nombre, x.teamId, 34)}<span class="cq"><b>${esc(x.nombre)}</b><span>${esc(x.m.name)} · ${esc(enMadrid(x.t.ts, { day: "2-digit", month: "2-digit" }))} · cobró ${eur(x.cobro)}</span></span><span class="cr"><b class="${cl(x.dif)}">${sig(x.dif)}</b><small>${x.nj ? `${x.pts} pts desde` : "sin jugar aún"}</small></span></li>`;
+  return `<section class="card"><div class="gh"><h2>Ventas que dolieron</h2></div>
+    <p class="note" style="margin:0 0 8px">Lo que vale hoy cada jugador vendido frente a lo que cobró su antiguo dueño y los puntos que ha dado desde entonces (verde: hoy vale más, ¡mala venta!).</p>
+    ${dolieron.length ? `<p class="ordlbl">Las que más duelen</p><ul class="clist">${dolieron.map(fila).join("")}</ul>` : ""}
+    ${aciertos.length ? `<p class="ordlbl" style="margin-top:12px">Ventas a tiempo</p><ul class="clist">${aciertos.map(fila).join("")}</ul>` : ""}
+    <p class="ordlbl" style="margin-top:12px">Balance por vendedor</p>
+    <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.dif) / mx * 100).toFixed(1)}%;background:${x.dif >= 0 ? "var(--red)" : col(x.m.i)}"></i></span><small>${x.n} ${x.n === 1 ? "venta" : "ventas"} · cuánto más (+) o menos (−) valen hoy</small></span><span class="pp ${cl(x.dif)}" style="font-size:15px">${sig(x.dif)}</span></li>`).join("")}</ul>
+    <p class="note">Solo las ventas de los últimos ${(E.transfers || []).length} movimientos guardados. Lo cobrado es la cláusula pagada o el valor de ese día si se vendió al mercado.</p></section>`;
+}
+
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
   const filas = ms.slice().sort((a, b) => b.squadValue - a.squadValue).map((m, k) => {
@@ -4738,6 +4766,7 @@ function resumenEq(ms, hp) {
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
+    ${bloqueVentas(ms)}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : vacioHTML("Todo tranquilo", "Aún no se ha detectado ningún fichaje ni venta.")}</section>`;
 }
 
