@@ -4032,13 +4032,16 @@ function rxVersus(m, LN) {
   const fila = (t, a, b, f) => { const mx = Math.max(a, b, 1); return `<div class="rv-f"><b class="${a > b ? "g" : ""}">${f(a)}</b><span class="rv-b"><i class="l" style="--w:${(a / mx).toFixed(3)}"></i><em>${t}</em><i class="r" style="--w:${(b / mx).toFixed(3)}"></i></span><b class="${b > a ? "g" : ""}">${f(b)}</b></div>`; };
   const tY = K.reduce((t, k) => t + yo.s[k], 0), tE = K.reduce((t, k) => t + el.s[k], 0), gan = K.filter(k => yo.s[k] > el.s[k]).length, per = K.filter(k => yo.s[k] < el.s[k]).length;
   const opts = otros.map(x => `<option value="${esc(String(x.id))}"${x === r ? " selected" : ""}>${esc(x.name)}</option>`).join("");
+  RV_D = { a: m, ia: (E.managers || []).indexOf(m), b: r, ib: (E.managers || []).indexOf(r), sa: { ...yo.s }, sb: { ...el.s }, va: Number(m.squadValue) || 0, vb: Number(r.squadValue) || 0 };
   return `<p class="ordlbl">Plantilla contra plantilla</p>
     <label class="note" style="display:block;margin:0 0 8px">Compara con <select data-rxvs aria-label="Manager con el que comparar" style="min-height:44px;max-width:100%">${opts}</select></label>
     <div class="rv"><div class="rv-h"><span>${esc(m.name)}</span><span>${esc(r.name)}</span></div>
       ${K.map(k => fila(NOM[k], yo.s[k], el.s[k], v => v)).join("")}
       ${fila("Puntos totales", tY, tE, v => v)}${fila("Valor", Number(m.squadValue) || 0, Number(r.squadValue) || 0, eur)}</div>
-    <p class="note">${gan === per ? "Empate a líneas" : gan > per ? `${esc(m.name)} gana en ${gan} de 4 líneas` : `${esc(r.name)} gana en ${per} de 4 líneas`} (puntos alineados en la temporada, sin el extra del capitán).</p>`;
+    <p class="note">${gan === per ? "Empate a líneas" : gan > per ? `${esc(m.name)} gana en ${gan} de 4 líneas` : `${esc(r.name)} gana en ${per} de 4 líneas`} (puntos alineados en la temporada, sin el extra del capitán).</p>
+    <div class="acciones"><button class="btn-cromo" data-rv-comp>📤 Compartir lámina</button></div>`;
 }
+let RV_D = null;
 document.addEventListener("change", e => { const t = e.target.closest && e.target.closest("[data-rxvs]"); if (!t) return; rxVs = t.value; pintarEquipos(); });
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-rx]"); if (!b || b.dataset.rx === rxCapa) return; rxCapa = b.dataset.rx; rxBarre = true; pintarEquipos(); });
 
@@ -7657,7 +7660,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8039,6 +8042,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-banq-comp]")) { if (BANQ_D) { EST_DAT.banq = { ...BANQ_D }; abrirEstudio("banq", e.target.closest("[data-banq-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
@@ -8420,6 +8424,36 @@ async function esPlantones(d) {
   return c;
 }
 ES_SETS.plan = [["Plantones", esPlantones]];
+async function esVersus(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const [imA, imB] = await Promise.all([esImg(d.a.avatarUrl), esImg(d.b.avatarUrl)]);
+  esFondo(x);
+  esCabecera(x, { titulo: "CARA A CARA", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const NOM = { PT: "Portería", DF: "Defensa", MC: "Medio campo", DL: "Delantera" }, K = ["PT", "DF", "MC", "DL"];
+  const fil = K.map(k => [NOM[k], d.sa[k], d.sb[k], String(d.sa[k]), String(d.sb[k])]);
+  const tA = K.reduce((t, k) => t + d.sa[k], 0), tB = K.reduce((t, k) => t + d.sb[k], 0);
+  fil.push(["Puntos totales", tA, tB, String(tA), String(tB)], ["Valor", d.va, d.vb, eur(d.va), eur(d.vb)]);
+  esAvatar(x, d.a, d.ia, imA, M + 130, 520, 100, ES.luz); esAvatar(x, d.b, d.ib, imB, W - M - 130, 520, 100, ES.luz);
+  x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esF(800, 80, "condensed"); x.fillText("VS", W / 2, 545);
+  x.fillStyle = ES.txt; x.font = esS(700, 32);
+  x.fillText(esAjusta(x, d.a.name, 400, 700, 32, 22), M + 130, 665); x.fillText(esAjusta(x, d.b.name, 400, 700, 32, 22), W - M - 130, 665);
+  const h = 78, cw = 150, bw = W - 2 * M - 2 * cw - 40;
+  fil.forEach((f, k) => {
+    const Y = 720 + k * (h + 12), mx = Math.max(f[1], f[2], 1), gA = f[1] > f[2], gB = f[2] > f[1];
+    esPanel(x, M, Y, W - 2 * M, h, k >= 4 ? ES.verde : ES.linea, 18);
+    x.textAlign = "left"; x.fillStyle = gA ? ES.verde : ES.txt; x.font = esF(800, 44, "condensed"); x.fillText(f[3], M + 22, Y + 56);
+    x.textAlign = "right"; x.fillStyle = gB ? ES.verde : ES.txt; x.fillText(f[4], W - M - 22, Y + 56);
+    x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(f[0], W / 2, Y + 30);
+    x.fillStyle = ES.linea; x.fillRect(W / 2 - bw / 2, Y + 44, bw, 10);
+    x.fillStyle = gA ? ES.verde : ES.mut; x.fillRect(W / 2 - 2 - bw / 2 * f[1] / mx, Y + 44, bw / 2 * f[1] / mx, 10);
+    x.fillStyle = gB ? ES.verde : ES.mut; x.fillRect(W / 2 + 2, Y + 44, bw / 2 * f[2] / mx, 10);
+  });
+  const gan = K.filter(k => d.sa[k] > d.sb[k]).length, per = K.filter(k => d.sa[k] < d.sb[k]).length;
+  x.textAlign = "left";
+  esPie(x, gan === per ? "Empate a líneas" : gan > per ? `${d.a.name} gana en ${gan} de 4 líneas` : `${d.b.name} gana en ${per} de 4 líneas`);
+  return c;
+}
+ES_SETS.rv = [["Plantilla contra plantilla", esVersus]];
 async function esAltibajos(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.L.slice(0, 7), rg = Math.max(1, d.mx - d.mn), X0 = M + 28, AN = W - 2 * M - 56 - 120;
