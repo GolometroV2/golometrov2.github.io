@@ -9181,6 +9181,18 @@ function itemsCinta() {
       return { p: LIGAJ.jug[id], s: g.reduce((t, k) => t + (capNum(o[k]) ? o[k] : 0), 0) }; }).filter(x => x.p).sort((a, b) => b.s - a.s)[0];
     if (ult && ult.s > 0) ic("🔥", `En racha: <b>${esc(ult.p.name)}</b>, ${ult.s} pts en las 3 últimas jornadas`);
   }
+  // Regla de Mister (sin previsión): fichajes cuya protección de 3 días acaba en menos de 24 h
+  if (E && E.transfers && E.managers) {
+    const vis = new Set(), pr = [];
+    E.transfers.forEach(t => {
+      if (!t.ts || !t.to) return;
+      const falta = Date.parse(t.ts) + 72 * 3600e3 - Date.now(), o = E.managers.find(m => String(m.id) === String(t.to));
+      const pj = o && (o.players || []).find(q => String(q.id) === String(t.playerId));
+      if (!pj || !isFinite(falta) || falta <= 0 || falta > 24 * 3600e3 || vis.has(pj.id)) return; vis.add(pj.id);
+      pr.push({ pj, o, h: Math.max(1, Math.ceil(falta / 3600e3)) });
+    });
+    pr.sort((x, y) => x.h - y.h).slice(0, 2).forEach(y => ic("🔓", `<b>${esc(apellido(y.pj.short || y.pj.name))}</b> (${esc(y.o.name)}) se podrá clausular en ${y.h} h`));
+  }
   if (E && E.transfers && E.transfers.length) E.transfers.slice(0, 3).forEach(t => ic(!t.from ? "🛒" : !t.to ? "💸" : "🤝", textoMov(t)));
   return it;
 }
