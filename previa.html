@@ -3351,12 +3351,15 @@ function pintarSinCap() {
   const filas = sinOrd.map(r => { const d = r.p0 - r.p1;
     return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${r.p1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.sin} puntos sin capitán, ${r.tot} con capitán"><i style="width:${Math.max(0, r.sin / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.ext} pts del capitán · hoy ${r.p0}.º</small></span>
       <span class="pts"><b>${r.sin}</b><em class="${d > 0 ? "up" : d < 0 ? "dn" : ""}" style="${d ? "" : "color:var(--mut)"}">${d > 0 ? "▲ " + d : d < 0 ? "▼ " + -d : "="}</em></span></li>`; }).join("");
+  SINCAP_D = { R: sinOrd.map(r => ({ m: r.m, i: r.i, tot: r.tot, ext: r.ext, sin: r.sin, p0: r.p0, p1: r.p1 })), n: Math.max(...R.map(r => r.n)) };
   const cambian = R.filter(r => r.p1 !== r.p0).length, ayuda = R.slice().sort((a, b) => b.ext - a.ext)[0];
   cont.innerHTML = `<div class="gh"><h2>¿Y si no hubiera capitán?</h2></div>
     <p class="note" style="margin:0 0 10px">La tabla quitando los puntos extra del brazalete en todas las jornadas jugadas. La flecha dice cuántos puestos ganaría o perdería cada uno frente a la clasificación real.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.` : "Nadie cambiaría de puesto: el capitán no decide la liga."} Al que más le ha dado el capitán: <b>${esc(ayuda.m.name)}</b> (+${ayuda.ext}).</p>`;
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.` : "Nadie cambiaría de puesto: el capitán no decide la liga."} Al que más le ha dado el capitán: <b>${esc(ayuda.m.name)}</b> (+${ayuda.ext}).</p>
+    <div class="acciones"><button class="btn-cromo" data-sincap-comp>📤 Compartir lámina</button></div>`;
 }
+let SINCAP_D = null;
 
 /* ---------- Liga de duelos: la clasificación si cada jornada fuese un todos contra todos (3 por victoria, 1 por empate) ---------- */
 // Cada jornada, cada manager se mide con los demás: gana, empata o pierde según los puntos de esa jornada. Solo lee D.matchdays.
@@ -8153,6 +8156,7 @@ let CMP_ULT = null;
 document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-alti-comp]")) { if (ALTI_D) { EST_DAT.alti = { ...ALTI_D }; abrirEstudio("alti", e.target.closest("[data-alti-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-sincap-comp]")) { if (SINCAP_D) { EST_DAT.sincap = { ...SINCAP_D }; abrirEstudio("sincap", e.target.closest("[data-sincap-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sorp-comp]")) { if (SORP_D) { EST_DAT.sorp = { ...SORP_D }; abrirEstudio("sorp", e.target.closest("[data-sorp-comp]")); } return; }
@@ -8629,6 +8633,29 @@ async function esPlantones(d) {
   return c;
 }
 ES_SETS.plan = [["Plantones", esPlantones]];
+// lámina de «¿Y si no hubiera capitán?»: la tabla sin los puntos extra del brazalete y los puestos que se ganan o pierden; estadístico
+async function esSinCap(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(1, ...R.map(r => r.tot));
+  esFondo(x);
+  esCabecera(x, { titulo: "SIN CAPITÁN", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), dd = r.p0 - r.p1;
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.p1 + ".º " + r.m.name, 520, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.ext} pts del brazalete · con él: ${r.tot} (${r.p0}.º)`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * Math.max(0, r.sin) / mx, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.sin), W - M - 24, Y + 66);
+    x.fillStyle = ES.mut; x.font = esS(700, 22); x.fillText(dd > 0 ? "▲ " + dd : dd < 0 ? "▼ " + -dd : "=", W - M - 190, Y + 66); x.textAlign = "left";
+  });
+  const ay = d.R.slice().sort((a, b) => b.ext - a.ext)[0];
+  esPie(x, `Al que más ayudó el capitán: ${ay.m.name} (+${ay.ext})`);
+  return c;
+}
+ES_SETS.sincap = [["Sin capitán", esSinCap]];
 // lámina del Rayos X: el mejor once de la temporada de un manager, con la capa elegida (puntos, forma, valor...) como chapa; estadístico
 async function esRayosOnce(d) {
   const c = esCanvas(), x = c.getContext("2d"), o = d.o;
