@@ -8071,7 +8071,10 @@ function cromoDatos(id) {
   const racha = (p.streak || []).filter(capNum), forma = racha.length ? racha.reduce((a, b) => a + b, 0) / racha.length : null;
   const nombreEq = {}; ((CAL && CAL.games) || []).forEach(g => { nombreEq[g.home] = g.homeName; nombreEq[g.away] = g.awayName; });
   const POS = { PT: "porteros", DF: "defensas", MC: "centrocampistas", DL: "delanteros" };
-  return { p, nota, tier: nota >= 86 ? "esm" : nota >= 74 ? "pla" : "car", tierNom: nota >= 86 ? "Esmeralda" : nota >= 74 ? "Plata" : "Carbono",
+  const mismos = Object.values(LIGAJ.jug).filter(q => q.pos === p.pos);
+  const puesto = (k, ok = () => true) => { const v = p[k]; if (!capNum(v) || !ok(p)) return null; const L = mismos.filter(q => capNum(q[k]) && ok(q)); return L.length < 5 ? null : { r: L.filter(q => q[k] > v).length + 1, n: L.length }; };
+  const rangos = [["Puntos", puesto("points")], ["Media", puesto("avg", q => q.avg > 0 && q.points / q.avg >= 5)], ["Valor", puesto("value")]].filter(x => x[1]);
+  return { p, nota, rangos, tier: nota >= 86 ? "esm" : nota >= 74 ? "pla" : "car", tierNom: nota >= 86 ? "Esmeralda" : nota >= 74 ? "Plata" : "Carbono",
     pj: jug.length, serie, rec, forma, rival: p.nextRival != null ? nombreEq[p.nextRival] : null, equipo: nombreEq[p.teamId] || "",
     n: String(p.id), nIg: igual.length, posNom: POS[p.pos] || "jugadores", mejorQue: Math.round(100 * (0.6 * pct(q => q.avg || 0, p.avg || 0) + 0.4 * pct(q => q.points, p.points))) };
 }
@@ -8101,6 +8104,7 @@ function htmlCromo(d) {
       <b class="cr-dt">${esc(p.name)}</b><small class="cr-ds">${esc(d.equipo)} · ${esc(d.tierNom)}</small>
       <dl class="cr-dl">
         <div><dt>Media ${d.nota}</dt><dd>Mejor que el ${d.mejorQue} % de los ${d.nIg} ${esc(d.posNom)} con puntos, por puntos por partido (60 %) y puntos totales (40 %).</dd></div>
+        ${d.rangos.length ? `<div><dt>Puesto entre los ${esc(d.posNom)}</dt><dd>${d.rangos.map(([t, x]) => `${t} ${x.r}.º de ${x.n}`).join(" · ")}.</dd></div>` : ""}
         ${d.rec ? `<div><dt>Mejor jornada</dt><dd>J${d.rec.g}, con ${d.rec.v} puntos.</dd></div>` : ""}
         ${d.forma != null ? `<div><dt>Forma</dt><dd>${nf1.format(d.forma)} puntos de media en sus últimos ${(p.streak || []).filter(capNum).length} partidos.</dd></div>` : ""}
         ${d.rival ? `<div><dt>Próximo partido</dt><dd>${p.nextHome ? "En casa contra" : "Fuera, contra"} ${esc(d.rival)}.</dd></div>` : ""}
