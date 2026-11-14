@@ -4542,6 +4542,7 @@ function bloqueProtegidos(ms) {
     if (p) L.push({ m, p, fin, falta: fin - ahora });
   });
   L.sort((a, b) => a.falta - b.falta);
+  PRO_D = { L: L.slice(0, 7).map(x => ({ nom: x.p.short || x.p.name, dueno: x.m.name, val: x.p.value, clau: x.p.clause || 0, falta: x.falta })) };
   const cuenta = f => { const h = Math.ceil(f / 3600e3); return h >= 24 ? Math.floor(h / 24) + " d " + (h % 24) + " h" : h + " h"; };
   const cab = `<div class="gh"><h2>Protegidos</h2></div>`;
   if (!L.length) return `<section class="card">${cab}${vacioHTML("Nadie protegido", "Ningún fichaje de los últimos 3 días sigue en su plantilla: todo se puede clausular.")}</section>`;
@@ -4550,8 +4551,10 @@ function bloqueProtegidos(ms) {
     <ul class="pron">${L.map(x => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${esc(x.p.short || x.p.name)}</b><small>${esc(x.m.name)} · ${eur(x.p.value)}${x.p.clause ? " · cláusula " + eur(x.p.clause) : ""}</small>
       <span class="pb"><i style="width:${Math.max(3, (1 - x.falta / PROT) * 100).toFixed(1)}%;background:${col(x.m.i)}"></i></span></span>
       <span class="pp">🔒 ${cuenta(x.falta)}</span></li>`).join("")}</ul>
-    <p class="note">Tres días contados desde la hora del fichaje; la barra se llena a medida que pasa el tiempo.</p></section>`;
+    <p class="note">Tres días contados desde la hora del fichaje; la barra se llena a medida que pasa el tiempo.</p>
+    <div class="acciones"><button class="btn-cromo" data-pro-comp>📤 Compartir lámina</button></div></section>`;
 }
+let PRO_D = null;
 
 // Enfermería: jugadores de cada plantilla con aviso de lesión, duda o sanción hoy (dato de Mister, sin previsión)
 function bloqueEnfermeria(ms) {
@@ -8171,6 +8174,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-pro-comp]")) { if (PRO_D && PRO_D.L.length) { EST_DAT.pro = { ...PRO_D }; abrirEstudio("pro", e.target.closest("[data-pro-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
@@ -8797,6 +8801,26 @@ async function esEnf(d) {
   return c;
 }
 ES_SETS.enf = [["Enfermería", esEnf]];
+async function esPro(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, PROT = 72 * 3600e3;
+  esFondo(x);
+  esCabecera(x, { titulo: "PROTEGIDOS", kicker: "Aún no se pueden clausular", pag: 0, total: 1 });
+  const h = 100;
+  d.L.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), hh = Math.ceil(r.falta / 3600e3);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.dueno + " · " + eur(r.val) + (r.clau ? " · cláusula " + eur(r.clau) : ""), 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * (1 - r.falta / PROT)), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed");
+    x.fillText(hh >= 24 ? Math.floor(hh / 24) + " d " + (hh % 24) + " h" : hh + " h", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Fichados hace menos de 3 días");
+  return c;
+}
+ES_SETS.pro = [["Protegidos", esPro]];
 async function esVentas(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.L, mx = Math.max(1, ...R.map(r => r.dif));
