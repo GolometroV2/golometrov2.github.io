@@ -4718,6 +4718,7 @@ function bloqueVentas(ms) {
   const dolieron = ventas.filter(x => x.dif > 0).sort((a, b) => b.dif - a.dif).slice(0, 5), aciertos = ventas.filter(x => x.dif < 0).sort((a, b) => a.dif - b.dif).slice(0, 3);
   const bal = ms.map(m => { const c = ventas.filter(x => x.m === m); return { m, n: c.length, dif: c.reduce((s, x) => s + x.dif, 0) }; }).filter(x => x.n).sort((a, b) => b.dif - a.dif);
   const mx = Math.max(1, ...bal.map(x => Math.abs(x.dif)));
+  VEN_D = { L: dolieron.slice(0, 5).map(x => ({ nom: x.nombre, m: x.m.name, cobro: x.cobro, dif: x.dif, pts: x.pts, nj: x.nj })) };
   const fila = x => `<li class="crow" data-ficha="${esc(x.t.playerId)}">${avatar(x.m, x.m.i)}${cara(x.t.playerId, x.nombre, x.teamId, 34)}<span class="cq"><b>${esc(x.nombre)}</b><span>${esc(x.m.name)} · ${esc(enMadrid(x.t.ts, { day: "2-digit", month: "2-digit" }))} · cobró ${eur(x.cobro)}</span></span><span class="cr"><b class="${cl(x.dif)}">${sig(x.dif)}</b><small>${x.nj ? `${x.pts} pts desde` : "sin jugar aún"}</small></span></li>`;
   return `<section class="card"><div class="gh"><h2>Ventas que dolieron</h2></div>
     <p class="note" style="margin:0 0 8px">Lo que vale hoy cada jugador vendido frente a lo que cobró su antiguo dueño y los puntos que ha dado desde entonces (verde: hoy vale más, ¡mala venta!).</p>
@@ -4725,8 +4726,10 @@ function bloqueVentas(ms) {
     ${aciertos.length ? `<p class="ordlbl" style="margin-top:12px">Ventas a tiempo</p><ul class="clist">${aciertos.map(fila).join("")}</ul>` : ""}
     <p class="ordlbl" style="margin-top:12px">Balance por vendedor</p>
     <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.dif) / mx * 100).toFixed(1)}%;background:${x.dif >= 0 ? "var(--red)" : col(x.m.i)}"></i></span><small>${x.n} ${x.n === 1 ? "venta" : "ventas"} · cuánto más (+) o menos (−) valen hoy</small></span><span class="pp ${cl(x.dif)}" style="font-size:15px">${sig(x.dif)}</span></li>`).join("")}</ul>
-    <p class="note">Solo las ventas de los últimos ${(E.transfers || []).length} movimientos guardados. Lo cobrado es la cláusula pagada o el valor de ese día si se vendió al mercado.</p></section>`;
+    <p class="note">Solo las ventas de los últimos ${(E.transfers || []).length} movimientos guardados. Lo cobrado es la cláusula pagada o el valor de ese día si se vendió al mercado.</p>
+    ${dolieron.length ? `<div class="acciones"><button class="btn-cromo" data-ven-comp>📤 Compartir lámina</button></div>` : ""}</section>`;
 }
+let VEN_D = null;
 
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
@@ -7689,7 +7692,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8071,6 +8074,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-banq-comp]")) { if (BANQ_D) { EST_DAT.banq = { ...BANQ_D }; abrirEstudio("banq", e.target.closest("[data-banq-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
@@ -8648,6 +8652,27 @@ async function esEnf(d) {
   return c;
 }
 ES_SETS.enf = [["Enfermería", esEnf]];
+async function esVentas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, mx = Math.max(1, ...R.map(r => r.dif));
+  esFondo(x);
+  esCabecera(x, { titulo: "LAS QUE DOLIERON", kicker: "Ventas: lo que valen hoy frente a lo cobrado", pag: 0, total: 1 });
+  const h = 120;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 32);
+    x.fillText(esAjusta(x, r.nom, 520, 700, 32, 22), M + 28, Y + 42);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.m} · cobró ${eur(r.cobro)} · ${r.nj ? r.pts + " pts desde" : "sin jugar aún"}`, 560), M + 28, Y + 74);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 94, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 94, Math.max(6, 560 * r.dif / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed"); x.fillText(sig(r.dif), W - M - 24, Y + 72); x.textAlign = "left";
+  });
+  esPie(x, "Cuánto más vale hoy que lo que se cobró");
+  return c;
+}
+ES_SETS.ven = [["Ventas que dolieron", esVentas]];
 
 async function esValor7(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
