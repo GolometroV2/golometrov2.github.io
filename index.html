@@ -3762,29 +3762,6 @@ function pintarTrono() {
 }
 let TRONO_D = null;
 
-/* ---------- Liga de duelos: clasificación si cada jornada fuese un cara a cara contra todos (estadístico, solo lee D.matchdays) ---------- */
-function pintarDuelos() {
-  const cont = $("#duelos"); if (!cont || !D || !D.matchdays) return;
-  const S = serieLiga(), n = S.js.length, N = S.ms.length;
-  if (n < 3 || N < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
-  cont.hidden = false;
-  const R = S.ms.map((o, x) => {
-    let g = 0, e = 0, p = 0;
-    for (let j = 0; j < n; j++) S.ms.forEach((_, y) => { if (y === x) return; const a = S.pts[x][j], b = S.pts[y][j]; if (a > b) g++; else if (a === b) e++; else p++; });
-    return { m: o.m, i: o.i, x, g, e, p, pt: g * 3 + e, real: S.cum[x][n - 1] };
-  });
-  const porReal = R.slice().sort((a, b) => b.real - a.real).map(r => r.x);
-  const L = R.slice().sort((a, b) => b.pt - a.pt || b.real - a.real);
-  const mx = Math.max(1, ...L.map(r => r.pt));
-  const filas = L.map((r, k) => {
-    const d = porReal.indexOf(r.x) - k, tx = d > 0 ? `<span class="up">▲ ${d} sobre la general</span>` : d < 0 ? `<span class="dn">▼ ${-d} bajo la general</span>` : "<span>igual que la general</span>";
-    return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><small>${r.g} victorias · ${r.e} empates · ${r.p} derrotas</small><small>${tx}</small><span class="pb" role="img" aria-label="${r.pt} puntos de duelos"><i style="width:${(r.pt / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span></span><span class="pts"><b>${nf0.format(r.pt)}</b> pts</span></li>`;
-  }).join("");
-  cont.innerHTML = `<div class="gh"><h2>Liga de duelos</h2></div>
-    <p class="note" style="margin:0 0 10px">¿Y si cada jornada fuese un cara a cara contra todos los demás? Se gana (3 puntos) si se puntúa más que el rival, se empata (1) si es igual. Premia a quien gana jornadas, no a quien hace una explosiva.</p>
-    <ul class="pron">${filas}</ul>`;
-}
-
 /* ---------- Persecución: cuánto le falta a cada manager para alcanzar al de arriba (estadístico, solo lee D.matchdays) ---------- */
 function pintarPersecucion() {
   const cont = $("#pers"); if (!cont || !D || !D.matchdays) return;
@@ -10041,7 +10018,6 @@ function pintar() {
     <section class="card" id="sorp" hidden></section>
     <section class="card" id="foto" hidden></section>
     <section class="card" id="trono" hidden></section>
-    <section class="card" id="duelos" hidden></section>
     <section class="card" id="pers"></section>
     <section class="card" id="gole"></section>
     <section class="card" id="recs"></section>
@@ -10082,7 +10058,6 @@ function pintar() {
   pintarPersecucion();
   pintarFotos();
   pintarTrono();
-  pintarDuelos();
   pintarGoleadores();
   pintarRecords();
   cuentaClasificacion();
