@@ -8266,9 +8266,11 @@ async function esCromo(d) {
   st.forEach(([v, l], k) => { const cx = X + 70 + (k % 3 + 0.5) * (cw - 140) / 3, cy = Y + 806 + Math.floor(k / 3) * 84;
     x.textAlign = "right"; x.fillStyle = tinta; x.font = esF(800, 58, "condensed"); x.fillText(String(v), cx + 8, cy);
     x.textAlign = "left"; x.font = esF(700, 26); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.7)" : "rgba(242,251,245,.75)"; x.fillText(l, cx + 16, cy); });
+  x.textAlign = "center";
+  if (d.rangos.length) { x.font = esF(700, 24); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.8)" : "rgba(242,251,245,.85)"; x.fillText(esCorta(x, "Puesto: " + d.rangos.map(([t, r]) => `${t} ${r.r}.º/${r.n}`).join(" · "), cw - 100), W / 2, Y + 926); }
   x.textAlign = "left";
-  x.font = esF(700, 26); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.7)" : "rgba(242,251,245,.7)"; x.fillText(d.tierNom, X + 56, Y + ch - 36);
-  x.textAlign = "right"; x.fillText(esCorta(x, p.ownerName || "Sin dueño", cw - 300), X + cw - 56, Y + ch - 36); x.textAlign = "left";
+  x.font = esF(700, 26); x.fillStyle = d.tier === "pla" ? "rgba(11,26,18,.7)" : "rgba(242,251,245,.7)"; x.fillText(d.tierNom, X + 56, Y + ch - 22);
+  x.textAlign = "right"; x.fillText(esCorta(x, p.ownerName || "Sin dueño", cw - 300), X + cw - 56, Y + ch - 22); x.textAlign = "left";
   esPie(x, `Media ${d.nota}: mejor que el ${d.mejorQue} % de los ${d.posNom}`);
   return c;
 }
