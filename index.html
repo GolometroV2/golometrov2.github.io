@@ -3643,8 +3643,12 @@ function pintarCasaFuera() {
     <p class="note">${Math.abs(dif) < 0.15 ? "Prácticamente da igual" : dif > 0 ? `Jugar en casa vale <b>${nf1.format(dif)}</b> puntos más por jugador` : `Jugar fuera vale <b>${nf1.format(-dif)}</b> puntos más por jugador`}. Resultados: ${vl} victorias locales, ${em} empates y ${vv} visitantes (${nf1.format(gl)} goles de media en casa y ${nf1.format(gv)} fuera).</p>
     <h3 class="sec">Los que más rinden en casa</h3><ul class="pron">${caseros.map((r, k) => fila(r, k, true)).join("")}</ul>
     <h3 class="sec">Los que más rinden fuera</h3><ul class="pron">${viajeros.map((r, k) => fila(r, k, false)).join("")}</ul>
-    <p class="note">Solo jugadores con 3 partidos o más en casa y fuera y 3 puntos de media. Con pocos partidos, parte de la diferencia es casualidad.</p>`;
+    <p class="note">Solo jugadores con 3 partidos o más en casa y fuera y 3 puntos de media. Con pocos partidos, parte de la diferencia es casualidad.</p>
+    <div class="acciones"><button class="btn-cromo" data-casa-comp>📤 Compartir lámina</button></div>`;
+  const rc = r => ({ n: r.p.name, pos: r.p.pos, mh: r.mh, ma: r.ma, d: Math.abs(r.d) });
+  CASA_D = { mH, mA, nH: H.length, nA: A.length, vl, em, vv, L: caseros.slice(0, 3).map(rc), V: viajeros.slice(0, 3).map(rc) };
 }
+let CASA_D = null;
 
 /* ---------- Sorpresas de la jornada: quién rindió muy por encima o por debajo de lo suyo (estadístico, para todos) ---------- */
 // Puntos de la jornada frente a la media de sus jornadas anteriores (jugadores_historial.json); solo con 3 jornadas previas y 3 puntos de media o más.
@@ -7761,7 +7765,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8128,6 +8132,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-alti-comp]")) { if (ALTI_D) { EST_DAT.alti = { ...ALTI_D }; abrirEstudio("alti", e.target.closest("[data-alti-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sorp-comp]")) { if (SORP_D) { EST_DAT.sorp = { ...SORP_D }; abrirEstudio("sorp", e.target.closest("[data-sorp-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
@@ -8528,6 +8533,35 @@ async function esSorpresas(d) {
   return c;
 }
 ES_SETS.sorp = [["Sorpresas", esSorpresas]];
+async function esCasaFuera(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "CASA Y FUERA", kicker: "Puntos por jugador · toda LaLiga", pag: 0, total: 1 });
+  const mx = Math.max(d.mH, d.mA, 0.1), BW = W - 2 * M - 56;
+  [["En casa", d.mH, d.nH, ES.verde], ["Fuera", d.mA, d.nA, ES.mut]].forEach(([t, m, n, col], k) => {
+    const Y = 390 + k * 150;
+    esPanel(x, M, Y, W - 2 * M, 130, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 32); x.fillText(t, M + 28, Y + 44);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(n + " actuaciones", M + 28, Y + 76);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 96, BW, 10);
+    x.fillStyle = col; x.fillRect(M + 28, Y + 96, Math.max(6, BW * m / mx), 10);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 64, "condensed"); x.fillText(nf1.format(m), W - M - 28, Y + 70); x.textAlign = "left";
+  });
+  x.fillStyle = ES.mut; x.font = esS(400, 24); x.textAlign = "center";
+  x.fillText(`${d.vl} victorias locales · ${d.em} empates · ${d.vv} visitantes`, W / 2, 700); x.textAlign = "left";
+  [["Más rinden en casa", d.L, 730], ["Más rinden fuera", d.V, 975]].forEach(([t, L, Y0]) => {
+    x.fillStyle = ES.verde; x.font = esS(700, 24); x.fillText(t.toUpperCase(), M, Y0);
+    L.forEach((r, k) => {
+      const Y = Y0 + 12 + k * 72;
+      x.fillStyle = ES.txt; x.font = esS(700, 28); x.fillText(esAjusta(x, r.n, 560, 700, 28, 20), M + 8, Y + 34);
+      x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(`${r.pos} · casa ${nf1.format(r.mh)} · fuera ${nf1.format(r.ma)}`, M + 8, Y + 60);
+      x.textAlign = "right"; x.fillStyle = ES.verde; x.font = esF(800, 44, "condensed"); x.fillText("+" + nf1.format(r.d), W - M - 8, Y + 52); x.textAlign = "left";
+    });
+  });
+  esPie(x, "Media de puntos según jugar en casa o fuera");
+  return c;
+}
+ES_SETS.casa = [["Casa y fuera", esCasaFuera]];
 async function esPlantones(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7), mx = Math.max(...R.map(r => r.no / r.tot));
