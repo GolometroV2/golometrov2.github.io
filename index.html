@@ -183,7 +183,7 @@ ul{list-style:none;margin:0;padding:0}
 .alerta{margin:8px 0 0;background:var(--redBg);color:var(--red);border-radius:var(--r-s);padding:5px 10px;font-size:12.5px;font-weight:600}
 .cv-l{stroke-dasharray:1;stroke-dashoffset:0;animation:cvDib .9s ease-out both}@keyframes cvDib{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @media(prefers-reduced-motion:reduce){.cv-l{animation:none}}
-.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
+.cv-box svg{width:100%;height:auto;display:block}.cv-ley{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.cv-ley li{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}.cv-ley i{width:12px;height:12px;border-radius:4px;flex:none}.cv-t{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 8px;border-radius:var(--r-m);cursor:pointer;font-size:13px;opacity:.6}.cv-t.on{opacity:1;background:var(--accBg)}.cv-t:focus-visible{outline:2px solid var(--acc)}.cv-t i{border:2px solid var(--line);box-sizing:border-box}.cv-ley span{color:var(--mut);margin-left:auto;font-size:12px;text-align:right}
 .cdist{padding:8px 2px 2px}.cdist-t{font-size:12px;font-weight:600;margin-bottom:4px}.cdist svg{width:100%;height:auto;display:block}
 .claves{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .clave,.rv{background:var(--panel2);border-radius:var(--r-m);overflow:hidden}
@@ -619,6 +619,10 @@ button.mx-c{border:0;font-family:inherit;cursor:pointer;min-height:44px;padding:
 .fb i{display:block;width:16px;border-radius:4px}
 .fb small{font-size:11px;font-weight:700}.fb em{font-style:normal;font-size:9.5px;color:var(--mut)}
 .fsp{width:100%;height:60px;display:block}
+.fr{display:grid;gap:7px}.fr-f{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:9px;font-size:13px}
+.fr-b{height:10px;border-radius:99px;background:var(--line);overflow:hidden}.fr-b i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 55%,transparent),var(--acc));transform-origin:left;animation:frIn .6s ease-out}
+.fr-f b{min-width:74px;text-align:right;font-variant-numeric:tabular-nums}.fr-f small{font-weight:500;color:var(--mut)}
+@keyframes frIn{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.fr-b i{animation:none}}
 li[data-ficha]{cursor:pointer}
 li[data-ficha]:hover{background:color-mix(in srgb,var(--panel2) 50%,transparent)}
 @media(max-width:380px){.nav>div{gap:6px}.logo{font-size:17px;gap:6px}.acciones{gap:6px}.refresh{padding:7px 11px}}
@@ -840,7 +844,7 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .mpuja b{font-family:var(--f-disp);font-stretch:85%;font-size:17px}
 @media (max-width:420px){.acciones{gap:6px}.busc{width:40px!important;height:40px!important}.refresh{padding:7px 11px}.logo{font-size:17px}}
 @media (max-width:370px){.logo{font-size:16px}.logo svg{width:22px;height:22px}.acciones{gap:6px}.refresh{padding:7px 10px;min-width:44px;justify-content:center}}
-.comp-b{grid-template-columns:1.3fr 1fr 1fr}.comp-b .btn-comp{white-space:nowrap;padding-left:6px;padding-right:6px}
+.comp-b{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}.comp-b>*{min-width:0}.comp-b .btn-comp{white-space:nowrap;padding-left:4px;padding-right:4px;font-size:13px}
 /* ---- el once sobre un campo con sus líneas ---- */
 /* ---- cambio de pestaña y pulsaciones ---- */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
@@ -1582,7 +1586,7 @@ body.wr-abierto{overflow:hidden}
 .bo-c small{font-size:9.5px;font-weight:700;opacity:.9}
 .bo-ley{display:flex;gap:2px;margin:0 0 12px}
 .bo-ley i{flex:1;padding:3px 0;border-radius:3px;text-align:center;font-style:normal;font-size:10px;font-weight:800;color:#f4fbf6}
-.bo-top{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.bo-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:8px}
 .bo-top small{display:block;margin-bottom:4px;font-size:12px;font-weight:700;color:var(--mut)}
 .bo-mv{display:flex;align-items:center;gap:7px;width:100%;min-height:40px;margin:0 0 4px;padding:4px 8px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--txt);cursor:pointer;text-align:left}
 .bo-mv b{flex:1;min-width:0;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1633,6 +1637,8 @@ body.wr-abierto{overflow:hidden}
 .gal-tip small{font-size:11px;color:#b9d6c5;line-height:1.3}
 .gal-tip button{flex:none;min-height:36px;padding:0 10px;border:0;border-radius:10px;background:#2fd46e;color:#03200e;font-weight:800;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.gal-m{transition:none}}
+/* Persecución: curva de distancia al líder */
+.pers-c{display:block;width:120px;max-width:100%;height:26px;margin-top:4px}
 /* «Explora la liga»: el índice de la Clasificación como tarjetas en dos filas que se deslizan */
 .ind-t{margin:18px 0 8px;font-family:var(--f-disp);font-weight:800;font-size:18px}
 .indice.bento{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(210px,64%);gap:8px;margin:0 -16px;padding:2px 16px 6px;scroll-snap-type:x proximity;scroll-padding:0 16px}
@@ -1737,6 +1743,11 @@ body.wr-abierto{overflow:hidden}
 .pt-ctl{display:flex;gap:6px;width:100%;justify-content:center}
 .pt-comp{flex:1;max-width:190px;font-size:14px;background:#2fd46e;color:#03200e}
 @media (prefers-reduced-motion:reduce){.btn-pt,.pt-fin,.pt-res b.pum{animation:none}.pt-tk,.pt-prob i,.pt-balon{transition:none}}
+.rv{display:grid;gap:6px;margin:0 0 8px}.rv-h{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:.85rem}.rv-h span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:48%}
+.rv-f{display:grid;grid-template-columns:62px 1fr 62px;align-items:center;gap:6px;font-size:.85rem}.rv-f>b{white-space:nowrap}.rv-f>b{font-variant-numeric:tabular-nums}.rv-f>b:last-child{text-align:right}.rv-f>b.g{color:var(--accFg)}
+.rv-b{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:3px;height:24px;align-items:center}.rv-b i{display:block;height:100%;border-radius:6px;background:var(--acc);opacity:.55;transform-origin:right;transform:scaleX(var(--w))}.rv-b i.r{transform-origin:left}.rv-b i.l{justify-self:end;width:100%}
+.rv-b em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:.7rem;opacity:.85;pointer-events:none;text-shadow:0 0 3px var(--bg,#000)}
+.cf-f{display:grid;grid-template-columns:64px 1fr auto;gap:4px 10px;align-items:center;margin:0 0 8px}.cf-f span{font-weight:700;font-size:14px}.cf-b{height:12px;border-radius:6px;background:var(--panel2);overflow:hidden}.cf-b i{display:block;height:100%;border-radius:6px}.cf-f small{grid-column:2/4;color:var(--mut);font-size:12px}
 </style>
 </head>
 <body>
@@ -2276,7 +2287,7 @@ function cargarLigaJ() {
   if (LIGAJ) return;
   LIGAJ = { cargando: true };
   Promise.all(["jugadores.json", "jugadores_historial.json"].map(f => fetch(f + "?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)))
-    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); pintarCinta(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
+    .then(([j, h]) => { LIGAJ = { jug: Object.fromEntries(((j || {}).jugadores || []).map(p => [String(p.id), p])), pts: (h || {}).puntos || {}, val: (h || {}).valor || {} }; pintarBusqueda(); pintarCinta(); if (fichaPendiente) { const f = fichaPendiente; fichaPendiente = null; abrirFicha(f); } if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarRentables(); pintarTermometro(); pintarLibres(); pintarReyes(); pintarRegulares(); pintarCasaFuera(); pintarSorpresas(); pintarCronica(); pintarComparador(); if (capVista === "acierto") pintarCapitanes(); if (otsAbierto) pintarPremios(); } });
 }
 /* ---------- Buscador y ficha de jugador ---------- */
 const sinTilde = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -2324,6 +2335,11 @@ function abrirFicha(id) {
     spark = `<h3 class="sec">Valor desde el ${vh[0][0].slice(8, 10)}/${vh[0][0].slice(5, 7)}</h3><svg viewBox="0 0 ${W} ${H}" class="fsp" role="img" aria-label="Evolución del valor"><polyline points="${pt}" fill="none" stroke="${d >= 0 ? "var(--pos)" : "var(--red)"}" stroke-width="2.5" stroke-linejoin="round"/></svg>
       <p class="note" style="margin:2px 0 0">${merEur(vs[0])} → ${merEur(vs[vs.length - 1])} (<span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${eur(Math.abs(d))}</span>)</p>`;
   }
+  // puesto entre los jugadores de su misma posición (solo estadístico): puntos, media (con 5 jornadas o más) y valor
+  const mismos = Object.values(LIGAJ.jug).filter(q => q.pos === p.pos);
+  const puesto = (k, ok = () => true) => { const v = p[k]; if (!capNum(v) || !ok(p)) return null; const L = mismos.filter(q => capNum(q[k]) && ok(q)); return L.length < 5 ? null : { r: L.filter(q => q[k] > v).length + 1, n: L.length }; };
+  const rangos = [["Puntos", puesto("points")], ["Media", puesto("avg", q => q.avg > 0 && q.points / q.avg >= 5)], ["Valor", puesto("value")]].filter(x => x[1]);
+  const bloqueRango = rangos.length ? `<h3 class="sec">Entre los ${{ PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }[p.pos] || "de su puesto"} de LaLiga</h3><div class="fr">${rangos.map(([t, x]) => { const pc = Math.max(4, 100 - (x.r - 1) / x.n * 100); return `<div class="fr-f"><span>${t}</span><span class="fr-b" role="img" aria-label="${t}: puesto ${x.r} de ${x.n}"><i style="width:${pc.toFixed(0)}%"></i></span><b>${x.r}.º<small> de ${x.n}</small></b></div>`; }).join("")}</div>` : "";
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2340,11 +2356,25 @@ function abrirFicha(id) {
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
+    ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
     ${(() => { const mv = ((E && E.transfers) || []).filter(t => String(t.playerId) === String(p.id)).slice(0, 6);
       return mv.length ? `<h3 class="sec">Sus últimos movimientos en la liga</h3><ul class="clist">${mv.map(t => `<li class="mv mv2" style="padding:6px 0"><span class="mv-x">${textoMov(t)}<small>${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`).join("")}</ul>` : ""; })()}</div>`;
   ov.hidden = false; document.body.classList.add("sin-scroll");
+  cuentaEnteros(ov.querySelectorAll(".ch-kpi b"));
+}
+// cifras enteras que suben desde 0 al abrir una ficha (el valor final no cambia; respeta «reducir movimiento»)
+function cuentaEnteros(els) {
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const l = [...els].filter(e => /^\d+$/.test(e.textContent.trim())); if (!l.length) return;
+  const fin = l.map(e => e.textContent.trim()), t0 = performance.now(), dur = 650;
+  const paso = t => {
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    l.forEach((el, i) => { if (el.isConnected) el.textContent = k >= 1 ? fin[i] : Math.round(+fin[i] * e); });
+    if (k < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
 }
 function cerrarOv() { ["#ovBusc", "#ovFicha", "#ovCmp"].forEach(s => { const o = $(s); if (o) o.hidden = true; }); document.body.classList.remove("sin-scroll"); }
 document.addEventListener("click", e => {
@@ -2895,7 +2925,7 @@ function pintarCronica() {
   cont.innerHTML = `${nav}
     <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
-    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button>${seg2 ? `<button class="btn-comp" data-cr-pt="${esc(gan.m.id)}|${esc(seg2.m.id)}|${esc(cronJ)}" aria-label="Ver el partido en 3D">🏟️ Partido 3D</button>` : ""}</div>
+    <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button>${seg2 ? `<button class="btn-comp" data-cr-pt="${esc(gan.m.id)}|${esc(seg2.m.id)}|${esc(cronJ)}" aria-label="Ver el partido en 3D">🏟️ Partido 3D</button>` : ""}${porPts.length >= 4 ? `<button class="btn-comp" data-cr-pt="${esc(porPts[porPts.length - 2].m.id)}|${esc(ult.m.id)}|${esc(cronJ)}" aria-label="Ver el duelo del farolillo rojo en 3D">🐢 Duelo del farolillo</button>` : ""}</div>
     ${htmlMapaCalor(filas)}
     ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
@@ -3224,13 +3254,16 @@ function pintarAltibajos() {
   const todos = L.flatMap(x => x.v.map(y => y.p)), mn = Math.min(...todos), mx = Math.max(...todos), rg = Math.max(1, mx - mn);
   const X = p => (4 + (p - mn) / rg * 92).toFixed(2);
   const fiable = L[0], loco = L[L.length - 1];
+  ALTI_D = { L: L.map(x => ({ m: x.m, i: x.i, sd: x.sd, med: x.med, mejor: x.mejor, peor: x.peor })), mn, mx, n: js.length };
   cont.innerHTML = `<div class="gh"><h2>Altibajos</h2></div>
     <p class="note" style="margin:0 0 10px">Cada punto es una jornada. Cuanto más juntos, más regular; la rayita es su jornada típica (mediana). Ordenados del más regular al más irregular.</p>
     <ul class="al">${L.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b>
       <span class="al-t" role="img" aria-label="${esc(x.m.name)}: de ${x.peor.p} a ${x.mejor.p} puntos, típica ${nf1.format(x.med)}"><u style="left:${X(Math.min(...x.v.map(y => y.p)))}%;width:${(X(x.mejor.p) - X(x.peor.p)).toFixed(2)}%"></u><s style="left:${X(x.med)}%"></s>${x.v.map(y => `<i class="${y === x.mejor ? "mx" : y === x.peor ? "mn" : ""}" style="left:${X(y.p)}%" title="J${y.j.slice(1)}: ${y.p}"></i>`).join("")}</span>
       <small>Mejor J${x.mejor.j.slice(1)} · ${x.mejor.p} · peor J${x.peor.j.slice(1)} · ${x.peor.p} · típica ${nf1.format(x.med)}</small></span><span class="pp" style="font-size:14px">±${Math.round(x.sd)}</span></li>`).join("")}</ul>
-    <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>`;
+    <p class="note">El más regular es <b>${esc(fiable.m.name)}</b> (±${Math.round(fiable.sd)}) y el de más altibajos, <b>${esc(loco.m.name)}</b> (±${Math.round(loco.sd)}; de ${loco.peor.p} a ${loco.mejor.p}). El «±» es cuánto se aleja de su media en una jornada normal.</p>
+    <div class="acciones"><button class="btn-cromo" data-alti-comp>📤 Compartir lámina</button></div>`;
 }
+let ALTI_D = null;
 
 /* ---------- Cara a cara de todos: matriz de enfrentamientos (jornadas ganadas a cada rival) ---------- */
 // Cada casilla es en cuántas jornadas el manager de la fila sumó más puntos que el de la columna. Solo lee D.matchdays.
@@ -3242,7 +3275,7 @@ function pintarMatriz() {
   js.forEach(j => M.forEach((a, x) => M.forEach((b, y) => {
     const pa = pt(j, a), pb = pt(j, b);
     if (x === y || !capNum(pa) || !capNum(pb)) return;
-    g[x][y].t++; if (pa > pb) g[x][y].w++;
+    g[x][y].t++; if (pa > pb) g[x][y].w++; else if (pa === pb) g[x][y].e = (g[x][y].e || 0) + 1;
   })));
   if (n < 2 || !g.some(f => f.some(c => c.t))) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
@@ -3263,11 +3296,18 @@ function pintarMatriz() {
     det.hidden = false;
     det.innerHTML = `<b>${esc(A.name)} contra ${esc(B.name)}</b><div class="mx-ch">${lis.map(r => `<span class="${r.pa > r.pb ? "g" : r.pa < r.pb ? "r" : ""}">J${String(r.j).replace(/\D/g, "")}<small>${r.pa}-${r.pb}</small></span>`).join("")}</div>`;
   };
+  // Liga de duelos: 3 puntos por victoria y 1 por empate en cada duelo jornada a jornada; se compara con el puesto real
+  const real = M.map((m, x) => js.reduce((t, j) => t + (pt(j, m) || 0), 0));
+  const ordReal = M.map((_, x) => x).sort((a, b) => real[b] - real[a]);
+  const liga = M.map((m, x) => { const w = g[x].reduce((t, c) => t + c.w, 0), e = g[x].reduce((t, c) => t + (c.e || 0), 0), t = g[x].reduce((s, c) => s + c.t, 0); return { m, x, w, e, l: t - w - e, p: 3 * w + e }; }).sort((a, b) => b.p - a.p || b.w - a.w);
+  const mxp = Math.max(1, ...liga.map(r => r.p));
+  const ligaHtml = `<h3 class="sec">Liga de duelos</h3><p class="note" style="margin:0 0 8px">Como si cada jornada fuese un partido contra todos los demás: 3 puntos por ganar y 1 por empatar. La flecha compara con la clasificación real.</p>
+    <ul class="pron">${liga.map((r, k) => { const d = ordReal.indexOf(r.x) - k; return `<li>${avatar(r.m, r.x)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.p} puntos de duelos"><i style="width:${(r.p / mxp * 100).toFixed(0)}%"></i></span><small>${r.w} ganados · ${r.e} empates · ${r.l} perdidos${d ? ` · <span class="${d > 0 ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${Math.abs(d)} ${d > 0 ? "mejor" : "peor"} que en la clasificación real</span>` : ""}</small></span><span class="pts"><b>${r.p}</b> pts</span></li>`; }).join("")}</ul>`;
   cont.innerHTML = `<div class="gh"><h2>Cara a cara de todos</h2></div>
     <p class="note" style="margin:0 0 10px">Cada casilla dice en cuántas jornadas ganó el de la izquierda al de arriba (ganadas-perdidas). Verde: le gana más veces; rojo: pierde más.</p>
     <div class="mx-g" style="grid-template-columns:30px repeat(${n},minmax(0,1fr))"><span></span>${cab}${filas}</div>
     <div class="mx-det" id="mxDet" aria-live="polite" hidden></div>
-    <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>`;
+    <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>${ligaHtml}`;
 }
 
 /* ---------- Rachas: jornadas seguidas por encima o por debajo de la mediana ---------- */
@@ -3290,8 +3330,11 @@ function pintarRachas() {
   cont.innerHTML = `<div class="gh"><h2>Rachas</h2></div>
     <p class="note" style="margin:0 0 10px">Cada cuadro es una jornada: verde si el manager puntuó por encima de la mediana de la liga y rojo si por debajo. A la derecha, la racha actual (🔥 seguidas por encima, ❄️ seguidas por debajo) y su mejor racha.</p>
     ${filas}
-    <p class="note">${top.sg > 0 ? `En racha: <b>${esc(top.m.name)}</b>, ${top.ac} jornada${top.ac > 1 ? "s" : ""} por encima de la mediana.` : "Nadie está ahora en racha positiva."}${bajo ? ` Al revés, <b>${esc(bajo.m.name)}</b> lleva ${bajo.ac} por debajo.` : ""}</p>`;
+    <p class="note">${top.sg > 0 ? `En racha: <b>${esc(top.m.name)}</b>, ${top.ac} jornada${top.ac > 1 ? "s" : ""} por encima de la mediana.` : "Nadie está ahora en racha positiva."}${bajo ? ` Al revés, <b>${esc(bajo.m.name)}</b> lleva ${bajo.ac} por debajo.` : ""}</p>
+    <div class="acciones"><button class="btn-cromo" data-rach-comp>📤 Compartir lámina</button></div>`;
+  RACH_D = { n: js.length, R: R.slice(0, 7).map(r => ({ nom: r.m.name, st: r.st, mejor: r.mejor, ac: r.ac, sg: r.sg })) };
 }
+let RACH_D = null;
 
 
 // «Sin capitán»: cómo quedaría la tabla si el brazalete no diera puntos extra (suma de las jornadas jugadas)
@@ -3343,8 +3386,11 @@ function pintarLigaDuelos() {
   cont.innerHTML = `<div class="gh"><h2>Liga de duelos</h2></div>
     <p class="note" style="margin:0 0 10px">Y si cada jornada fuese un todos contra todos: cada manager gana 3 por cada rival al que supera ese fin de semana y 1 por cada empate. Premia ganar muchas jornadas, no sumar muchos puntos. La flecha compara con la clasificación real.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>`;
+    <p class="note">${cambian ? `Cambiarían de puesto ${cambian} managers.${sube && sube.d > 0 ? ` El que más sube: <b>${esc(sube.r.m.name)}</b> (▲ ${sube.d}).` : ""}` : "La clasificación sería la misma: los puntos mandan."}</p>
+    <div class="acciones"><button class="btn-cromo" data-duel-comp>📤 Compartir lámina</button></div>`;
+  LD_D = { n: js.length, cambian, R: duel.map((r, k) => ({ m: r.m, g: r.g, e: r.e, p: r.p, pt: r.pt, d: real.indexOf(r) - k })) };
 }
+let LD_D = null;
 
 /* ---------- Formaciones: qué esquema da más puntos (estadístico) ---------- */
 function pintarFormaciones() {
@@ -3360,11 +3406,14 @@ function pintarFormaciones() {
   const filas = L.map(f => { const me = f.t / f.n, top = Object.entries(f.q).sort((a, b) => b[1] - a[1])[0];
     return `<li><span class="pq"><b>${esc(nom(f.f))}</b><span class="pb" role="img" aria-label="${me.toFixed(1)} puntos de media con ${esc(nom(f.f))}"><i style="width:${Math.max(4, me / mx * 100).toFixed(1)}%;background:var(--acc)"></i></span><small>${f.n} ${f.n === 1 ? "vez" : "veces"} · la usa más ${esc(D.managers[top[0]].name)} (${top[1]})</small></span><span class="pts"><b>${me.toFixed(1).replace(".", ",")}</b></span></li>`; }).join("");
   const a = L[0], z = L.filter(f => f.n >= 3).slice(-1)[0];
+  FORM_D = { L: L.map(f => { const top = Object.entries(f.q).sort((p, q) => q[1] - p[1])[0]; return { f: nom(f.f), n: f.n, me: f.t / f.n, quien: D.managers[top[0]].name, qn: top[1] }; }), mx };
   cont.innerHTML = `<div class="gh"><h2>Formaciones</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos medios que han sacado los onces según su esquema (defensas-medios-delanteros) en todas las jornadas jugadas. Ojo: las poco usadas dicen poco.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">La mejor media es la de <b>${esc(nom(a.f))}</b> (${a.n} ${a.n === 1 ? "vez" : "veces"})${z && z !== a ? `; la más floja entre las usadas 3 o más veces, <b>${esc(nom(z.f))}</b> (${(z.t / z.n).toFixed(1).replace(".", ",")}).` : "."}</p>`;
+    <p class="note">La mejor media es la de <b>${esc(nom(a.f))}</b> (${a.n} ${a.n === 1 ? "vez" : "veces"})${z && z !== a ? `; la más floja entre las usadas 3 o más veces, <b>${esc(nom(z.f))}</b> (${(z.t / z.n).toFixed(1).replace(".", ",")}).` : "."}</p>
+    <div class="acciones"><button class="btn-cromo" data-form-comp>📤 Compartir lámina</button></div>`;
 }
+let FORM_D = null;
 
 /* ---------- Rotación: cuánto cambia cada manager su once de una jornada a la siguiente (estadístico) ---------- */
 function pintarRotacion() {
@@ -3390,14 +3439,17 @@ function pintarRotacion() {
   const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${f1(r.med)} cambios de media por jornada"><i style="width:${Math.max(3, r.med / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.dist} jugadores distintos en ${r.n + 1} jornadas</small></span>
       <span class="pts"><b>${f1(r.med)}</b></span></li>`).join("");
   const a = R[0], z = R[R.length - 1];
+  ROTA_D = { L: R.map(r => ({ m: r.m, i: r.i, med: r.med, dist: r.dist, n: r.n + 1, fijo: r.fijo ? { name: r.fijo.name, n: r.fijo.n, pts: r.fijo.pts } : null })), mx };
   cont.innerHTML = `<div class="gh"><h2>Rotación del once</h2></div>
     <p class="note" style="margin:0 0 10px">Jugadores nuevos que mete cada manager en su once, de media, respecto a la jornada anterior. Más barra = más cambios; menos, un once más estable.</p>
     <ul class="pron">${filas}</ul>
     <h3 class="sec">Los fijos</h3>
     <ul class="pron">${R.filter(r => r.fijo).map(r => `<li data-ficha="${r.fijo.id}">${cara(r.fijo.id, r.fijo.name, r.fijo.teamId, 36)}<span class="pq"><b>${esc(r.fijo.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · en ${r.fijo.n} de ${r.n + 1} onces</span></span><span class="pts"><b>${nf0.format(r.fijo.pts)}</b> pts</span></li>`).join("")}</ul>
     <p class="note">El jugador que más veces ha estado en el once de cada manager y los puntos (sin capitán) que le ha dado.</p>
-    <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>`;
+    <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>
+    <div class="acciones"><button class="btn-cromo" data-rota-comp>📤 Compartir lámina</button></div>`;
 }
+let ROTA_D = null;
 
 /* ---------- Plantones: alineados que no llegaron a jugar (estadístico, solo lee D.matchdays) ---------- */
 function pintarPlantones() {
@@ -3419,12 +3471,15 @@ function pintarPlantones() {
   const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${pc(r)} % de alineados sin jugar"><i style="width:${Math.max(3, r.no / r.tot / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.no} de ${r.tot} alineados · peor ${esc(r.peor.j)} con ${r.peor.n}</small></span><span class="pts"><b>${pc(r)} %</b></span></li>`).join("");
   const rep = R.filter(r => r.rr && r.rr.n >= 2);
   const a = R[0], z = R[R.length - 1];
+  PLAN_D = { R: R.map(r => ({ m: r.m, i: r.i, tot: r.tot, no: r.no, peor: r.peor })), n: js.length };
   cont.innerHTML = `<div class="gh"><h2>Plantones</h2></div>
     <p class="note" style="margin:0 0 10px">Alineados que no llegaron a jugar (lesión, banquillo o descanso) sobre el total de huecos del once en la temporada. Menos barra = mejor ojo.</p>
     <ul class="pron">${filas}</ul>
     ${rep.length ? `<h3 class="sec">Los que más dejaron plantado</h3><ul class="pron">${rep.map(r => `<li data-ficha="${r.rr.id}">${cara(r.rr.id, r.rr.name, r.rr.teamId, 36)}<span class="pq"><b>${esc(r.rr.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · sin jugar en ${r.rr.n} onces</span></span></li>`).join("")}</ul>` : ""}
-    <p class="note">El que más huecos regala es <b>${esc(a.m.name)}</b> (${pc(a)} %) y el que mejor los llena, <b>${esc(z.m.name)}</b> (${pc(z)} %).</p>`;
+    <p class="note">El que más huecos regala es <b>${esc(a.m.name)}</b> (${pc(a)} %) y el que mejor los llena, <b>${esc(z.m.name)}</b> (${pc(z)} %).</p>
+    <div class="acciones"><button class="btn-cromo" data-plan-comp>📤 Compartir lámina</button></div>`;
 }
+let PLAN_D = null;
 
 /* ---------- Clubes: de qué equipo real viven los puntos de cada manager (estadístico, solo lee D.matchdays) ---------- */
 function pintarClubes() {
@@ -3452,10 +3507,323 @@ function pintarClubes() {
     <ul class="pron">${filas}</ul>
     <h3 class="sec">Los clubes que más puntos reparten en la liga</h3>
     <ul class="pron">${top.map(([id, v], k) => `<li>${esc2(id)}<span class="pq"><b>${k + 1}.º ${nm(id)}</b></span><span class="pts"><b>${v}</b> pts · ${Math.round(v / T * 100)} %</span></li>`).join("")}</ul>
-    <p class="note">El más pegado a un solo club es <b>${esc(R[0].m.name)}</b> y el que más reparte, <b>${esc(R[R.length - 1].m.name)}</b>.</p>`;
+    <p class="note">El más pegado a un solo club es <b>${esc(R[0].m.name)}</b> y el que más reparte, <b>${esc(R[R.length - 1].m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-clu-comp>📤 Compartir lámina</button></div>`;
+  CLUBES_D = { R: R.map(r => ({ m: r.m, i: r.i, t: r.t, v: r.v, club: nom[r.id] || "su club" })), n: jornadas().length };
+}
+let CLUBES_D = null;
+
+/* ---------- Rentabilidad: puntos por millón de valor en toda LaLiga (estadístico, lee jugadores.json vía LIGAJ) ---------- */
+let rentPos = "";
+function pintarRentables() {
+  const cont = $("#rent"); if (!cont) return;
+  const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => (!rentPos || p.pos === rentPos) && capNum(p.value) && p.value >= 1e6 && capNum(p.points) && p.points >= 20) : [];
+  if (J.length < 20) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const R = J.map(p => ({ p, r: p.points / (p.value / 1e6) }));
+  const bien = [...R].sort((a, b) => b.r - a.r).slice(0, 8), mx = bien[0].r;
+  const mal = R.filter(x => x.p.value >= 8e6).sort((a, b) => a.r - b.r).slice(0, 5);
+  const dueno = p => p.owner ? esc(p.ownerName || "") : p.onMarket ? "en el mercado" : "libre";
+  const fila = (x, k, barra) => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.p.name)}</b>${barra ? `<span class="pb" role="img" aria-label="${nf1.format(x.r)} puntos por millón"><i style="width:${(x.r / mx * 100).toFixed(1)}%"></i></span>` : ""}<small>${x.p.points} pts · vale ${eur(x.p.value)} · ${dueno(x.p)}</small></span><span class="pts"><b>${nf1.format(x.r)}</b> pts/M</span></li>`;
+  cont.innerHTML = `<div class="gh"><h2>Los más rentables</h2></div>
+    <p class="note" style="margin:0 0 10px">Puntos de la temporada por cada millón de valor actual, en todos los jugadores de LaLiga con 1 M o más y 20 puntos o más. Cuanto más alto, más rinde lo que cuesta.</p>
+    <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${rentPos === k ? "on" : ""}" data-rpos="${k}" aria-pressed="${rentPos === k}">${t}</button>`).join("")}</div>
+    <ul class="pron">${bien.map((x, k) => fila(x, k, true)).join("")}</ul>
+    ${mal.length ? `<h3 class="sec">Los caros que menos rinden (8 M o más)</h3>
+    <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}
+    <div class="acciones"><button class="btn-cromo" data-rent-comp>📤 Compartir lámina</button></div>`;
+  const nom = x => ({ n: x.p.name, pts: x.p.points, v: x.p.value, r: x.r, d: x.p.owner ? (x.p.ownerName || "") : x.p.onMarket ? "en el mercado" : "libre" });
+  RENT_D = { pos: rentPos, bien: bien.slice(0, 7).map(nom), mal: mal.slice(0, 3).map(nom), tot: J.length };
+}
+let RENT_D = null;
+
+/* ---------- Termómetro del valor: quién más ha subido y bajado en 7 días en toda LaLiga (estadístico, lee LIGAJ.val) ---------- */
+function pintarTermometro() {
+  const cont = $("#term"); if (!cont) return;
+  const V = LIGAJ && LIGAJ.val ? LIGAJ.val : null, J = LIGAJ && LIGAJ.jug ? LIGAJ.jug : null;
+  if (!V || !J) { cont.innerHTML = ""; cont.hidden = true; return; }
+  const R = [];
+  Object.keys(V).forEach(id => {
+    const p = J[id], h = V[id]; if (!p || !h) return;
+    const f = Object.keys(h).sort(); if (f.length < 2) return;
+    const ult = f[f.length - 1], t0 = new Date(ult + "T12:00:00").getTime() - 7 * 864e5;
+    const ant = f.filter(d => new Date(d + "T12:00:00").getTime() <= t0).pop();
+    if (!ant || !(h[ant] >= 1e6)) return;
+    R.push({ p, d: h[ult] - h[ant], pc: (h[ult] / h[ant] - 1) * 100 });
+  });
+  if (R.length < 20) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const sube = [...R].sort((a, b) => b.d - a.d).slice(0, 6), baja = [...R].sort((a, b) => a.d - b.d).slice(0, 6);
+  const mx = Math.max(...sube.map(x => x.d), ...baja.map(x => -x.d), 1);
+  const dueno = p => p.owner ? esc(p.ownerName || "") : p.onMarket ? "en el mercado" : "libre";
+  const fila = x => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${esc(x.p.name)}</b><span class="pb" role="img" aria-label="${eur(x.d)} en 7 días"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%${x.d < 0 ? ";opacity:.45" : ""}"></i></span><small>vale ${eur(x.p.value)} · ${dueno(x.p)}</small></span><span class="pts"><b>${x.d > 0 ? "+" : "−"}${eur(Math.abs(x.d))}</b> ${nf1.format(Math.abs(x.pc))} %</span></li>`;
+  cont.innerHTML = `<div class="gh"><h2>Termómetro del valor</h2></div>
+    <p class="note" style="margin:0 0 10px">Lo que ha cambiado el valor de cada jugador de LaLiga (1 M o más) en los últimos 7 días.</p>
+    <h3 class="sec">Los que más suben</h3><ul class="pron">${sube.map(fila).join("")}</ul>
+    <h3 class="sec">Los que más bajan</h3><ul class="pron">${baja.map(fila).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-term-comp>📤 Compartir lámina</button></div>`;
+  const nm = x => ({ n: x.p.name, v: x.p.value, d: x.d, pc: x.pc });
+  TERM_D = { sube: sube.slice(0, 4).map(nm), baja: baja.slice(0, 3).map(nm) };
+}
+let TERM_D = null;
+
+/* ---------- Mejores libres: jugadores sin dueño que más puntos llevan (estadístico, lee jugadores.json vía LIGAJ) ---------- */
+let libPos = "";
+function pintarLibres() {
+  const cont = $("#libres"); if (!cont) return;
+  const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => !p.owner && capNum(p.points) && p.points > 0) : [];
+  if (J.length < 10) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const L = J.filter(p => !libPos || p.pos === libPos).sort((a, b) => b.points - a.points).slice(0, 8);
+  const mx = L.length ? L[0].points : 1;
+  const fila = (p, k) => `<li data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(p.name)}</b><span class="pb" role="img" aria-label="${p.points} puntos"><i style="width:${(p.points / mx * 100).toFixed(1)}%"></i></span><small>${p.pos} · vale ${eur(p.value)} · ${p.onMarket ? "en el mercado" : "libre"}${capNum(p.avg) ? " · media " + nf1.format(p.avg) : ""}</small></span><span class="pts"><b>${p.points}</b> pts</span></li>`;
+  cont.innerHTML = `<div class="gh"><h2>Los mejores libres</h2></div>
+    <p class="note" style="margin:0 0 10px">Jugadores que no tiene ningún manager, ordenados por los puntos de la temporada.</p>
+    <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${libPos === k ? "on" : ""}" data-lpos="${k}" aria-pressed="${libPos === k}">${t}</button>`).join("")}</div>
+    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie libre en esta posición.</small></span></li>'}</ul>
+    ${L.length ? '<div class="acciones"><button class="btn-cromo" data-lib-comp>📤 Compartir lámina</button></div>' : ""}`;
+  LIB_D = { L: L.slice(0, 7).map(p => ({ n: p.name, pos: p.pos, pts: p.points, v: p.value, m: !!p.onMarket })), filtro: libPos };
+}
+let LIB_D = null;
+
+/* ---------- Los más regulares: jugadores de toda LaLiga que menos varían de una jornada a otra (estadístico, para todos) ---------- */
+// Desviación típica de sus puntos por jornada (jugadores_historial.json); solo con 5 jornadas o más y 4 puntos de media o más.
+let regPos = "";
+function pintarRegulares() {
+  const cont = $("#regul"); if (!cont) return;
+  if (!LIGAJ || LIGAJ.cargando || !LIGAJ.jug) { cont.innerHTML = ""; cont.hidden = true; return; }
+  const R = Object.entries(LIGAJ.pts).map(([id, v]) => {
+    const p = LIGAJ.jug[id], xs = Object.values(v).filter(capNum);
+    if (!p || xs.length < 5) return null;
+    const m = xs.reduce((a, b) => a + b, 0) / xs.length;
+    return m < 4 ? null : { p, n: xs.length, m, sd: Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length), mn: Math.min(...xs), mx: Math.max(...xs) };
+  }).filter(Boolean);
+  if (R.length < 8) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const L = R.filter(r => !regPos || r.p.pos === regPos).sort((a, b) => a.sd - b.sd).slice(0, 8);
+  const fila = (r, k) => `<li data-ficha="${esc(r.p.id)}">${cara(r.p.id, r.p.name, r.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(r.p.name)}</b><small>${r.p.pos} · ${r.n} jornadas · entre ${r.mn} y ${r.mx} puntos${r.p.owner ? "" : " · sin dueño"}</small></span><span class="pts"><b>${nf1.format(r.m)}</b> de media</span></li>`;
+  cont.innerHTML = `<div class="gh"><h2>Los más regulares</h2></div>
+    <p class="note" style="margin:0 0 10px">Jugadores que casi siempre dan lo mismo: los que menos cambian sus puntos de una jornada a otra (con 5 jornadas o más y 4 puntos de media o más).</p>
+    <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${regPos === k ? "on" : ""}" data-gpos="${k}" aria-pressed="${regPos === k}">${t}</button>`).join("")}</div>
+    <ul class="pron">${L.map(fila).join("") || '<li><span class="pq"><small>Nadie cumple en esta posición.</small></span></li>'}</ul>
+    ${L.length ? '<div class="acciones"><button class="btn-cromo" data-reg-comp>📤 Compartir lámina</button></div>' : ""}`;
+  REG_D = { L: L.slice(0, 7).map(r => ({ n: r.p.name, pos: r.p.pos, m: r.m, sd: r.sd, mn: r.mn, mx: r.mx, j: r.n })), filtro: regPos, nj: Math.max(...R.map(r => r.n)) };
+}
+let REG_D = null;
+
+/* ---------- Casa y fuera: ¿se puntúa más jugando en casa? (estadístico, para todos) ---------- */
+// Puntos de todos los jugadores de LaLiga (jugadores_historial.json) según el partido de esa jornada fuese en casa o fuera (calendario.json).
+function pintarCasaFuera() {
+  const cont = $("#casa"); if (!cont) return;
+  if (!LIGAJ || LIGAJ.cargando || !LIGAJ.jug || !CAL || !CAL.games) { cont.innerHTML = ""; cont.hidden = true; return; }
+  const loc = {}; // equipo -> jornada -> true si jugó en casa
+  CAL.games.filter(g => g.status === "played").forEach(g => { (loc[g.home] = loc[g.home] || {})[g.gw] = true; (loc[g.away] = loc[g.away] || {})[g.gw] = false; });
+  const med = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  let H = [], A = []; const R = [];
+  Object.entries(LIGAJ.pts).forEach(([id, v]) => {
+    const p = LIGAJ.jug[id]; if (!p || !loc[p.teamId]) return;
+    const h = [], a = [];
+    Object.entries(v).forEach(([gw, x]) => { if (!capNum(x) || loc[p.teamId][gw] === undefined) return; (loc[p.teamId][gw] ? h : a).push(x); });
+    H = H.concat(h); A = A.concat(a);
+    if (h.length >= 3 && a.length >= 3 && med(h.concat(a)) >= 3) R.push({ p, mh: med(h), ma: med(a), nh: h.length, na: a.length, d: med(h) - med(a) });
+  });
+  if (H.length < 50 || A.length < 50 || R.length < 6) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const jg = CAL.games.filter(g => g.status === "played" && capNum(g.gh) && capNum(g.ga));
+  const vl = jg.filter(g => g.gh > g.ga).length, em = jg.filter(g => g.gh === g.ga).length, vv = jg.length - vl - em;
+  const gl = jg.reduce((t, g) => t + g.gh, 0) / (jg.length || 1), gv = jg.reduce((t, g) => t + g.ga, 0) / (jg.length || 1);
+  const mH = med(H), mA = med(A), mx = Math.max(mH, mA, 0.1);
+  const barra = (t, m, n, c) => `<div class="cf-f"><span>${t}</span><div class="cf-b"><i style="width:${Math.round(m / mx * 100)}%;background:${c}"></i></div><b>${nf1.format(m)}</b><small>${n} actuaciones</small></div>`;
+  const fila = (r, k, casa) => `<li data-ficha="${esc(r.p.id)}">${cara(r.p.id, r.p.name, r.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(r.p.name)}</b><small>${r.p.pos} · en casa ${nf1.format(r.mh)} (${r.nh}) · fuera ${nf1.format(r.ma)} (${r.na})</small></span><span class="pts"><b>+${nf1.format(Math.abs(r.d))}</b> ${casa ? "en casa" : "fuera"}</span></li>`;
+  const caseros = R.filter(r => r.d > 0).sort((a, b) => b.d - a.d).slice(0, 5), viajeros = R.filter(r => r.d < 0).sort((a, b) => a.d - b.d).slice(0, 5);
+  const dif = mH - mA;
+  cont.innerHTML = `<div class="gh"><h2>Casa y fuera</h2></div>
+    <p class="note" style="margin:0 0 10px">Media de puntos de todos los jugadores de LaLiga que han jugado, según su partido fuese en casa o fuera.</p>
+    ${barra("En casa", mH, H.length, "var(--acc)")}${barra("Fuera", mA, A.length, "var(--mut)")}
+    <p class="note">${Math.abs(dif) < 0.15 ? "Prácticamente da igual" : dif > 0 ? `Jugar en casa vale <b>${nf1.format(dif)}</b> puntos más por jugador` : `Jugar fuera vale <b>${nf1.format(-dif)}</b> puntos más por jugador`}. Resultados: ${vl} victorias locales, ${em} empates y ${vv} visitantes (${nf1.format(gl)} goles de media en casa y ${nf1.format(gv)} fuera).</p>
+    <h3 class="sec">Los que más rinden en casa</h3><ul class="pron">${caseros.map((r, k) => fila(r, k, true)).join("")}</ul>
+    <h3 class="sec">Los que más rinden fuera</h3><ul class="pron">${viajeros.map((r, k) => fila(r, k, false)).join("")}</ul>
+    <p class="note">Solo jugadores con 3 partidos o más en casa y fuera y 3 puntos de media. Con pocos partidos, parte de la diferencia es casualidad.</p>
+    <div class="acciones"><button class="btn-cromo" data-casa-comp>📤 Compartir lámina</button></div>`;
+  const rc = r => ({ n: r.p.name, pos: r.p.pos, mh: r.mh, ma: r.ma, d: Math.abs(r.d) });
+  CASA_D = { mH, mA, nH: H.length, nA: A.length, vl, em, vv, L: caseros.slice(0, 3).map(rc), V: viajeros.slice(0, 3).map(rc) };
+}
+let CASA_D = null;
+
+/* ---------- Sorpresas de la jornada: quién rindió muy por encima o por debajo de lo suyo (estadístico, para todos) ---------- */
+// Puntos de la jornada frente a la media de sus jornadas anteriores (jugadores_historial.json); solo con 3 jornadas previas y 3 puntos de media o más.
+let sorJ = null;
+function pintarSorpresas() {
+  const cont = $("#sorp"); if (!cont) return;
+  if (!LIGAJ || LIGAJ.cargando || !LIGAJ.jug) { cont.innerHTML = ""; cont.hidden = true; return; }
+  const gws = [...new Set(Object.values(LIGAJ.pts).flatMap(v => Object.keys(v)))].map(Number).sort((a, b) => a - b).slice(3);
+  if (!gws.length) { cont.innerHTML = ""; cont.hidden = true; return; }
+  if (sorJ == null || !gws.includes(sorJ)) sorJ = gws[gws.length - 1];
+  const R = Object.entries(LIGAJ.pts).map(([id, v]) => {
+    const p = LIGAJ.jug[id], x = v[sorJ];
+    if (!p || !capNum(x)) return null;
+    const ant = Object.entries(v).filter(([g, y]) => +g < sorJ && capNum(y)).map(([, y]) => y);
+    if (ant.length < 3) return null;
+    const m = ant.reduce((a, b) => a + b, 0) / ant.length;
+    return m < 3 ? null : { p, x, m, d: x - m };
+  }).filter(Boolean);
+  if (R.length < 10) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const sube = R.slice().sort((a, b) => b.d - a.d).slice(0, 5), baja = R.slice().sort((a, b) => a.d - b.d).slice(0, 5);
+  const mx = Math.max(...sube.map(r => r.d), ...baja.map(r => -r.d), 1);
+  const fila = r => `<li data-ficha="${esc(r.p.id)}">${cara(r.p.id, r.p.name, r.p.teamId, 36)}<span class="pq"><b>${esc(r.p.name)}</b><span class="pb" role="img" aria-label="${r.d > 0 ? "+" : "−"}${nf1.format(Math.abs(r.d))} puntos sobre su media"><i style="width:${(Math.abs(r.d) / mx * 100).toFixed(1)}%${r.d < 0 ? ";opacity:.45" : ""}"></i></span><small>${r.p.pos} · media anterior ${nf1.format(r.m)} · ${r.p.owner ? esc(r.p.ownerName || "") : "sin dueño"}</small></span><span class="pts"><b>${r.x}</b> pts</span></li>`;
+  cont.innerHTML = `<div class="gh"><h2>Sorpresas de la jornada</h2></div>
+    <p class="note" style="margin:0 0 10px">Quién dio muchos más (o menos) puntos de los que solía dar: puntos de la jornada frente a su media de las anteriores (3 jornadas previas y 3 puntos de media o más).</p>
+    <div class="pills wrap" role="group" aria-label="Jornada" style="margin:0 0 10px">${gws.slice(-8).map(g => `<button class="pill ${g === sorJ ? "on" : ""}" data-sorp="${g}" aria-pressed="${g === sorJ}">J${g}</button>`).join("")}</div>
+    <h3 class="sec">Se salieron</h3><ul class="pron">${sube.map(fila).join("")}</ul>
+    <h3 class="sec">Se quedaron cortos</h3><ul class="pron">${baja.map(fila).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-sorp-comp>📤 Compartir lámina</button></div>`;
+  const rs = r => ({ n: r.p.name, pos: r.p.pos, x: r.x, m: r.m, d: r.d });
+  SORP_D = { j: sorJ, S: sube.slice(0, 4).map(rs), B: baja.slice(0, 3).map(rs) };
+}
+let SORP_D = null;
+
+/* ---------- Los reyes de cada jornada: los mejores jugadores de toda LaLiga y quién los alineó (estadístico, para todos) ---------- */
+// Puntos de todos los jugadores (jugadores_historial.json) frente a los onces de cada manager (D.matchdays): quién tuvo ojo.
+let reyJ = null;
+function pintarReyes() {
+  const cont = $("#reyes"); if (!cont) return;
+  if (!D || !D.matchdays || !LIGAJ || LIGAJ.cargando || !LIGAJ.jug) { cont.innerHTML = ""; cont.hidden = true; return; }
+  const gws = [...new Set(Object.values(LIGAJ.pts).flatMap(v => Object.keys(v)))].map(Number).filter(g => D.matchdays["J" + g]).sort((a, b) => a - b);
+  if (gws.length < 2) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const M = D.managers, top = g => Object.entries(LIGAJ.pts).filter(([id, v]) => capNum(v[g]) && LIGAJ.jug[id]).map(([id, v]) => ({ id, pts: v[g] })).sort((a, b) => b.pts - a.pts).slice(0, 3);
+  const alin = (g, id) => M.map((m, i) => ({ m, i, x: (D.matchdays["J" + g] || {})[m.id] })).filter(o => o.x && (o.x.players || []).some(p => String(p.id) === String(id) && p.played !== false));
+  const cuenta = M.map(() => 0); let hay = 0, tot = 0;
+  gws.forEach(g => top(g).forEach(r => { const a = alin(g, r.id); tot++; if (a.length) hay++; a.forEach(o => cuenta[o.i]++); }));
+  if (reyJ == null || !gws.includes(reyJ)) reyJ = gws[gws.length - 1];
+  const fila = (r, k) => { const p = LIGAJ.jug[r.id], a = alin(reyJ, r.id);
+    return `<li data-ficha="${esc(r.id)}">${cara(r.id, p.name, p.teamId, 36)}<span class="pq"><b>${["🥇", "🥈", "🥉"][k]} ${esc(p.name)}</b><small>${a.length ? "Lo alineó " + a.map(o => esc(o.m.name)).join(", ") : "Nadie lo alineó"}</small></span><span class="pts"><b>${r.pts}</b> pts</span></li>`; };
+  const orden = M.map((m, i) => ({ m, i, n: cuenta[i] })).sort((a, b) => b.n - a.n), mx = Math.max(1, orden[0].n);
+  cont.innerHTML = `<div class="gh"><h2>Los reyes de cada jornada</h2></div>
+    <p class="note" style="margin:0 0 10px">Los 3 jugadores con más puntos de toda LaLiga en la jornada y quién de la liga los tenía en su once.</p>
+    <div class="pills wrap" role="group" aria-label="Jornada" style="margin:0 0 10px">${gws.map(g => `<button class="pill ${g === reyJ ? "on" : ""}" data-rey="${g}" aria-pressed="${g === reyJ}">J${g}</button>`).join("")}</div>
+    <ul class="pron">${top(reyJ).map(fila).join("")}</ul>
+    <h3 class="sec">Quién tuvo más ojo</h3>
+    <p class="note" style="margin:0 0 8px">Veces que cada manager alineó a uno de los 3 mejores de una jornada (${hay} de ${tot} reyes tuvieron dueño que los alineó).</p>
+    <ul class="pron">${orden.map(o => `<li>${avatar(o.m, o.i)}<span class="pq"><b>${esc(o.m.name)}</b><span class="pb" role="img" aria-label="${o.n} veces"><i style="width:${(o.n / mx * 100).toFixed(1)}%;background:${col(o.i)}"></i></span></span><span class="pts"><b>${o.n}</b></span></li>`).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-rey-comp>📤 Compartir lámina</button></div>`;
+  REY_D = { hay, tot, ng: gws.length, R: orden.map(o => ({ m: o.m, i: o.i, n: o.n })) };
+}
+let REY_D = null;
+
+/* ---------- Finales de foto: cuánto ganó el ganador de cada jornada al segundo (estadístico, solo lee D.matchdays) ---------- */
+function pintarFotos() {
+  const cont = $("#foto"); if (!cont || !D || !D.matchdays) return;
+  const S = serieLiga(), R = [];
+  S.js.forEach((j, k) => {
+    const o = S.ms.map((m, x) => ({ m, x, v: S.pts[x][k] })).filter(r => S.pts[r.x][k] > 0).sort((a, b) => b.v - a.v);
+    if (o.length >= 2) R.push({ j, k, g: o[0], s: o[1], d: o[0].v - o[1].v });
+  });
+  if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const mx = Math.max(1, ...R.map(r => r.d)), med = R.reduce((t, r) => t + r.d, 0) / R.length;
+  const ajust = R.slice().sort((a, b) => a.d - b.d)[0], paliza = R.slice().sort((a, b) => b.d - a.d)[0];
+  const filas = R.slice().reverse().map(r => `<li>${avatar(r.g.m.m, r.g.m.i)}<span class="pq"><b>${esc(r.g.m.m.name)}</b><span class="pb" role="img" aria-label="Ganó por ${r.d} puntos"><i style="width:${Math.max(3, r.d / mx * 100).toFixed(1)}%;background:${col(r.g.m.i)}"></i></span><small>${esc(r.j)} · ${r.g.v} frente a ${r.s.v} de ${esc(r.s.m.m.name)}</small></span><span class="pts"><b>+${r.d}</b></span></li>`).join("");
+  cont.innerHTML = `<div class="gh"><h2>Finales de foto</h2></div>
+    <p class="note" style="margin:0 0 10px">Por cuántos puntos ganó cada jornada su ganador al segundo. Barra corta = final apretado.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">Ventaja media: <b>${nf1.format(med)}</b> puntos. La más ajustada fue la <b>${esc(ajust.j)}</b> (${ajust.d} pts, ${esc(ajust.g.m.m.name)}) y la mayor paliza, la <b>${esc(paliza.j)}</b> (${paliza.d} pts, ${esc(paliza.g.m.m.name)}).</p>
+    <div class="acciones"><button class="btn-cromo" data-foto-comp>📤 Compartir lámina</button></div>`;
+  FOTO_D = { n: R.length, med, R: R.slice().sort((x, y) => x.d - y.d).slice(0, 7).map(r => ({ j: r.j, d: r.d, g: r.g.m.m.name, s: r.s.m.m.name, gv: r.g.v, sv: r.s.v })), paliza: { j: paliza.j, d: paliza.d, g: paliza.g.m.m.name } };
+}
+let FOTO_D = null;
+
+/* ---------- El trono: jornadas al frente de la general, mayor subida y mayor caída de puestos (estadístico, solo lee D.matchdays) ---------- */
+function pintarTrono() {
+  const cont = $("#trono"); if (!cont || !D || !D.matchdays) return;
+  const S = serieLiga(), n = S.js.length;
+  if (n < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const R = S.ms.map((o, x) => {
+    const lider = S.rank.filter(r => r[x] === 1).length;
+    let sube = { d: 0, j: "" }, baja = { d: 0, j: "" };
+    for (let k = 1; k < n; k++) { const d = S.rank[k - 1][x] - S.rank[k][x]; if (d > sube.d) sube = { d, j: S.js[k] }; if (-d > baja.d) baja = { d: -d, j: S.js[k] }; }
+    return { m: o.m, i: o.i, lider, sube, baja, ahora: S.rank[n - 1][x] };
+  }).sort((a, b) => b.lider - a.lider || a.ahora - b.ahora);
+  const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.lider} de ${n} jornadas líder"><i style="width:${Math.max(r.lider ? 3 : 0, r.lider / n * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.sube.d ? `Mayor subida: +${r.sube.d} ${r.sube.d === 1 ? "puesto" : "puestos"} (${esc(r.sube.j)})` : "Sin subidas"}${r.baja.d ? ` · mayor caída: −${r.baja.d} ${r.baja.d === 1 ? "puesto" : "puestos"} (${esc(r.baja.j)})` : ""}</small></span><span class="pts"><b>${r.lider}</b></span></li>`).join("");
+  cont.innerHTML = `<div class="gh"><h2>El trono</h2></div>
+    <p class="note" style="margin:0 0 10px">Jornadas (de ${n}) que cada manager ha terminado como líder de la general, con su mayor subida y caída de puestos en una sola jornada.</p>
+    <ul class="pron">${filas}</ul>
+    <div class="acciones"><button class="btn-cromo" data-trono-comp>📤 Compartir lámina</button></div>`;
+  TRONO_D = { n, R: R.slice(0, 7).map(r => ({ nom: r.m.name, lider: r.lider, ahora: r.ahora, sube: r.sube, baja: r.baja })) };
+}
+let TRONO_D = null;
+
+/* ---------- Persecución: cuánto le falta a cada manager para alcanzar al de arriba (estadístico, solo lee D.matchdays) ---------- */
+function pintarPersecucion() {
+  const cont = $("#pers"); if (!cont || !D || !D.matchdays) return;
+  const S = serieLiga(), n = S.js.length, N = S.ms.length, TOT = 38, quedan = Math.max(0, TOT - n);
+  if (n < 3 || N < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const ord = S.ms.map((_, x) => x).sort((a, b) => S.cum[b][n - 1] - S.cum[a][n - 1]);
+  const med = x => S.cum[x][n - 1] / n;
+  // distancia al líder de cada jornada (el líder de entonces); escala común para comparar a todos
+  const lid = S.js.map((_, j) => Math.max(...S.cum.map(c => c[j]))), gmax = Math.max(1, ...S.cum.map(c => Math.max(...c.map((v, j) => lid[j] - v))));
+  const curva = x => {
+    const W = 120, H = 26, px = j => (j / (n - 1) * (W - 4) + 2).toFixed(1), py = j => (2 + (lid[j] - S.cum[x][j]) / gmax * (H - 4)).toFixed(1);
+    const pts = S.js.map((_, j) => px(j) + "," + py(j)).join(" "), fin = lid[n - 1] - S.cum[x][n - 1];
+    return `<svg class="pers-c" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distancia al líder jornada a jornada: ${fin === 0 ? "es líder" : "ahora a " + nf0.format(fin) + " puntos"}"><line x1="0" x2="${W}" y1="2" y2="2" stroke="var(--line)" stroke-dasharray="2 3"/><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${px(n - 1)}" cy="${py(n - 1)}" r="2.6" fill="var(--acc)"/></svg>`;
+  };
+  const filas = ord.map((x, k) => {
+    const o = S.ms[x], t = S.cum[x][n - 1];
+    if (k === 0) return `<li>${avatar(o.m, o.i)}<span class="pq"><b>1.º ${esc(o.m.name)}</b><small>Líder · media ${nf1.format(med(x))} por jornada</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
+    const arr = ord[k - 1], ld = ord[0], dA = S.cum[arr][n - 1] - t, dL = S.cum[ld][n - 1] - t;
+    // puntos por jornada que debe sacarle de media al de arriba para alcanzarlo al acabar la temporada
+    const nec = quedan ? dA / quedan : null;
+    const txt = dA === 0 ? "empatado con el de arriba" : `a ${nf0.format(dA)} pts del ${k}.º` + (k > 1 ? ` · a ${nf0.format(dL)} del líder` : "");
+    const ritmo = nec == null ? "" : ` · le tiene que sacar ${nf1.format(nec)} pts por jornada al ${k}.º`;
+    const ult = Math.min(5, n - 1), gan = S.pts[x].slice(-ult).reduce((a, v) => a + v, 0) - S.pts[arr].slice(-ult).reduce((a, v) => a + v, 0);
+    const tend = gan > 0 ? `<span class="up">▲ ${nf0.format(gan)} en las últimas ${ult}</span>` : gan < 0 ? `<span class="dn">▼ ${nf0.format(-gan)} en las últimas ${ult}</span>` : `<span>igual en las últimas ${ult}</span>`;
+    return `<li>${avatar(o.m, o.i)}<span class="pq"><b>${k + 1}.º ${esc(o.m.name)}</b><small>${txt}${ritmo}</small><small>${tend}</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
+  }).join("");
+  cont.innerHTML = `<div class="gh"><h2>Persecución</h2></div>
+    <p class="note" style="margin:0 0 10px">Distancia de cada manager al de arriba y cuántos puntos por jornada tendría que ganarle de media en las ${quedan} que quedan (de ${TOT}). Las flechas comparan las últimas jornadas con el de delante. La curva de cada uno es su distancia al líder jornada a jornada (arriba = líder; si baja hacia la línea, se acerca).</p>
+    <ul class="pron">${filas}</ul>
+    <div class="acciones"><button class="btn-cromo" data-pers-comp>📤 Compartir lámina</button></div>`;
+  PERS_D = { n, quedan, TOT, R: ord.map((x, k) => ({ m: S.ms[x].m, i: S.ms[x].i, t: S.cum[x][n - 1], dA: k ? S.cum[ord[k - 1]][n - 1] - S.cum[x][n - 1] : 0, dL: S.cum[ord[0]][n - 1] - S.cum[x][n - 1] })) };
+}
+let PERS_D = null;
+
+/* ---------- Goleadores y asistentes de la liga: los jugadores con más goles y pases de gol entre los once de los managers (estadístico, solo lee D.matchdays) ---------- */
+let GOL_D = null;
+function pintarGoleadores() {
+  const cont = $("#gole"); if (!cont || !D || !D.matchdays) return;
+  const J = new Map(), M = D.managers;
+  jornadas().forEach(j => M.forEach((m, i) => { const x = (D.matchdays[j] || {})[m.id]; if (!x) return;
+    (x.players || []).forEach(p => { if (p.played === false) return;
+      let r = J.get(p.id); if (!r) J.set(p.id, r = { id: p.id, name: p.name, teamId: p.teamId, g: 0, a: 0, c: 0, mn: 0, bp: 0, pt: p.pos === "PT", vistos: new Set(), uso: {} });
+      r.uso[i] = (r.uso[i] || 0) + 1;
+      if (r.vistos.has(j)) return; r.vistos.add(j); r.g += p.goals || 0; r.a += p.assists || 0; r.mn += p.minutes || 0; r.bp += capNum(p.basePoints != null ? p.basePoints : p.points) ? (p.basePoints != null ? p.basePoints : p.points) : 0;
+      if (p.pos === "PT" && p.goalsConceded === 0 && (p.minutes || 0) >= 60) r.c++; }); }));
+  const L = [...J.values()];
+  if (L.reduce((t, r) => t + r.g, 0) < 5) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  const dueno = r => { const k = Object.keys(r.uso).sort((a, b) => r.uso[b] - r.uso[a])[0]; return k == null ? "" : ` · más en el once de ${esc(M[k].name)}`; };
+  const lista = (campo, ico) => {
+    const t = L.filter(r => r[campo] > 0).sort((a, b) => b[campo] - a[campo] || b.vistos.size - a.vistos.size).slice(0, 5), mx = t.length ? t[0][campo] : 1;
+    return `<ul class="pron">${t.map((r, k) => `<li data-ficha="${r.id}">${cara(r.id, r.name, r.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(r.name)}</b><span class="pb" role="img" aria-label="${r[campo]}"><i style="width:${(r[campo] / mx * 100).toFixed(1)}%"></i></span><small>${r.vistos.size} jornadas con él alineado${dueno(r)}</small></span><span class="pts"><b>${r[campo]}</b> ${ico}</span></li>`).join("")}</ul>`;
+  };
+  // puntos por 90 minutos (sin capitán), solo jugadores con 270 minutos o más
+  const porMin = () => { const t = L.filter(r => r.mn >= 270).map(r => ({ r, v: r.bp / r.mn * 90 })).sort((a, b) => b.v - a.v).slice(0, 5); if (!t.length) return "";
+    const mx = t[0].v || 1;
+    return `<h3 class="sec">⏱️ Más puntos por 90 minutos</h3><ul class="pron">${t.map((x, k) => `<li data-ficha="${x.r.id}">${cara(x.r.id, x.r.name, x.r.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.r.name)}</b><span class="pb" role="img" aria-label="${x.v.toFixed(1)}"><i style="width:${(x.v / mx * 100).toFixed(1)}%"></i></span><small>${x.r.mn} minutos en total</small></span><span class="pts"><b>${x.v.toFixed(1).replace(".", ",")}</b> pts/90</span></li>`).join("")}</ul>`; };
+  const top3 = c => L.filter(r => r[c] > 0).sort((a, b) => b[c] - a[c] || b.vistos.size - a.vistos.size).slice(0, 5).map(r => ({ n: r.name, v: r[c], j: r.vistos.size }));
+  GOL_D = { g: top3("g"), a: top3("a"), c: top3("c"), n: jornadas().length };
+  cont.innerHTML = `<div class="gh"><h2>Goleadores de la liga</h2></div>
+    <p class="note" style="margin:0 0 10px">Los jugadores con más goles, asistencias y porterías a cero (portero con 60 minutos o más sin encajar) contando solo las jornadas en las que algún manager los alineó (una jornada cuenta una vez aunque lo tengan varios). Tocar uno abre su ficha.</p>
+    <h3 class="sec">⚽ Más goles</h3>${lista("g", "goles")}
+    <h3 class="sec">👟 Más asistencias</h3>${lista("a", "asist.")}${porMin()}${L.some(r => r.c > 0) ? `<h3 class="sec">🧤 Porterías a cero</h3>${lista("c", "a cero")}` : ""}
+    <div class="acciones"><button class="btn-cromo" data-gol-comp>📤 Compartir lámina</button></div>`;
 }
 
 /* ---------- Récords de la temporada: las mejores actuaciones individuales y de manager (solo lee D.matchdays) ---------- */
+let RECS_D = null;
 function pintarRecords() {
   const cont = $("#recs"); if (!cont || !D || !D.matchdays) return;
   const js = jornadas(), M = D.managers;
@@ -3470,6 +3838,7 @@ function pintarRecords() {
   const topP = [...jg.values()].sort((a, b) => b.b - a.b || a.j.localeCompare(b.j, "es", { numeric: true })).slice(0, 5);
   // mayor paliza: más diferencia entre el mejor y el peor de una misma jornada
   let pal = null; js.forEach(j => { const v = mj.filter(r => r.j === j); if (v.length < 2) return; const a = v.reduce((x, y) => y.p > x.p ? y : x), z = v.reduce((x, y) => y.p < x.p ? y : x); if (!pal || a.p - z.p > pal.d) pal = { j, a, z, d: a.p - z.p }; });
+  RECS_D = { topJ, topP, peorJ, pal, n: js.length };
   const medalla = k => ["🥇", "🥈", "🥉"][k] || (k + 1) + ".º";
   const fm = topJ.map((r, k) => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${medalla(k)} ${esc(r.m.name)}</b><small>${esc(r.j)}</small></span><span class="pts"><b>${r.p}</b> pts</span></li>`).join("");
   const fp = topP.map((r, k) => `<li data-ficha="${r.id}">${cara(r.id, r.name, r.teamId, 36)}<span class="pq"><b>${medalla(k)} ${esc(r.name)}</b><small>${esc(r.j)} · en el once de ${esc(r.m.name)}</small></span><span class="pts"><b>${r.b}</b> pts</span></li>`).join("");
@@ -3477,6 +3846,7 @@ function pintarRecords() {
     <h3 class="sec">Mejores jornadas de un manager</h3><ul class="pron">${fm}</ul>
     <h3 class="sec">Mejores actuaciones de un jugador</h3><ul class="pron">${fp}</ul>
     <p class="note">Puntos del jugador sin contar el capitán; tocar uno abre su ficha.</p>
+    <div class="acciones"><button class="btn-cromo" data-rec-comp>📤 Compartir lámina</button></div>
     <p class="note">La peor jornada fue la de <b>${esc(peorJ.m.name)}</b> en la ${esc(peorJ.j)}: ${peorJ.p} puntos.${pal ? ` La mayor paliza: ${esc(pal.j)}, <b>${esc(pal.a.m.name)}</b> (${pal.a.p}) contra <b>${esc(pal.z.m.name)}</b> (${pal.z.p}), ${pal.d} puntos de diferencia.` : ""}</p>`;
 }
 
@@ -3721,8 +4091,31 @@ function bloqueOnceEq(m) {
     <div class="rx-campo${barre ? " barre" : ""}">${campo}<i class="rx-scan" aria-hidden="true"></i></div>
     ${banco ? `<p class="ordlbl">Banquillo · ${ban.length}</p><div class="rx-ban">${banco}</div>` : ""}
     ${lineas ? `<p class="ordlbl">Puntos de cada línea esta temporada, frente a la liga</p>${lineas}` : ""}
-    ${frases.length ? `<ul class="rx-ins">${frases.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}</section>`;
+    ${frases.length ? `<ul class="rx-ins">${frases.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}
+    ${rxVersus(m, LN)}</section>`;
 }
+// Rayos X: plantilla frente a plantilla. Puntos de cada línea (lo alineado de verdad, sin capitán) y valor de las dos; solo datos ya ocurridos
+let rxVs = "";
+function rxVersus(m, LN) {
+  const otros = ((E && E.managers) || []).filter(x => String(x.id) !== String(m.id));
+  if (!otros.length || !LN.length) return "";
+  const r = otros.find(x => String(x.id) === rxVs) || otros[0], yo = LN.find(x => x.id === String(m.id)), el = LN.find(x => x.id === String(r.id));
+  if (!yo || !el) return "";
+  const NOM = { PT: "Portería", DF: "Defensa", MC: "Medio campo", DL: "Delantera" }, K = ["PT", "DF", "MC", "DL"];
+  const fila = (t, a, b, f) => { const mx = Math.max(a, b, 1); return `<div class="rv-f"><b class="${a > b ? "g" : ""}">${f(a)}</b><span class="rv-b"><i class="l" style="--w:${(a / mx).toFixed(3)}"></i><em>${t}</em><i class="r" style="--w:${(b / mx).toFixed(3)}"></i></span><b class="${b > a ? "g" : ""}">${f(b)}</b></div>`; };
+  const tY = K.reduce((t, k) => t + yo.s[k], 0), tE = K.reduce((t, k) => t + el.s[k], 0), gan = K.filter(k => yo.s[k] > el.s[k]).length, per = K.filter(k => yo.s[k] < el.s[k]).length;
+  const opts = otros.map(x => `<option value="${esc(String(x.id))}"${x === r ? " selected" : ""}>${esc(x.name)}</option>`).join("");
+  RV_D = { a: m, ia: (E.managers || []).indexOf(m), b: r, ib: (E.managers || []).indexOf(r), sa: { ...yo.s }, sb: { ...el.s }, va: Number(m.squadValue) || 0, vb: Number(r.squadValue) || 0 };
+  return `<p class="ordlbl">Plantilla contra plantilla</p>
+    <label class="note" style="display:block;margin:0 0 8px">Compara con <select data-rxvs aria-label="Manager con el que comparar" style="min-height:44px;max-width:100%">${opts}</select></label>
+    <div class="rv"><div class="rv-h"><span>${esc(m.name)}</span><span>${esc(r.name)}</span></div>
+      ${K.map(k => fila(NOM[k], yo.s[k], el.s[k], v => v)).join("")}
+      ${fila("Puntos totales", tY, tE, v => v)}${fila("Valor", Number(m.squadValue) || 0, Number(r.squadValue) || 0, eur)}</div>
+    <p class="note">${gan === per ? "Empate a líneas" : gan > per ? `${esc(m.name)} gana en ${gan} de 4 líneas` : `${esc(r.name)} gana en ${per} de 4 líneas`} (puntos alineados en la temporada, sin el extra del capitán).</p>
+    <div class="acciones"><button class="btn-cromo" data-rv-comp>📤 Compartir lámina</button></div>`;
+}
+let RV_D = null;
+document.addEventListener("change", e => { const t = e.target.closest && e.target.closest("[data-rxvs]"); if (!t) return; rxVs = t.value; pintarEquipos(); });
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-rx]"); if (!b || b.dataset.rx === rxCapa) return; rxCapa = b.dataset.rx; rxBarre = true; pintarEquipos(); });
 
 /* ---------- Equipos: seguimiento de plantillas ---------- */
@@ -3994,6 +4387,7 @@ function bloqueClausulas(ms) {
   }
   const top = clausulasRentables(ms).slice(0, 10);
   if (!top.length) return "";
+  CLV_D = { R: top.slice(0, 7).map(x => ({ nom: x.p.short || x.p.name, dueno: x.m.name, esp: x.esp, cl: x.p.clause, sobre: x.sobre, val: x.p.value, chollo: x.sobreEf <= 0.1 })) };
   return `<section class="card" id="clausulas"><div class="gh"><h2>Cláusulas que merecen la pena</h2></div><div class="seg seg2">${seg}</div>
     <p class="note" style="margin:0 0 6px">Solo jugadores rentables en puntos (4 o más por jornada y al menos lo que se espera de su precio) y que Futbol Fantasy y Analítica Fantasy ven titulares (50 % o más). Entre ellos suben los que dan más puntos por millón, tienen la cláusula más cerca de su valor y más suben cada día.</p>
     <ul class="clist">${top.map((x, k) => `<li class="crow cl2" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
@@ -4001,7 +4395,7 @@ function bloqueClausulas(ms) {
         <span><b class="ct-n">${nf1.format(x.esp)}</b> pts/jornada · ${avatar(x.m, x.m.i)}${esc(x.m.name)}</span>
         <span class="cl2-g ${x.g >= 0.002 ? "up" : x.g <= -0.002 ? "dn" : ""}">${esc(textoCrec(x))}</span>${x.ff ? `<span class="cl2-g">${esc(textoTit(x.ff, true))}</span>` : ""}</span>
       <span class="cr"><b>${merEur(x.p.clause)}</b><small>+${Math.round(x.sobre * 100)} % sobre ${merEur(x.p.value)}</small></span></li>`).join("")}</ul>
-    <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p></section>`;
+    <p class="note">En esta liga casi todas las cláusulas son un 50 % más que el valor: por eso pesa tanto lo que sube cada día, porque esa diferencia se va comiendo. «Chollo»: dentro de una semana su cláusula estará como mucho un 10 % por encima de lo que valdrá. Antes de pagar, comprueba en Mister que su cláusula ya se puede ejecutar.</p><div class="acciones"><button class="btn-cromo" data-clv-comp>📤 Compartir lámina</button></div></section>`;
 }
 
 // Perfil de cada manager: un radar con seis cosas que se miden igual para todos (el mejor de la liga en cada una = borde)
@@ -4083,11 +4477,14 @@ function bloqueAciertoCap() {
   }).filter(r => r.n > 0).sort((a, b) => (b.ganado - b.perdido) - (a.ganado - a.perdido));
   if (L.length < 3) return "";
   const mx = Math.max(1, ...L.map(r => r.ganado + r.perdido));
+  CAPAC_D = { L: L.slice(0, 7).map(r => ({ nom: r.m.name, g: r.ganado, p: r.perdido, a: r.aciertos, n: r.n })), mx };
   return `<section class="card"><div class="gh"><h2>Acierto con el capitán</h2></div>
     <p class="note" style="margin:0 0 8px">Puntos extra que dio el capitán (verde) y los que se dejó por no elegir al mejor de su once (rojo) en cada jornada ya jugada.</p>
     <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb dos" role="img" aria-label="${r.ganado} puntos extra y ${r.perdido} perdidos"><i style="width:${(r.ganado / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i><i style="width:${(r.perdido / mx * 100).toFixed(1)}%;background:var(--red);opacity:.55"></i></span><small>Mejor capitán en ${r.aciertos} de ${r.n} jornadas · se dejó ${r.perdido}</small></span><span class="pp ${cl(r.ganado - r.perdido)}" style="font-size:15px">${r.ganado}</span></li>`).join("")}</ul>
-    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p></section>`;
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L.slice().sort((a, b) => b.perdido - a.perdido)[0].m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-capac-comp>📤 Compartir lámina</button></div></section>`;
 }
+let CAPAC_D = null;
 
 // Banquillo de la temporada: puntos que cada manager se dejó fuera del once sumando las jornadas (reutiliza banquilloJornada)
 function bloqueBanquilloTemp() {
@@ -4099,11 +4496,14 @@ function bloqueBanquilloTemp() {
   const L = D.managers.map((m, ci) => ({ m, ci, ...(T[m.id] || {}) })).filter(r => r.max > 0).sort((a, b) => a.perd - b.perd);
   if (nj < 2 || L.length < 3) return "";
   const mx = Math.max(1, ...L.map(r => r.perd));
+  BANQ_D = { nj, mx, L: L.slice(0, 7).map(r => ({ nom: r.m.name, perd: r.perd, pct: Math.round(r.real / r.max * 100), clav: r.clav })) };
   return `<section class="card"><div class="gh"><h2>Banquillo de la temporada</h2></div>
     <p class="note" style="margin:0 0 8px">Puntos (sin capitán) que cada manager se dejó fuera de su once sumando ${nj} jornadas, frente al mejor once que podía hacer con su plantilla de entonces. Menos barra = mejores alineaciones.</p>
     <ul class="pron">${L.map(r => `<li>${avatar(r.m, r.ci)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${r.perd} puntos dejados en el banquillo"><i style="width:${Math.max(2, r.perd / mx * 100).toFixed(1)}%;background:${col(r.ci)}"></i></span><small>${Math.round(r.real / r.max * 100)} % del once perfecto${r.clav ? ` · ${r.clav} ${r.clav === 1 ? "jornada" : "jornadas"} perfecta${r.clav === 1 ? "" : "s"}` : ""}</small></span><span class="pts"><b>${r.perd}</b></span></li>`).join("")}</ul>
-    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L[L.length - 1].m.name)}</b> (${L[L.length - 1].perd}).</p></section>`;
+    <p class="note">Mejor ojo: <b>${esc(L[0].m.name)}</b>. Más puntos perdidos: <b>${esc(L[L.length - 1].m.name)}</b> (${L[L.length - 1].perd}).</p>
+    <div class="acciones"><button class="btn-cromo" data-banq-comp>📤 Compartir lámina</button></div></section>`;
 }
+let BANQ_D = null;
 
 // Valor previsto de cada plantilla dentro de 7 días (modelo con inercia; los de menos de 1 M se dejan igual)
 function bloqueValor7(ms) {
@@ -4117,9 +4517,53 @@ function bloqueValor7(ms) {
     return { m, d, mejor, peor };
   }).sort((a, b) => b.d - a.d);
   const mx = Math.max(1, ...L.map(x => Math.abs(x.d)));
+  V7_D = { R: L.slice(0, 7).map(x => ({ nom: x.m.name, d: x.d, txt: [x.mejor && x.mejor.x > 0 ? "tira " + apellido(x.mejor.p.short || x.mejor.p.name) : "", x.peor && x.peor.x < 0 ? "lastra " + apellido(x.peor.p.short || x.peor.p.name) : ""].filter(Boolean).join(" · ") })), tot: L.reduce((t, x) => t + x.d, 0) };
   return `<section class="card"><div class="gh"><h2>Valor dentro de una semana</h2></div>
     <p class="note" style="margin:0 0 8px">Cuánto se espera que gane o pierda cada plantilla en 7 días si nadie ficha ni vende (previsión con la inercia del valor; los jugadores de menos de 1 M se dejan igual). Los partidos del fin de semana la cambiarán: tómalo como tendencia.</p>
-    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul></section>`;
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.d) / mx * 100).toFixed(1)}%;background:${x.d >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.mejor && x.mejor.x > 0 ? `tira ${esc(apellido(x.mejor.p.short || x.mejor.p.name))} (+${eur(x.mejor.x)})` : ""}${x.peor && x.peor.x < 0 ? `${x.mejor && x.mejor.x > 0 ? " · " : ""}lastra ${esc(apellido(x.peor.p.short || x.peor.p.name))} (−${eur(-x.peor.x)})` : ""}</small></span><span class="pp ${cl(x.d)}" style="font-size:15px">${sig(x.d)}</span></li>`).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-v7-comp>📤 Compartir lámina</button></div></section>`;
+}
+let V7_D = null, CLV_D = null;
+
+// Protegidos: fichados hace menos de 3 días (regla de Mister dicha por el dueño: no se pueden clausular). Solo datos y regla, sin previsión
+function bloqueProtegidos(ms) {
+  const ahora = Date.now(), PROT = 72 * 3600e3, vistos = new Set(), L = [];
+  (E.transfers || []).filter(t => t.to && t.ts).forEach(t => {
+    const fin = Date.parse(t.ts) + PROT, k = t.playerId + "|" + t.to;
+    if (!isFinite(fin) || fin <= ahora || vistos.has(k)) return; vistos.add(k);
+    const m = ms.find(x => String(x.id) === String(t.to)), p = m && m.players.find(q => String(q.id) === String(t.playerId));
+    if (p) L.push({ m, p, fin, falta: fin - ahora });
+  });
+  L.sort((a, b) => a.falta - b.falta);
+  const cuenta = f => { const h = Math.ceil(f / 3600e3); return h >= 24 ? Math.floor(h / 24) + " d " + (h % 24) + " h" : h + " h"; };
+  const cab = `<div class="gh"><h2>Protegidos</h2></div>`;
+  if (!L.length) return `<section class="card">${cab}${vacioHTML("Nadie protegido", "Ningún fichaje de los últimos 3 días sigue en su plantilla: todo se puede clausular.")}</section>`;
+  return `<section class="card">${cab}
+    <p class="note" style="margin:0 0 8px">Fichados hace menos de 3 días: no se pueden clausular hasta que acabe la cuenta atrás.</p>
+    <ul class="pron">${L.map(x => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${esc(x.p.short || x.p.name)}</b><small>${esc(x.m.name)} · ${eur(x.p.value)}${x.p.clause ? " · cláusula " + eur(x.p.clause) : ""}</small>
+      <span class="pb"><i style="width:${Math.max(3, (1 - x.falta / PROT) * 100).toFixed(1)}%;background:${col(x.m.i)}"></i></span></span>
+      <span class="pp">🔒 ${cuenta(x.falta)}</span></li>`).join("")}</ul>
+    <p class="note">Tres días contados desde la hora del fichaje; la barra se llena a medida que pasa el tiempo.</p></section>`;
+}
+
+// Enfermería: jugadores de cada plantilla con aviso de lesión, duda o sanción hoy (dato de Mister, sin previsión)
+function bloqueEnfermeria(ms) {
+  const L = ms.map(m => ({ m, ps: m.players.map(p => ({ p, e: ESTADO(p.status) })).filter(x => x.e).sort((a, b) => (a.e[0] === "doubt") - (b.e[0] === "doubt") || b.p.value - a.p.value) }))
+    .filter(x => x.ps.length).sort((a, b) => b.ps.reduce((s, x) => s + x.p.value, 0) - a.ps.reduce((s, x) => s + x.p.value, 0));
+  if (!L.length) return `<section class="card"><div class="gh"><h2>Enfermería</h2></div>${vacioHTML("Enfermería vacía", "Ningún jugador de las plantillas está lesionado, en duda o sancionado.")}</section>`;
+  const tot = L.reduce((s, x) => s + x.ps.reduce((t, y) => t + y.p.value, 0), 0);
+  ENF_D = enfDatos(ms);
+  return `<section class="card"><div class="gh"><h2>Enfermería</h2></div>
+    <p class="note" style="margin:0 0 8px">Jugadores con aviso de lesión, duda o sanción en Mister. Suman <b>${eur(tot)}</b> de valor parado.</p>
+    <ul class="pron">${L.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><small>${x.ps.map(y => `<span data-ficha="${esc(y.p.id)}">${y.e[1]} ${esc(apellido(y.p.short || y.p.name))} (${y.e[2].toLowerCase()}, ${eur(y.p.value)})</span>`).join(" · ")}</small></span><span class="pp" style="font-size:16px">${x.ps.length}</span></li>`).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-enf-comp>📤 Compartir lámina</button></div></section>`;
+}
+let ENF_D = null;
+function enfDatos(ms) {
+  const R = ms.map(m => ({ nom: m.name, ps: m.players.map(p => ({ p, e: ESTADO(p.status) })).filter(x => x.e).sort((a, b) => b.p.value - a.p.value) }))
+    .filter(x => x.ps.length).map(x => ({ nom: x.nom, n: x.ps.length, val: x.ps.reduce((s, y) => s + y.p.value, 0), txt: x.ps.map(y => apellido(y.p.short || y.p.name) + " (" + y.e[2].toLowerCase() + ")").join(", ") }))
+    .sort((a, b) => b.val - a.val);
+  return { R: R.slice(0, 7), tot: R.reduce((s, x) => s + x.val, 0) };
 }
 
 // Disciplina: tarjetas y goles en propia que han sumado los onces de cada manager en la temporada (solo datos pasados)
@@ -4298,8 +4742,67 @@ function bloqueOjo(ms) {
     ${peores.length ? `<p class="ordlbl" style="margin-top:12px">Compras que hoy valen menos de lo pagado</p><ul class="clist">${peores.map(fila).join("")}</ul>` : ""}
     <p class="ordlbl" style="margin-top:12px">Balance por manager</p>
     <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.gan) / mx * 100).toFixed(1)}%;background:${x.gan >= 0 ? col(x.m.i) : "var(--red)"}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · ${x.pts} pts desde el fichaje</small></span><span class="pp ${cl(x.gan)}" style="font-size:15px">${sig(x.gan)}</span></li>`).join("")}</ul>
+    ${graficaSobreprecio(compras)}
     <p class="note">Solo las compras de los últimos ${(E.transfers || []).length} movimientos guardados cuyo jugador sigue en el equipo.</p></section>`;
 }
+
+// ¿Pagar de más compensa? Cada compra reciente: sobreprecio (lo pagado frente al valor del día) y ganancia de valor hasta hoy
+function graficaSobreprecio(compras) {
+  const P = compras.filter(x => x.t.value > 0 && x.coste > 0).map(x => ({ x, s: (x.coste / x.t.value - 1) * 100, g: x.gan / 1e6 }));
+  if (P.length < 6) return "";
+  const med = P.map(d => d.s).sort((a, b) => a - b)[Math.floor(P.length / 2)];
+  const media = L => L.length ? L.reduce((s, d) => s + d.g, 0) / L.length : 0;
+  const caros = P.filter(d => d.s > med), baratos = P.filter(d => d.s <= med);
+  // por vía de compra: cláusula frente a puja en el mercado
+  const fila_ = (nom, L) => { if (L.length < 2) return ""; const sm = L.reduce((a, d) => a + d.s, 0) / L.length;
+    return `<li><span class="pq"><b>${nom}</b><small>${L.length} compras · sobreprecio medio ${sm >= 0 ? "+" : "−"}${nf1.format(Math.abs(sm))} %</small></span><span class="pp ${cl(media(L))}" style="font-size:15px">${sig(media(L) * 1e6)}</span></li>`; };
+  const fc = fila_("Por cláusula", P.filter(d => d.x.tipo === "clausula")), fm = fila_("Por puja en el mercado", P.filter(d => d.x.tipo === "mercado"));
+  const porTipo = fc || fm ? `<ul class="pron">${fc}${fm}</ul><p class="note">Ganancia media de valor hasta hoy según cómo se fichó.</p>` : "";
+  const W = 320, H = 190, l = 34, r = 8, t = 10, b = 24;
+  const q85 = f => { const v = P.map(d => Math.abs(f(d))).sort((a, b) => a - b); return v[Math.floor((v.length - 1) * 0.85)]; };
+  const sx = Math.max(5, q85(d => d.s)) * 1.15, sy = Math.max(0.2, q85(d => d.g)) * 1.15;     // los extremos se quedan en el borde
+  const cl_ = (v, m) => Math.max(-m, Math.min(m, v));
+  const X = v => l + (cl_(v, sx) + sx) / (2 * sx) * (W - l - r), Y = v => t + (1 - (cl_(v, sy) + sy) / (2 * sy)) * (H - t - b);
+  const pts = P.map(d => `<circle cx="${X(d.s).toFixed(1)}" cy="${Y(d.g).toFixed(1)}" r="5" fill="${col(d.x.m.i)}" fill-opacity=".8" stroke="var(--card,#fff)" stroke-width="1"><title>${esc(d.x.p.name)}: ${d.s >= 0 ? "+" : ""}${nf1.format(d.s)} % sobre el valor, ${sig(d.x.gan)} hoy</title></circle>`).join("");
+  return `<p class="ordlbl" style="margin-top:12px">¿Pagar de más compensa?</p>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sobreprecio pagado frente a ganancia de valor de cada compra" style="width:100%;height:auto;display:block">
+      <line x1="${X(0)}" y1="${t}" x2="${X(0)}" y2="${H - b}" stroke="currentColor" stroke-opacity=".2"/><line x1="${l}" y1="${Y(0)}" x2="${W - r}" y2="${Y(0)}" stroke="currentColor" stroke-opacity=".3"/>
+      ${pts}
+      <text x="${l}" y="${H - 8}" font-size="10" fill="currentColor" fill-opacity=".6">← pagó menos del valor</text><text x="${W - r}" y="${H - 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">pagó más →</text>
+      <text x="${l - 4}" y="${t + 8}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">+${nf1.format(sy)}</text><text x="${l - 4}" y="${H - b}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".6">−${nf1.format(sy)}</text></svg>
+    <p class="note">Cada punto es una compra: a la derecha pagó por encima del valor, arriba hoy vale más de lo que costó (millones). Las ${caros.length} compras con más sobreprecio han ganado de media <b class="${cl(media(caros))}">${sig(media(caros) * 1e6)}</b> y las ${baratos.length} más ajustadas <b class="${cl(media(baratos))}">${sig(media(baratos) * 1e6)}</b>.</p>${porTipo}`;
+}
+
+// Ventas que dolieron: el espejo de «¿Quién ficha mejor?». Ventas guardadas (al mercado o por cláusula): cuánto vale hoy el
+// jugador frente a lo que cobró el vendedor y los puntos que ha dado desde la venta (equipos.json -> transfers + LIGAJ)
+function bloqueVentas(ms) {
+  if (!LIGAJ || LIGAJ.cargando) return "";
+  const ini = {}; ((CAL && CAL.gameweeks) || []).forEach(g => { if (g.first) ini[g.gw] = Date.parse(g.first.replace(" ", "T") + "+01:00"); });
+  const vistos = new Set(), ventas = [];
+  (E.transfers || []).filter(t => t.from && t.value && t.ts).forEach(t => {
+    const k = t.playerId + "|" + t.from + "|" + t.ts; if (vistos.has(k)) return; vistos.add(k);
+    const m = ms.find(x => String(x.id) === String(t.from)), jg = LIGAJ.jug[String(t.playerId)];
+    if (!m || !jg || !(+jg.value > 0)) return;
+    const cobro = importeMov(t), desde = Date.parse(t.ts), pj = LIGAJ.pts[String(t.playerId)] || {};
+    const jor = Object.keys(pj).filter(g => ini[g] && ini[g] > desde);
+    ventas.push({ m, t, nombre: t.name || jg.name, teamId: jg.teamId, cobro, dif: +jg.value - cobro, pts: jor.reduce((s, g) => s + (+pj[g] || 0), 0), nj: jor.length });
+  });
+  if (ventas.length < 4) return "";
+  const dolieron = ventas.filter(x => x.dif > 0).sort((a, b) => b.dif - a.dif).slice(0, 5), aciertos = ventas.filter(x => x.dif < 0).sort((a, b) => a.dif - b.dif).slice(0, 3);
+  const bal = ms.map(m => { const c = ventas.filter(x => x.m === m); return { m, n: c.length, dif: c.reduce((s, x) => s + x.dif, 0) }; }).filter(x => x.n).sort((a, b) => b.dif - a.dif);
+  const mx = Math.max(1, ...bal.map(x => Math.abs(x.dif)));
+  VEN_D = { L: dolieron.slice(0, 5).map(x => ({ nom: x.nombre, m: x.m.name, cobro: x.cobro, dif: x.dif, pts: x.pts, nj: x.nj })) };
+  const fila = x => `<li class="crow" data-ficha="${esc(x.t.playerId)}">${avatar(x.m, x.m.i)}${cara(x.t.playerId, x.nombre, x.teamId, 34)}<span class="cq"><b>${esc(x.nombre)}</b><span>${esc(x.m.name)} · ${esc(enMadrid(x.t.ts, { day: "2-digit", month: "2-digit" }))} · cobró ${eur(x.cobro)}</span></span><span class="cr"><b class="${cl(x.dif)}">${sig(x.dif)}</b><small>${x.nj ? `${x.pts} pts desde` : "sin jugar aún"}</small></span></li>`;
+  return `<section class="card"><div class="gh"><h2>Ventas que dolieron</h2></div>
+    <p class="note" style="margin:0 0 8px">Lo que vale hoy cada jugador vendido frente a lo que cobró su antiguo dueño y los puntos que ha dado desde entonces (verde: hoy vale más, ¡mala venta!).</p>
+    ${dolieron.length ? `<p class="ordlbl">Las que más duelen</p><ul class="clist">${dolieron.map(fila).join("")}</ul>` : ""}
+    ${aciertos.length ? `<p class="ordlbl" style="margin-top:12px">Ventas a tiempo</p><ul class="clist">${aciertos.map(fila).join("")}</ul>` : ""}
+    <p class="ordlbl" style="margin-top:12px">Balance por vendedor</p>
+    <ul class="pron">${bal.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.abs(x.dif) / mx * 100).toFixed(1)}%;background:${x.dif >= 0 ? "var(--red)" : col(x.m.i)}"></i></span><small>${x.n} ${x.n === 1 ? "venta" : "ventas"} · cuánto más (+) o menos (−) valen hoy</small></span><span class="pp ${cl(x.dif)}" style="font-size:15px">${sig(x.dif)}</span></li>`).join("")}</ul>
+    <p class="note">Solo las ventas de los últimos ${(E.transfers || []).length} movimientos guardados. Lo cobrado es la cláusula pagada o el valor de ese día si se vendió al mercado.</p>
+    ${dolieron.length ? `<div class="acciones"><button class="btn-cromo" data-ven-comp>📤 Compartir lámina</button></div>` : ""}</section>`;
+}
+let VEN_D = null;
 
 function resumenEq(ms, hp) {
   const maxV = Math.max(0, ...ms.map(m => m.squadValue || 0));
@@ -4307,8 +4810,9 @@ function resumenEq(ms, hp) {
     const d = m.squadValue - m.squadPrev;
     const ts = m.players.map(p => tendencia(hp(p.id), p).k);
     const sube = ts.filter(t => t.startsWith("sube")).length, baja = ts.filter(t => t.startsWith("baja")).length, frena = ts.filter(t => t === "sube_frena").length;
+    const enf = m.players.filter(p => ESTADO(p.status)), enfV = enf.reduce((t, p) => t + (p.value || 0), 0);
     return `<li class="row${k === 0 ? " lider" : ""}"><button class="rowbtn" data-e="${esc(m.id)}"><span class="pos">${k + 1}</span>${avatar(m, m.i)}
-      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jug. · <span class="up">▲${sube}</span> <span class="dn">▼${baja}</span>${frena ? " · ⚠ " + frena + " frenando" : ""}</span>
+      <span class="info"><span class="nm">${esc(m.name)}</span><span class="sub">${m.players.length} jug. · <span class="up">▲${sube}</span> <span class="dn">▼${baja}</span>${frena ? " · ⚠ " + frena + " frenando" : ""}${enf.length ? ` · <span class="dn" title="Lesionados, dudas o sancionados: ${eur(enfV)} parados">✚ ${enf.length} en la enfermería</span>` : ""}</span>
         <span class="rbar" aria-hidden="true"><i style="width:${maxV > 0 ? Math.max(0, Math.min(100, m.squadValue / maxV * 100)).toFixed(1) : 0}%"></i></span></span>
       <span class="pts"><b>${eur(m.squadValue)}</b><em class="${cl(d)}">${sig(d)}</em></span></button></li>`;
   }).join("");
@@ -4316,7 +4820,7 @@ function resumenEq(ms, hp) {
   const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   const ex = [["gvalor", "📈", "Evolución", "Cuánto vale cada plantilla", graficaValor(ms)], ["bolsa", "🟩", "La Bolsa", "El mercado de LaLiga en un mapa", bloqueBolsa()], ["conquista", "🗺️", "Conquista", "Quién domina cada equipo", bloqueConquista()], ["galaxia", "✨", "Galaxia", "Valor frente a puntos, jugador a jugador", bloqueGalaxia()],
-    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()]]
+    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exprot", "🔒", "Protegidos", "Aún no se pueden clausular", bloqueProtegidos(ms)], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)], ["exven", "💸", "Ventas", "Las que más dolieron", bloqueVentas(ms)]]
     .filter(x => x[4]);
   const bl = k => { const x = ex.find(y => y[0] === k); return x ? `<div id="eqx-${k}">${x[4]}</div>` : ""; };
   const explora = `<nav class="indice bento" aria-label="Más de Equipos">${ex.map(x => `<button data-ir="eqx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
@@ -4332,10 +4836,13 @@ function resumenEq(ms, hp) {
     ${soloIA(bloqueValor7(ms))}
     ${bloqueEficiencia(ms)}
     ${bl("exdis")}
+    ${bl("exprot")}
+    ${bl("exenf")}
     ${soloIA(bloqueClausulas(ms))}
     ${bloqueQuienClausula(ms)}
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
+    ${bl("exven")}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : vacioHTML("Todo tranquilo", "Aún no se ha detectado ningún fichaje ni venta.")}</section>`;
 }
 
@@ -6260,7 +6767,7 @@ function cargarCalendario() {
   cargarExternas();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarCasaFuera(); pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
@@ -6331,10 +6838,24 @@ function curvaPuntos(c) {
 // «Duelo de curvas» (Capitán, con PIN): la distribución de puntos de los 4 mejores candidatos, superpuestas y suavizadas.
 // Eje = puntos que te darían como capitán (puntos × multiplicador), los mismos `ys` y `pj` del modelo; el área de cada
 // curva es su probabilidad de jugar (lo que falta hasta 100 % es «no juega» y vale 0 puntos).
+let CURVAS_C = [], CURVAS_SEL = null;
 function bloqueCurvas(cands) {
-  const cs = cands.filter(c => c.ys && c.ys.length).slice(0, 4);
-  if (cs.length < 2) return "";
-  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"];
+  CURVAS_C = cands.filter(c => c.ys && c.ys.length).slice(0, 8);
+  if (CURVAS_C.length < 2) return "";
+  CURVAS_SEL = CURVAS_C.slice(0, Math.min(4, CURVAS_C.length)).map((_, k) => k);
+  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box" id="cv-box">${curvasInterior()}</div>`;
+}
+// Elegir candidatos: tocar uno de la lista lo añade o lo quita (entre 2 y 4 a la vez).
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest(".cv-t"); if (!t || !CURVAS_SEL) return;
+  const k = +t.dataset.k, i = CURVAS_SEL.indexOf(k);
+  if (i >= 0) { if (CURVAS_SEL.length > 2) CURVAS_SEL.splice(i, 1); }
+  else { if (CURVAS_SEL.length >= 4) CURVAS_SEL.shift(); CURVAS_SEL.push(k); }
+  const box = document.getElementById("cv-box"); if (box) box.innerHTML = curvasInterior();
+});
+function curvasInterior() {
+  const orden = [...CURVAS_SEL].sort((a, b) => a - b), cs = orden.map(k => CURVAS_C[k]);
+  const cols = ["var(--acc)", "var(--df)", "var(--txt)", "var(--dl)"], col = k => cols[orden.indexOf(k)];
   const xs = cs.map(c => c.ys.map(y => y * c.m)), hi = Math.ceil(Math.max(...xs.flat(), 8)), lo = Math.floor(Math.min(0, ...xs.flat()));
   const N = 60, W = 320, H = 120, X = v => (v - lo) / (hi - lo) * W;
   const dens = cs.map((c, k) => { const bw = Math.max(0.8, 0.45 * c.m), w = c.pj / xs[k].length;
@@ -6345,10 +6866,11 @@ function bloqueCurvas(cands) {
     <path class="cv-l" pathLength="1" d="${trazo(d)}" fill="none" stroke="${cols[k]}" stroke-width="2.2" stroke-linejoin="round" style="animation-delay:${k * 120}ms"/>`).join("");
   const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
   const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
-  const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
-  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+  const leyenda = CURVAS_C.map((c, k) => { const on = CURVAS_SEL.includes(k);
+    return `<li><button type="button" class="cv-t${on ? " on" : ""}" data-k="${k}" aria-pressed="${on}"><i style="background:${on ? col(k) : "transparent"}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></button></li>`; }).join("");
+  return `<p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada. Toca a los candidatos de abajo para elegir cuáles comparar (de 2 a 4).</p>
     <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
-    <ul class="cv-ley">${leyenda}</ul></div>`;
+    <ul class="cv-ley">${leyenda}</ul>`;
 }
 
 function clavesCandidato(c, r) {
@@ -7242,8 +7764,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "bolsa" ? "La Bolsa de LaLiga" : `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -7608,6 +8130,32 @@ function abrirComparador(idA, idB) {
 let CMP_ULT = null;
 document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-bolsa-comp]")) { const B = bolsaDatos(); if (B) { EST_DAT.bolsa = { B, n: Object.keys(D.matchdays).length }; abrirEstudio("bolsa", e.target.closest("[data-bolsa-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-alti-comp]")) { if (ALTI_D) { EST_DAT.alti = { ...ALTI_D }; abrirEstudio("alti", e.target.closest("[data-alti-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-sorp-comp]")) { if (SORP_D) { EST_DAT.sorp = { ...SORP_D }; abrirEstudio("sorp", e.target.closest("[data-sorp-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-gol-comp]")) { if (GOL_D) { EST_DAT.gol = { ...GOL_D }; abrirEstudio("gol", e.target.closest("[data-gol-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-form-comp]")) { if (FORM_D) { EST_DAT.form = { ...FORM_D }; abrirEstudio("form", e.target.closest("[data-form-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rota-comp]")) { if (ROTA_D) { EST_DAT.rota = { ...ROTA_D }; abrirEstudio("rota", e.target.closest("[data-rota-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-lib-comp]")) { if (LIB_D && LIB_D.L.length) { EST_DAT.lib = { ...LIB_D }; abrirEstudio("lib", e.target.closest("[data-lib-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-term-comp]")) { if (TERM_D) { EST_DAT.term = { ...TERM_D }; abrirEstudio("term", e.target.closest("[data-term-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rent-comp]")) { if (RENT_D) { EST_DAT.rent = { ...RENT_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rent", e.target.closest("[data-rent-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-duel-comp]")) { if (LD_D) { EST_DAT.duel = { ...LD_D }; abrirEstudio("duel", e.target.closest("[data-duel-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-foto-comp]")) { if (FOTO_D) { EST_DAT.foto = { ...FOTO_D }; abrirEstudio("foto", e.target.closest("[data-foto-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rach-comp]")) { if (RACH_D) { EST_DAT.rach = { ...RACH_D }; abrirEstudio("rach", e.target.closest("[data-rach-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-clv-comp]")) { if (CLV_D) { EST_DAT.clv = { ...CLV_D }; abrirEstudio("clv", e.target.closest("[data-clv-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-banq-comp]")) { if (BANQ_D) { EST_DAT.banq = { ...BANQ_D }; abrirEstudio("banq", e.target.closest("[data-banq-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rv-comp]")) { if (RV_D) { EST_DAT.rv = { ...RV_D, n: Object.keys(D.matchdays).length }; abrirEstudio("rv", e.target.closest("[data-rv-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-enf-comp]")) { if (ENF_D) { EST_DAT.enf = { ...ENF_D }; abrirEstudio("enf", e.target.closest("[data-enf-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-trono-comp]")) { if (TRONO_D) { EST_DAT.trono = { ...TRONO_D }; abrirEstudio("trono", e.target.closest("[data-trono-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-pers-comp]")) { if (PERS_D) { EST_DAT.pers = { ...PERS_D }; abrirEstudio("pers", e.target.closest("[data-pers-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-clu-comp]")) { if (CLUBES_D) { EST_DAT.clu = { ...CLUBES_D }; abrirEstudio("clu", e.target.closest("[data-clu-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rec-comp]")) { if (RECS_D) { EST_DAT.rec = { ...RECS_D }; abrirEstudio("rec", e.target.closest("[data-rec-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-dis-comp]")) { const L = disciplinaDatos(); if (L) { EST_DAT.dis = { L, n: Object.keys(D.matchdays).length }; abrirEstudio("dis", e.target.closest("[data-dis-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-cmp-comp]") && CMP_ULT) { EST_DAT.cmp = CMP_ULT; abrirEstudio("cmp", e.target.closest("[data-cmp-comp]")); return; }
   const c = e.target.closest && e.target.closest("[data-comparar]");
@@ -7779,6 +8327,564 @@ async function esBolsa(d) {
   return c;
 }
 ES_SETS.bolsa = [["La Bolsa", esBolsa]];
+// Lámina de los récords de la temporada (mismos datos que la tarjeta de Clasificación)
+async function esRecords(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const ims = await Promise.all(d.topJ.map(r => esImg(r.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "RÉCORDS", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const med = k => ["🥇", "🥈", "🥉"][k] || (k + 1) + ".º";
+  const fila = (Y, k, h, izq, sub, val, pri) => {
+    esPanel(x, M, Y, W - 2 * M, h, pri ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30); x.fillText(med(k), M + 22, Y + h / 2 + 11);
+    x.fillStyle = ES.txt; x.fillText(esAjusta(x, izq, 520, 700, 30, 22), M + 110, Y + h / 2 - 4);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, sub, 520), M + 110, Y + h / 2 + 24);
+    x.textAlign = "right"; x.fillStyle = pri ? ES.verde : ES.txt; x.font = esF(800, 50, "condensed"); x.fillText(String(val), W - M - 24, Y + h / 2 + 17); x.textAlign = "left";
+  };
+  const t = (txt, Y) => { x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(700, 26); x.fillText(txt.toUpperCase(), M, Y); };
+  t("Mejores jornadas de un manager", 392);
+  d.topJ.forEach((r, k) => fila(410 + k * 84, k, 72, r.m.name, r.j, r.p + " pts", k === 0));
+  t("Mejores actuaciones de un jugador", 858);
+  d.topP.forEach((r, k) => fila(876 + k * 70, k, 60, r.name, `${r.j} · en el once de ${r.m.name}`, r.b + " pts", k === 0));
+  esPie(x, `Peor jornada: ${d.peorJ.m.name} (${d.peorJ.p}) en la ${d.peorJ.j}`);
+  return c;
+}
+async function esRentables(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const pn = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }[d.pos] || "todas las posiciones";
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MÁS RENTABLES", kicker: "Puntos por millón · " + pn, pag: 0, total: 1 });
+  const mx = Math.max(1, ...d.bien.map(r => r.r)), h = 84;
+  d.bien.forEach((r, k) => {
+    const Y = 380 + k * (h + 12);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 28);
+    x.fillText(esAjusta(x, `${k + 1}.º ${r.n}`, 560, 700, 28, 21), M + 26, Y + 33);
+    x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(esCorta(x, `${r.pts} pts · vale ${f1(r.v / 1e6)} M · ${r.d}`, 560), M + 26, Y + 58);
+    x.fillStyle = ES.linea; x.fillRect(M + 26, Y + 68, 560, 6);
+    x.fillStyle = ES.verde; x.fillRect(M + 26, Y + 68, Math.max(6, 560 * r.r / mx), 6);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 48, "condensed"); x.fillText(f1(r.r), W - M - 24, Y + 56); x.textAlign = "left";
+  });
+  esPie(x, d.mal.length ? `Caros que no rinden: ${d.mal.map(r => r.n).join(", ")}` : `${d.tot} jugadores comparados · ${d.n} jornadas`);
+  return c;
+}
+async function esGoleadores(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "GOLEADORES", kicker: "Goles, asistencias y porterías a cero · " + d.n + " jornadas", pag: 0, total: 1 });
+  const grupos = [["⚽ GOLES", d.g], ["👟 ASISTENCIAS", d.a], ["🧤 A CERO", d.c]].filter(g => g[1].length);
+  const filas = Math.min(3, Math.max(...grupos.map(g => g[1].length)));
+  const h = 56, gap = 8, bloque = 44 + filas * (h + gap) + 14;
+  grupos.forEach(([tit, L], gi) => {
+    const Y0 = 340 + gi * bloque, mx = Math.max(1, L[0].v);
+    x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(800, 26); x.fillText(tit, M, Y0 + 28);
+    L.slice(0, filas).forEach((r, k) => {
+      const Y = Y0 + 44 + k * (h + gap);
+      esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 16);
+      x.fillStyle = ES.txt; x.font = esS(700, 26); x.fillText(esAjusta(x, `${k + 1}.º ${r.n}`, 520, 700, 26, 20), M + 22, Y + 28);
+      x.fillStyle = ES.linea; x.fillRect(M + 22, Y + 40, 520, 6);
+      x.fillStyle = ES.verde; x.fillRect(M + 22, Y + 40, Math.max(6, 520 * r.v / mx), 6);
+      x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 40, "condensed"); x.fillText(String(r.v), W - M - 22, Y + 42); x.textAlign = "left";
+    });
+  });
+  esPie(x, "Jornadas con algún manager que los alineó");
+  return c;
+}
+async function esRegulares(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, nombres = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" };
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MÁS REGULARES", kicker: (d.filtro ? nombres[d.filtro] : "Toda LaLiga") + " · " + d.nj + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.n, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.pos} · ${r.j} jornadas · entre ${r.mn} y ${r.mx} pts`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * Math.max(0.03, 1 - r.sd / (R[R.length - 1].sd * 1.25 || 1)), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.m.toFixed(1).replace(".", ","), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Puntos de media · los que menos varían de una jornada a otra");
+  return c;
+}
+ES_SETS.reg = [["Regulares", esRegulares]];
+async function esTermometro(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const L = [...d.sube.map(r => ({ ...r, up: true })), ...d.baja.map(r => ({ ...r, up: false }))];
+  const mx = Math.max(1, ...L.map(r => Math.abs(r.d)));
+  esFondo(x);
+  esCabecera(x, { titulo: "TERMÓMETRO", kicker: "Valor en 7 días · toda LaLiga", pag: 0, total: 1 });
+  const h = 92;
+  L.forEach((r, k) => {
+    const Y = 380 + k * (h + 12) + (k >= d.sube.length ? 24 : 0);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (r.up ? "▲ " : "▼ ") + r.n, 560, 700, 30, 22), M + 28, Y + 36);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `vale ${eur(r.v)} · ${nf1.format(Math.abs(r.pc))} % en 7 días`, 560), M + 28, Y + 62);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 72, 560, 8);
+    x.globalAlpha = r.up ? 1 : 0.45; x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 72, Math.max(6, 560 * Math.abs(r.d) / mx), 8); x.globalAlpha = 1;
+    x.textAlign = "right"; x.fillStyle = r.up ? ES.verde : ES.txt; x.font = esF(800, 44, "condensed"); x.fillText((r.up ? "+" : "−") + eur(Math.abs(r.d)), W - M - 24, Y + 58); x.textAlign = "left";
+  });
+  esPie(x, "Cambio de valor en los últimos 7 días");
+  return c;
+}
+async function esLibres(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, nombres = { PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }, mx = R[0].pts || 1;
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS MEJORES LIBRES", kicker: (d.filtro ? nombres[d.filtro] : "Todas las posiciones") + " · sin dueño", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.n, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.pos} · vale ${eur(r.v)} · ${r.m ? "en el mercado" : "libre"}`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.pts / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.pts + " pts", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Puntos de la temporada de jugadores que nadie tiene");
+  return c;
+}
+ES_SETS.lib = [["Libres", esLibres]];
+ES_SETS.term = [["Termómetro", esTermometro]];
+async function esClubes(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7);
+  esFondo(x);
+  esCabecera(x, { titulo: "CLUBES DE CADA UNO", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), pc = r.v / r.t;
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.club} · ${r.v} de ${r.t} pts`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * pc, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(Math.round(pc * 100) + " %", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El más pegado a un solo club: ${d.R[0].m.name}`);
+  return c;
+}
+async function esPersecucion(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(1, ...R.map(r => r.dL));
+  esFondo(x);
+  esCabecera(x, { titulo: "PERSECUCIÓN", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    const txt = k === 0 ? "Líder · " + r.t + " pts" : r.dA === 0 ? "Empatado con el de arriba" : `A ${r.dA} pts del ${k}.º` + (d.quedan ? ` · ${(r.dA / d.quedan).toFixed(1).replace(".", ",")} pts/jornada` : "");
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, txt, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * (1 - r.dL / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(k === 0 ? "LÍDER" : "-" + r.dL, W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Quedan ${d.quedan} jornadas de ${d.TOT}`);
+  return c;
+}
+ES_SETS.pers = [["Persecución", esPersecucion]];
+async function esReyes(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(1, R[0].n);
+  esFondo(x);
+  esCabecera(x, { titulo: "LOS REYES", kicker: "Quién tuvo más ojo · " + d.ng + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(r.n === 1 ? "1 rey alineado" : r.n + " reyes alineados", M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * (r.n / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.n), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `${d.hay} de ${d.tot} reyes los alineó alguien de la liga`);
+  return c;
+}
+ES_SETS.rey = [["Quién tuvo más ojo", esReyes]];
+async function esSorpresas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = [...d.S.map(r => ({ ...r, up: true })), ...d.B.map(r => ({ ...r, up: false }))];
+  const mx = Math.max(1, ...R.map(r => Math.abs(r.d)));
+  esFondo(x);
+  esCabecera(x, { titulo: "SORPRESAS", kicker: "Jornada " + d.j + " · frente a su media", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.n, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.pos} · media anterior ${nf1.format(r.m)} · ${r.x} pts`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.globalAlpha = r.up ? 1 : 0.45; x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * Math.abs(r.d) / mx), 8); x.globalAlpha = 1;
+    x.textAlign = "right"; x.fillStyle = r.up ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText((r.up ? "+" : "−") + nf1.format(Math.abs(r.d)), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Puntos de la jornada frente a su media anterior");
+  return c;
+}
+ES_SETS.sorp = [["Sorpresas", esSorpresas]];
+async function esCasaFuera(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "CASA Y FUERA", kicker: "Puntos por jugador · toda LaLiga", pag: 0, total: 1 });
+  const mx = Math.max(d.mH, d.mA, 0.1), BW = W - 2 * M - 56;
+  [["En casa", d.mH, d.nH, ES.verde], ["Fuera", d.mA, d.nA, ES.mut]].forEach(([t, m, n, col], k) => {
+    const Y = 390 + k * 150;
+    esPanel(x, M, Y, W - 2 * M, 130, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 32); x.fillText(t, M + 28, Y + 44);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(n + " actuaciones", M + 28, Y + 76);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 96, BW, 10);
+    x.fillStyle = col; x.fillRect(M + 28, Y + 96, Math.max(6, BW * m / mx), 10);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 64, "condensed"); x.fillText(nf1.format(m), W - M - 28, Y + 70); x.textAlign = "left";
+  });
+  x.fillStyle = ES.mut; x.font = esS(400, 24); x.textAlign = "center";
+  x.fillText(`${d.vl} victorias locales · ${d.em} empates · ${d.vv} visitantes`, W / 2, 700); x.textAlign = "left";
+  [["Más rinden en casa", d.L, 730], ["Más rinden fuera", d.V, 975]].forEach(([t, L, Y0]) => {
+    x.fillStyle = ES.verde; x.font = esS(700, 24); x.fillText(t.toUpperCase(), M, Y0);
+    L.forEach((r, k) => {
+      const Y = Y0 + 12 + k * 72;
+      x.fillStyle = ES.txt; x.font = esS(700, 28); x.fillText(esAjusta(x, r.n, 560, 700, 28, 20), M + 8, Y + 34);
+      x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(`${r.pos} · casa ${nf1.format(r.mh)} · fuera ${nf1.format(r.ma)}`, M + 8, Y + 60);
+      x.textAlign = "right"; x.fillStyle = ES.verde; x.font = esF(800, 44, "condensed"); x.fillText("+" + nf1.format(r.d), W - M - 8, Y + 52); x.textAlign = "left";
+    });
+  });
+  esPie(x, "Media de puntos según jugar en casa o fuera");
+  return c;
+}
+ES_SETS.casa = [["Casa y fuera", esCasaFuera]];
+async function esPlantones(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(...R.map(r => r.no / r.tot));
+  esFondo(x);
+  esCabecera(x, { titulo: "PLANTONES", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), pc = r.no / r.tot;
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.no} de ${r.tot} alineados sin jugar · peor ${r.peor.j} (${r.peor.n})`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * pc / mx, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(Math.round(pc * 100) + " %", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El que más huecos regala: ${d.R[0].m.name}`);
+  return c;
+}
+ES_SETS.plan = [["Plantones", esPlantones]];
+async function esVersus(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const [imA, imB] = await Promise.all([esImg(d.a.avatarUrl), esImg(d.b.avatarUrl)]);
+  esFondo(x);
+  esCabecera(x, { titulo: "CARA A CARA", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const NOM = { PT: "Portería", DF: "Defensa", MC: "Medio campo", DL: "Delantera" }, K = ["PT", "DF", "MC", "DL"];
+  const fil = K.map(k => [NOM[k], d.sa[k], d.sb[k], String(d.sa[k]), String(d.sb[k])]);
+  const tA = K.reduce((t, k) => t + d.sa[k], 0), tB = K.reduce((t, k) => t + d.sb[k], 0);
+  fil.push(["Puntos totales", tA, tB, String(tA), String(tB)], ["Valor", d.va, d.vb, eur(d.va), eur(d.vb)]);
+  esAvatar(x, d.a, d.ia, imA, M + 130, 520, 100, ES.luz); esAvatar(x, d.b, d.ib, imB, W - M - 130, 520, 100, ES.luz);
+  x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esF(800, 80, "condensed"); x.fillText("VS", W / 2, 545);
+  x.fillStyle = ES.txt; x.font = esS(700, 32);
+  x.fillText(esAjusta(x, d.a.name, 400, 700, 32, 22), M + 130, 665); x.fillText(esAjusta(x, d.b.name, 400, 700, 32, 22), W - M - 130, 665);
+  const h = 78, cw = 150, bw = W - 2 * M - 2 * cw - 40;
+  fil.forEach((f, k) => {
+    const Y = 720 + k * (h + 12), mx = Math.max(f[1], f[2], 1), gA = f[1] > f[2], gB = f[2] > f[1];
+    esPanel(x, M, Y, W - 2 * M, h, k >= 4 ? ES.verde : ES.linea, 18);
+    x.textAlign = "left"; x.fillStyle = gA ? ES.verde : ES.txt; x.font = esF(800, 44, "condensed"); x.fillText(f[3], M + 22, Y + 56);
+    x.textAlign = "right"; x.fillStyle = gB ? ES.verde : ES.txt; x.fillText(f[4], W - M - 22, Y + 56);
+    x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(f[0], W / 2, Y + 30);
+    x.fillStyle = ES.linea; x.fillRect(W / 2 - bw / 2, Y + 44, bw, 10);
+    x.fillStyle = gA ? ES.verde : ES.mut; x.fillRect(W / 2 - 2 - bw / 2 * f[1] / mx, Y + 44, bw / 2 * f[1] / mx, 10);
+    x.fillStyle = gB ? ES.verde : ES.mut; x.fillRect(W / 2 + 2, Y + 44, bw / 2 * f[2] / mx, 10);
+  });
+  const gan = K.filter(k => d.sa[k] > d.sb[k]).length, per = K.filter(k => d.sa[k] < d.sb[k]).length;
+  x.textAlign = "left";
+  esPie(x, gan === per ? "Empate a líneas" : gan > per ? `${d.a.name} gana en ${gan} de 4 líneas` : `${d.b.name} gana en ${per} de 4 líneas`);
+  return c;
+}
+ES_SETS.rv = [["Plantilla contra plantilla", esVersus]];
+async function esAltibajos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), rg = Math.max(1, d.mx - d.mn), X0 = M + 28, AN = W - 2 * M - 56 - 120;
+  esFondo(x);
+  esCabecera(x, { titulo: "ALTIBAJOS", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100, px = p => X0 + (p - d.mn) / rg * AN;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `de ${r.peor.p} a ${r.mejor.p} puntos · típica ${Math.round(r.med)}`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(px(r.peor.p), Y + 78, Math.max(4, px(r.mejor.p) - px(r.peor.p)), 8);
+    x.fillStyle = ES.verde; x.fillRect(px(r.med) - 3, Y + 72, 6, 20);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText("±" + Math.round(r.sd), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El más regular: ${d.L[0].m.name} · el de más altibajos: ${d.L[d.L.length - 1].m.name}`);
+  return c;
+}
+ES_SETS.alti = [["Altibajos", esAltibajos]];
+async function esRotacion(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56 - 150, f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "ROTACIÓN", kicker: "Cambios de once por jornada", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 30, 22), X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, r.fijo ? `el fijo: ${r.fijo.name} (${r.fijo.n} de ${r.n} onces)` : `${r.dist} jugadores distintos`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(X0, Y + 78, AN, 8);
+    x.fillStyle = k === 0 ? ES.verde : ES.mut; x.fillRect(X0, Y + 78, Math.max(6, r.med / d.mx * AN), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(f1(r.med), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `El que más rota: ${d.L[0].m.name} · el más fiel a su once: ${d.L[d.L.length - 1].m.name}`);
+  return c;
+}
+ES_SETS.rota = [["Rotación", esRotacion]];
+async function esFormaciones(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56 - 150, f1 = v => v.toFixed(1).replace(".", ",");
+  esFondo(x);
+  esCabecera(x, { titulo: "FORMACIONES", kicker: "Qué esquema da más puntos", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(r.f, X0, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.n} ${r.n === 1 ? "vez" : "veces"} · la usa más ${r.quien} (${r.qn})`, 560), X0, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(X0, Y + 78, AN, 8);
+    x.fillStyle = k === 0 ? ES.verde : ES.mut; x.fillRect(X0, Y + 78, Math.max(6, r.me / d.mx * AN), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(f1(r.me), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Puntos medios por esquema · la mejor media: ${d.L[0].f}`);
+  return c;
+}
+ES_SETS.form = [["Formaciones", esFormaciones]];
+async function esFotos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = Math.max(1, ...R.map(r => r.d));
+  esFondo(x);
+  esCabecera(x, { titulo: "FINALES DE FOTO", kicker: "Las jornadas más apretadas · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.g, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `${r.j} · ${r.gv} frente a ${r.sv} de ${r.s}`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.d / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText("+" + r.d, W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Ventaja media ${d.med.toFixed(1).replace(".", ",")} pts · mayor paliza: ${d.paliza.j} (${d.paliza.d})`);
+  return c;
+}
+async function esTrono(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = Math.max(1, ...R.map(r => r.lider));
+  esFondo(x);
+  esCabecera(x, { titulo: "EL TRONO", kicker: "Jornadas como líder de la general · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100, pu = n => n === 1 ? "puesto" : "puestos";
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, (r.sube.d ? `▲ +${r.sube.d} ${pu(r.sube.d)} (${r.sube.j})` : "sin subidas") + (r.baja.d ? ` · ▼ −${r.baja.d} (${r.baja.j})` : ""), 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, r.lider ? Math.max(6, 560 * r.lider / mx) : 0, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.lider), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Jornadas acabadas como líder de la general");
+  return c;
+}
+ES_SETS.trono = [["El trono", esTrono]];
+async function esCapAcierto(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, AN = 560;
+  esFondo(x);
+  esCabecera(x, { titulo: "EL CAPITÁN", kicker: "Acierto con el brazalete: lo dado y lo perdido", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), t = Math.max(1, d.mx);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `Mejor capitán en ${r.a} de ${r.n} jornadas · se dejó ${r.p}`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, AN, 8);
+    const g = Math.min(AN, Math.max(r.g ? 6 : 0, AN * r.g / t)); x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, g, 8);
+    x.fillStyle = "#c0504d"; x.globalAlpha = .6; x.fillRect(M + 28 + g, Y + 78, Math.min(AN - g, AN * r.p / t), 8); x.globalAlpha = 1;
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.g), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Verde = extra · rojo = perdido");
+  return c;
+}
+ES_SETS.capac = [["Acierto con el capitán", esCapAcierto]];
+async function esBanquillo(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, AN = 560;
+  esFondo(x);
+  esCabecera(x, { titulo: "EL BANQUILLO", kicker: `Puntos que se dejaron fuera en ${d.nj} jornadas`, pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.pct} % del mejor once · perfecto ${r.clav} veces`, 600), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, AN, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(r.perd ? 6 : 0, AN * r.perd / Math.max(1, d.mx)), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.perd), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Menos puntos perdidos = mejor ojo");
+  return c;
+}
+ES_SETS.banq = [["Banquillo de la temporada", esBanquillo]];
+async function esEnf(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = Math.max(1, ...R.map(r => r.val));
+  esFondo(x);
+  esCabecera(x, { titulo: "ENFERMERÍA", kicker: "Valor parado · " + eur(d.tot), pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.txt, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.val / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed"); x.fillText(eur(r.val), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Valor de los jugadores con aviso en Mister");
+  return c;
+}
+ES_SETS.enf = [["Enfermería", esEnf]];
+async function esVentas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.L, mx = Math.max(1, ...R.map(r => r.dif));
+  esFondo(x);
+  esCabecera(x, { titulo: "LAS QUE DOLIERON", kicker: "Ventas: lo que valen hoy frente a lo cobrado", pag: 0, total: 1 });
+  const h = 120;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 32);
+    x.fillText(esAjusta(x, r.nom, 520, 700, 32, 22), M + 28, Y + 42);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.m} · cobró ${eur(r.cobro)} · ${r.nj ? r.pts + " pts desde" : "sin jugar aún"}`, 560), M + 28, Y + 74);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 94, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 94, Math.max(6, 560 * r.dif / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed"); x.fillText(sig(r.dif), W - M - 24, Y + 72); x.textAlign = "left";
+  });
+  esPie(x, "Cuánto más vale hoy que lo que se cobró");
+  return c;
+}
+ES_SETS.ven = [["Ventas que dolieron", esVentas]];
+
+async function esValor7(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = Math.max(1, ...R.map(r => Math.abs(r.d)));
+  esFondo(x);
+  esCabecera(x, { titulo: "VALOR A 7 DÍAS", kicker: "Previsión · " + (d.tot >= 0 ? "+" : "−") + eur(Math.abs(d.tot)) + " en la liga", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.txt, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = r.d >= 0 ? ES.verde : ES.rojo; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * Math.abs(r.d) / mx), 8);
+    x.textAlign = "right"; x.fillStyle = r.d >= 0 ? ES.verde : ES.txt; x.font = esF(800, 46, "condensed"); x.fillText((r.d >= 0 ? "+" : "−") + eur(Math.abs(r.d)), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Tendencia con la inercia del valor; los partidos la cambiarán");
+  return c;
+}
+ES_SETS.v7 = [["Valor a 7 días", esValor7]];
+
+async function esClausulas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "CLÁUSULAS TOP", kicker: "Previsión · rentables y titulares", pag: 0, total: 1 });
+  const h = 100;
+  d.R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 40);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, "de " + r.dueno + " · " + nf1.format(r.esp) + " pts/jornada" + (r.chollo ? " · chollo" : ""), 560), M + 28, Y + 72);
+    x.textAlign = "right"; x.fillStyle = ES.verde; x.font = esF(800, 46, "condensed"); x.fillText(merEur(r.cl), W - M - 24, Y + 56);
+    x.fillStyle = ES.mut; x.font = esS(400, 20); x.fillText("+" + Math.round(r.sobre * 100) + " % sobre " + merEur(r.val), W - M - 24, Y + 84); x.textAlign = "left";
+  });
+  esPie(x, "Solo titulares según Futbol Fantasy y Analítica Fantasy");
+  return c;
+}
+ES_SETS.clv = [["Cláusulas", esClausulas]];
+
+async function esDuelos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(1, ...R.map(r => r.pt));
+  esFondo(x);
+  esCabecera(x, { titulo: "LIGA DE DUELOS", kicker: "Todos contra todos cada jornada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, `${k + 1}.º ${r.m.name}`, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `${r.g} ganados · ${r.e} empates · ${r.p} perdidos · ${r.d > 0 ? "▲ " + r.d : r.d < 0 ? "▼ " + -r.d : "="} vs. real`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, 560 * r.pt / mx), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(r.pt), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, d.cambian ? `Cambiarían de puesto ${d.cambian} managers` : "La clasificación sería la misma");
+  return c;
+}
+async function esRachas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "RACHAS", kicker: "Sobre la mediana · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100, cw = Math.min(26, 560 / d.n);
+  d.R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    r.st.forEach((v, j) => { x.fillStyle = v > 0 ? ES.verde : v < 0 ? ES.rojo : ES.linea; x.fillRect(M + 28 + j * cw, Y + 54, Math.max(2, cw - 3), 28); });
+    x.textAlign = "right"; x.fillStyle = r.sg > 0 ? ES.verde : r.sg < 0 ? ES.rojo : ES.txt; x.font = esF(800, 54, "condensed");
+    x.fillText(r.sg ? (r.sg > 0 ? "+" : "-") + r.ac : "–", W - M - 24, Y + 56);
+    x.fillStyle = ES.mut; x.font = esS(400, 20); x.fillText("mejor: " + r.mejor, W - M - 24, Y + 84); x.textAlign = "left";
+  });
+  esPie(x, "Verde: sobre la mediana · rojo: bajo ella");
+  return c;
+}
+ES_SETS.rach = [["Rachas", esRachas]];
+ES_SETS.duel = [["Liga de duelos", esDuelos]];
+ES_SETS.foto = [["Finales de foto", esFotos]];
+ES_SETS.rent = [["Los más rentables", esRentables]];
+ES_SETS.gol = [["Goleadores", esGoleadores]];
+ES_SETS.clu = [["Clubes", esClubes]];
+ES_SETS.rec = [["Récords", esRecords]];
 ES_SETS.dis = [["Pabellón", esPabellon]];
 ES_SETS.cmp = [["Cara a cara", esComparar]];
 // Lámina extra de la crónica: el cromo del jugador de la jornada (mismo cromo y mismas cifras que en su ficha)
@@ -8824,7 +9930,7 @@ function pintar() {
     <ul class="rank">${filas}</ul>
     <section class="card tuj" id="tuj" hidden></section>
     <p class="ind-t">Explora la liga</p>
-    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["plan", "🪑", "Plantones", "Alineados que no jugaron"], ["clubes", "🛡️", "Clubes", "De qué equipo viven tus puntos"], ["recs", "🏆", "Récords", "Las mejores actuaciones del año"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
+    <nav class="indice bento" aria-label="Más de la liga"><button class="pt-ent" data-pt="top"><i>🏟️</i><b>El partido en 3D</b><small>Dos onces frente a frente, como en la tele</small></button><button data-ir="previa" id="irPrevia"${gwPrevia() ? "" : " hidden"}><i>📣</i><b>Previa</b><small>Lo que se juega la jornada</small></button><button data-ir="quin" id="irQuin" hidden><i>🎲</i><b>Predicción</b><small>Quién ganará la jornada</small></button>${[["cron", "📰", "Crónica", "Cómo fue la última jornada"], ["graf", "📈", "Carrera", "Los puestos jornada a jornada"], ["rep", "▶️", "Repetición", "La liga en movimiento"], ["lt", "🧭", "Línea del tiempo", "Los momentos de la temporada"], ["red", "🕸️", "Traspasos", "Quién ficha a quién"], ["pron", "🔮", "Pronóstico", "Quién ganará la liga"], ["duelo", "⚔️", "Duelo", "Tú contra otro manager"], ["comp", "🆚", "Jugadores", "Dos jugadores frente a frente"], ["caps", "🎖️", "Capitanes", "Aciertos con el brazalete"], ["origen", "🧩", "Puntos", "De dónde salen los puntos"], ["alti", "🎢", "Altibajos", "Lo regular que es cada uno"], ["mat", "🧮", "Cara a cara", "Quién gana a quién, jornada a jornada"], ["rach", "🔥", "Rachas", "Quién está en racha y quién en bache"], ["sincap", "🎖️", "Sin capitán", "La tabla sin los puntos extra del brazalete"], ["ligad", "🥊", "Liga de duelos", "Si cada jornada fuese un todos contra todos"], ["form", "📐", "Formaciones", "Qué esquema da más puntos"], ["rota", "🔄", "Rotación", "Quién cambia más su once"], ["plan", "🪑", "Plantones", "Alineados que no jugaron"], ["clubes", "🛡️", "Clubes", "De qué equipo viven tus puntos"], ["rent", "💎", "Rentables", "Puntos por millón en toda LaLiga"], ["term", "🌡️", "Termómetro", "Quién sube y baja de valor esta semana"], ["libres", "🆓", "Libres", "Los sin dueño que más puntos suman"], ["reyes", "👑", "Reyes", "Los mejores de cada jornada y quién los tuvo"], ["regul", "🧊", "Regulares", "Los que siempre dan lo mismo"], ["casa", "🏠", "Casa y fuera", "Si se puntúa más jugando en casa"], ["sorp", "🎭", "Sorpresas", "Quién se salió de lo suyo en la jornada"], ["foto", "📸", "Finales de foto", "Por cuántos puntos se gana cada jornada"], ["trono", "👑", "El trono", "Quién ha liderado y cuánto subió o cayó"], ["pers", "🎯", "Persecución", "Cuánto te falta para alcanzar al de arriba"], ["gole", "⚽", "Goleadores", "Quién marca y da más pases de gol"], ["recs", "🏆", "Récords", "Las mejores actuaciones del año"], ["premios", "🏅", "Premios", "Premios e historias de la temporada"]].map(([k, e, t, d]) => `<button data-ir="${k}"><i>${e}</i><b>${t}</b><small>${d}</small></button>`).join("")}</nav>
     <section class="card" id="previa" hidden></section>
     <section class="card" id="quin" hidden></section>
     <section class="card" id="cron" aria-label="Crónica de la jornada"></section>
@@ -8846,6 +9952,17 @@ function pintar() {
     <section class="card" id="rota"></section>
     <section class="card" id="plan"></section>
     <section class="card" id="clubes"></section>
+    <section class="card" id="rent" hidden></section>
+    <section class="card" id="term" hidden></section>
+    <section class="card" id="libres" hidden></section>
+    <section class="card" id="reyes" hidden></section>
+    <section class="card" id="regul" hidden></section>
+    <section class="card" id="casa" hidden></section>
+    <section class="card" id="sorp" hidden></section>
+    <section class="card" id="foto" hidden></section>
+    <section class="card" id="trono" hidden></section>
+    <section class="card" id="pers"></section>
+    <section class="card" id="gole"></section>
     <section class="card" id="recs"></section>
     <section class="card" id="premios"></section>`;
   cuentaPuntosFilas(); cuentaPodio(); pintarCinta(); if (!LIGAJ) setTimeout(cargarLigaJ, 1500);
@@ -8874,6 +9991,17 @@ function pintar() {
   pintarRotacion();
   pintarPlantones();
   pintarClubes();
+  pintarRentables();
+  pintarTermometro();
+  pintarLibres();
+  pintarReyes();
+  pintarRegulares();
+  pintarCasaFuera();
+  pintarSorpresas();
+  pintarPersecucion();
+  pintarFotos();
+  pintarTrono();
+  pintarGoleadores();
   pintarRecords();
   cuentaClasificacion();
 }
@@ -8903,9 +10031,14 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg],[data-rpos],[data-lpos],[data-rey],[data-gpos],[data-sorp]");
   if (!t) return;
   const d = t.dataset;
+  if (d.rey !== undefined) { reyJ = +d.rey; pintarReyes(); return; }
+  if (d.sorp !== undefined) { sorJ = +d.sorp; pintarSorpresas(); return; }
+  if (d.gpos !== undefined) { regPos = d.gpos; pintarRegulares(); return; }
+  if (d.lpos !== undefined) { libPos = d.lpos; pintarLibres(); return; }
+  if (d.rpos !== undefined) { rentPos = d.rpos; pintarRentables(); return; }
   if (d.s) {
     // cambio de pestaña con un fundido corto si el navegador lo permite (y sin movimiento si se ha pedido así)
     if (document.startViewTransition && d.s !== seccion && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(() => ir(d.s));
