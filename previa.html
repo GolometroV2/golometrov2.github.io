@@ -3125,6 +3125,7 @@ function pintarPronostico() {
     <div class="pf-foco" id="pfFoco"></div>
     <ul class="pf-l" id="pfL">${lider.map(x => { const o = S.ms[x]; return `<li data-pf-m="${esc(o.m.id)}" style="--c:${col(o.i)}">${avatar(o.m, o.i)}<span class="pf-q"><b>${esc(o.m.name)}</b><span class="pf-b"><i style="background:${col(o.i)}"></i></span>
       <span class="pf-ps" title="Probabilidad de acabar en cada puesto, del 1.º al ${N}.º">${S.ms.map(() => "<i></i>").join("")}<span></span></span></span><span class="pf-pc"></span></li>`; }).join("")}</ul>
+    <div class="acciones"><button class="btn-cromo" data-pf-comp>📤 Compartir lámina</button></div>
     <p class="note">El abanico es donde acabaría 8 de cada 10 veces. Los cuadritos de cada fila son sus opciones de acabar 1.º, 2.º, 3.º… (más color, más probable). Es un pronóstico, no una predicción segura: los fichajes, las lesiones y los capitanes lo cambian cada semana. Supone una liga de ${JORNADAS_TOTALES} jornadas.</p>`;
   pronFoco();
 }
@@ -3142,7 +3143,7 @@ function pronFoco() {
 }
 function pronPinta() {
   const P = PRON; if (!P || !$("#pfSvg")) return;
-  const { S, n, quedan, N } = P, par = pronRitmos(), R = pronSim(S, par, quedan), fx = S.ms.findIndex(o => String(o.m.id) === PRONX.foco), T = JORNADAS_TOTALES;
+  const { S, n, quedan, N } = P, par = pronRitmos(), R = pronSim(S, par, quedan), _g = (P.R = R, P.libre = Object.values(PRONX.ritmo).some(v => Math.abs(v) > 0.01)), fx = S.ms.findIndex(o => String(o.m.id) === PRONX.foco), T = JORNADAS_TOTALES;
   // gráfica: puntos respecto a la media de la liga; pasado real, futuro al ritmo marcado y abanico del elegido
   const med = k => S.cum.reduce((t, c) => t + c[k], 0) / N, rel = S.cum.map(c => c.map((v, k) => v - med(k)));
   const mR = par.reduce((t, p) => t + p.m, 0) / N, fut = (x, k) => rel[x][n - 1] + (par[x].m - mR) * k;
@@ -3198,6 +3199,7 @@ function pronPinta() {
 document.addEventListener("click", e => {
   const c = e.target.closest && e.target.closest("#pron"); if (!c || !PRON) return;
   const m = e.target.closest("[data-pf-m]"), b = e.target.closest("[data-pf]"), es = e.target.closest("[data-pf-esc]");
+  if (e.target.closest("[data-pf-comp]")) { if (PRON.R) { EST_DAT.pron = { R: PRON.R.slice().sort((p, q) => q.g - p.g || q.f - p.f), quedan: PRON.quedan, n: PRON.n, forma: PRONX.esc === "forma", libre: PRON.libre }; abrirEstudio("pron", e.target.closest("[data-pf-comp]")); } return; }
   if (es) { const { S, base } = PRON; PRONX.ritmo = {}; PRONX.esc = es.dataset.pfEsc === "forma" ? "forma" : null;
     // forma: la media de sus últimas 5 jornadas en lugar de la de toda la temporada
     if (PRONX.esc) S.ms.forEach((o, x) => { const u = S.pts[x].slice(-5); PRONX.ritmo[o.m.id] = Math.max(-15, Math.min(15, u.reduce((a, v) => a + v, 0) / u.length - base[x].m)); });
@@ -8584,6 +8586,26 @@ async function esCasaFuera(d) {
   return c;
 }
 ES_SETS.casa = [["Casa y fuera", esCasaFuera]];
+async function esPronostico(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), mx = Math.max(0.01, R[0].g);
+  esFondo(x);
+  esCabecera(x, { titulo: "FAVORITOS", kicker: "Jornada " + d.n + " · quedan " + d.quedan, pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.o.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, `Podio ${pronPct(r.p)} · último ${pronPct(r.u)} · ~${Math.round(r.f)} pts al final`, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * r.g / mx, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(pronPct(r.g), W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `3.000 ligas simuladas · ${d.libre ? (d.forma ? "forma reciente" : "ritmos a medida") : "ritmo de temporada"}`);
+  return c;
+}
+ES_SETS.pron = [["Quién ganará la liga", esPronostico]];
 async function esPlantones(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.R.slice(0, 7), mx = Math.max(...R.map(r => r.no / r.tot));
