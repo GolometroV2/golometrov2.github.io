@@ -3595,8 +3595,11 @@ function pintarPuestos() {
   cont.innerHTML = `<div class="gh"><h2>¿En qué puesto está el valor?</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos por millón de valor que dan los 10 jugadores con más puntos de cada posición (mediana, 1 M o más). Barra larga = ahí se puntúa más por cada euro. Toca para ver al más rentable.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">Por lo que cuestan, los más rentables de la liga son los <b>${NOM[R[0].k].toLowerCase()}</b>; los que menos puntos dan por millón, los <b>${NOM[R[R.length - 1].k].toLowerCase()}</b>.</p>`;
+    <p class="note">Por lo que cuestan, los más rentables de la liga son los <b>${NOM[R[0].k].toLowerCase()}</b>; los que menos puntos dan por millón, los <b>${NOM[R[R.length - 1].k].toLowerCase()}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-pue-comp>📤 Compartir lámina</button></div>`;
+  PUE_D = { R: R.map(r => ({ n: NOM[r.k], pts: r.pts, val: r.val, r: r.r, mejor: r.mejor.name })) };
 }
+let PUE_D = null;
 
 /* ---------- Rentabilidad: puntos por millón de valor en toda LaLiga (estadístico, lee jugadores.json vía LIGAJ) ---------- */
 let rentPos = "";
@@ -8260,6 +8263,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-mat-comp]")) { if (MAT_D) { EST_DAT.mat = { ...MAT_D }; abrirEstudio("mat", e.target.closest("[data-mat-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-car-comp]")) { if (CAR_D) { EST_DAT.car = { ...CAR_D }; abrirEstudio("car", e.target.closest("[data-car-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-val-comp]")) { if (VAL_D) { EST_DAT.val = { ...VAL_D }; abrirEstudio("val", e.target.closest("[data-val-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-pue-comp]")) { if (PUE_D) { EST_DAT.pue = { ...PUE_D }; abrirEstudio("pue", e.target.closest("[data-pue-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-estr-comp]")) { if (ESTR_D) { EST_DAT.estr = { ...ESTR_D }; abrirEstudio("estr", e.target.closest("[data-estr-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ppm-comp]")) { if (PPM_D) { EST_DAT.ppm = { ...PPM_D }; abrirEstudio("ppm", e.target.closest("[data-ppm-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sincap-comp]")) { if (SINCAP_D) { EST_DAT.sincap = { ...SINCAP_D }; abrirEstudio("sincap", e.target.closest("[data-sincap-comp]")); } return; }
@@ -8806,6 +8810,30 @@ async function esEstrellas(d) {
   return c;
 }
 ES_SETS.estr = [["Estrellas y obreros", esEstrellas]];
+// lámina de «¿En qué puesto está el valor?»: puntos por millón de la élite de cada posición; estadístico
+async function esPuestos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, mx = R[0].r || 1;
+  esFondo(x);
+  esCabecera(x, { titulo: "EL VALOR", kicker: "Puntos por millón · élite de cada puesto", pag: 0, total: 1 });
+  const h = 150;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 16);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 34);
+    x.fillText(r.n, M + 28, Y + 48);
+    x.fillStyle = ES.mut; x.font = esS(400, 22);
+    x.fillText(esCorta(x, `Mediana ${Math.round(r.pts)} pts · vale ${(r.val / 1e6).toFixed(1).replace(".", ",")} M · ${r.mejor}`, 600), M + 28, Y + 84);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 108, 600, 10);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 108, 600 * Math.max(0.03, r.r / mx), 10);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 60, "condensed");
+    x.fillText(r.r.toFixed(1).replace(".", ","), W - M - 24, Y + 80);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText("pts/M", W - M - 24, Y + 114); x.textAlign = "left";
+  });
+  esPie(x, `Más rentable: ${R[0].n.toLowerCase()}`);
+  return c;
+}
+ES_SETS.pue = [["¿Dónde está el valor?", esPuestos]];
 // lámina de «Evolución del valor»: valor de cada plantilla y lo ganado desde el inicio; estadístico
 async function esValor(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
