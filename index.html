@@ -1269,6 +1269,7 @@ body.wr-abierto{overflow:hidden}
 .fh-tx b{font-size:26px;line-height:1.1;letter-spacing:-.6px;font-family:var(--f-disp)}
 .fh-r{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .fh-r .ch-vs{color:#e6f5ec}
+.ffo{display:flex;align-items:center;gap:14px;margin:4px 0 8px}.ffo b{display:block;font-size:15px}.ffo span{font-size:13px;color:var(--mut)}.ffo-a{transition:stroke-dasharray .6s ease-out}
 .fh-x{position:relative;z-index:2;height:0;margin:0;overflow:visible}
 .fh-x .ov-x{position:relative;top:0;background:#0007;color:#fff;border-color:#fff3}
 @media(prefers-reduced-motion:no-preference){.fh-ph{animation:sube .3s ease-out}}
@@ -2342,6 +2343,16 @@ function abrirFicha(id) {
   const puesto = (k, ok = () => true) => { const v = p[k]; if (!capNum(v) || !ok(p)) return null; const L = mismos.filter(q => capNum(q[k]) && ok(q)); return L.length < 5 ? null : { r: L.filter(q => q[k] > v).length + 1, n: L.length }; };
   const rangos = [["Puntos", puesto("points")], ["Media", puesto("avg", q => q.avg > 0 && q.points / q.avg >= 5)], ["Valor", puesto("value")]].filter(x => x[1]);
   const bloqueRango = rangos.length ? `<h3 class="sec">Entre los ${{ PT: "porteros", DF: "defensas", MC: "medios", DL: "delanteros" }[p.pos] || "de su puesto"} de LaLiga</h3><div class="fr">${rangos.map(([t, x]) => { const pc = Math.max(4, 100 - (x.r - 1) / x.n * 100); return `<div class="fr-f"><span>${t}</span><span class="fr-b" role="img" aria-label="${t}: puesto ${x.r} de ${x.n}"><i style="width:${pc.toFixed(0)}%"></i></span><b>${x.r}.º<small> de ${x.n}</small></b></div>`; }).join("")}</div>` : "";
+  // forma reciente (estadístico): media de las últimas 5 jornadas jugadas frente a la de toda la temporada y presencia
+  const jug = gws.filter(g => pts[g] != null), u5 = jug.slice(-5).map(g => pts[g]);
+  let bloqueForma = "";
+  if (jug.length >= 6) {
+    const mT = jug.reduce((t, g) => t + pts[g], 0) / jug.length, m5 = u5.reduce((t, v) => t + v, 0) / u5.length, d = m5 - mT;
+    const R = 30, C = 2 * Math.PI * R, k = Math.max(0, Math.min(1, m5 / Math.max(1, mT * 2)));
+    const est = d >= 1.5 ? "En racha" : d <= -1.5 ? "Algo apagado" : "Estable";
+    bloqueForma = `<h3 class="sec">Su forma</h3><div class="ffo"><svg viewBox="0 0 76 76" width="76" height="76" role="img" aria-label="Media reciente ${nf1.format(m5)} frente a ${nf1.format(mT)} de temporada"><circle cx="38" cy="38" r="${R}" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ffo-a" cx="38" cy="38" r="${R}" fill="none" stroke="${d >= 0 ? "var(--pos)" : "var(--red)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(k * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="16" font-weight="800" fill="currentColor">${nf1.format(m5)}</text></svg>
+      <div><b>${est}</b><span>Media de sus últimas ${u5.length} jornadas: ${nf1.format(m5)} puntos, frente a ${nf1.format(mT)} en toda la temporada (<span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${nf1.format(Math.abs(d))}</span>). Ha puntuado en ${jug.length} de ${gws.length} jornadas.</span></div></div>`;
+  }
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2358,6 +2369,7 @@ function abrirFicha(id) {
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
+    ${bloqueForma}
     ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
