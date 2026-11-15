@@ -3324,9 +3324,10 @@ function ligaPartidos(M, js, g, pt) {
   const rr = tot.slice().sort((a, b) => b.real - a.real).map(r => r.i), lp = tot.slice().sort((a, b) => b.pts - a.pts || b.real - a.real);
   const filas = lp.map((r, k) => { const d = rr.indexOf(r.i) - k;
     return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><small>${r.w} G · ${r.e} E · ${r.l} P</small></span><span class="pts"><b>${r.pts}</b> pts${d ? ` <small>${d > 0 ? "▲" : "▼"}${Math.abs(d)}</small>` : ""}</span></li>`; }).join("");
-  return `<h3 class="sec">Liga de partidos</h3><p class="note" style="margin:0 0 8px">Si cada jornada fuese un duelo contra todos los demás (3 por ganar, 1 por empatar). La flecha compara con la clasificación real por puntos.</p><ul class="pron">${filas}</ul>`;
+  LP_D = { n: js.length, R: lp.slice(0, 7).map(r => ({ m: r.m, i: r.i, w: r.w, e: r.e, l: r.l, pts: r.pts, d: rr.indexOf(r.i) - lp.indexOf(r) })) };
+  return `<h3 class="sec">Liga de partidos</h3><p class="note" style="margin:0 0 8px">Si cada jornada fuese un duelo contra todos los demás (3 por ganar, 1 por empatar). La flecha compara con la clasificación real por puntos.</p><ul class="pron">${filas}</ul><div class="acciones"><button class="btn-cromo" data-lp-comp>📤 Compartir lámina</button></div>`;
 }
-let MAT_D = null;
+let MAT_D = null, LP_D = null;
 
 /* ---------- Rachas: jornadas seguidas por encima o por debajo de la mediana ---------- */
 function pintarRachas() {
@@ -8273,6 +8274,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-alti-comp]")) { if (ALTI_D) { EST_DAT.alti = { ...ALTI_D }; abrirEstudio("alti", e.target.closest("[data-alti-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-orig-comp]")) { if (ORIG_D) { EST_DAT.orig = { ...ORIG_D }; abrirEstudio("orig", e.target.closest("[data-orig-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-prem-comp]")) { if (PREM_D) { EST_DAT.prem = { ...PREM_D }; abrirEstudio("prem", e.target.closest("[data-prem-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-lp-comp]")) { if (LP_D) { EST_DAT.lp = { ...LP_D }; abrirEstudio("lp", e.target.closest("[data-lp-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-mat-comp]")) { if (MAT_D) { EST_DAT.mat = { ...MAT_D }; abrirEstudio("mat", e.target.closest("[data-mat-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-car-comp]")) { if (CAR_D) { EST_DAT.car = { ...CAR_D }; abrirEstudio("car", e.target.closest("[data-car-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-val-comp]")) { if (VAL_D) { EST_DAT.val = { ...VAL_D }; abrirEstudio("val", e.target.closest("[data-val-comp]")); } return; }
@@ -8923,6 +8925,25 @@ async function esMatriz(d) {
   return c;
 }
 ES_SETS.mat = [["Cara a cara", esMatriz]];
+async function esLigaPartidos(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const ims = await Promise.all(d.R.map(r => esImg(r.m.avatarUrl)));
+  esFondo(x);
+  esCabecera(x, { titulo: "LIGA DE PARTIDOS", kicker: "Si cada jornada fuese un duelo · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  d.R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    esAvatar(x, r.m, r.i, ims[k], M + 56, Y + h / 2, 30);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.m.name, 560, 700, 30, 22), M + 112, Y + 44);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(r.w + " G · " + r.e + " E · " + r.l + " P" + (r.d ? "  " + (r.d > 0 ? "▲" : "▼") + Math.abs(r.d) : ""), M + 112, Y + 76);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.pts + " pts", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Líder de la liga de partidos: ${d.R[0].m.name}`);
+  return c;
+}
+ES_SETS.lp = [["Liga de partidos", esLigaPartidos]];
 // lámina de «Premios de la temporada»: los 8 premios con su ganador; estadístico
 async function esPremios(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
