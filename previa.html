@@ -3538,8 +3538,11 @@ function pintarEstrellas() {
   cont.innerHTML = `<div class="gh"><h2>Estrellas y obreros</h2></div>
     <p class="note" style="margin:0 0 10px">Qué parte de los puntos (sin capitán) vienen de sus 3 mejores jugadores. Barra larga = vive de sus estrellas; corta = puntúa todo el equipo.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">El más dependiente de sus estrellas es <b>${esc(R[0].m.name)}</b> y el más repartido, <b>${esc(R[R.length - 1].m.name)}</b>.</p>`;
+    <p class="note">El más dependiente de sus estrellas es <b>${esc(R[0].m.name)}</b> y el más repartido, <b>${esc(R[R.length - 1].m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-estr-comp>📤 Compartir lámina</button></div>`;
+  ESTR_D = { R: R.map(r => ({ m: r.m, i: r.i, t: r.t, s3: r.s3, top: r.top.map(p => p.name + " " + p.v).join(" · ") })), n: js.length };
 }
+let ESTR_D = null;
 
 /* ---------- Clubes: de qué equipo real viven los puntos de cada manager (estadístico, solo lee D.matchdays) ---------- */
 function pintarClubes() {
@@ -8234,6 +8237,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-mat-comp]")) { if (MAT_D) { EST_DAT.mat = { ...MAT_D }; abrirEstudio("mat", e.target.closest("[data-mat-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-car-comp]")) { if (CAR_D) { EST_DAT.car = { ...CAR_D }; abrirEstudio("car", e.target.closest("[data-car-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-val-comp]")) { if (VAL_D) { EST_DAT.val = { ...VAL_D }; abrirEstudio("val", e.target.closest("[data-val-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-estr-comp]")) { if (ESTR_D) { EST_DAT.estr = { ...ESTR_D }; abrirEstudio("estr", e.target.closest("[data-estr-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ppm-comp]")) { if (PPM_D) { EST_DAT.ppm = { ...PPM_D }; abrirEstudio("ppm", e.target.closest("[data-ppm-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sincap-comp]")) { if (SINCAP_D) { EST_DAT.sincap = { ...SINCAP_D }; abrirEstudio("sincap", e.target.closest("[data-sincap-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
@@ -8758,6 +8762,27 @@ async function esPpm(d) {
   return c;
 }
 ES_SETS.ppm = [["Puntos por 90 min", esPpm]];
+// lámina de «Estrellas y obreros»: peso de los 3 mejores jugadores en los puntos de cada manager; estadístico
+async function esEstrellas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7);
+  esFondo(x);
+  esCabecera(x, { titulo: "LAS ESTRELLAS", kicker: "Temporada · " + d.n + " jornadas", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14), f = r.s3 / r.t;
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, (k + 1) + ".º " + r.m.name, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.top, 560), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, 560, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, 560 * f, 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(Math.round(f * 100) + " %", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, `Vive de sus estrellas: ${d.R[0].m.name}`);
+  return c;
+}
+ES_SETS.estr = [["Estrellas y obreros", esEstrellas]];
 // lámina de «Evolución del valor»: valor de cada plantilla y lo ganado desde el inicio; estadístico
 async function esValor(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
