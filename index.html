@@ -4079,7 +4079,7 @@ function pintarLinea() {
   if (n < 2) { c.hidden = true; return; }
   c.hidden = false;
   const N = S.ms.length, nom = x => esc(S.ms[x].m.name);
-  let rec = -1;
+  let rec = -1; const LT_F = [];
   const tarjetas = S.js.map((j, k) => {
     let mx = 0; for (let x = 1; x < N; x++) if (S.pts[x][k] > S.pts[mx][k]) mx = x;
     let lider = S.rank[k].indexOf(1), peor = 0; for (let x = 1; x < N; x++) if (S.pts[x][k] < S.pts[peor][k]) peor = x;
@@ -4088,15 +4088,19 @@ function pintarLinea() {
     const h = [["🥇", `${nom(lider)}<small>líder con ${nf0.format(S.cum[lider][k])} pts</small>`],
       ["🔥", `${nom(mx)}<small>${S.pts[mx][k]} pts${esRec ? " · récord de la temporada" : ""}</small>`],
       ["🧊", `${nom(peor)}<small>${S.pts[peor][k]} pts, el que menos</small>`]];
+    LT_F.push({ j: String(j), lider: S.ms[lider].m.name, lp: S.cum[lider][k], mejor: S.ms[mx].m.name, mp: S.pts[mx][k], rec: esRec, peor: S.ms[peor].m.name, pp: S.pts[peor][k], salto: salto ? { n: S.ms[salto.x].m.name, g: salto.g } : null });
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
     return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
   }).join("");
   c.innerHTML = `<div class="gh"><h2>Línea del tiempo</h2></div>
     <p class="note" style="margin:0 0 10px">Los momentos de cada jornada. Desliza hacia los lados.</p>
-    <div class="lt-pista" tabindex="0" role="region" aria-label="Línea del tiempo de la temporada">${tarjetas}</div>`;
+    <div class="lt-pista" tabindex="0" role="region" aria-label="Línea del tiempo de la temporada">${tarjetas}</div>
+    <div class="acciones"><button class="btn-cromo" data-lt-comp>📤 Compartir lámina</button></div>`;
+  LT_D = { f: LT_F.slice(-5) };
   const p = c.querySelector(".lt-pista"); p.scrollLeft = p.scrollWidth;
 }
 
+let LT_D = null;
 /* ---------- Red de traspasos: managers en círculo y arcos de dinero entre ellos ---------- */
 // Lee los últimos movimientos guardados (equipos.json -> transfers). Centro = Mister (mercado libre). Grosor = dinero.
 let REDSEL = null;
@@ -8356,6 +8360,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-ppm-comp]")) { if (PPM_D) { EST_DAT.ppm = { ...PPM_D }; abrirEstudio("ppm", e.target.closest("[data-ppm-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sincap-comp]")) { if (SINCAP_D) { EST_DAT.sincap = { ...SINCAP_D }; abrirEstudio("sincap", e.target.closest("[data-sincap-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-lt-comp]")) { if (LT_D && LT_D.f.length) { EST_DAT.lt = { ...LT_D }; abrirEstudio("lt", e.target.closest("[data-lt-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-red-comp]")) { if (RED_D) { EST_DAT.red = { ...RED_D }; abrirEstudio("red", e.target.closest("[data-red-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-for-comp]")) { if (FOR_D && (FOR_D.sube.length || FOR_D.baja.length)) { EST_DAT.forma = { ...FOR_D }; abrirEstudio("forma", e.target.closest("[data-for-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
@@ -10162,6 +10167,24 @@ async function esRed(d) {
   return c;
 }
 ES_SETS.red = [["Red de traspasos", esRed]];
+async function esLinea(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x);
+  esCabecera(x, { titulo: "LÍNEA DEL TIEMPO", kicker: `Las últimas ${d.f.length} jornadas`, pag: 0, total: 1 });
+  const h = 150, gap = 12;
+  d.f.slice().reverse().forEach((r, k) => {
+    const Y = 330 + k * (h + gap);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(800, 26); x.fillText(esCorta(x, String(r.j).toUpperCase(), 200), M + 24, Y + 40);
+    x.fillStyle = ES.txt; x.font = esS(700, 26); x.fillText(esCorta(x, "🥇 " + r.lider + " · " + r.lp + " pts", 420), M + 24, Y + 82);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, "🧊 " + r.peor + " · " + r.pp + " pts" + (r.salto ? "   🚀 " + r.salto.n + " +" + r.salto.g : ""), 460), M + 24, Y + 120);
+    x.textAlign = "right"; x.fillStyle = ES.verde; x.font = esF(800, 54, "condensed"); x.fillText(String(r.mp), W - M - 24, Y + 70);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, "🔥 " + r.mejor + (r.rec ? " · récord" : ""), 300), W - M - 24, Y + 112); x.textAlign = "left";
+  });
+  esPie(x, "Líder, mejor y peor de cada jornada");
+  return c;
+}
+ES_SETS.lt = [["Línea del tiempo", esLinea]];
 ES_SETS.gal = [["La galaxia", esGalaxia]];
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-gal-comp]");
