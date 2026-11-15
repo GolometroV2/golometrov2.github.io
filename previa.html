@@ -3576,9 +3576,32 @@ function pintarClubes() {
 }
 let CLUBES_D = null;
 
+/* ---------- ¿En qué puesto está el valor? (estadístico, lee LIGAJ): lo que rinde por millón la élite de cada posición ---------- */
+function pintarPuestos() {
+  const cont = $("#puestos"); if (!cont) return;
+  const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => capNum(p.value) && p.value >= 1e6 && capNum(p.points) && p.points >= 20) : [];
+  const med = a => { const s = [...a].sort((x, y) => x - y), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+  const NOM = { PT: "Porteros", DF: "Defensas", MC: "Centrocampistas", DL: "Delanteros" };
+  const R = POS.map(k => {
+    const top = J.filter(p => p.pos === k).sort((a, b) => b.points - a.points).slice(0, 10);
+    if (top.length < 5) return null;
+    return { k, n: top.length, pts: med(top.map(p => p.points)), val: med(top.map(p => p.value)), r: med(top.map(p => p.points / (p.value / 1e6))), mejor: top.slice().sort((a, b) => b.points / b.value - a.points / a.value)[0] };
+  }).filter(Boolean);
+  if (R.length < 3) { cont.innerHTML = ""; cont.hidden = true; return; }
+  cont.hidden = false;
+  R.sort((a, b) => b.r - a.r);
+  const mx = R[0].r || 1;
+  const filas = R.map(r => `<li data-ficha="${esc(r.mejor.id)}">${cara(r.mejor.id, r.mejor.name, r.mejor.teamId, 36)}<span class="pq"><b>${NOM[r.k]}</b><span class="pb" role="img" aria-label="${nf1.format(r.r)} puntos por millón"><i style="width:${Math.max(3, r.r / mx * 100).toFixed(1)}%"></i></span><small>Mediana de sus ${r.n} mejores: ${nf0.format(r.pts)} pts · vale ${eur(r.val)} · el más rentable: ${esc(r.mejor.name)}</small></span><span class="pts"><b>${nf1.format(r.r)}</b> pts/M</span></li>`).join("");
+  cont.innerHTML = `<div class="gh"><h2>¿En qué puesto está el valor?</h2></div>
+    <p class="note" style="margin:0 0 10px">Puntos por millón de valor que dan los 10 jugadores con más puntos de cada posición (mediana, 1 M o más). Barra larga = ahí se puntúa más por cada euro. Toca para ver al más rentable.</p>
+    <ul class="pron">${filas}</ul>
+    <p class="note">Por lo que cuestan, los más rentables de la liga son los <b>${NOM[R[0].k].toLowerCase()}</b>; los que menos puntos dan por millón, los <b>${NOM[R[R.length - 1].k].toLowerCase()}</b>.</p>`;
+}
+
 /* ---------- Rentabilidad: puntos por millón de valor en toda LaLiga (estadístico, lee jugadores.json vía LIGAJ) ---------- */
 let rentPos = "";
 function pintarRentables() {
+  pintarPuestos();
   const cont = $("#rent"); if (!cont) return;
   const J = LIGAJ && LIGAJ.jug ? Object.values(LIGAJ.jug).filter(p => (!rentPos || p.pos === rentPos) && capNum(p.value) && p.value >= 1e6 && capNum(p.points) && p.points >= 20) : [];
   if (J.length < 20) { cont.innerHTML = ""; cont.hidden = true; return; }
@@ -10389,6 +10412,7 @@ function pintar() {
     <section class="card" id="clubes"></section>
     <section class="card" id="estr"></section>
     <section class="card" id="ppm"></section>
+    <section class="card" id="puestos" hidden></section>
     <section class="card" id="rent" hidden></section>
     <section class="card" id="term" hidden></section>
     <section class="card" id="libres" hidden></section>
