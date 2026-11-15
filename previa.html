@@ -4138,8 +4138,11 @@ function pintarRed() {
     <svg class="red-svg" viewBox="0 0 ${W} ${W}" role="img" aria-label="Red de traspasos entre managers">${svgArcos}${centro}${svgNodos}</svg>
     <div class="red-pie"><span><i></i>entre managers (cláusulas y traspasos)</span><span><i class="m"></i>con Mister (mercado)</span></div>
     ${sel != null ? `<button class="red-bt" data-red="-1">✕ Ver a todos</button> <p class="note" style="margin:0 0 6px"><b>${esc(ms[sel].name)}</b>: ha gastado ${eur(gastado)} y ha cobrado ${eur(cobrado)} en estos movimientos.</p>` : ""}
-    <ul class="red-l">${lista}</ul>`;
+    <ul class="red-l">${lista}</ul>
+    <div class="acciones"><button class="btn-cromo" data-red-comp>📤 Compartir lámina</button></div>`;
+  RED_D = { ms: ms.map((m, i) => ({ name: m.name, avatar: m.avatar || "MF", i })), arcos: arcos.map(o => ({ a: o.a, b: o.b, v: o.v })), top: mov.slice().sort((p, q) => (q.value || 0) - (p.value || 0)).slice(0, 5).map(t => ({ name: t.name, de: nom(t.from), a: nom(t.to), v: t.value || 0 })), total: mov.length, dinero: mov.reduce((q, t) => q + (t.value || 0), 0) };
 }
+let RED_D = null;
 document.addEventListener("click", e => { const g = e.target.closest && e.target.closest("[data-red]"); if (!g || !D) return; const i = +g.dataset.red; REDSEL = i < 0 || REDSEL === i ? null : i; pintarRed(); });
 document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".red-nodo")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); } });
 
@@ -7967,7 +7970,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8353,6 +8356,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-ppm-comp]")) { if (PPM_D) { EST_DAT.ppm = { ...PPM_D }; abrirEstudio("ppm", e.target.closest("[data-ppm-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sincap-comp]")) { if (SINCAP_D) { EST_DAT.sincap = { ...SINCAP_D }; abrirEstudio("sincap", e.target.closest("[data-sincap-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-plan-comp]")) { if (PLAN_D) { EST_DAT.plan = { ...PLAN_D }; abrirEstudio("plan", e.target.closest("[data-plan-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-red-comp]")) { if (RED_D) { EST_DAT.red = { ...RED_D }; abrirEstudio("red", e.target.closest("[data-red-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-for-comp]")) { if (FOR_D && (FOR_D.sube.length || FOR_D.baja.length)) { EST_DAT.forma = { ...FOR_D }; abrirEstudio("forma", e.target.closest("[data-for-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sorp-comp]")) { if (SORP_D) { EST_DAT.sorp = { ...SORP_D }; abrirEstudio("sorp", e.target.closest("[data-sorp-comp]")); } return; }
@@ -10133,6 +10137,31 @@ async function esGalaxia(d) {
   esPie(x, "Sobre la línea: rinde más que lo normal a su precio");
   return c;
 }
+// Lámina de la red de traspasos: managers en círculo, arcos de dinero (grosor) y los movimientos más caros
+async function esRed(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, n = d.ms.length;
+  esFondo(x);
+  esCabecera(x, { titulo: "RED DE TRASPASOS", kicker: `${d.total} movimientos · ${eur(d.dinero)}`, pag: 0, total: 1 });
+  const cx = W / 2, cy = 730, R = 265, pos = d.ms.map((_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+  const xy = k => k === "M" ? [cx, cy] : pos[k], maxV = Math.max(...d.arcos.map(o => o.v), 1);
+  d.arcos.forEach(o => { const [x1, y1] = xy(o.a), [x2, y2] = xy(o.b), mer = o.a === "M" || o.b === "M";
+    x.strokeStyle = mer ? "#9fc4ae88" : "#5cf096cc"; x.lineWidth = 3 + 14 * Math.sqrt(o.v / maxV); x.lineCap = "round";
+    x.beginPath(); x.moveTo(x1, y1); x.quadraticCurveTo((x1 + x2) / 2 + (cx - (x1 + x2) / 2) * .45, (y1 + y2) / 2 + (cy - (y1 + y2) / 2) * .45, x2, y2); x.stroke(); });
+  x.fillStyle = "#0b1f16"; x.strokeStyle = ES.linea; x.lineWidth = 3; x.beginPath(); x.arc(cx, cy, 52, 0, 6.2832); x.fill(); x.stroke();
+  x.fillStyle = ES.mut; x.font = esS(700, 24); x.textAlign = "center"; x.fillText("Mister", cx, cy + 8);
+  d.ms.forEach((m, i) => { const [px, py] = pos[i];
+    x.fillStyle = col(m.i); x.strokeStyle = "#0b1f16"; x.lineWidth = 6; x.beginPath(); x.arc(px, py, 40, 0, 6.2832); x.fill(); x.stroke();
+    x.fillStyle = "#fff"; x.font = esS(800, 28); x.textAlign = "center"; x.fillText(Array.from(String(m.avatar)).slice(0, 2).join(""), px, py + 10);
+    x.fillStyle = ES.txt; x.font = esS(700, 22); x.fillText(esCorta(x, m.name, 170), px, py + (py > cy ? 76 : -54)); });
+  x.textAlign = "left"; x.fillStyle = ES.verde; x.font = esS(800, 24); x.fillText("LOS MÁS CAROS", M, 1100);
+  d.top.slice(0, 3).forEach((t, k) => { const Y = 1115 + k * 46;
+    x.fillStyle = ES.txt; x.font = esS(700, 24); x.textAlign = "left"; x.fillText(esCorta(x, `${t.name} · ${t.de} → ${t.a}`, 700), M, Y + 26);
+    x.fillStyle = ES.verde; x.textAlign = "right"; x.fillText(eur(t.v), W - M, Y + 26); });
+  x.textAlign = "left";
+  esPie(x, "Grosor = dinero · de quien vende a quien compra");
+  return c;
+}
+ES_SETS.red = [["Red de traspasos", esRed]];
 ES_SETS.gal = [["La galaxia", esGalaxia]];
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-gal-comp]");
