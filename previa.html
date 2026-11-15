@@ -8218,7 +8218,11 @@ function cromoDatos(id) {
   const mismos = Object.values(LIGAJ.jug).filter(q => q.pos === p.pos);
   const puesto = (k, ok = () => true) => { const v = p[k]; if (!capNum(v) || !ok(p)) return null; const L = mismos.filter(q => capNum(q[k]) && ok(q)); return L.length < 5 ? null : { r: L.filter(q => q[k] > v).length + 1, n: L.length }; };
   const rangos = [["Puntos", puesto("points")], ["Media", puesto("avg", q => q.avg > 0 && q.points / q.avg >= 5)], ["Valor", puesto("value")]].filter(x => x[1]);
-  return { p, nota, rangos, tier: nota >= 86 ? "esm" : nota >= 74 ? "pla" : "car", tierNom: nota >= 86 ? "Esmeralda" : nota >= 74 ? "Plata" : "Carbono",
+  // estado de forma (igual que «Su forma» de la ficha): media de las últimas 5 jornadas frente a la de la temporada
+  let estForma = null;
+  if (jug.length >= 6) { const mT = jug.reduce((t, x) => t + x.v, 0) / jug.length, u5 = jug.slice(-5), m5 = u5.reduce((t, x) => t + x.v, 0) / u5.length, df = m5 - mT;
+    estForma = { m5, mT, n: u5.length, nom: df >= 1.5 ? "En racha" : df <= -1.5 ? "Algo apagado" : "Estable" }; }
+  return { estForma, p, nota, rangos, tier: nota >= 86 ? "esm" : nota >= 74 ? "pla" : "car", tierNom: nota >= 86 ? "Esmeralda" : nota >= 74 ? "Plata" : "Carbono",
     pj: jug.length, serie, rec, forma, rival: p.nextRival != null ? nombreEq[p.nextRival] : null, equipo: nombreEq[p.teamId] || "",
     n: String(p.id), nIg: igual.length, posNom: POS[p.pos] || "jugadores", mejorQue: Math.round(100 * (0.6 * pct(q => q.avg || 0, p.avg || 0) + 0.4 * pct(q => q.points, p.points))) };
 }
@@ -8250,6 +8254,7 @@ function htmlCromo(d) {
         <div><dt>Media ${d.nota}</dt><dd>Mejor que el ${d.mejorQue} % de los ${d.nIg} ${esc(d.posNom)} con puntos, por puntos por partido (60 %) y puntos totales (40 %).</dd></div>
         ${d.rangos.length ? `<div><dt>Puesto entre los ${esc(d.posNom)}</dt><dd>${d.rangos.map(([t, x]) => `${t} ${x.r}.º de ${x.n}`).join(" · ")}.</dd></div>` : ""}
         ${d.rec ? `<div><dt>Mejor jornada</dt><dd>J${d.rec.g}, con ${d.rec.v} puntos.</dd></div>` : ""}
+        ${d.estForma ? `<div><dt>Su forma: ${d.estForma.nom}</dt><dd>${nf1.format(d.estForma.m5)} puntos de media en sus últimas ${d.estForma.n} jornadas, frente a ${nf1.format(d.estForma.mT)} en toda la temporada.</dd></div>` : ""}
         ${d.forma != null ? `<div><dt>Forma</dt><dd>${nf1.format(d.forma)} puntos de media en sus últimos ${(p.streak || []).filter(capNum).length} partidos.</dd></div>` : ""}
         ${d.rival ? `<div><dt>Próximo partido</dt><dd>${p.nextHome ? "En casa contra" : "Fuera, contra"} ${esc(d.rival)}.</dd></div>` : ""}
         <div><dt>Valor</dt><dd>${merEur(p.value || 0)}${p.clause ? ` · cláusula ${merEur(p.clause)}` : ""}.</dd></div>
