@@ -1,7 +1,43 @@
 {
-"updatedAt": "2026-11-14T04:05:29Z",
+"updatedAt": "2026-11-15T04:00:23Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-15T04:00:23Z",
+"playerId": "12900",
+"name": "Vinícius Júnior",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 16505000,
+"listado": 16505000,
+"precio": 21658858,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-15T04:00:23Z",
+"playerId": "52162",
+"name": "Pape Gueye",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 10767000,
+"listado": 10767000,
+"precio": 11567000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-15T04:00:23Z",
+"playerId": "71140",
+"name": "Quilindschy Hartman",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 478000,
+"listado": 478000,
+"precio": 778000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-14T04:05:29Z",
 "playerId": "616",
