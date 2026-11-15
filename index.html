@@ -3311,7 +3311,19 @@ function pintarMatriz() {
     <div class="mx-g" style="grid-template-columns:30px repeat(${n},minmax(0,1fr))"><span></span>${cab}${filas}</div>
     <div class="mx-det" id="mxDet" aria-live="polite" hidden></div>
     <p class="note">Quien más veces gana a los demás jornada a jornada: <b>${esc(pr.m.name)}</b> (${pr.w} de ${pr.t} duelos). El que menos: <b>${esc(pe.m.name)}</b> (${pe.w} de ${pe.t}).</p>
+    ${ligaPartidos(M, js, g, pt)}
     <div class="acciones"><button class="btn-cromo" data-mat-comp>📤 Compartir lámina</button></div>`;
+}
+// «Liga de partidos»: clasificación si cada jornada fuese un cara a cara contra todos (3 por victoria, 1 por empate)
+// frente al puesto real por puntos. Mismos duelos que la matriz de arriba; solo estadística pasada.
+function ligaPartidos(M, js, g, pt) {
+  const tot = M.map((m, x) => { let w = 0, e = 0, t = 0; g[x].forEach(c => { w += c.w; e += c.e || 0; t += c.t; });
+    return { m, i: x, w, e, l: t - w - e, pts: 3 * w + e, t, real: js.reduce((s, j) => s + (capNum(pt(j, m)) ? pt(j, m) : 0), 0) }; }).filter(r => r.t);
+  if (tot.length < 3) return "";
+  const rr = tot.slice().sort((a, b) => b.real - a.real).map(r => r.i), lp = tot.slice().sort((a, b) => b.pts - a.pts || b.real - a.real);
+  const filas = lp.map((r, k) => { const d = rr.indexOf(r.i) - k;
+    return `<li>${avatar(r.m, r.i)}<span class="pq"><b>${k + 1}.º ${esc(r.m.name)}</b><small>${r.w} G · ${r.e} E · ${r.l} P</small></span><span class="pts"><b>${r.pts}</b> pts${d ? ` <small>${d > 0 ? "▲" : "▼"}${Math.abs(d)}</small>` : ""}</span></li>`; }).join("");
+  return `<h3 class="sec">Liga de partidos</h3><p class="note" style="margin:0 0 8px">Si cada jornada fuese un duelo contra todos los demás (3 por ganar, 1 por empatar). La flecha compara con la clasificación real por puntos.</p><ul class="pron">${filas}</ul>`;
 }
 let MAT_D = null;
 
