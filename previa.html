@@ -3702,6 +3702,12 @@ function pintarRentables() {
   const mal = R.filter(x => x.p.value >= 8e6).sort((a, b) => a.r - b.r).slice(0, 5);
   const dueno = p => p.owner ? esc(p.ownerName || "") : p.onMarket ? "en el mercado" : "libre";
   const fila = (x, k, barra) => `<li data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="pq"><b>${k + 1}.º ${esc(x.p.name)}</b>${barra ? `<span class="pb" role="img" aria-label="${nf1.format(x.r)} puntos por millón"><i style="width:${(x.r / mx * 100).toFixed(1)}%"></i></span>` : ""}<small>${x.p.points} pts · vale ${eur(x.p.value)} · ${dueno(x.p)}</small></span><span class="pts"><b>${nf1.format(x.r)}</b> pts/M</span></li>`;
+  const nomClub = {}; (CAL && CAL.games || []).forEach(g => { nomClub[g.home] = g.homeName; nomClub[g.away] = g.awayName; });
+  const CLUBES = (() => {
+    const C = {};
+    J.forEach(p => { if (!p.teamId) return; const o = C[p.teamId] || (C[p.teamId] = { id: p.teamId, n: 0, pts: 0, val: 0, best: null }); o.n++; o.pts += p.points; o.val += p.value / 1e6; if (!o.best || p.points > o.best.points) o.best = p; });
+    return Object.values(C).filter(c => c.n >= 6 && c.val > 0).map(c => ({ ...c, r: c.pts / c.val })).sort((a, b) => b.r - a.r);
+  })();
   cont.innerHTML = `<div class="gh"><h2>Los más rentables</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos de la temporada por cada millón de valor actual, en todos los jugadores de LaLiga con 1 M o más y 20 puntos o más. Cuanto más alto, más rinde lo que cuesta.</p>
     <div class="pills wrap" role="group" aria-label="Posición" style="margin:0 0 10px">${[["", "Todos"], ["PT", "Porteros"], ["DF", "Defensas"], ["MC", "Medios"], ["DL", "Delanteros"]].map(([k, t]) => `<button class="pill ${rentPos === k ? "on" : ""}" data-rpos="${k}" aria-pressed="${rentPos === k}">${t}</button>`).join("")}</div>
@@ -3710,10 +3716,7 @@ function pintarRentables() {
     <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}
     ${(() => {
       // Clubes: puntos por millón de todos sus jugadores con 1 M o más (estadístico)
-      const nom = {}; (CAL && CAL.games || []).forEach(g => { nom[g.home] = g.homeName; nom[g.away] = g.awayName; });
-      const C = {};
-      J.forEach(p => { if (!p.teamId) return; const o = C[p.teamId] || (C[p.teamId] = { id: p.teamId, n: 0, pts: 0, val: 0, best: null }); o.n++; o.pts += p.points; o.val += p.value / 1e6; if (!o.best || p.points > o.best.points) o.best = p; });
-      const L = Object.values(C).filter(c => c.n >= 6 && c.val > 0).map(c => ({ ...c, r: c.pts / c.val })).sort((a, b) => b.r - a.r);
+      const nom = nomClub, L = CLUBES;
       if (L.length < 8) return "";
       const mxc = L[0].r, fc = c => `<li data-ficha="${esc(c.best.id)}"><img class="cara-e" style="position:static;width:26px;height:26px" src="fotos/escudos/${esc(c.id)}.png" alt="" onerror="this.remove()"><span class="pq"><b>${esc(nom[c.id] || "Club")}</b><span class="pb" role="img" aria-label="${nf1.format(c.r)} puntos por millón"><i style="width:${(c.r / mxc * 100).toFixed(1)}%"></i></span><small>${c.n} jugadores · ${nf0.format(c.pts)} pts · ${esc(c.best.name)} ${c.best.points}</small></span><span class="pts"><b>${nf1.format(c.r)}</b> pts/M</span></li>`;
       return `<h3 class="sec">Clubes que más dan por su dinero</h3><ul class="pron">${L.slice(0, 5).map(fc).join("")}</ul>
@@ -3721,7 +3724,7 @@ function pintarRentables() {
     })()}
     <div class="acciones"><button class="btn-cromo" data-rent-comp>📤 Compartir lámina</button></div>`;
   const nom = x => ({ n: x.p.name, pts: x.p.points, v: x.p.value, r: x.r, d: x.p.owner ? (x.p.ownerName || "") : x.p.onMarket ? "en el mercado" : "libre" });
-  RENT_D = { pos: rentPos, bien: bien.slice(0, 7).map(nom), mal: mal.slice(0, 3).map(nom), tot: J.length };
+  RENT_D = { pos: rentPos, bien: bien.slice(0, 7).map(nom), mal: mal.slice(0, 3).map(nom), tot: J.length, clubes: CLUBES.length >= 8 ? CLUBES.map(c => ({ id: c.id, n: nomClub[c.id] || "Club", r: c.r, mej: c.best.name })) : null };
 }
 let RENT_D = null;
 
@@ -8776,6 +8779,29 @@ async function esRentables(d) {
   esPie(x, d.mal.length ? `Caros que no rinden: ${d.mal.map(r => r.n).join(", ")}` : `${d.tot} jugadores comparados · ${d.n} jornadas`);
   return c;
 }
+async function esClubesRent(d) {
+  if (!d.clubes) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  const nTop = 5, L = [...d.clubes.slice(0, nTop), ...d.clubes.slice(-3)], mx = d.clubes[0].r;
+  const escs = await Promise.all(L.map(q => esImg(esEscudo(q.id))));
+  esFondo(x);
+  esCabecera(x, { titulo: "CLUBES RENTABLES", kicker: "Puntos por millón de todo el equipo", pag: 0, total: 1 });
+  const h = 88;
+  L.forEach((q, k) => {
+    const Y = 370 + k * (h + 10) + (k >= nTop ? 28 : 0);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    if (escs[k]) x.drawImage(escs[k], M + 22, Y + 18, 52, 52);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 28);
+    x.fillText(esAjusta(x, q.n, 480, 700, 28, 21), M + 92, Y + 36);
+    x.fillStyle = ES.mut; x.font = esS(400, 21); x.fillText(esCorta(x, `Mejor: ${q.mej}`, 480), M + 92, Y + 62);
+    x.fillStyle = ES.linea; x.fillRect(M + 92, Y + 72, 480, 6);
+    x.fillStyle = ES.verde; x.fillRect(M + 92, Y + 72, Math.max(6, 480 * q.r / mx), 6);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 48, "condensed"); x.fillText(f1(q.r), W - M - 24, Y + 58); x.textAlign = "left";
+  });
+  esPie(x, "Puntos por millón de valor actual");
+  return c;
+}
 async function esGoleadores(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   esFondo(x);
@@ -9686,7 +9712,7 @@ async function esDuelo(d) {
 }
 ES_SETS.duelo = [["Duelo", esDuelo]];
 ES_SETS.foto = [["Finales de foto", esFotos]];
-ES_SETS.rent = [["Los más rentables", esRentables]];
+ES_SETS.rent = [["Los más rentables", esRentables], ["Clubes rentables", esClubesRent]];
 ES_SETS.gol = [["Goleadores", esGoleadores]];
 ES_SETS.clu = [["Clubes", esClubes]];
 ES_SETS.rec = [["Récords", esRecords]];
