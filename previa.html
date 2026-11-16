@@ -3541,7 +3541,11 @@ function pintarBanquillo() {
   cont.innerHTML = `<div class="gh"><h2>Banquillo de la temporada</h2></div>
     <p class="note" style="margin:0 0 10px">Puntos que sacó el once de cada uno sobre los que habría sacado con el mejor once posible de su plantilla de cada jornada (sin capitán). Barra llena = alineación perfecta. ${nj} ${nj === 1 ? "jornada" : "jornadas"} con datos.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">El mejor ojo de entrenador es el de <b>${esc(a.m.name)}</b> (${nf1.format(a.pc)} %) y el que más puntos regala al banquillo, <b>${esc(z.m.name)}</b> (${nf1.format(z.pc)} %, ${z.max - z.real} pts).</p>`;
+    <p class="note">El mejor ojo de entrenador es el de <b>${esc(a.m.name)}</b> (${nf1.format(a.pc)} %) y el que más puntos regala al banquillo, <b>${esc(z.m.name)}</b> (${nf1.format(z.pc)} %, ${z.max - z.real} pts).</p>
+    <div class="acciones"><button class="btn-cromo" data-banq-comp>📤 Compartir lámina</button></div>`;
+  // Misma lámina que el «Banquillo» de Equipos: ordenada por puntos perdidos (menos = mejor ojo)
+  const po = L.slice().sort((p, q) => (p.max - p.real) - (q.max - q.real));
+  BANQ_D = { nj, mx: Math.max(1, ...L.map(r => r.max - r.real)), L: po.slice(0, 7).map(r => ({ nom: r.m.name, perd: r.max - r.real, pct: Math.round(r.pc), clav: r.perf })) };
 }
 
 /* ---------- Puntos por 90 minutos (estadístico, solo lee D.matchdays): quién rinde más por minuto en el campo ---------- */
