@@ -3708,6 +3708,17 @@ function pintarRentables() {
     <ul class="pron">${bien.map((x, k) => fila(x, k, true)).join("")}</ul>
     ${mal.length ? `<h3 class="sec">Los caros que menos rinden (8 M o más)</h3>
     <ul class="pron">${mal.map((x, k) => fila(x, k, false)).join("")}</ul>` : ""}
+    ${(() => {
+      // Clubes: puntos por millón de todos sus jugadores con 1 M o más (estadístico)
+      const nom = {}; (CAL && CAL.games || []).forEach(g => { nom[g.home] = g.homeName; nom[g.away] = g.awayName; });
+      const C = {};
+      J.forEach(p => { if (!p.teamId) return; const o = C[p.teamId] || (C[p.teamId] = { id: p.teamId, n: 0, pts: 0, val: 0, best: null }); o.n++; o.pts += p.points; o.val += p.value / 1e6; if (!o.best || p.points > o.best.points) o.best = p; });
+      const L = Object.values(C).filter(c => c.n >= 6 && c.val > 0).map(c => ({ ...c, r: c.pts / c.val })).sort((a, b) => b.r - a.r);
+      if (L.length < 8) return "";
+      const mxc = L[0].r, fc = c => `<li data-ficha="${esc(c.best.id)}"><img class="cara-e" style="position:static;width:26px;height:26px" src="fotos/escudos/${esc(c.id)}.png" alt="" onerror="this.remove()"><span class="pq"><b>${esc(nom[c.id] || "Club")}</b><span class="pb" role="img" aria-label="${nf1.format(c.r)} puntos por millón"><i style="width:${(c.r / mxc * 100).toFixed(1)}%"></i></span><small>${c.n} jugadores · ${nf0.format(c.pts)} pts · ${esc(c.best.name)} ${c.best.points}</small></span><span class="pts"><b>${nf1.format(c.r)}</b> pts/M</span></li>`;
+      return `<h3 class="sec">Clubes que más dan por su dinero</h3><ul class="pron">${L.slice(0, 5).map(fc).join("")}</ul>
+      <h3 class="sec">Clubes que menos dan por su dinero</h3><ul class="pron">${L.slice(-3).reverse().map(fc).join("")}</ul>`;
+    })()}
     <div class="acciones"><button class="btn-cromo" data-rent-comp>📤 Compartir lámina</button></div>`;
   const nom = x => ({ n: x.p.name, pts: x.p.points, v: x.p.value, r: x.r, d: x.p.owner ? (x.p.ownerName || "") : x.p.onMarket ? "en el mercado" : "libre" });
   RENT_D = { pos: rentPos, bien: bien.slice(0, 7).map(nom), mal: mal.slice(0, 3).map(nom), tot: J.length };
@@ -7022,7 +7033,7 @@ function cargarCalendario() {
   cargarExternas();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarCasaFuera(); pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); pintarBanquillo(); pintarLinea(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarCasaFuera(); pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); pintarRentables(); pintarBanquillo(); pintarLinea(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
