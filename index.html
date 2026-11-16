@@ -4190,6 +4190,15 @@ function pintarLinea() {
     LT_F.push({ j: String(j), lider: S.ms[lider].m.name, lp: S.cum[lider][k], mejor: S.ms[mx].m.name, mp: S.pts[mx][k], rec: esRec, peor: S.ms[peor].m.name, pp: S.pts[peor][k], salto: salto ? { n: S.ms[salto.x].m.name, g: salto.g } : null });
     const gl = CAL && CAL.games ? CAL.games.filter(g => g.gw === +String(j).slice(1) && g.status === "played" && g.gh != null && g.ga != null).sort((a, b) => Math.abs(b.gh - b.ga) - Math.abs(a.gh - a.ga) || (b.gh + b.ga) - (a.gh + a.ga))[0] : null;
     if (gl && Math.abs(gl.gh - gl.ga) >= 3) h.push(["⚽", `${esc(gl.homeName)} ${gl.gh}-${gl.ga} ${esc(gl.awayName)}<small>la goleada de LaLiga</small>`]);
+    // Fichaje más caro entre el primer partido de esta jornada y el de la siguiente (equipos.json -> transfers; solo hay los últimos movimientos)
+    if (CAL && CAL.games && E && E.transfers) {
+      const gw = +String(j).slice(1), ini = g => Math.min(...CAL.games.filter(x => x.gw === g).map(x => x.ts * 1000));
+      const a = ini(gw), b = ini(gw + 1);
+      if (isFinite(a)) {
+        const tt = E.transfers.filter(t => t.to && t.ts && Date.parse(t.ts) >= a && (!isFinite(b) || Date.parse(t.ts) < b)).sort((p, q) => importeMov(q) - importeMov(p))[0];
+        if (tt && importeMov(tt) > 0) h.push(["💸", `${esc(tt.name)}<small>${esc(nombreM(tt.to))} lo ficha por ${eur(importeMov(tt))}, el más caro</small>`]);
+      }
+    }
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
     return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
   }).join("");
