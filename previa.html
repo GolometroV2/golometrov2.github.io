@@ -2390,6 +2390,25 @@ function abrirFicha(id) {
       bloqueCasa = `<h3 class="sec">En casa y fuera</h3>${fila("En casa", mh, h.length, "var(--acc)")}${fila("Fuera", ma, a.length, "var(--mut)")}<p class="note" style="margin:4px 0 0">${Math.abs(df) < 0.5 ? "Rinde igual en casa que fuera." : df > 0 ? `Rinde ${nf1.format(df)} puntos más en casa.` : `Rinde ${nf1.format(-df)} puntos más fuera.`} Con pocos partidos, parte de la diferencia es casualidad.</p>`;
     }
   }
+  // contra rivales fuertes y débiles (estadístico): media de puntos frente a los 7 primeros y los 7 últimos de LaLiga (por puntos de tabla con los partidos jugados)
+  let bloqueFuertes = "";
+  if (CAL && CAL.games && p.teamId) {
+    const jug = CAL.games.filter(g => g.status === "played"), tp = {};
+    jug.forEach(g => { const a = g.gh > g.ga ? 3 : g.gh === g.ga ? 1 : 0, b = g.gh < g.ga ? 3 : g.gh === g.ga ? 1 : 0; tp[g.home] = (tp[g.home] || 0) + a; tp[g.away] = (tp[g.away] || 0) + b; });
+    const orden = Object.keys(tp).sort((x, y) => tp[y] - tp[x]);
+    if (orden.length >= 16) {
+      const top = new Set(orden.slice(0, 7)), baj = new Set(orden.slice(-7)), f = [], d = [];
+      jug.forEach(g => { if (String(g.home) !== String(p.teamId) && String(g.away) !== String(p.teamId)) return;
+        const riv = String(g.home) === String(p.teamId) ? g.away : g.home;
+        if (!capNum(pts[g.gw])) return;
+        if (top.has(String(riv))) f.push(pts[g.gw]); else if (baj.has(String(riv))) d.push(pts[g.gw]); });
+      if (f.length >= 2 && d.length >= 2) {
+        const mf = f.reduce((t, v) => t + v, 0) / f.length, md = d.reduce((t, v) => t + v, 0) / d.length, mx = Math.max(mf, md, 0.1), df = md - mf;
+        const fila = (t, m, n, c) => `<div class="cf-f"><span>${t}</span><div class="cf-b"><i style="width:${Math.max(2, Math.round(Math.max(m, 0) / mx * 100))}%;background:${c}"></i></div><b>${nf1.format(m)}</b><small>${n} partidos</small></div>`;
+        bloqueFuertes = `<h3 class="sec">Contra grandes y pequeños</h3>${fila("Top 7", mf, f.length, "var(--acc)")}${fila("Últimos 7", md, d.length, "var(--mut)")}<p class="note" style="margin:4px 0 0">${Math.abs(df) < 0.5 ? "Rinde igual contra unos y otros." : df > 0 ? `Saca ${nf1.format(df)} puntos más a los equipos de abajo.` : `Saca ${nf1.format(-df)} puntos más a los de arriba.`} Clubes ordenados por puntos de LaLiga hoy; con pocos partidos pesa la casualidad.</p>`;
+      }
+    }
+  }
   // su mejor y su peor partido (estadístico): puntos de la jornada con el rival y el resultado
   let bloqueExt = "";
   if (CAL && CAL.games && p.teamId) {
@@ -2422,6 +2441,7 @@ function abrirFicha(id) {
     ${bloqueForma}
     ${bloqueReparto}
     ${bloqueCasa}
+    ${bloqueFuertes}
     ${bloqueExt}
     ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
