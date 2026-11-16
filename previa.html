@@ -4117,6 +4117,8 @@ function pintarLinea() {
       ["🔥", `${nom(mx)}<small>${S.pts[mx][k]} pts${esRec ? " · récord de la temporada" : ""}</small>`],
       ["🧊", `${nom(peor)}<small>${S.pts[peor][k]} pts, el que menos</small>`]];
     LT_F.push({ j: String(j), lider: S.ms[lider].m.name, lp: S.cum[lider][k], mejor: S.ms[mx].m.name, mp: S.pts[mx][k], rec: esRec, peor: S.ms[peor].m.name, pp: S.pts[peor][k], salto: salto ? { n: S.ms[salto.x].m.name, g: salto.g } : null });
+    const gl = CAL && CAL.games ? CAL.games.filter(g => g.gw === +String(j).slice(1) && g.status === "played" && g.gh != null && g.ga != null).sort((a, b) => Math.abs(b.gh - b.ga) - Math.abs(a.gh - a.ga) || (b.gh + b.ga) - (a.gh + a.ga))[0] : null;
+    if (gl && Math.abs(gl.gh - gl.ga) >= 3) h.push(["⚽", `${esc(gl.homeName)} ${gl.gh}-${gl.ga} ${esc(gl.awayName)}<small>la goleada de LaLiga</small>`]);
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
     return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
   }).join("");
@@ -7004,7 +7006,7 @@ function cargarCalendario() {
   cargarExternas();
   fetch("calendario.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarCasaFuera(); pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); pintarBanquillo(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
+    .then(j => { CAL = j; pintarAviso(); pintarCinta(); if (seccion === "clas" && D) { pintarCasaFuera(); pintarPrevia(); pintarQuiniela(); pintarTuJornada(); pintarCronica(); pintarClubes(); pintarBanquillo(); pintarLinea(); } repintarSiVivo(); if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); if (seccion === "eq") pintarEquipos(); })
     .catch(() => { if (seccion === "cap") pintarCapitan(); if (seccion === "mer") pintarMercado(); });
 }
 
