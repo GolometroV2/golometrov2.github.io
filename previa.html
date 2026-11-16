@@ -3360,8 +3360,9 @@ function ligaPartidos(M, js, g, pt) {
 let MAT_D = null, LP_D = null;
 
 /* ---------- Rachas: jornadas seguidas por encima o por debajo de la mediana ---------- */
-function pintarRachas() {
-  const cont = $("#rach"); if (!cont || !D || !D.matchdays) return;
+// Racha de cada manager frente a la mediana de la liga (compartido por «Rachas» y la cinta «Ahora»)
+function rachasLiga() {
+  if (!D || !D.matchdays) return null;
   const js = jornadas(), M = D.managers;
   const med = js.map(j => { const v = M.map(m => ((D.matchdays[j] || {})[m.id] || {}).points).filter(capNum).sort((a, b) => a - b); return v.length >= 2 ? (v[(v.length - 1) >> 1] + v[v.length >> 1]) / 2 : null; });
   const R = M.map((m, i) => {
@@ -3370,6 +3371,12 @@ function pintarRachas() {
     let ac = 0, sg = 0; for (let k = st.length - 1; k >= 0 && st[k] && (!sg || st[k] === sg); k--) { sg = st[k]; ac++; }
     return { m, i, st, mejor, ac, sg };
   });
+  return { js, med, R };
+}
+function pintarRachas() {
+  const cont = $("#rach"); if (!cont) return;
+  const rl = rachasLiga(); if (!rl) return;
+  const { js, med, R } = rl;
   if (js.length < 3 || !med.some(v => v != null)) { cont.innerHTML = ""; cont.hidden = true; return; }
   cont.hidden = false;
   R.sort((a, b) => (b.sg * b.ac) - (a.sg * a.ac) || b.mejor - a.mejor);
@@ -9892,6 +9899,12 @@ function itemsCinta() {
     const ult = Object.entries(LIGAJ.pts).map(([id, o]) => { const g = Object.keys(o).map(Number).sort((a, b) => a - b).slice(-3);
       return { p: LIGAJ.jug[id], s: g.reduce((t, k) => t + (capNum(o[k]) ? o[k] : 0), 0) }; }).filter(x => x.p).sort((a, b) => b.s - a.s)[0];
     if (ult && ult.s > 0) ic("🔥", `En racha: <b>${esc(ult.p.name)}</b>, ${ult.s} pts en las 3 últimas jornadas`);
+  }
+  const rl = rachasLiga();
+  if (rl && rl.js.length >= 3) {
+    const t = rl.R.filter(r => r.sg > 0 && r.ac >= 2).sort((a, b) => b.ac - a.ac)[0], f = rl.R.filter(r => r.sg < 0 && r.ac >= 3).sort((a, b) => b.ac - a.ac)[0];
+    if (t) ic("🔥", `<b>${esc(t.m.name)}</b> lleva ${t.ac} jornadas seguidas por encima de la mediana`);
+    if (f) ic("❄️", `<b>${esc(f.m.name)}</b> encadena ${f.ac} jornadas por debajo de la mediana`);
   }
   // Regla de Mister (sin previsión): fichajes cuya protección de 3 días acaba en menos de 24 h
   if (E && E.transfers && E.managers) {
