@@ -8322,7 +8322,32 @@ async function esWrValor(t, pag, total) {
   esPie(x, `Máximo ${eur(mx)} · mínimo ${eur(mn)}`);
   return c;
 }
-ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete], ["Cara a cara", esWrCara], ["Mi plantilla", esWrValor]];
+// Lámina «Mi ADN»: la etiqueta de manager y sus cuatro cifras (mismos datos que la última historia del Wrapped)
+async function esWrAdn(t, pag, total) {
+  if (!t.adn || !t.adn.txt) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x, col(t.i));
+  esCabecera(x, { titulo: "MI ADN", kicker: `${t.m.name} · la temporada`, pag, total });
+  x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esS(600, 32); x.fillText("MI ADN DE MANAGER", W / 2, 420);
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 40; x.fillStyle = ES.luz; x.font = esF(800, 120, "condensed");
+  x.fillText(esCorta(x, t.adn.nom.toUpperCase(), W - 2 * M), W / 2, 580); x.restore();
+  x.fillStyle = ES.txt; x.font = esS(500, 34);
+  const pal = t.adn.txt.split(" "); let lin = "", Y = 670;
+  pal.forEach(w => { if (x.measureText(lin + w).width > W - 2 * M - 40) { x.fillText(lin.trim(), W / 2, Y); Y += 48; lin = ""; } lin += w + " "; });
+  x.fillText(lin.trim(), W / 2, Y);
+  const cifras = [[nf0.format(t.total), "puntos"], [wrOrd(t.pos), `de ${t.N}`], [String(t.victorias), t.victorias === 1 ? "jornada ganada" : "jornadas ganadas"], ["+" + t.extra, "de capitán"]];
+  const cw = (W - 2 * M - 30) / 2;
+  cifras.forEach(([v, l], k) => {
+    const cx = M + (k % 2) * (cw + 30), cy = 820 + Math.floor(k / 2) * 190;
+    esPanel(x, cx, cy, cw, 165, ES.linea, 24);
+    x.fillStyle = ES.luz; x.font = esF(800, 80, "condensed"); x.fillText(v, cx + cw / 2, cy + 90);
+    x.fillStyle = ES.mut; x.font = esS(500, 28); x.fillText(l, cx + cw / 2, cy + 135);
+  });
+  x.textAlign = "left";
+  esPie(x, "Golómetro V2");
+  return c;
+}
+ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete], ["Cara a cara", esWrCara], ["Mi plantilla", esWrValor], ["Mi ADN", esWrAdn]];
 
 /* ---------- Cromo del jugador: carta holográfica que se inclina con el dedo y se gira al tocarla ---------- */
 // La «media» del cromo es estadística (nada de previsiones): su puesto entre los de su misma posición en LaLiga
