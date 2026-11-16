@@ -2390,6 +2390,18 @@ function abrirFicha(id) {
       bloqueCasa = `<h3 class="sec">En casa y fuera</h3>${fila("En casa", mh, h.length, "var(--acc)")}${fila("Fuera", ma, a.length, "var(--mut)")}<p class="note" style="margin:4px 0 0">${Math.abs(df) < 0.5 ? "Rinde igual en casa que fuera." : df > 0 ? `Rinde ${nf1.format(df)} puntos más en casa.` : `Rinde ${nf1.format(-df)} puntos más fuera.`} Con pocos partidos, parte de la diferencia es casualidad.</p>`;
     }
   }
+  // su mejor y su peor partido (estadístico): puntos de la jornada con el rival y el resultado
+  let bloqueExt = "";
+  if (CAL && CAL.games && p.teamId) {
+    const jg = {}; CAL.games.filter(g => g.status === "played" && (g.home === p.teamId || g.away === p.teamId)).forEach(g => { jg[g.gw] = g; });
+    const lst = gws.filter(g => capNum(pts[g]) && jg[g]).map(g => ({ g, v: pts[g], m: jg[g] }));
+    if (lst.length >= 4) {
+      const mx = lst.reduce((a, b) => (b.v > a.v ? b : a)), mn = lst.reduce((a, b) => (b.v < a.v ? b : a));
+      const caja = (t, x) => { const casa = x.m.home === p.teamId, riv = casa ? x.m.away : x.m.home;
+        return `<div class="fpx" style="border:1px solid var(--line)"><small>${t} · J${x.g}</small><img class="shield" src="${esc(merUrlEscudo(riv))}" alt="" onerror="this.remove()"><b>${x.v} pts</b><small>${casa ? "vs" : "@"} ${esc(nombreEq[riv] || "")} ${x.m.gh}-${x.m.ga}</small></div>`; };
+      bloqueExt = `<h3 class="sec">Su mejor y su peor partido</h3><div class="fpxs">${caja("Mejor", mx)}${caja("Peor", mn)}</div>`;
+    }
+  }
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2410,6 +2422,7 @@ function abrirFicha(id) {
     ${bloqueForma}
     ${bloqueReparto}
     ${bloqueCasa}
+    ${bloqueExt}
     ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
