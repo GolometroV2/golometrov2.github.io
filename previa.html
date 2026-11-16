@@ -1274,6 +1274,7 @@ body.wr-abierto{overflow:hidden}
 .fh-tx b{font-size:26px;line-height:1.1;letter-spacing:-.6px;font-family:var(--f-disp)}
 .fh-r{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .fh-r .ch-vs{color:#e6f5ec}
+.frp{display:flex;gap:2px;height:30px;border-radius:var(--r-s);overflow:hidden;margin:4px 0}.frp i{display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;font-style:normal;min-width:22px}
 .ffo{display:flex;align-items:center;gap:14px;margin:4px 0 8px}.ffo b{display:block;font-size:15px}.ffo span{font-size:13px;color:var(--mut)}.ffo-a{transition:stroke-dasharray .6s ease-out}
 .fh-x{position:relative;z-index:2;height:0;margin:0;overflow:visible}
 .fh-x .ov-x{position:relative;top:0;background:#0007;color:#fff;border-color:#fff3}
@@ -2358,6 +2359,15 @@ function abrirFicha(id) {
     bloqueForma = `<h3 class="sec">Su forma</h3><div class="ffo"><svg viewBox="0 0 76 76" width="76" height="76" role="img" aria-label="Media reciente ${nf1.format(m5)} frente a ${nf1.format(mT)} de temporada"><circle cx="38" cy="38" r="${R}" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ffo-a" cx="38" cy="38" r="${R}" fill="none" stroke="${d >= 0 ? "var(--pos)" : "var(--red)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(k * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="16" font-weight="800" fill="currentColor">${nf1.format(m5)}</text></svg>
       <div><b>${est}</b><span>Media de sus últimas ${u5.length} jornadas: ${nf1.format(m5)} puntos, frente a ${nf1.format(mT)} en toda la temporada (<span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${nf1.format(Math.abs(d))}</span>). Ha puntuado en ${jug.length} de ${gws.length} jornadas.</span></div></div>`;
   }
+  // reparto de sus jornadas por colores de Mister (estadístico): cuántas veces cae en cada tramo
+  let bloqueReparto = "";
+  if (jug.length >= 5) {
+    const T = [["critical", "Negativa"], ["failing", "0-1"], ["poor", "2-4"], ["fair", "5-6"], ["good", "7-9"], ["excellent", "10-11"], ["outstanding", "12+"]];
+    const cu = {}; jug.forEach(g => { const t = tramoPts(pts[g]); cu[t] = (cu[t] || 0) + 1; });
+    const ok = T.filter(([k]) => cu[k]), bue = (cu.good || 0) + (cu.excellent || 0) + (cu.outstanding || 0);
+    bloqueReparto = `<h3 class="sec">Cómo reparte sus puntos</h3><div class="frp" role="img" aria-label="${ok.map(([k, t]) => `${cu[k]} jornadas de ${t} puntos`).join(", ")}">${ok.map(([k, t]) => `<i class="mp-${k}" style="flex:${cu[k]}">${cu[k]}</i>`).join("")}</div>
+      <p class="note" style="margin:4px 0 0">${ok.map(([k, t]) => `<b>${t}</b> ${cu[k]}`).join(" · ")}. En ${bue} de ${jug.length} jornadas con nota ha hecho 7 puntos o más (${Math.round(bue / jug.length * 100)} %).</p>`;
+  }
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2375,6 +2385,7 @@ function abrirFicha(id) {
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
     ${bloqueForma}
+    ${bloqueReparto}
     ${bloqueRango}
     ${gws.length ? `<h3 class="sec">Puntos por jornada</h3><div class="fbar">${barras}</div>` : ""}
     ${spark}
