@@ -8256,7 +8256,28 @@ async function esWrEstrella(t, pag, total) {
   esPie(x, t.top[1] ? `Le siguen ${apellido(t.top[1].name)} (${t.top[1].pts})${t.top[2] ? ` y ${apellido(t.top[2].name)} (${t.top[2].pts})` : ""}` : "");
   return c;
 }
-ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella]];
+// Lámina «Mi brazalete»: puntos extra del capitán, su mejor elección y la que menos rindió (mismos datos que la historia del brazalete)
+async function esWrBrazalete(t, pag, total) {
+  const cm = t.capMejor; if (!t.caps.length || !cm) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x, col(t.i));
+  esCabecera(x, { titulo: "MI BRAZALETE", kicker: `${t.m.name} · la temporada`, pag, total });
+  x.textAlign = "center"; x.save(); x.shadowColor = ES.verde; x.shadowBlur = 40; x.fillStyle = ES.luz; x.font = esF(800, 260, "condensed"); x.fillText("+" + t.extra, W / 2, 560); x.restore();
+  x.fillStyle = ES.mut; x.font = esS(500, 34); x.fillText(`puntos extra de capitán · ${wrOrd(t.R.extra)} de la liga`, W / 2, 620); x.textAlign = "left";
+  const lista = [[cm, "TU MEJOR ELECCIÓN", `+${cm.bonus} en la ${cm.j}`, false]];
+  if (t.capPeor && t.capPeor !== cm) lista.push([t.capPeor, "LA QUE MENOS RINDIÓ", `${t.capPeor.played === false ? "no jugó" : "+" + t.capPeor.bonus} en la ${t.capPeor.j}`, true]);
+  for (let k = 0; k < lista.length; k++) {
+    const [cp, et, tx, mala] = lista[k], Y = 690 + k * 260, im = await esImg(esFoto(cp.id));
+    esPanel(x, M, Y, W - 2 * M, 220, mala ? "rgba(240,90,90,.55)" : "rgba(47,212,110,.6)", 28);
+    if (im) { x.save(); x.beginPath(); x.arc(M + 120, Y + 110, 80, 0, Math.PI * 2); x.clip(); x.drawImage(im, M + 40, Y + 30, 160, 160 * im.height / im.width); x.restore(); }
+    x.fillStyle = ES.mut; x.font = esS(600, 26); x.fillText(et, M + 230, Y + 70);
+    x.fillStyle = ES.txt; x.font = esF(800, 70, "condensed"); x.fillText(esCorta(x, apellido(cp.name).toUpperCase(), W - 2 * M - 270), M + 230, Y + 138);
+    x.fillStyle = mala ? "#f08a8a" : ES.luz; x.font = esS(500, 30); x.fillText(tx, M + 230, Y + 182);
+  }
+  esPie(x, `${t.caps.length} ${t.caps.length === 1 ? "jornada" : "jornadas"} con capitán`);
+  return c;
+}
+ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete]];
 
 /* ---------- Cromo del jugador: carta holográfica que se inclina con el dedo y se gira al tocarla ---------- */
 // La «media» del cromo es estadística (nada de previsiones): su puesto entre los de su misma posición en LaLiga
