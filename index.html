@@ -579,6 +579,7 @@ code{color:var(--accFg)}
 .b-res{width:100%;text-align:left}
 .sin-scroll{overflow:hidden}
 .f4{grid-template-columns:repeat(4,1fr)!important}.f4 b{font-size:16px!important}
+.fpxs{display:flex;gap:8px}.fpx{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:var(--r-m);min-height:44px}.fpx .shield{width:26px;height:26px}.fpx small{opacity:.8}
 .fbar{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding-bottom:2px}
 .al{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .al li{display:flex;align-items:center;gap:10px}
@@ -2368,6 +2369,15 @@ function abrirFicha(id) {
     bloqueReparto = `<h3 class="sec">Cómo reparte sus puntos</h3><div class="frp" role="img" aria-label="${ok.map(([k, t]) => `${cu[k]} jornadas de ${t} puntos`).join(", ")}">${ok.map(([k, t]) => `<i class="mp-${k}" style="flex:${cu[k]}">${cu[k]}</i>`).join("")}</div>
       <p class="note" style="margin:4px 0 0">${ok.map(([k, t]) => `<b>${t}</b> ${cu[k]}`).join(" · ")}. En ${bue} de ${jug.length} jornadas con nota ha hecho 7 puntos o más (${Math.round(bue / jug.length * 100)} %).</p>`;
   }
+  // próximos partidos con la dificultad de cada rival (estadístico: mismo cálculo que «Próximos rivales» de Equipos)
+  let bloqueProx = "";
+  const K = p.pos ? calRivales() : null;
+  if (K) {
+    const it = K.gws.map(gw => { const g = K.pend.find(x => x.gw === gw && (x.home === p.teamId || x.away === p.teamId)); if (!g) return "";
+      const casa = g.home === p.teamId, r = casa ? g.away : g.home, d = K.dif(r, p.pos, casa, g);
+      return `<span class="rv${d} fpx" title="${esc(K.nombre[r] || "")}">${img(merUrlEscudo(r), "shield")}<b>J${gw}</b><small>${casa ? "Casa" : "Fuera"}</small></span>`; }).join("");
+    if (it) bloqueProx = `<h3 class="sec">Sus próximos partidos</h3><div class="fpxs">${it}</div><p class="note" style="margin:4px 0 0">Verde: rival fácil para su puesto; rojo: difícil.</p>`;
+  }
   const dHoy = capNum(p.prev) && p.prev ? p.value - p.prev : 0;
   const libre = MER_DATA && (MER_DATA.libres || []).some(x => String(x.id) === String(p.id));
   let ov = $("#ovFicha");
@@ -2384,6 +2394,7 @@ function abrirFicha(id) {
     ${p.pos ? `<button class="btn-cromo" data-cromo="${esc(p.id)}">🃏 Ver su cromo</button> <button class="btn-cromo" data-comparar="${esc(p.id)}">⚔️ Compararlo con otro</button>` : ""}
     <div class="ch-kpi f4"><span><b>${merEur(p.value || 0)}</b><small class="${dHoy > 0 ? "up" : dHoy < 0 ? "dn" : ""}">${dHoy ? (dHoy > 0 ? "+" : "−") + eur(Math.abs(dHoy)) + " hoy" : "valor"}</small></span><span><b>${p.points ?? 0}</b><small>puntos</small></span><span><b>${p.avg != null ? nf1.format(p.avg) : "–"}</b><small>media</small></span><span><b>${p.clause ? merEur(p.clause) : "–"}</b><small>cláusula</small></span></div>
     ${prox ? `<p class="ch-por">Próximo partido: ${prox.home === p.teamId ? "en casa contra" : "fuera, en casa del"} <b>${esc(nombreEq[prox.home === p.teamId ? prox.away : prox.home] || "")}</b> · ${esc(enMadrid(prox.ts * 1000, { weekday: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))}${ff && iaOk ? ` · <b>${textoTit(ff)}</b>` : ""}.</p>` : ""}
+    ${bloqueProx}
     ${bloqueForma}
     ${bloqueReparto}
     ${bloqueRango}
@@ -5077,12 +5088,12 @@ function resumenEq(ms, hp) {
 }
 
 // Próximos rivales de cada jugador de la plantilla, con la dificultad según lo que marca y encaja cada rival
-function bloqueRivalesEq(m) {
-  if (!CAL || !CAL.games) return "";
+function calRivales() {
+  if (!CAL || !CAL.games) return null;
   const ahora = Date.now() / 1000;
   const pend = CAL.games.filter(g => g.status !== "played" && !capNum(g.gh) && (g.ts || 0) > ahora - 3 * 3600);
   const gws = [...new Set(pend.map(g => g.gw))].filter(gw => pend.filter(g => g.gw === gw).length >= 5).sort((a, b) => a - b).slice(0, 3);   // sin partidos aplazados sueltos
-  if (!gws.length) return "";
+  if (!gws.length) return null;
   const jug = CAL.games.filter(g => capNum(g.gh) && capNum(g.ga));
   const eq = {};
   jug.forEach(g => { [[g.home, g.gh, g.ga], [g.away, g.ga, g.gh]].forEach(([t, f, c]) => { const e = eq[t] || (eq[t] = { f: 0, c: 0, n: 0 }); e.f += f; e.c += c; e.n++; }); });
@@ -5097,6 +5108,11 @@ function bloqueRivalesEq(m) {
     const x = w * (f - 1) - (1 - w) * (c - 1) + (ep ? 0 : casa ? -0.06 : 0.06);   // con goles esperados la ventaja de casa ya va dentro
     return Math.max(1, Math.min(5, Math.round(3 + x * 5)));
   };
+  return { pend, gws, nombre, dif };
+}
+function bloqueRivalesEq(m) {
+  const K = calRivales(); if (!K) return "";
+  const { pend, gws, nombre, dif } = K;
   const filas = m.players.slice().sort((a, b) => POS.indexOf(a.pos) - POS.indexOf(b.pos) || b.value - a.value).map(p => {
     const celdas = gws.map(gw => {
       const g = pend.find(x => x.gw === gw && (x.home === p.teamId || x.away === p.teamId));
