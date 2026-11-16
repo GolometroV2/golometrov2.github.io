@@ -4058,7 +4058,8 @@ function pintarRepeticion() {
     <p class="note" style="margin:0 0 10px">Pulsa ▶ y mira cómo fue la clasificación jornada a jornada. También puedes arrastrar la barra.</p>
     <div class="rep-top"><button class="rep-play" data-rep="play" aria-label="Reproducir">▶</button><div class="rep-j"><small>Hasta la jornada</small><b id="repJ"></b></div>
       <input class="rep-r" type="range" min="0" max="${n - 1}" step="1" value="${n - 1}" aria-label="Jornada de la repetición"></div>
-    <div class="rep-pista" style="height:${S.ms.length * REP.h}px">${filas}</div>`;
+    <div class="rep-pista" style="height:${S.ms.length * REP.h}px">${filas}</div>
+    <div class="acciones"><button class="btn-cromo" data-rep-comp>📤 Compartir esta jornada</button></div>`;
   repPoner(n - 1);
 }
 document.addEventListener("click", e => {
@@ -7974,7 +7975,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "rep" ? `Repetición de la liga` : clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8353,6 +8354,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-prem-comp]")) { if (PREM_D) { EST_DAT.prem = { ...PREM_D }; abrirEstudio("prem", e.target.closest("[data-prem-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-lp-comp]")) { if (LP_D) { EST_DAT.lp = { ...LP_D }; abrirEstudio("lp", e.target.closest("[data-lp-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-mat-comp]")) { if (MAT_D) { EST_DAT.mat = { ...MAT_D }; abrirEstudio("mat", e.target.closest("[data-mat-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-rep-comp]")) { const S = serieLiga(), k = Math.max(0, Math.min(S.js.length - 1, REP.k == null ? S.js.length - 1 : REP.k)); EST_DAT.rep = { j: S.js[k], k, ms: S.ms.map(o => ({ m: o.m, i: o.i })), rank: S.rank.map(r => r.slice()), cum: S.cum.map(r => r.slice()) }; abrirEstudio("rep", e.target.closest("[data-rep-comp]")); return; }
   if (e.target.closest && e.target.closest("[data-car-comp]")) { if (CAR_D) { EST_DAT.car = { ...CAR_D }; abrirEstudio("car", e.target.closest("[data-car-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-val-comp]")) { if (VAL_D) { EST_DAT.val = { ...VAL_D }; abrirEstudio("val", e.target.closest("[data-val-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-pue-comp]")) { if (PUE_D) { EST_DAT.pue = { ...PUE_D }; abrirEstudio("pue", e.target.closest("[data-pue-comp]")); } return; }
@@ -9008,6 +9010,29 @@ async function esCarrera(d) {
   return c;
 }
 ES_SETS.car = [["La carrera", esCarrera]];
+// lámina de «Repetición de la liga»: la clasificación en la jornada elegida con barras y puestos ganados o perdidos; estadístico
+async function esRepeticion(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const N = d.ms.length, k = d.k, h = Math.min(100, Math.floor(880 / N) - 12);
+  const orden = d.ms.map((_, i) => i).sort((a, b) => d.rank[k][a] - d.rank[k][b]);
+  const mx = Math.max(1, ...orden.map(i => d.cum[i][k]));
+  esFondo(x);
+  esCabecera(x, { titulo: "REPETICIÓN", kicker: "Clasificación hasta la " + d.j, pag: 0, total: 1 });
+  orden.forEach((xi, p) => {
+    const Y = 400 + p * (h + 12), o = d.ms[xi], v = d.cum[xi][k], dd = k > 0 ? d.rank[k - 1][xi] - d.rank[k][xi] : 0;
+    esPanel(x, M, Y, W - 2 * M, h, p === 0 ? ES.verde : ES.linea, 20);
+    x.beginPath(); x.arc(M + 44, Y + h / 2, 20, 0, 2 * Math.PI); x.fillStyle = col(o.i); x.fill();
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 28);
+    x.fillText(esAjusta(x, (p + 1) + ".º " + o.m.name, 460, 700, 28, 20), M + 84, Y + h / 2 - 6);
+    x.fillStyle = ES.linea; x.fillRect(M + 84, Y + h / 2 + 12, 520, 8);
+    x.fillStyle = p === 0 ? ES.verde : ES.mut; x.fillRect(M + 84, Y + h / 2 + 12, 520 * v / mx, 8);
+    x.textAlign = "right"; x.fillStyle = p === 0 ? ES.verde : ES.txt; x.font = esF(800, 48, "condensed"); x.fillText(String(v), W - M - 24, Y + h / 2 + 14);
+    x.fillStyle = ES.mut; x.font = esS(700, 22); x.fillText(dd > 0 ? "▲ " + dd : dd < 0 ? "▼ " + -dd : "=", W - M - 170, Y + h / 2 + 12); x.textAlign = "left";
+  });
+  esPie(x, `Lidera ${d.ms[orden[0]].m.name} con ${d.cum[orden[0]][k]} pts`);
+  return c;
+}
+ES_SETS.rep = [["Repetición", esRepeticion]];
 // lámina de «Cara a cara de todos»: matriz de jornadas ganadas a cada rival; estadístico
 async function esMatriz(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
