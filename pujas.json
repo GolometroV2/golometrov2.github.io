@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-15T04:00:23Z",
+"updatedAt": "2026-11-16T04:00:24Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-16T04:00:24Z",
+"playerId": "2720265",
+"name": "Troy Parrott",
+"from": null,
+"to": "8658507",
+"tipo": "mercado",
+"valor": 5226000,
+"listado": 5226000,
+"precio": 5689900,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-15T04:00:23Z",
 "playerId": "12900",
