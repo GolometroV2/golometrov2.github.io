@@ -8277,7 +8277,27 @@ async function esWrBrazalete(t, pag, total) {
   esPie(x, `${t.caps.length} ${t.caps.length === 1 ? "jornada" : "jornadas"} con capitán`);
   return c;
 }
-ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete]];
+// Lámina «Cara a cara»: su víctima favorita y su bestia negra (mismos datos que la historia del cara a cara)
+async function esWrCara(t, pag, total) {
+  if (!t.victima || !t.bestia) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  esFondo(x, col(t.i));
+  esCabecera(x, { titulo: "CARA A CARA", kicker: `${t.m.name} · jornada a jornada`, pag, total });
+  const lista = [[t.victima, "MI VÍCTIMA FAVORITA", `${t.victima.g}–${t.victima.p}`, `le he ganado ${t.victima.g} de ${t.n} jornadas`, false],
+                 [t.bestia, "MI BESTIA NEGRA", `${t.bestia.g}–${t.bestia.p}`, `me ha ganado ${t.bestia.p} de ${t.n}`, true]];
+  for (let k = 0; k < lista.length; k++) {
+    const [r, et, mar, tx, mala] = lista[k], Y = 370 + k * 400, im = await esImg(r.o.m.avatarUrl);
+    esPanel(x, M, Y, W - 2 * M, 370, mala ? "rgba(240,90,90,.55)" : "rgba(47,212,110,.6)", 30);
+    esAvatar(x, r.o.m, r.o.i, im, M + 140, Y + 185, 90, mala ? "#f08a8a" : ES.luz);
+    x.fillStyle = ES.mut; x.font = esS(600, 28); x.fillText(et, M + 270, Y + 90);
+    x.fillStyle = ES.txt; x.font = esF(800, 70, "condensed"); x.fillText(esCorta(x, r.o.m.name.toUpperCase(), W - 2 * M - 300), M + 270, Y + 165);
+    x.fillStyle = mala ? "#f08a8a" : ES.luz; x.font = esF(800, 120, "condensed"); x.fillText(mar, M + 270, Y + 285);
+    x.fillStyle = ES.mut; x.font = esS(500, 28); x.fillText(esCorta(x, tx, W - 2 * M - 300), M + 270, Y + 330);
+  }
+  esPie(x, `${t.n} jornadas comparadas con cada rival`);
+  return c;
+}
+ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete], ["Cara a cara", esWrCara]];
 
 /* ---------- Cromo del jugador: carta holográfica que se inclina con el dedo y se gira al tocarla ---------- */
 // La «media» del cromo es estadística (nada de previsiones): su puesto entre los de su misma posición en LaLiga
