@@ -1252,6 +1252,11 @@ body.wr-abierto{overflow:hidden}
 @property --gx{syntax:"<percentage>";inherits:true;initial-value:30%}
 @property --gy{syntax:"<percentage>";inherits:true;initial-value:20%}
 .cm-cab{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:4px 0 12px;text-align:center}
+.cm-cr{display:flex;justify-content:center;align-items:center;margin:2px 0 10px;perspective:900px}
+.cm-cr .cr-tarjeta{--w:min(40vw,168px);animation:none;pointer-events:none;cursor:default}
+.cm-cr .cr-escena:first-child .cr-tarjeta{--cx:0deg;--cy:14deg;margin-right:-6px}
+.cm-cr .cr-escena:last-child .cr-tarjeta{--cx:0deg;--cy:-14deg;margin-left:-6px}
+.cm-cr .cr-escena:first-child{z-index:1}.cm-cr .cr-escena:last-child{z-index:0}
 .cm-cab em{font-style:normal;font-weight:800;color:var(--mut);font-size:13px}
 .cm-j{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}
 .cm-j b{font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cm-j small{color:var(--mut);font-size:12px}
@@ -8430,6 +8435,7 @@ function abrirComparador(idA, idB) {
   if (!ov) { ov = document.createElement("div"); ov.id = "ovCmp"; ov.className = "ov"; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ov-c" role="dialog" aria-modal="true" aria-label="Comparar ${esc(a.p.name)} y ${esc(b.p.name)}">
     <div class="ov-h"><span></span><button class="ov-x" data-cerrar="1" aria-label="Cerrar">✕</button></div>
+    <div class="cm-cr" aria-hidden="true">${htmlCromo(a)}${htmlCromo(b)}</div>
     <div class="cm-cab">${cab(a)}<em>VS</em>${cab(b)}</div>${html}
     <p class="note cm-v"><b>${veredicto}</b> Solo cuenta lo ya jugado (puntos de Mister), sin previsiones.</p>
     <button class="btn-cromo" data-comparar="${esc(idA)}">⚔️ Cambiar de rival</button> <button class="btn-cromo" data-cmp-comp>📤 Compartir comparación</button></div>`;
