@@ -8297,7 +8297,32 @@ async function esWrCara(t, pag, total) {
   esPie(x, `${t.n} jornadas comparadas con cada rival`);
   return c;
 }
-ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete], ["Cara a cara", esWrCara]];
+// Lámina «Mi plantilla»: valor de la plantilla jornada a jornada y lo que ha crecido (mismos datos que la historia «Tu plantilla vale»)
+async function esWrValor(t, pag, total) {
+  if (!t.val || t.val.length < 2) return null;
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const v0 = t.val[0], v1 = t.val[t.val.length - 1], mn = Math.min(...t.val), mx = Math.max(...t.val), sube = v1 >= v0;
+  esFondo(x, col(t.i));
+  esCabecera(x, { titulo: "MI PLANTILLA", kicker: `${t.m.name} · la temporada`, pag, total });
+  x.textAlign = "center"; x.fillStyle = ES.mut; x.font = esS(600, 32); x.fillText("MI PLANTILLA VALE", W / 2, 400);
+  x.save(); x.shadowColor = ES.verde; x.shadowBlur = 40; x.fillStyle = ES.luz; x.font = esF(800, 190, "condensed"); x.fillText(eur(v1), W / 2, 570); x.restore();
+  x.fillStyle = sube ? ES.luz : "#f08a8a"; x.font = esS(600, 40);
+  x.fillText(`${sube ? "+" : "−"}${eur(Math.abs(v1 - v0))} desde la ${t.js[0]} (${sube ? "+" : "−"}${nf1c(Math.abs(t.crece * 100))} %)`, W / 2, 640); x.textAlign = "left";
+  const gx = M + 10, gy = 720, gw = W - 2 * M - 20, gh = 380, n = t.val.length;
+  const X = k => gx + k * gw / (n - 1), Y = v => gy + gh - (v - mn) / Math.max(1, mx - mn) * (gh - 40) - 20;
+  esPanel(x, M - 20, gy - 30, W - 2 * M + 40, gh + 60, ES.linea, 28);
+  const trazo = () => { x.beginPath(); t.val.forEach((v, k) => { if (!k) x.moveTo(X(k), Y(v)); else { const mx_ = (X(k - 1) + X(k)) / 2; x.bezierCurveTo(mx_, Y(t.val[k - 1]), mx_, Y(v), X(k), Y(v)); } }); };
+  trazo(); x.lineTo(X(n - 1), gy + gh); x.lineTo(X(0), gy + gh); x.closePath();
+  const g = x.createLinearGradient(0, gy, 0, gy + gh); g.addColorStop(0, "rgba(47,212,110,.45)"); g.addColorStop(1, "rgba(47,212,110,0)"); x.fillStyle = g; x.fill();
+  trazo(); x.strokeStyle = ES.luz; x.lineWidth = 8; x.lineJoin = "round"; x.stroke();
+  x.fillStyle = ES.luz; x.beginPath(); x.arc(X(n - 1), Y(v1), 13, 0, Math.PI * 2); x.fill();
+  x.fillStyle = ES.mut; x.font = esS(500, 26); x.fillText(t.js[0], gx, gy + gh + 12); x.textAlign = "right"; x.fillText(t.js[t.js.length - 1], gx + gw, gy + gh + 12); x.textAlign = "left";
+  x.textAlign = "center"; x.fillStyle = ES.txt; x.font = esS(600, 34);
+  x.fillText(t.R.crece === 1 ? "Nadie ha hecho crecer tanto su plantilla" : `El ${wrOrd(t.R.crece)} que más ha hecho crecer su plantilla`, W / 2, 1196); x.textAlign = "left";
+  esPie(x, `Máximo ${eur(mx)} · mínimo ${eur(mn)}`);
+  return c;
+}
+ES_SETS.wr = [["Mi temporada", esWrResumen], ["Mi estrella", esWrEstrella], ["Mi brazalete", esWrBrazalete], ["Cara a cara", esWrCara], ["Mi plantilla", esWrValor]];
 
 /* ---------- Cromo del jugador: carta holográfica que se inclina con el dedo y se gira al tocarla ---------- */
 // La «media» del cromo es estadística (nada de previsiones): su puesto entre los de su misma posición en LaLiga
