@@ -4177,6 +4177,7 @@ function pintarLinea() {
   const S = serieLiga(), n = S.js.length;
   if (n < 2) { c.hidden = true; return; }
   c.hidden = false;
+  cargarPujas();      // lo pagado de verdad (cláusulas) sale de pujas.json; al llegar se repinta
   const N = S.ms.length, nom = x => esc(S.ms[x].m.name);
   let rec = -1; const LT_F = [];
   const tarjetas = S.js.map((j, k) => {
@@ -4197,6 +4198,9 @@ function pintarLinea() {
       if (isFinite(a)) {
         const tt = E.transfers.filter(t => t.to && t.ts && Date.parse(t.ts) >= a && (!isFinite(b) || Date.parse(t.ts) < b)).sort((p, q) => importeMov(q) - importeMov(p))[0];
         if (tt && importeMov(tt) > 0) h.push(["💸", `${esc(tt.name)}<small>${esc(nombreM(tt.to))} lo ficha por ${eur(importeMov(tt))}, el más caro</small>`]);
+        // El mayor «robo»: la cláusula más cara pagada a otro manager en esa jornada
+        const cl = E.transfers.filter(t => t.to && t.from && t.ts && Date.parse(t.ts) >= a && (!isFinite(b) || Date.parse(t.ts) < b) && (pagoDe(t) || {}).tipo === "clausula").sort((p, q) => importeMov(q) - importeMov(p))[0];
+        if (cl && importeMov(cl) > 0) h.push(["🏴‍☠️", `${esc(cl.name)}<small>${esc(nombreM(cl.to))} paga su cláusula (${eur(importeMov(cl))}) a ${esc(nombreM(cl.from))}</small>`]);
       }
     }
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
@@ -6048,7 +6052,7 @@ function cargarPujas() {
   fetch("pujas_mister.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(j => { PUJAS_M = j && j.compras ? j : null; RIVALES = null; if (PUJAS_M && seccion === "mer") pintarMercado(); if (PUJAS_M && seccion === "eq" && E) pintarEquipos(); });
   fetch("pujas.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null)
-    .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) pintarTuJornada(); });
+    .then(j => { PUJAS = j && j.compras ? j : { compras: [] }; PUJAS_OBS = null; if (seccion === "mer") pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "clas" && D) { pintarTuJornada(); pintarLinea(); } });
 }
 // compras del mercado con precio conocido: valor del día en que salió y sobrepuja con la que se ganó
 function obsPujas() {
