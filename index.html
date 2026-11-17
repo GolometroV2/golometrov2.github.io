@@ -4210,6 +4210,9 @@ function pintarLinea() {
         if (cl && importeMov(cl) > 0) h.push(["🏴‍☠️", `${esc(cl.name)}<small>${esc(nombreM(cl.to))} paga su cláusula (${eur(importeMov(cl))}) a ${esc(nombreM(cl.from))}</small>`]);
       }
     }
+    // Final de foto: el ganador de la jornada saca 5 puntos o menos al segundo
+    { const o = S.ms.map((_, x) => x).sort((p, q) => S.pts[q][k] - S.pts[p][k]), dif = S.pts[o[0]][k] - S.pts[o[1]][k];
+      if (dif <= 5) h.push(["🤏", `${nom(o[0])}<small>${dif === 0 ? "empata con" : "gana por " + dif + " pt" + (dif > 1 ? "s" : "") + " a"} ${nom(o[1])}</small>`]); }
     if (k > 0 && S.rank[k - 1].indexOf(1) !== lider) h.push(["👑", `${nom(lider)}<small>releva a ${nom(S.rank[k - 1].indexOf(1))} como líder</small>`]);
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
     return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
