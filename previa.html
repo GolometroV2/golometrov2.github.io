@@ -5143,10 +5143,11 @@ function bloqueCaja(ms) {
     const id = String(m.id), sal = mv.filter(t => t.to && String(t.to) === id), ent = mv.filter(t => t.from && String(t.from) === id);
     const gasto = sal.reduce((s, t) => s + importeMov(t), 0), ingreso = ent.reduce((s, t) => s + importeMov(t), 0);
     // puntos que han dado los fichados desde que se compraron (jornadas que empezaron después del movimiento)
-    let pts = 0, ok = false;
+    let pts = 0, ok = false, mejor = null;
     if (LIGAJ && !LIGAJ.cargando) sal.forEach(t => { const pj = LIGAJ.pts[String(t.playerId)]; if (!pj || !t.ts) return; ok = true;
-      const desde = Date.parse(t.ts); Object.keys(pj).forEach(g => { if (ini[g] && ini[g] > desde) pts += +pj[g] || 0; }); });
-    return { m, gasto, ingreso, neto: ingreso - gasto, nc: sal.length, nv: ent.length, pts: ok ? pts : null };
+      const desde = Date.parse(t.ts); let p = 0; Object.keys(pj).forEach(g => { if (ini[g] && ini[g] > desde) p += +pj[g] || 0; }); pts += p;
+      if (!mejor || p > mejor.p) mejor = { p, nom: t.name || (LIGAJ.jug[String(t.playerId)] || {}).name || "" }; });
+    return { m, gasto, ingreso, neto: ingreso - gasto, nc: sal.length, nv: ent.length, pts: ok ? pts : null, mejor };
   }).filter(x => x.nc + x.nv).sort((a, b) => b.neto - a.neto);
   if (filas.length < 3) return "";
   const mx = Math.max(1, ...filas.map(x => Math.max(x.gasto, x.ingreso)));
@@ -5156,7 +5157,7 @@ function bloqueCaja(ms) {
     <ul class="pron">${filas.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b>
       <span class="pb" title="Ingresado ${eur(x.ingreso)}"><i style="width:${w(x.ingreso)};background:var(--acc)"></i></span>
       <span class="pb" title="Gastado ${eur(x.gasto)}"><i style="width:${w(x.gasto)};background:var(--red)"></i></span>
-      <small>${x.nc} compra${x.nc === 1 ? "" : "s"} (${eur(x.gasto)}) · ${x.nv} venta${x.nv === 1 ? "" : "s"} (${eur(x.ingreso)})${x.pts != null && x.nc ? ` · sus fichajes han dado ${x.pts} pts desde que llegaron${x.pts > 0 ? ` (${eur(x.gasto / x.pts)} por punto)` : ""}` : ""}</small></span>
+      <small>${x.nc} compra${x.nc === 1 ? "" : "s"} (${eur(x.gasto)}) · ${x.nv} venta${x.nv === 1 ? "" : "s"} (${eur(x.ingreso)})${x.pts != null && x.nc ? ` · sus fichajes han dado ${x.pts} pts desde que llegaron${x.pts > 0 ? ` (${eur(x.gasto / x.pts)} por punto)` : ""}${x.mejor && x.mejor.p > 0 && x.mejor.nom ? ` · ⭐ su mejor fichaje: ${esc(x.mejor.nom)} (${x.mejor.p} pts)` : ""}` : ""}</small></span>
       <span class="pts"><b class="${cl(x.neto)}">${sig(x.neto)}</b></span></li>`).join("")}</ul>
     <p class="note">Solo cuenta los últimos ${mv.length} movimientos guardados; las ventas al mercado se valoran al valor de ese día.</p></section>`;
 }
