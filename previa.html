@@ -5133,6 +5133,29 @@ function bloqueVentas(ms) {
     <p class="note">Solo las ventas de los últimos ${(E.transfers || []).length} movimientos guardados. Lo cobrado es la cláusula pagada o el valor de ese día si se vendió al mercado.</p>
     ${dolieron.length ? `<div class="acciones"><button class="btn-cromo" data-ven-comp>📤 Compartir lámina</button></div>` : ""}</section>`;
 }
+// Caja de cada manager: lo gastado en fichajes y cláusulas pagadas frente a lo ingresado por ventas y cláusulas cobradas
+// (equipos.json -> transfers, mismo importe que el resto de la web: importeMov). Es estadístico: para todos.
+function bloqueCaja(ms) {
+  const vistos = new Set(), mv = [];
+  (E.transfers || []).forEach(t => { const k = t.playerId + "|" + t.from + "|" + t.to + "|" + t.ts; if (vistos.has(k)) return; vistos.add(k); mv.push(t); });
+  const filas = ms.map(m => {
+    const id = String(m.id), sal = mv.filter(t => t.to && String(t.to) === id), ent = mv.filter(t => t.from && String(t.from) === id);
+    const gasto = sal.reduce((s, t) => s + importeMov(t), 0), ingreso = ent.reduce((s, t) => s + importeMov(t), 0);
+    return { m, gasto, ingreso, neto: ingreso - gasto, nc: sal.length, nv: ent.length };
+  }).filter(x => x.nc + x.nv).sort((a, b) => b.neto - a.neto);
+  if (filas.length < 3) return "";
+  const mx = Math.max(1, ...filas.map(x => Math.max(x.gasto, x.ingreso)));
+  const w = v => (v / mx * 100).toFixed(1) + "%";
+  return `<section class="card"><div class="gh"><h2>Caja de cada manager</h2></div>
+    <p class="note" style="margin:0 0 8px">Dinero movido en los fichajes, cláusulas y ventas guardados: lo gastado (rojo), lo ingresado (verde) y el saldo de esos movimientos.</p>
+    <ul class="pron">${filas.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b>
+      <span class="pb" title="Ingresado ${eur(x.ingreso)}"><i style="width:${w(x.ingreso)};background:var(--acc)"></i></span>
+      <span class="pb" title="Gastado ${eur(x.gasto)}"><i style="width:${w(x.gasto)};background:var(--red)"></i></span>
+      <small>${x.nc} compra${x.nc === 1 ? "" : "s"} (${eur(x.gasto)}) · ${x.nv} venta${x.nv === 1 ? "" : "s"} (${eur(x.ingreso)})</small></span>
+      <span class="pts"><b class="${cl(x.neto)}">${sig(x.neto)}</b></span></li>`).join("")}</ul>
+    <p class="note">Solo cuenta los últimos ${mv.length} movimientos guardados; las ventas al mercado se valoran al valor de ese día.</p></section>`;
+}
+
 let VEN_D = null;
 
 function resumenEq(ms, hp) {
@@ -5151,7 +5174,7 @@ function resumenEq(ms, hp) {
   const mv = (E.transfers || []).slice(0, 10).map(t => { const [c, et] = tipo(t);
     return `<li class="mv mv2">${cara(t.playerId, t.name, null, 36)}<span class="mv-x">${textoMov(t)}<small><span class="mv-et ${c}">${et}</span> ${esc(t.ts ? fechaCorta(t.ts) : t.date)}</small></span></li>`; }).join("");
   const ex = [["gvalor", "📈", "Evolución", "Cuánto vale cada plantilla", graficaValor(ms)], ["bolsa", "🟩", "La Bolsa", "El mercado de LaLiga en un mapa", bloqueBolsa()], ["conquista", "🗺️", "Conquista", "Quién domina cada equipo", bloqueConquista()], ["galaxia", "✨", "Galaxia", "Valor frente a puntos, jugador a jugador", bloqueGalaxia()],
-    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exprot", "🔒", "Protegidos", "Aún no se pueden clausular", bloqueProtegidos(ms)], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)], ["exven", "💸", "Ventas", "Las que más dolieron", bloqueVentas(ms)]]
+    ["exdep", "⭐", "Estrellas", "Cuánto dependen de sus mejores", bloqueDependencia(ms)], ["excap", "🎖️", "Capitán", "Aciertos con el brazalete", bloqueAciertoCap()], ["exban", "🪑", "Banquillo", "Puntos que se dejan fuera", bloqueBanquilloTemp()], ["exdis", "🟥", "Pabellón", "Tarjetas y goles en propia", bloqueDisciplina()], ["exprot", "🔒", "Protegidos", "Aún no se pueden clausular", bloqueProtegidos(ms)], ["exenf", "✚", "Enfermería", "Lesionados, dudas y sancionados", bloqueEnfermeria(ms)], ["exven", "💸", "Ventas", "Las que más dolieron", bloqueVentas(ms)], ["excaja", "💰", "Caja", "Gastado e ingresado por manager", bloqueCaja(ms)]]
     .filter(x => x[4]);
   const bl = k => { const x = ex.find(y => y[0] === k); return x ? `<div id="eqx-${k}">${x[4]}</div>` : ""; };
   const explora = `<nav class="indice bento" aria-label="Más de Equipos">${ex.map(x => `<button data-ir="eqx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
@@ -5174,6 +5197,7 @@ function resumenEq(ms, hp) {
     ${bloqueFichajes(ms)}
     ${bloqueOjo(ms)}
     ${bl("exven")}
+    ${bl("excaja")}
     <section class="card"><div class="gh"><h2>Últimos movimientos</h2></div>${mv ? `<ul>${mv}</ul>` : vacioHTML("Todo tranquilo", "Aún no se ha detectado ningún fichaje ni venta.")}</section>`;
 }
 
