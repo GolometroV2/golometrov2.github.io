@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-17 (agente, revisión sin cambios de código) · Revisadas las listas del parón (fases 1 y 2): todo lo pedido ya existe (láminas de Bolsa, conquista y galaxia incluidas; «Explora» en las 4 pestañas). No hay una mejora nueva con valor claro que no duplique algo; las ideas de Clones y «El más repetido» ya se descartaron con datos. Se deja la rama como está a la espera de nuevas ideas del dueño.
 - 2026-11-17 (agente, parón idea propia) · **«Clones» descartada y revertida**: comparar cuántos jugadores repiten los onces de dos managers da 0 % siempre, porque en Mister cada jugador pertenece a un solo manager. No volver a proponer solapamientos entre plantillas de la liga.
 - 2026-11-17 (agente) · Descartado «El más repetido» en la Crónica (jugador alineado por varios managers): probado J1-J12, ningún jugador está en dos plantillas, así que nunca saldría. Sin cambios en `index.html`.
 - 2026-11-17 (agente, parón idea propia) · **«El patinazo» en la Crónica** (para todos: estadístico): el jugador que más puntos negativos sumó en la jornada, con foto y manager; sale solo si hay negativos. (Descartado «el gafe» por jugador repetido: en esta liga ningún jugador lo tiene dos managers.) Probado a 390 px con Playwright en J1-J12: sin errores ni desborde; `node --check` correcto.
