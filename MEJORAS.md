@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-17 (agente) · Descartado «El más repetido» en la Crónica (jugador alineado por varios managers): probado J1-J12, ningún jugador está en dos plantillas, así que nunca saldría. Sin cambios en `index.html`.
 - 2026-11-17 (agente, parón idea propia) · **«El patinazo» en la Crónica** (para todos: estadístico): el jugador que más puntos negativos sumó en la jornada, con foto y manager; sale solo si hay negativos. (Descartado «el gafe» por jugador repetido: en esta liga ningún jugador lo tiene dos managers.) Probado a 390 px con Playwright en J1-J12: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón idea propia) · **«Capitán sin jugar» en la Crónica** (para todos: estadístico): tarjeta con foto y manager(es) cuyo capitán no jugó (0 puntos de capitán; p. ej. J5 y J7). Aparece solo si ocurre. Probado a 390 px con Playwright en J7: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón idea propia) · **«Peor capitán» en la Crónica** (para todos: estadístico): tarjeta con foto, puntos y manager, antes solo en el texto de WhatsApp; misma regla (más de 2 capitanes). Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
