@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-17 (agente, parón 6) · **«Peor capitán» en la «Línea del tiempo»** (para todos: estadístico): espejo del 🎖️; si el peor capitán de la jornada (de `matchdays`) saca 2 puntos o menos, sale «🤦 X · N pts como capitán de Y». Probado a 390 px con Playwright: 3 jornadas lo muestran (p. ej. -3 pts), sin errores ni desborde.
 - 2026-11-17 (agente, parón 6) · **«Caída de puestos» en la «Línea del tiempo»** (para todos: estadístico): espejo del 🚀; cada jornada muestra «🪂 X baja N puestos» (el que más cae según `serieLiga`). Probado a 390 px con Playwright: 8 jornadas con caída, sin errores de consola ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón 6) · **«Final de foto» en la «Línea del tiempo»** (para todos: estadístico): si el mejor de la jornada saca 5 puntos o menos al segundo, sale «🤏 X gana por N pts a Y» (o empata). Hoy 5 jornadas. Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón 6) · **«Jugador de la jornada» y «Mejor capitán» en la «Línea del tiempo»** (para todos: estadístico): mismo criterio que la Crónica (`matchdays`). Probado a 390 px con Playwright: J12 muestra López (18 pts) y Óskarsson (27 pts), sin errores de consola ni desborde.
