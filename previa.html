@@ -2962,6 +2962,8 @@ function pintarCronica() {
   const jugs = {};
   filas.forEach(f => (f.d.players || []).forEach(p => { if (!p.played) return; const q = jugs[p.id] || (jugs[p.id] = { p, n: 0, de: [] }); q.n++; q.de.push(f.m.name); }));
   const mvp = Object.values(jugs).sort((a, b) => (b.p.basePoints ?? b.p.points) - (a.p.basePoints ?? a.p.points))[0];
+  // el patinazo: el jugador que más puntos perdió (solo si puntuó en negativo)
+  const gafe = Object.values(jugs).filter(q => (q.p.basePoints ?? q.p.points) < 0).sort((a, b) => (a.p.basePoints ?? a.p.points) - (b.p.basePoints ?? b.p.points))[0];
   // quién sube y quién baja en la general
   let sube = null, baja = null;
   if (k > 0) {
@@ -2987,6 +2989,7 @@ function pintarCronica() {
     caps.length > 2 ? (c => tile("", "Peor capitán", esc(apellido(c.d.captain.name)), `<b class="ct-n">${c.d.captain.points}</b> (${c.d.captain.basePoints ?? "–"} × ${c.d.captain.multiplier || "–"}) · ${esc(c.m.name)}`, cara(c.d.captain.id, c.d.captain.name, equipoEn(cronJ, c.m.id, c.d.captain.id), 40)))(caps[caps.length - 1]) : "",
     plantonCap.length ? (c => tile("", plantonCap.length > 1 ? `Capitanes sin jugar (${plantonCap.length})` : "Capitán sin jugar", esc(apellido(c.d.captain.name)), `No pisó el campo: 0 puntos de capitán · ${esc(plantonCap.map(f => f.m.name).join(", "))}`, cara(c.d.captain.id, c.d.captain.name, equipoEn(cronJ, c.m.id, c.d.captain.id), 40)))(plantonCap[0]) : "",
     mvp ? tile("", "Jugador de la jornada", esc(apellido(mvp.p.name)), `<b class="ct-n">${mvp.p.basePoints ?? mvp.p.points}</b> puntos · ${mvp.n > 1 ? `lo tenían ${mvp.n} managers` : `de ${esc(mvp.de[0])}`}`, cara(mvp.p.id, mvp.p.name, mvp.p.teamId, 40)) : "",
+    gafe ? tile("", "El patinazo", esc(apellido(gafe.p.name)), `<b class="ct-n">${gafe.p.basePoints ?? gafe.p.points}</b> ${(gafe.p.basePoints ?? gafe.p.points) === -1 ? "punto" : "puntos"} · ${esc(gafe.de[0])}`, cara(gafe.p.id, gafe.p.name, gafe.p.teamId, 40)) : "",
     sube ? tile("📈", "La remontada", esc(sube.f.m.name), `Sube ${sube.dlt} ${sube.dlt === 1 ? "puesto" : "puestos"}: ahora ${S.rank[k][sube.f.x]}.º`) : "",
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
