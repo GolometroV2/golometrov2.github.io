@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-17 (agente, parón idea propia) · **«Sobre la media»** (Clasificación, índice «📏 Sobre la media», para todos: estadístico): suma, por manager, cuánto se ha alejado de la media de la liga en cada jornada (barra verde o roja, jornadas por encima y diferencia por jornada). `pintarSobreMedia`, solo lee `D.matchdays`. Probado a 390 px con Playwright: sin errores de consola ni desborde. Idea: lámina para compartir.
 - 2026-11-17 (agente, revisión sin cambios de código) · Revisadas las listas del parón (fases 1 y 2): todo lo pedido ya existe (láminas de Bolsa, conquista y galaxia incluidas; «Explora» en las 4 pestañas). No hay una mejora nueva con valor claro que no duplique algo; las ideas de Clones y «El más repetido» ya se descartaron con datos. Se deja la rama como está a la espera de nuevas ideas del dueño.
 - 2026-11-17 (agente, parón idea propia) · **«Clones» descartada y revertida**: comparar cuántos jugadores repiten los onces de dos managers da 0 % siempre, porque en Mister cada jugador pertenece a un solo manager. No volver a proponer solapamientos entre plantillas de la liga.
 - 2026-11-17 (agente) · Descartado «El más repetido» en la Crónica (jugador alineado por varios managers): probado J1-J12, ningún jugador está en dos plantillas, así que nunca saldría. Sin cambios en `index.html`.
