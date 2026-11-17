@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-17 (agente, parón idea propia) · **«Peor capitán» en la Crónica** (para todos: estadístico): tarjeta con foto, puntos y manager, antes solo en el texto de WhatsApp; misma regla (más de 2 capitanes). Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón idea propia) · **«Su mejor fichaje»** en la «Caja de cada manager» (para todos: estadístico): la compra que más puntos ha dado a cada manager desde que llegó. Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón idea propia) · **Coste por punto de los fichajes** en la «Caja de cada manager» (para todos: estadístico): «(X M por punto)» = gastado en compras / puntos que han dado. Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
 - 2026-11-17 (agente, parón idea propia) · **Puntos de los fichajes en la «Caja de cada manager»** (para todos: estadístico): cada fila añade «sus fichajes han dado N pts desde que llegaron» (jornadas empezadas tras cada compra, `LIGAJ.pts`). Probado a 390 px con Playwright: sin errores ni desborde; `node --check` correcto.
