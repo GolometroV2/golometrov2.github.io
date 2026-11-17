@@ -2958,6 +2958,7 @@ function pintarCronica() {
   const media = filas.reduce((t, f) => t + f.p, 0) / filas.length;
   // mejor capitán y MVP de la jornada
   const caps = filas.filter(f => f.d.captain && f.d.captain.played).sort((a, b) => b.d.captain.points - a.d.captain.points);
+  const plantonCap = filas.filter(f => f.d.captain && f.d.captain.played === false);
   const jugs = {};
   filas.forEach(f => (f.d.players || []).forEach(p => { if (!p.played) return; const q = jugs[p.id] || (jugs[p.id] = { p, n: 0, de: [] }); q.n++; q.de.push(f.m.name); }));
   const mvp = Object.values(jugs).sort((a, b) => (b.p.basePoints ?? b.p.points) - (a.p.basePoints ?? a.p.points))[0];
@@ -2984,6 +2985,7 @@ function pintarCronica() {
   const tiles = [
     caps[0] ? tile("", "Mejor capitán", esc(apellido(caps[0].d.captain.name)), `<b class="ct-n">${caps[0].d.captain.points}</b> (${caps[0].d.captain.basePoints ?? "–"} × ${caps[0].d.captain.multiplier || "–"}) · ${esc(caps[0].m.name)}`, cara(caps[0].d.captain.id, caps[0].d.captain.name, equipoEn(cronJ, caps[0].m.id, caps[0].d.captain.id), 40)) : "",
     caps.length > 2 ? (c => tile("", "Peor capitán", esc(apellido(c.d.captain.name)), `<b class="ct-n">${c.d.captain.points}</b> (${c.d.captain.basePoints ?? "–"} × ${c.d.captain.multiplier || "–"}) · ${esc(c.m.name)}`, cara(c.d.captain.id, c.d.captain.name, equipoEn(cronJ, c.m.id, c.d.captain.id), 40)))(caps[caps.length - 1]) : "",
+    plantonCap.length ? (c => tile("", plantonCap.length > 1 ? `Capitanes sin jugar (${plantonCap.length})` : "Capitán sin jugar", esc(apellido(c.d.captain.name)), `No pisó el campo: 0 puntos de capitán · ${esc(plantonCap.map(f => f.m.name).join(", "))}`, cara(c.d.captain.id, c.d.captain.name, equipoEn(cronJ, c.m.id, c.d.captain.id), 40)))(plantonCap[0]) : "",
     mvp ? tile("", "Jugador de la jornada", esc(apellido(mvp.p.name)), `<b class="ct-n">${mvp.p.basePoints ?? mvp.p.points}</b> puntos · ${mvp.n > 1 ? `lo tenían ${mvp.n} managers` : `de ${esc(mvp.de[0])}`}`, cara(mvp.p.id, mvp.p.name, mvp.p.teamId, 40)) : "",
     sube ? tile("📈", "La remontada", esc(sube.f.m.name), `Sube ${sube.dlt} ${sube.dlt === 1 ? "puesto" : "puestos"}: ahora ${S.rank[k][sube.f.x]}.º`) : "",
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
