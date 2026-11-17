@@ -4215,6 +4215,9 @@ function pintarLinea() {
       if (dif <= 5) h.push(["🤏", `${nom(o[0])}<small>${dif === 0 ? "empata con" : "gana por " + dif + " pt" + (dif > 1 ? "s" : "") + " a"} ${nom(o[1])}</small>`]); }
     if (k > 0 && S.rank[k - 1].indexOf(1) !== lider) h.push(["👑", `${nom(lider)}<small>releva a ${nom(S.rank[k - 1].indexOf(1))} como líder</small>`]);
     if (salto) h.push(["🚀", `${nom(salto.x)}<small>sube ${salto.g} puesto${salto.g > 1 ? "s" : ""}</small>`]);
+    // Mayor caída de puestos (espejo del salto)
+    if (k > 0) { let caida = null; for (let x = 0; x < N; x++) { const g = S.rank[k][x] - S.rank[k - 1][x]; if (g > 0 && (!caida || g > caida.g)) caida = { x, g }; }
+      if (caida) h.push(["🪂", `${nom(caida.x)}<small>baja ${caida.g} puesto${caida.g > 1 ? "s" : ""}</small>`]); }
     return `<article class="lt-j${k === n - 1 ? " ult" : ""}"><h3>${esc(String(j))}</h3>${h.map(([i, t]) => `<div class="lt-h"><i>${i}</i><span>${t}</span></div>`).join("")}</article>`;
   }).join("");
   c.innerHTML = `<div class="gh"><h2>Línea del tiempo</h2></div>
