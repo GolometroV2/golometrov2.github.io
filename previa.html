@@ -5156,7 +5156,7 @@ function bloqueCaja(ms) {
     <ul class="pron">${filas.map(x => `<li>${avatar(x.m, x.m.i)}<span class="pq"><b>${esc(x.m.name)}</b>
       <span class="pb" title="Ingresado ${eur(x.ingreso)}"><i style="width:${w(x.ingreso)};background:var(--acc)"></i></span>
       <span class="pb" title="Gastado ${eur(x.gasto)}"><i style="width:${w(x.gasto)};background:var(--red)"></i></span>
-      <small>${x.nc} compra${x.nc === 1 ? "" : "s"} (${eur(x.gasto)}) · ${x.nv} venta${x.nv === 1 ? "" : "s"} (${eur(x.ingreso)})${x.pts != null && x.nc ? ` · sus fichajes han dado ${x.pts} pts desde que llegaron` : ""}</small></span>
+      <small>${x.nc} compra${x.nc === 1 ? "" : "s"} (${eur(x.gasto)}) · ${x.nv} venta${x.nv === 1 ? "" : "s"} (${eur(x.ingreso)})${x.pts != null && x.nc ? ` · sus fichajes han dado ${x.pts} pts desde que llegaron${x.pts > 0 ? ` (${eur(x.gasto / x.pts)} por punto)` : ""}` : ""}</small></span>
       <span class="pts"><b class="${cl(x.neto)}">${sig(x.neto)}</b></span></li>`).join("")}</ul>
     <p class="note">Solo cuenta los últimos ${mv.length} movimientos guardados; las ventas al mercado se valoran al valor de ese día.</p></section>`;
 }
