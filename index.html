@@ -4086,8 +4086,11 @@ function pintarPersecucion() {
     const txt = dA === 0 ? "empatado con el de arriba" : `a ${nf0.format(dA)} pts del ${k}.º` + (k > 1 ? ` · a ${nf0.format(dL)} del líder` : "");
     const ritmo = nec == null ? "" : ` · le tiene que sacar ${nf1.format(nec)} pts por jornada al ${k}.º`;
     const ult = Math.min(5, n - 1), gan = S.pts[x].slice(-ult).reduce((a, v) => a + v, 0) - S.pts[arr].slice(-ult).reduce((a, v) => a + v, 0);
+    // al ritmo de las últimas jornadas: ¿cuándo alcanzaría al de arriba?
+    const porJ = gan / ult, alc = dA > 0 && porJ > 0 ? Math.ceil(dA / porJ) : null;
+    const proy = dA === 0 || !quedan ? "" : alc != null && alc <= quedan ? ` · al ritmo de las últimas ${ult}, lo alcanza en la jornada ${n + alc}` : ` · al ritmo de las últimas ${ult}, no lo alcanza esta temporada`;
     const tend = gan > 0 ? `<span class="up">▲ ${nf0.format(gan)} en las últimas ${ult}</span>` : gan < 0 ? `<span class="dn">▼ ${nf0.format(-gan)} en las últimas ${ult}</span>` : `<span>igual en las últimas ${ult}</span>`;
-    return `<li>${avatar(o.m, o.i)}<span class="pq"><b>${k + 1}.º ${esc(o.m.name)}</b><small>${txt}${ritmo}</small><small>${tend}</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
+    return `<li>${avatar(o.m, o.i)}<span class="pq"><b>${k + 1}.º ${esc(o.m.name)}</b><small>${txt}${ritmo}</small><small>${tend}${proy}</small>${curva(x)}</span><span class="pts"><b>${nf0.format(t)}</b> pts</span></li>`;
   }).join("");
   cont.innerHTML = `<div class="gh"><h2>Persecución</h2></div>
     <p class="note" style="margin:0 0 10px">Distancia de cada manager al de arriba y cuántos puntos por jornada tendría que ganarle de media en las ${quedan} que quedan (de ${TOT}). Las flechas comparan las últimas jornadas con el de delante. La curva de cada uno es su distancia al líder jornada a jornada (arriba = líder; si baja hacia la línea, se acerca).</p>
