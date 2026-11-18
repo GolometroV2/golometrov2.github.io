@@ -4847,10 +4847,13 @@ function bloqueDependencia(ms) {
       <div class="dp-b" role="img" aria-label="${esc(r.m.name)}: ${r.top.map(p => esc(p.short || p.name) + " " + p.points + " puntos").join(", ")}, de ${r.tot} en total">${r.top.map((p, k) => `<i class="k${k}" style="width:${(p.points / r.tot * 100).toFixed(2)}%"></i>`).join("")}</div>
       <small>${r.top.map(p => esc(p.short || p.name)).join(" · ")}</small></div><b>${Math.round(r.pct * 100)}%</b></div>`).join("");
   const a = R[0], z = R[R.length - 1];
+  DEP_D = { R: R.slice(0, 7).map(r => ({ nom: r.m.name, pct: Math.round(r.pct * 100), top: r.top.map(p => (p.short || p.name) + " " + p.points).join(" · ") })) };
   return `<section class="card"><div class="gh"><h2>¿Cuánto dependen de sus estrellas?</h2></div>
     <p class="note" style="margin:0 0 10px">Parte de los puntos de la plantilla de hoy que dan sus 3 mejores jugadores (tramos de más a menos oscuro). Cuanto más alto, más pierde si se lesionan.</p>${filas}
-    <p class="note">Más dependiente: <b>${esc(a.m.name)}</b> (${Math.round(a.pct * 100)} % en 3 jugadores). Más repartido: <b>${esc(z.m.name)}</b> (${Math.round(z.pct * 100)} %).</p></section>`;
+    <p class="note">Más dependiente: <b>${esc(a.m.name)}</b> (${Math.round(a.pct * 100)} % en 3 jugadores). Más repartido: <b>${esc(z.m.name)}</b> (${Math.round(z.pct * 100)} %).</p>
+    <div class="acciones"><button class="btn-cromo" data-dep-comp>📤 Compartir lámina</button></div></section>`;
 }
+let DEP_D = null;
 
 // Acierto con el capitán: puntos extra que dio el capitán frente al mejor del once (solo jornadas pasadas)
 function bloqueAciertoCap() {
@@ -8225,8 +8228,8 @@ async function abrirEstudio(clave, btn) {
   if (clave === "cron" && !d.once && LIGAJ && !LIGAJ.cargando) d.once = onceIdeal("J" + d.n);
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
-  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "rep" ? `Repetición de la liga` : clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", smed: "Sobre la media", lin: "Líneas de cada uno", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dep" ? "Dependencia de las estrellas" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "rep" ? `Repetición de la liga` : clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ dep: "Dependencia de las estrellas", rey: "Los reyes de la jornada", smed: "Sobre la media", lin: "Líneas de cada uno", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8727,6 +8730,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-clv-comp]")) { if (CLV_D) { EST_DAT.clv = { ...CLV_D }; abrirEstudio("clv", e.target.closest("[data-clv-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-v7-comp]")) { if (V7_D) { EST_DAT.v7 = { ...V7_D }; abrirEstudio("v7", e.target.closest("[data-v7-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-banq-comp]")) { if (BANQ_D) { EST_DAT.banq = { ...BANQ_D }; abrirEstudio("banq", e.target.closest("[data-banq-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-dep-comp]")) { if (DEP_D) { EST_DAT.dep = { ...DEP_D }; abrirEstudio("dep", e.target.closest("[data-dep-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-capac-comp]")) { if (CAPAC_D) { EST_DAT.capac = { ...CAPAC_D }; abrirEstudio("capac", e.target.closest("[data-capac-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ojo-comp]")) { if (OJO_D) { EST_DAT.ojo = { ...OJO_D }; abrirEstudio("ojo", e.target.closest("[data-ojo-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-ven-comp]")) { if (VEN_D) { EST_DAT.ven = { ...VEN_D }; abrirEstudio("ven", e.target.closest("[data-ven-comp]")); } return; }
@@ -9691,6 +9695,26 @@ async function esCapAcierto(d) {
   return c;
 }
 ES_SETS.capac = [["Acierto con el capitán", esCapAcierto]];
+async function esDependencia(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R, AN = 560;
+  esFondo(x);
+  esCabecera(x, { titulo: "DEPENDENCIA", kicker: "Puntos que dan sus 3 mejores jugadores", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, k === 0 ? ES.verde : ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 30);
+    x.fillText(esAjusta(x, r.nom, 560, 700, 30, 22), M + 28, Y + 38);
+    x.fillStyle = ES.mut; x.font = esS(400, 22); x.fillText(esCorta(x, r.top, 600), M + 28, Y + 66);
+    x.fillStyle = ES.linea; x.fillRect(M + 28, Y + 78, AN, 8);
+    x.fillStyle = ES.verde; x.fillRect(M + 28, Y + 78, Math.max(6, AN * r.pct / 100), 8);
+    x.textAlign = "right"; x.fillStyle = k === 0 ? ES.verde : ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(r.pct + " %", W - M - 24, Y + 66); x.textAlign = "left";
+  });
+  esPie(x, "Más alto = más pierde si se lesionan");
+  return c;
+}
+ES_SETS.dep = [["Dependencia de las estrellas", esDependencia]];
 async function esBanquillo(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.L, AN = 560;
