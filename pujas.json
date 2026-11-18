@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-17T04:03:27Z",
+"updatedAt": "2026-11-18T04:05:15Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-18T04:05:15Z",
+"playerId": "70922",
+"name": "Ibrahima Konaté",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 11253000,
+"listado": 11187000,
+"precio": 11412000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-17T04:03:27Z",
 "playerId": "70255",
