@@ -3768,8 +3768,11 @@ function pintarLineas() {
     <p class="note" style="margin:0 0 10px">De qué posición salen los puntos de cada manager (sin capitán, solo jugadores que jugaron): de menos a más tono, porteros, defensas, medios y delanteros. A la derecha, la línea en la que más se aleja de la media de la liga (en puntos porcentuales).</p>
     <p class="note" style="margin:0 0 10px">Media de la liga: ${POS.map(k => `${NOM[k]} ${Math.round(med(k) * 100)} %`).join(" · ")}.</p>
     <ul class="pron">${filas}</ul>
-    <p class="note">El que más vive de sus delanteros es <b>${esc(mejor("DL").m.name)}</b> y el que más de sus defensas, <b>${esc(mejor("DF").m.name)}</b>.</p>`;
+    <p class="note">El que más vive de sus delanteros es <b>${esc(mejor("DL").m.name)}</b> y el que más de sus defensas, <b>${esc(mejor("DF").m.name)}</b>.</p>
+    <div class="acciones"><button class="btn-cromo" data-lin-comp>📤 Compartir lámina</button></div>`;
+  LIN_D = { med: POS.map(k => ({ k, v: med(k) })), R: R.map(r => ({ m: r.m, i: r.i, v: POS.map(k => ({ k, v: r.c[k] / r.t })) })) };
 }
+let LIN_D = null;
 
 /* ---------- ¿En qué puesto está el valor? (estadístico, lee LIGAJ): lo que rinde por millón la élite de cada posición ---------- */
 function pintarPuestos() {
@@ -8223,7 +8226,7 @@ async function abrirEstudio(clave, btn) {
   let dlg = $("#estudio");
   if (!dlg) { dlg = document.createElement("div"); dlg.id = "estudio"; dlg.className = "est"; dlg.setAttribute("role", "dialog"); dlg.setAttribute("aria-modal", "true"); document.body.appendChild(dlg); }
   dlg.setAttribute("aria-label", clave === "cron" ? "Imágenes del post jornada" : clave === "wr" ? "Imágenes de la temporada" : clave === "cromo" ? "Imagen del cromo" : clave === "cmp" ? "Imagen de la comparación" : clave === "pt" ? "Imagen del partido" : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : "Imágenes de la previa");
-  dlg.innerHTML = `<div class="est-h"><b>${clave === "rep" ? `Repetición de la liga` : clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", smed: "Sobre la media", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
+  dlg.innerHTML = `<div class="est-h"><b>${clave === "rep" ? `Repetición de la liga` : clave === "cron" ? `Jornada ${d.n} · post jornada` : clave === "wr" ? `La temporada de ${esc(d.m.name)}` : clave === "cromo" ? `Cromo de ${esc(d.p.name)}` : clave === "cmp" ? `${esc(apellido(d.a.p.name))} vs ${esc(apellido(d.b.p.name))}` : clave === "pt" ? `Jornada ${d.n} · el partido` : clave === "dis" ? "Pabellón de la vergüenza" : clave === "rec" ? "Récords de la temporada" : clave === "bolsa" ? "La Bolsa de LaLiga" : ({ rey: "Los reyes de la jornada", smed: "Sobre la media", lin: "Líneas de cada uno", sorp: "Sorpresas de la jornada", val: "Valor de plantilla", car: "La carrera", casa: "Casa y fuera", pers: "Persecución", plan: "Plantones", clu: "Clubes de cada uno", conq: "La conquista", gal: "La galaxia", rach: "Rachas", duel: "Liga de duelos", foto: "Finales de foto", rent: "Los más rentables", gol: "Goleadores de la liga", reg: "Los más regulares", term: "Termómetro del valor", lib: "Los mejores libres", alti: "Altibajos", rota: "Rotación del once", form: "Formaciones", trono: "El trono", rv: "Plantilla contra plantilla", rx: "Rayos X: su mejor once", ven: "Ventas que dolieron", enf: "Enfermería", capac: "Acierto con el capitán", banq: "Banquillo de la temporada", forma: "Jugadores en forma", red: "Red de traspasos", v7: "Valor a 7 días", clv: "Cláusulas que merecen la pena" })[clave] || `Jornada ${d.n} · previa`}</b><button class="est-x" data-est="cerrar" aria-label="Cerrar">✕</button></div>
     <div class="est-c"><p class="est-cargando">Dibujando las imágenes…</p></div><div class="est-b"></div>`;
   dlg.hidden = false; document.body.classList.add("est-abierto");
   const hojas = await esGenerar(clave);
@@ -8707,6 +8710,7 @@ document.addEventListener("click", e => {
   if (e.target.closest && e.target.closest("[data-for-comp]")) { if (FOR_D && (FOR_D.sube.length || FOR_D.baja.length)) { EST_DAT.forma = { ...FOR_D }; abrirEstudio("forma", e.target.closest("[data-for-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-casa-comp]")) { if (CASA_D) { EST_DAT.casa = { ...CASA_D }; abrirEstudio("casa", e.target.closest("[data-casa-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-sorp-comp]")) { if (SORP_D) { EST_DAT.sorp = { ...SORP_D }; abrirEstudio("sorp", e.target.closest("[data-sorp-comp]")); } return; }
+  if (e.target.closest && e.target.closest("[data-lin-comp]")) { if (LIN_D) { EST_DAT.lin = { ...LIN_D }; abrirEstudio("lin", e.target.closest("[data-lin-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-smed-comp]")) { if (SMED_D) { EST_DAT.smed = { ...SMED_D }; abrirEstudio("smed", e.target.closest("[data-smed-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-rey-comp]")) { if (REY_D) { EST_DAT.rey = { ...REY_D }; abrirEstudio("rey", e.target.closest("[data-rey-comp]")); } return; }
   if (e.target.closest && e.target.closest("[data-reg-comp]")) { if (REG_D && REG_D.L.length) { EST_DAT.reg = { ...REG_D }; abrirEstudio("reg", e.target.closest("[data-reg-comp]")); } return; }
@@ -9562,6 +9566,27 @@ async function esSobreMedia(d) {
   return c;
 }
 ES_SETS.smed = [["Sobre la media", esSobreMedia]];
+async function esLineas(d) {
+  const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
+  const R = d.R.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56, NOM = { PT: "POR", DF: "DEF", MC: "MED", DL: "DEL" }, TON = [0.45, 0.7, 0.9, 1];
+  esFondo(x);
+  esCabecera(x, { titulo: "LÍNEAS DE CADA UNO", kicker: "De qué posición salen sus puntos", pag: 0, total: 1 });
+  const h = 100;
+  R.forEach((r, k) => {
+    const Y = 400 + k * (h + 14);
+    esPanel(x, M, Y, W - 2 * M, h, ES.linea, 20);
+    x.textAlign = "left"; x.fillStyle = ES.txt; x.font = esS(700, 28);
+    x.fillText(esAjusta(x, r.m.name, 560, 700, 28, 22), X0, Y + 34);
+    let px = X0;
+    r.v.forEach((o, j) => {
+      const w = o.v * AN; x.globalAlpha = TON[j]; x.fillStyle = ES.verde; x.fillRect(px, Y + 48, Math.max(2, w - 3), 14); x.globalAlpha = 1;
+      x.fillStyle = ES.mut; x.font = esS(400, 20); if (w > 150) x.fillText(NOM[o.k] + " " + Math.round(o.v * 100) + "%", px, Y + 88); px += w;
+    });
+  });
+  esPie(x, "Media: " + d.med.map(o => NOM[o.k] + " " + Math.round(o.v * 100) + "%").join(" · "));
+  return c;
+}
+ES_SETS.lin = [["Líneas", esLineas]];
 async function esRotacion(d) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES;
   const R = d.L.slice(0, 7), X0 = M + 28, AN = W - 2 * M - 56 - 150, f1 = v => v.toFixed(1).replace(".", ",");
