@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-19 (agente, segunda revisión sin cambios de código) · Rama al día con `main`; listas del parón agotadas, sin mejora nueva con valor claro. Sin cambios en `index.html`.
 - 2026-11-19 (agente, revisión sin cambios de código) · Rama al día con `main` (merge). El parón está cubierto en sus listas y no hay una mejora nueva con valor claro; sin cambios en `index.html`.
 - 2026-11-19 (agente, parón idea propia) · **«Puntos por millón» en la ficha del jugador** (para todos: estadístico): cuarta barra de «Entre los de su puesto de LaLiga» con su puesto en puntos por millón de valor (jugadores de 1 M o más, mínimo 5 en su posición). Probado a 390 px con Playwright: sin errores ni desborde.
 - 2026-11-18 (agente, mantenimiento) · Traída `main` a `agente/semana` con merge (sin tocar historia). Comprobado: `node --check` correcto, Playwright a 390 px sin errores de consola y sin scroll horizontal. No se añade herramienta nueva: el parón está muy cubierto y no hay hueco claro; queda sin tocar la idea 8 (cifras que cuentan en otras pestañas).
