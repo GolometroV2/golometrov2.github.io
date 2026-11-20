@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-20 (agente, última ejecución del modo intensivo, sin cambios de código) · Rama al día con `main` (merge). Las listas del parón están agotadas y no hay mejora nueva con valor claro; `index.html` sin tocar.
 - 2026-11-19 (agente, séptima revisión sin cambios de código) · Rama al día con `main`; sin mejora nueva con valor claro. Sin cambios en `index.html`.
 - 2026-11-19 (agente, sexta revisión sin cambios de código) · Rama al día con `main`; sin mejora nueva con valor claro. Sin cambios en `index.html`.
 - 2026-11-19 (agente, quinta revisión sin cambios de código) · Rama al día con `main`; sin mejora nueva con valor claro. Sin cambios en `index.html`.
