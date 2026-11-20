@@ -3569,11 +3569,12 @@ let FORM_D = null;
 function pintarRotacion() {
   const cont = $("#rota"); if (!cont || !D || !D.matchdays) return;
   const js = jornadas();
+  const PAR = [];
   const R = D.managers.map((m, i) => {
     let ant = null, ch = 0, n = 0; const vistos = new Set();
     js.forEach(j => { const x = (D.matchdays[j] || {})[m.id]; if (!x || !Array.isArray(x.players)) return;
       const ids = new Set(x.players.filter(p => p.played !== false).map(p => p.id)); ids.forEach(id => vistos.add(id));
-      if (ant) { let c = 0; ids.forEach(id => { if (!ant.has(id)) c++; }); ch += c; n++; }
+      if (ant) { let c = 0; ids.forEach(id => { if (!ant.has(id)) c++; }); ch += c; n++; if (typeof x.points === "number") PAR.push({ j, c, p: x.points }); }
       ant = ids; });
     // «el fijo»: el jugador que más jornadas ha estado en su once (y los puntos base que le dio)
     const ap = {};
@@ -3588,6 +3589,15 @@ function pintarRotacion() {
   const mx = Math.max(1, ...R.map(r => r.med)), f1 = v => v.toFixed(1).replace(".", ",");
   const filas = R.map(r => `<li>${avatar(r.m, r.i)}<span class="pq"><b>${esc(r.m.name)}</b><span class="pb" role="img" aria-label="${f1(r.med)} cambios de media por jornada"><i style="width:${Math.max(3, r.med / mx * 100).toFixed(1)}%;background:${col(r.i)}"></i></span><small>${r.dist} jugadores distintos en ${r.n + 1} jornadas</small></span>
       <span class="pts"><b>${f1(r.med)}</b></span></li>`).join("");
+  // ¿Compensa rotar? puntos de cada once frente a la media de esa jornada, según los cambios que hizo
+  const mj = {}; PAR.forEach(o => { (mj[o.j] || (mj[o.j] = [])).push(o.p); });
+  PAR.forEach(o => { o.d = o.p - mj[o.j].reduce((s, v) => s + v, 0) / mj[o.j].length; });
+  const gr = (f) => { const g = PAR.filter(f); return g.length ? { n: g.length, d: g.reduce((s, o) => s + o.d, 0) / g.length } : null; };
+  const gB = gr(o => o.c <= 3), gM = gr(o => o.c >= 4 && o.c <= 5), gA = gr(o => o.c >= 6);
+  const sg = v => (v > 0 ? "+" : "") + f1(v);
+  const compensa = (gB && gA && gB.n >= 3 && gA.n >= 3) ? `<h3 class="sec">¿Compensa cambiar?</h3>
+    <ul class="pron">${[["Hasta 3 cambios", gB], ["4 o 5 cambios", gM], ["6 o más cambios", gA]].filter(r => r[1]).map(r => `<li><span class="pq"><b>${r[0]}</b><span class="note" style="margin:0">${r[1].n} onces</span></span><span class="pts"><b>${sg(r[1].d)}</b> pts</span></li>`).join("")}</ul>
+    <p class="note">Puntos del once frente a la media de la jornada según los jugadores nuevos que metió. ${gA.d > gB.d + 2 ? "Rotar más ha sacado más puntos." : gB.d > gA.d + 2 ? "Cambiar poco ha sacado más puntos." : "Casi no hay diferencia."} Con pocas jornadas, es solo una pista.</p>` : "";
   const a = R[0], z = R[R.length - 1];
   ROTA_D = { L: R.map(r => ({ m: r.m, i: r.i, med: r.med, dist: r.dist, n: r.n + 1, fijo: r.fijo ? { name: r.fijo.name, n: r.fijo.n, pts: r.fijo.pts } : null })), mx };
   cont.innerHTML = `<div class="gh"><h2>Rotación del once</h2></div>
@@ -3596,6 +3606,7 @@ function pintarRotacion() {
     <h3 class="sec">Los fijos</h3>
     <ul class="pron">${R.filter(r => r.fijo).map(r => `<li data-ficha="${r.fijo.id}">${cara(r.fijo.id, r.fijo.name, r.fijo.teamId, 36)}<span class="pq"><b>${esc(r.fijo.name)}</b><span class="note" style="margin:0">${esc(r.m.name)} · en ${r.fijo.n} de ${r.n + 1} onces</span></span><span class="pts"><b>${nf0.format(r.fijo.pts)}</b> pts</span></li>`).join("")}</ul>
     <p class="note">El jugador que más veces ha estado en el once de cada manager y los puntos (sin capitán) que le ha dado.</p>
+    ${compensa}
     <p class="note">El que más rota: <b>${esc(a.m.name)}</b> (${f1(a.med)} cambios por jornada). El más fiel a su once: <b>${esc(z.m.name)}</b> (${f1(z.med)}).</p>
     <div class="acciones"><button class="btn-cromo" data-rota-comp>📤 Compartir lámina</button></div>`;
 }
