@@ -1,7 +1,31 @@
 {
-"updatedAt": "2026-11-19T04:00:54Z",
+"updatedAt": "2026-11-20T04:02:10Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-20T04:02:10Z",
+"playerId": "33717",
+"name": "Rubén Sánchez",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 554000,
+"listado": 537000,
+"precio": 698333,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-20T04:02:10Z",
+"playerId": "63727",
+"name": "Marcos Fernández",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 1283000,
+"listado": 1320000,
+"precio": 1320000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-19T04:00:54Z",
 "playerId": "17568",
