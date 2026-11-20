@@ -6,6 +6,7 @@ El agente lee este archivo al empezar y lo actualiza al terminar.
 - Si vas a hacer una herramienta nueva, mira antes que no exista ya (p. ej. hay comparador en Clasificación, subidas y bajadas y calendario de equipos en Mercado).
 
 ## Hecho
+- 2026-11-20 (agente, revisión final sin cambios de código) · Rama al día con `main` (merge); sin mejora nueva con valor claro. `index.html` sin tocar.
 - 2026-11-20 (agente, parón idea propia) · **«¿Compensa cambiar?»** dentro de «Rotación» (Clasificación, para todos: estadístico): puntos del once frente a la media de su jornada según los jugadores nuevos metidos (hasta 3: -2,6; 4-5: +2,0; 6 o más: +3,5; 77 onces). Solo lee `matchdays`. Probado a 390 px con Playwright: sin errores ni desborde. Idea: lo mismo separado por manager cuando haya más jornadas.
 - 2026-11-20 (agente, revisión final sin cambios de código) · Rama al día con `main` (merge); sin mejora nueva con valor claro. `index.html` sin tocar.
 - 2026-11-20 (agente, última ejecución del modo intensivo, sin cambios de código) · Rama al día con `main` (merge). Las listas del parón están agotadas y no hay mejora nueva con valor claro; `index.html` sin tocar.
