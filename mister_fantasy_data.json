@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "21/11/2026 16:01",
-  "updatedAt": "2026-11-21T15:01:21Z",
+  "lastUpdated": "21/11/2026 16:17",
+  "updatedAt": "2026-11-21T15:17:47Z",
   "managers": [
     {
       "id": "8663482",
@@ -19835,8 +19835,8 @@
         ]
       },
       "10303392": {
-        "points": 4,
-        "totalPoints": 754,
+        "points": 3,
+        "totalPoints": 753,
         "position": 4,
         "playersPlayed": 2,
         "squadValue": 123233000,
@@ -20028,11 +20028,11 @@
             "name": "Yeremay Hernández",
             "teamId": 6,
             "pos": "DL",
-            "points": 2,
+            "points": 1,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 1,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
