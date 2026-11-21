@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "21/11/2026 18:19",
-  "updatedAt": "2026-11-21T17:19:54Z",
+  "lastUpdated": "21/11/2026 18:36",
+  "updatedAt": "2026-11-21T17:36:11Z",
   "managers": [
     {
       "id": "8663482",
@@ -19213,7 +19213,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 95,
+            "minutes": 90,
             "goalsConceded": 0
           },
           {
@@ -19894,7 +19894,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 95,
+            "minutes": 90,
             "goalsConceded": 1
           },
           {
@@ -19966,7 +19966,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 95,
+            "minutes": 90,
             "goalsConceded": 1
           },
           {
@@ -20193,7 +20193,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 33,
+            "minutes": 28,
             "goalsConceded": 1
           },
           {
