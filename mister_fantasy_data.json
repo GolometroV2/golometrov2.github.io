@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "21/11/2026 18:59",
-  "updatedAt": "2026-11-21T17:59:24Z",
+  "lastUpdated": "21/11/2026 19:15",
+  "updatedAt": "2026-11-21T18:15:53Z",
   "managers": [
     {
       "id": "8663482",
@@ -19154,8 +19154,8 @@
     },
     "J13": {
       "13179902": {
-        "points": 49,
-        "totalPoints": 775,
+        "points": 53,
+        "totalPoints": 779,
         "position": 1,
         "playersPlayed": 5,
         "squadValue": 96232000,
@@ -19203,11 +19203,11 @@
             "name": "César Tárrega",
             "teamId": 19,
             "pos": "DF",
-            "points": 7,
+            "points": 8,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 7,
+            "basePoints": 8,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -19381,8 +19381,8 @@
         ]
       },
       "8664919": {
-        "points": 24,
-        "totalPoints": 690,
+        "points": 25,
+        "totalPoints": 691,
         "position": 2,
         "playersPlayed": 4,
         "squadValue": 95452000,
@@ -19608,8 +19608,8 @@
         ]
       },
       "8663482": {
-        "points": 14,
-        "totalPoints": 695,
+        "points": 15,
+        "totalPoints": 696,
         "position": 3,
         "playersPlayed": 3,
         "squadValue": 110064000,
@@ -19835,8 +19835,8 @@
         ]
       },
       "10303392": {
-        "points": 12,
-        "totalPoints": 762,
+        "points": 13,
+        "totalPoints": 763,
         "position": 4,
         "playersPlayed": 4,
         "squadValue": 123233000,
@@ -19884,11 +19884,11 @@
             "name": "Andrei Rațiu",
             "teamId": 14,
             "pos": "DF",
-            "points": 3,
+            "points": 4,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
