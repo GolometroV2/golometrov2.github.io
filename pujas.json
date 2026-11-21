@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-21T04:04:46Z",
+"updatedAt": "2026-11-21T17:02:39Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-21T17:02:39Z",
+"playerId": "24789",
+"name": "Nico Williams",
+"from": "8664919",
+"to": "10303392",
+"tipo": "clausula",
+"valor": 11862000,
+"listado": null,
+"precio": 17998500,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-21T04:04:46Z",
 "playerId": "17615",
