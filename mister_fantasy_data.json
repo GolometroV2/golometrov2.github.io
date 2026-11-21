@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "21/11/2026 15:43",
-  "updatedAt": "2026-11-21T14:43:22Z",
+  "lastUpdated": "21/11/2026 15:59",
+  "updatedAt": "2026-11-21T14:59:54Z",
   "managers": [
     {
       "id": "8663482",
@@ -19608,8 +19608,8 @@
         ]
       },
       "8664914": {
-        "points": 10,
-        "totalPoints": 513,
+        "points": 9,
+        "totalPoints": 512,
         "position": 3,
         "playersPlayed": 4,
         "squadValue": 72949000,
@@ -19657,18 +19657,18 @@
             "name": "José Giménez",
             "teamId": 6,
             "pos": "DF",
-            "points": null,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 45,
+            "goalsConceded": 3
           },
           {
             "id": 33717,
@@ -19835,8 +19835,8 @@
         ]
       },
       "10303392": {
-        "points": 6,
-        "totalPoints": 756,
+        "points": 4,
+        "totalPoints": 754,
         "position": 4,
         "playersPlayed": 2,
         "squadValue": 123233000,
@@ -20028,36 +20028,36 @@
             "name": "Yeremay Hernández",
             "teamId": 6,
             "pos": "DL",
-            "points": null,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 66,
+            "goalsConceded": 3
           },
           {
             "id": 70941,
             "name": "Bil Nsongo",
             "teamId": 6,
             "pos": "DL",
-            "points": null,
+            "points": 2,
             "captain": false,
             "captainMultiplier": null,
-            "played": false,
-            "basePoints": null,
+            "played": true,
+            "basePoints": 2,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 0,
-            "goalsConceded": 0
+            "minutes": 24,
+            "goalsConceded": 3
           }
         ]
       },
