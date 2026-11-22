@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "22/11/2026 20:14",
-  "updatedAt": "2026-11-22T19:14:36Z",
+  "lastUpdated": "22/11/2026 20:31",
+  "updatedAt": "2026-11-22T19:31:27Z",
   "managers": [
     {
       "id": "8663482",
@@ -19381,8 +19381,8 @@
         ]
       },
       "10303392": {
-        "points": 72,
-        "totalPoints": 822,
+        "points": 63,
+        "totalPoints": 813,
         "position": 2,
         "playersPlayed": 10,
         "squadValue": 123233000,
@@ -19402,9 +19402,9 @@
           "pos": "MC",
           "multiplier": 3,
           "played": true,
-          "points": 0,
-          "basePoints": 0,
-          "bonus": 0
+          "points": 18,
+          "basePoints": 6,
+          "bonus": 12
         },
         "players": [
           {
@@ -19466,17 +19466,17 @@
             "name": "Valentin Rosier",
             "teamId": 50,
             "pos": "DF",
-            "points": null,
+            "points": 6,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 5,
+            "basePoints": 6,
             "goals": 0,
             "assists": 1,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 86,
+            "minutes": 90,
             "goalsConceded": 0
           },
           {
@@ -19484,11 +19484,11 @@
             "name": "Moi Gómez",
             "teamId": 50,
             "pos": "MC",
-            "points": null,
+            "points": 18,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 4,
+            "basePoints": 6,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -20289,8 +20289,8 @@
         ]
       },
       "8658507": {
-        "points": 34,
-        "totalPoints": 604,
+        "points": 32,
+        "totalPoints": 602,
         "position": 6,
         "playersPlayed": 7,
         "squadValue": 73106000,
@@ -20482,11 +20482,11 @@
             "name": "Ante Budimir",
             "teamId": 50,
             "pos": "DL",
-            "points": null,
+            "points": 8,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 7,
+            "basePoints": 8,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
@@ -20516,8 +20516,8 @@
         ]
       },
       "8663449": {
-        "points": 31,
-        "totalPoints": 641,
+        "points": 29,
+        "totalPoints": 639,
         "position": 7,
         "playersPlayed": 5,
         "squadValue": 94190000,
@@ -20673,7 +20673,7 @@
             "name": "Rubén García",
             "teamId": 50,
             "pos": "MC",
-            "points": null,
+            "points": 3,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
