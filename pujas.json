@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-21T17:02:39Z",
+"updatedAt": "2026-11-22T04:04:49Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-22T04:04:49Z",
+"playerId": "58951",
+"name": "Endrick",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 330000,
+"listado": 344000,
+"precio": null,
+"clausulaMinima": true
+},
 {
 "ts": "2026-11-21T17:02:39Z",
 "playerId": "24789",
