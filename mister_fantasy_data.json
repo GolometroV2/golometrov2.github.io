@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "22/11/2026 19:40",
-  "updatedAt": "2026-11-22T18:40:58Z",
+  "lastUpdated": "22/11/2026 19:57",
+  "updatedAt": "2026-11-22T18:57:47Z",
   "managers": [
     {
       "id": "8663482",
@@ -19381,8 +19381,8 @@
         ]
       },
       "10303392": {
-        "points": 58,
-        "totalPoints": 808,
+        "points": 68,
+        "totalPoints": 818,
         "position": 2,
         "playersPlayed": 10,
         "squadValue": 123233000,
@@ -19476,7 +19476,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 53,
+            "minutes": 70,
             "goalsConceded": 0
           },
           {
@@ -19488,13 +19488,13 @@
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 3,
+            "basePoints": 4,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 53,
+            "minutes": 70,
             "goalsConceded": 0
           },
           {
@@ -20492,7 +20492,7 @@
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 53,
+            "minutes": 70,
             "goalsConceded": 0
           },
           {
@@ -20516,8 +20516,8 @@
         ]
       },
       "8663449": {
-        "points": 30,
-        "totalPoints": 640,
+        "points": 31,
+        "totalPoints": 641,
         "position": 7,
         "playersPlayed": 5,
         "squadValue": 94190000,
@@ -20677,13 +20677,13 @@
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 2,
+            "basePoints": 3,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
             "redCards": 0,
             "ownGoals": 0,
-            "minutes": 53,
+            "minutes": 70,
             "goalsConceded": 0
           },
           {
