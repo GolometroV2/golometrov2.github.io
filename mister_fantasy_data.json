@@ -1,8 +1,8 @@
 {
   "leagueName": "MONEYBALL",
   "season": "2026/2027",
-  "lastUpdated": "22/11/2026 22:17",
-  "updatedAt": "2026-11-22T21:17:49Z",
+  "lastUpdated": "22/11/2026 22:34",
+  "updatedAt": "2026-11-22T21:34:32Z",
   "managers": [
     {
       "id": "8663482",
@@ -19381,8 +19381,8 @@
         ]
       },
       "10303392": {
-        "points": 69,
-        "totalPoints": 819,
+        "points": 72,
+        "totalPoints": 822,
         "position": 2,
         "playersPlayed": 10,
         "squadValue": 123233000,
@@ -19402,9 +19402,9 @@
           "pos": "MC",
           "multiplier": 3,
           "played": true,
-          "points": 21,
-          "basePoints": 7,
-          "bonus": 14
+          "points": 24,
+          "basePoints": 8,
+          "bonus": 16
         },
         "players": [
           {
@@ -19484,11 +19484,11 @@
             "name": "Moi Gómez",
             "teamId": 50,
             "pos": "MC",
-            "points": 21,
+            "points": 24,
             "captain": true,
             "captainMultiplier": 3,
             "played": true,
-            "basePoints": 7,
+            "basePoints": 8,
             "goals": 0,
             "assists": 0,
             "yellowCards": 0,
@@ -19608,8 +19608,8 @@
         ]
       },
       "8664919": {
-        "points": 61,
-        "totalPoints": 727,
+        "points": 63,
+        "totalPoints": 729,
         "position": 3,
         "playersPlayed": 9,
         "squadValue": 95452000,
@@ -19835,8 +19835,8 @@
         ]
       },
       "8663449": {
-        "points": 55,
-        "totalPoints": 665,
+        "points": 58,
+        "totalPoints": 668,
         "position": 4,
         "playersPlayed": 9,
         "squadValue": 94190000,
@@ -20516,8 +20516,8 @@
         ]
       },
       "8658507": {
-        "points": 35,
-        "totalPoints": 605,
+        "points": 36,
+        "totalPoints": 606,
         "position": 7,
         "playersPlayed": 7,
         "squadValue": 73106000,
@@ -20709,11 +20709,11 @@
             "name": "Ante Budimir",
             "teamId": 50,
             "pos": "DL",
-            "points": 11,
+            "points": 12,
             "captain": false,
             "captainMultiplier": null,
             "played": true,
-            "basePoints": 11,
+            "basePoints": 12,
             "goals": 1,
             "assists": 0,
             "yellowCards": 0,
