@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-22T04:04:49Z",
+"updatedAt": "2026-11-22T08:08:02Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-22T08:08:02Z",
+"playerId": "17568",
+"name": "Pol Lozano",
+"from": "8664914",
+"to": "13179902",
+"tipo": "clausula",
+"valor": 550000,
+"listado": null,
+"precio": 1000000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-22T04:04:49Z",
 "playerId": "58951",
