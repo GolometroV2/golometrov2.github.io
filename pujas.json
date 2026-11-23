@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-23T08:10:04Z",
+"updatedAt": "2026-11-23T15:00:45Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-23T15:00:45Z",
+"playerId": "208",
+"name": "Moi Gómez",
+"from": "10303392",
+"to": "8664914",
+"tipo": "clausula",
+"valor": 2564000,
+"listado": null,
+"precio": 3846000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-23T08:10:04Z",
 "playerId": "59415",
