@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-23T04:01:16Z",
+"updatedAt": "2026-11-23T08:10:04Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-23T08:10:04Z",
+"playerId": "59415",
+"name": "Dani Olmo",
+"from": "8664914",
+"to": "10303392",
+"tipo": "clausula",
+"valor": 13661000,
+"listado": null,
+"precio": 27424666,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-23T04:01:16Z",
 "playerId": "71003",
