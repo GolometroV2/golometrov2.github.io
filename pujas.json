@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-23T15:00:45Z",
+"updatedAt": "2026-11-24T04:02:53Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-24T04:02:53Z",
+"playerId": "557",
+"name": "Pablo Fornals",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 13173000,
+"listado": 13150000,
+"precio": 13358000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-23T15:00:45Z",
 "playerId": "208",
