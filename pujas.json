@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-25T04:03:18Z",
+"updatedAt": "2026-11-25T10:31:33Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-25T10:31:33Z",
+"playerId": "64031",
+"name": "Hugo Rincón",
+"from": "13179902",
+"to": "8663482",
+"tipo": "clausula",
+"valor": 1962000,
+"listado": null,
+"precio": 3072000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-25T04:03:18Z",
 "playerId": "14789",
