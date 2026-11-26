@@ -20,24 +20,44 @@ En la pestaña Mercado (`bloquePlanParon`, `bloqueEscudo`, `bloqueLeerRivales`).
 ## Capitán: UN SOLO algoritmo (decisión del dueño, 04/11/2026)
 Ya no existen las tres pestañas «Seguro / Equilibrado / Arriesgado»: **no las vuelvas a crear**. La pestaña Capitán tiene una sola lista y el propio algoritmo decide el riesgo: puntuación = (multiplicador − 1) × (puntos esperados + k × posible subida − l × posible bajada), con `k` y `l` calibrados cada día por `autoajuste_capitan.py` con las jornadas pasadas (`parametros_capitan.json` → `riesgo`, `CAP.RIESGO` en la página). Cada tarjeta explica el coste (multiplicador por valor), el beneficio (puntos esperados) y el riesgo (techo, suelo, probabilidad de jugar). El panel «Análisis del riesgo» muestra la evidencia. Al rediseñar la pestaña Capitán (fase 5), hazlo sobre este diseño: una lista única, el mejor capitán destacado arriba con su porqué en una frase, y el detalle plegable. Si tu rama tiene conflictos con `main` en `index.html`, rebasa y **conserva la lógica de `main`** (riesgo único, probabilidades de Futbol Fantasy) aplicando tus cambios visuales encima.
 
-## Qué tienes que hacer en cada ejecución
-1. Lee `MEJORAS.md` (lo hecho y las ideas pendientes) y los datos de los JSON.
-2. Elige **UNA sola mejora** con valor real para los jugadores de la liga. Prioridad: errores graves de datos > **hoja de ruta del parón (sección PARÓN, hasta el 20/11)** > precisión del modelo (capitán y mercado) > otras herramientas nuevas. Las 8 fases del rediseño ya están hechas (04-08/11): no las repitas. Los arreglos pequeños (una fuente, una barra) no cuentan: cada ejecución debe dejar algo nuevo y visible.
-3. Impleméntala en una rama nueva `agente/AAAA-MM-DD`, probándola de verdad (ver abajo).
-4. Anota en `MEJORAS.md` qué hiciste, por qué y qué ideas nuevas has visto. Mantén la lista de ideas pendientes ordenada.
-5. Abre una Pull Request con `gh pr create` explicando en 5 líneas qué cambia y cómo lo has probado. **Nunca subas directo a `main`.**
+## AGENTES AUTÓNOMOS (decisión del dueño, 26/11/2026)
+Cuatro agentes trabajan solos con tareas programadas de Claude (ya no con el flujo `agente.yml`, que está desactivado: el reloj de GitHub se saltaba más del 90 % de las ejecuciones). El dueño pidió que **publiquen solos**: lo que el Revisor aprueba se fusiona en `main` sin esperarle. Por eso las reglas de abajo no se saltan nunca.
 
-## MODO INTENSIVO (hasta el 20/11/2026, fin del parón de selecciones; el dueño lo amplió el 09/11 y autorizó cambiar esa fecha en `agente.yml`)
-Se te ejecuta cada hora. Para no llenar el repositorio de ramas y no crear conflictos:
-- Trabaja siempre en la rama `agente/semana`. Si no existe, créala desde `main`. Si existe: `git fetch origin` y `git checkout agente/semana && git pull --rebase origin agente/semana`; para traer cambios de `main`, usa `git merge origin/main` (nunca `rebase` sobre main).
-- **Claude también sube commits a esta rama a mano.** Nunca reescribas su historia: prohibido `git push --force`, `--force-with-lease`, `reset` o rebase de commits ya subidos. Sube con `git pull --rebase origin agente/semana && git push origin agente/semana`; si falla, repite el pull y vuelve a subir.
-- Cada ejecucion = una mejora pequena = un commit con mensaje claro.
-- Mantén UNA sola Pull Request abierta de `agente/semana` a `main` (compruebalo con `gh pr list --head agente/semana`; si no existe, creala; si existe, actualiza su descripcion con la lista de mejoras).
-- Si la PR ya fue aceptada y la rama quedo vieja, empieza una `agente/semana` nueva desde `main`.
-- Prioriza variedad: no repitas el mismo tipo de mejora dos veces seguidas y revisa `MEJORAS.md` antes de elegir. Si algo se rompe en una prueba, revierte tu cambio y apunta el motivo en `MEJORAS.md`.
-- Las ideas pendientes de `MEJORAS.md` son un punto de partida, no un limite: investiga los datos y propon tus propias herramientas (comparadores, resumenes, graficos, calendario de fichajes, alertas de clausulas, etc.).
+| Agente | Cuándo (hora de Madrid) | Rama | Qué hace |
+|---|---|---|---|
+| **Vigilante de datos** | cada día, 07:43 | `agente/datos` | Comprueba que los JSON están al día y que la web cuadra con ellos; arregla errores de datos o de la página. Relanza los flujos de datos atrasados. |
+| **Analista del modelo** | lunes y jueves, 10:37 | `agente/modelo` | Mejora la precisión del capitán y del mercado (`modelo_liga.py`, `autoajuste_capitan.py`, lógica de la página). |
+| **Creador de herramientas** | martes, jueves y sábado, 12:29 | `agente/herramientas` | Una herramienta nueva, útil y vistosa por ejecución (sección «Ideas» de `MEJORAS.md`; antes, lo pendiente de las fases del parón). |
+| **Revisor** | cada día, 13:47 y 22:47 | — | Prueba las Pull Requests de los demás, fusiona las que pasan y vigila que todos los agentes y flujos sigan vivos. |
 
-## PARÓN (09-20/11/2026): herramientas visuales muy avanzadas (pedido del dueño, 09/11)
+**En estas sesiones GitHub solo responde por la API REST**: usa `gh api repos/…` para PRs, issues, comentarios y fusiones (`gh pr create`, `gh issue` y otros que usan GraphQL fallan).
+
+### Reglas comunes (los tres que programan)
+1. Repositorio `GolometroV2/golometrov2.github.io` (clónalo con `gh repo clone` si no está). Lee este fichero y `MEJORAS.md` antes de elegir qué hacer.
+2. Trabaja **solo en tu rama**. Si no existe, créala desde `origin/main`. Si existe: `git fetch origin`, `git checkout <rama>`, `git pull --no-rebase origin <rama>` y `git merge origin/main`. Nunca `push --force`, `reset` ni rebase de lo ya subido. Nunca subas a `main`.
+3. **Una sola mejora por ejecución**, de menos de ~400 líneas, probada como dice «Cómo se prueba». Si no encuentras nada que merezca la pena o la prueba falla, no subas nada (y deshaz lo hecho).
+4. Anota en `MEJORAS.md`, en «## Hecho», una línea que empiece por `- AAAA-MM-DD (<agente>)` con qué, por qué y cómo lo probaste. Si al traer cambios choca `MEJORAS.md`, quédate con las líneas de los dos lados.
+5. Una sola Pull Request abierta por rama hacia `main`: búscala con `gh api "repos/GolometroV2/golometrov2.github.io/pulls?head=GolometroV2:<rama>&state=open"` y créala si no hay (`gh api repos/GolometroV2/golometrov2.github.io/pulls -f title=… -f head=<rama> -f base=main -f body=…`), o añade tu mejora a su descripción. En la descripción, 5 líneas: qué cambia y cómo lo probaste.
+6. Si tu PR tiene un comentario del Revisor con fallos, arréglalos antes que nada.
+7. Al terminar, deja un comentario en el issue **«Estado de los agentes»** (`gh api repos/GolometroV2/golometrov2.github.io/issues/<n>/comments -f body=…`; el número está al final de esta sección): `✅ <agente> · <fecha y hora> · <una frase>` o `⚠️ <agente> · … · <qué falló>`. Es el latido que mira el Revisor.
+
+Issue de latidos: **#26** («Estado de los agentes»).
+
+### Revisor: cuándo se fusiona (si falla una sola condición, NO se fusiona)
+- La PR viene de `agente/datos`, `agente/modelo` o `agente/herramientas`. Nada de otras ramas (la antigua `agente/semana`, PR #25, queda en espera: no se fusiona).
+- **Limpieza en curso (26/11, pedido del dueño: «la web está muy sucia»):** mientras dure, no se acepta ningún bloque ni herramienta nueva, solo arreglos y mejoras de lo que ya existe. El Creador de herramientas está pausado.
+- No toca `.github/workflows/`, `previa.html`, `credenciales.env` ni secretos; no borra JSON ni cambia su formato; no quita el PIN ni saca de `soloIA` una previsión o consejo; no mete amarillo de acento ni librerías o peticiones externas nuevas.
+- Con `origin/main` mezclado dentro y sin conflictos: `node --check` del script de `index.html`; Playwright sirviendo la carpeta con `python -m http.server`, las 4 pestañas a 360, 390 y 420 px, con y sin PIN, claro y oscuro: **cero errores de consola y sin scroll horizontal**; capturas revisadas a ojo.
+- Mismos números que en `main` en lo que la PR no dice cambiar (clasificación, puntos, valores, capitán recomendado, puja ideal).
+- Si toca el modelo: la validación cruzada de `modelo_liga.py` / `autoajuste_capitan.py` no empeora.
+Si pasa: `gh api -X PUT repos/GolometroV2/golometrov2.github.io/pulls/<n>/merge -f merge_method=merge -f sha=<commit probado>` y comentario breve con lo probado. Si no: comentario en la PR con los fallos concretos y NO se fusiona. Una PR cada vez; tras fusionar, mezcla `main` en la siguiente antes de probarla.
+Después de fusionar, abre la web oficial (o `main` servido en local) y repite la prueba: si algo se ha roto, revierte la fusión con una PR (`git revert -m 1`) y fusiónala tú mismo, explicando el motivo en el issue.
+
+### Revisor: vigilancia
+- **Agentes:** mira el último latido de cada uno en el issue. Si el Vigilante lleva más de 36 h, el Analista más de 5 días o el Creador más de 4 días sin latido, relánzalo con la herramienta de tareas programadas si la tienes; si no, avisa en el issue.
+- **Flujos de datos de GitHub** (el cron de GitHub se salta ejecuciones): si el último éxito de `seguimiento.yml` tiene más de 3 h, `alineaciones.yml` más de 4 h, o `actualizar.yml`, `mercado.yml` o `estadisticas.yml` más de 26 h, lánzalo con `gh api -X POST repos/GolometroV2/golometrov2.github.io/actions/workflows/<fichero>/dispatches -f ref=main`. No cambies los ficheros de los flujos.
+
+## PARÓN (09-20/11/2026, terminado): herramientas visuales muy avanzadas (pedido del dueño, 09/11)
 El dueño quiere herramientas «que sean una locura estéticamente», al nivel de las mejores apps deportivas, para enseñarlas y compartirlas en los grupos de WhatsApp. Tienes mano libre; estas reglas no se saltan:
 - Una herramienta (o una parte entera de una grande) por ejecución, terminada y probada. Nada a medias a la vista.
 - Solo HTML, CSS, SVG y Canvas propios: sin librerías, sin fuentes ni imágenes de internet. Fotos y escudos de `fotos/`; si falta una foto, iniciales o camiseta del color del equipo (`esCamiseta`).
