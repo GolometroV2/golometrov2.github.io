@@ -6075,7 +6075,7 @@ function bloqueCurvas(cands) {
   const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
   const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
   const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
-  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+  return `<div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
     <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
     <ul class="cv-ley">${leyenda}</ul></div>`;
 }
@@ -6410,18 +6410,14 @@ function pintarCapitan() {
     const util = r.candidatos.filter(c => c.score > -Infinity);
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
-    const cx = [["rec", "🏆", "Capitán", "El mejor para esta jornada", top.length ? `<ul class="jplist">${heroCap(top[0], r)}</ul>` : ""],
-      ["once", "🧩", "Tu once", "El mejor once posible", htmlOnceRec(r)],
-      ["ganar", "🎯", "Ganar la jornada", "Tus opciones con cada capitán", bloqueCapGanar(r)],
-      ["liga", "👥", "La liga", "A quién capitanean los demás", htmlCapLiga(cg, gwVer)],
-      ["cur", "📈", "Curvas", "Sus puntos posibles, frente a frente", bloqueCurvas(util)],
-      ["hor", "⏰", "Horario", "Cuándo juega cada uno", htmlHorario(r)],
-      ["alt", "🔁", "Alternativas", "Otras opciones y riesgo", top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""]].filter(x => x[4]);
-    const cb = k => { const x = cx.find(y => y[0] === k); return x ? `<div id="cpx-${k}">${x[4]}</div>` : ""; };
-    const cexplora = `<nav class="indice bento" aria-label="Más del Capitán">${cx.map(x => `<button data-ir="cpx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
-    cuerpo = `${cexplora}${cb("rec")}${cb("once")}${cb("ganar")}${cb("liga")}${cb("cur")}${cb("hor")}${cb("alt")}
-      ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
-      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
+    // limpieza del 26/11: sin tarjetas «Explora» (empujaban al capitán fuera de la pantalla) y las otras opciones
+    // —alternativas, el resto y el duelo de curvas— juntas en un grupo con pestañas
+    const alt = top.length > 1 ? `<ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : "";
+    const resHTML = resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>
+      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}` : "";
+    cuerpo = `${top.length ? `<ul class="jplist">${heroCap(top[0], r)}</ul>` : ""}${htmlOnceRec(r)}${bloqueCapGanar(r)}
+      ${htmlGrupo("capop", "🔁 Otras opciones", [["cpoAlt", `Alternativas${util.length > 1 ? ` (${util.length - 1})` : ""}`, alt || resHTML ? alt + resHTML : ""], ["cpoCur", "Curvas frente a frente", bloqueCurvas(util)]])}
+      ${htmlCapLiga(cg, gwVer)}${htmlHorario(r)}
       ${bloqueRivales(r, util)}
       ${fuera.length ? `<p class="note">Sin partido pendiente: ${fuera.map(c => esc(c.p.short || c.p.name) + " (" + c.sinPartido.toLowerCase() + ")").join(", ")}.</p>` : ""}
       ${htmlGrupo("capfi", "🔬 ¿Cuánto fiarse del algoritmo?", [["cpfRend", "Acierto", panelRendimiento()], ["cpfCalc", "Cómo se calcula", `<p class="note" style="margin-top:0">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
