@@ -44,7 +44,8 @@ Cuatro agentes trabajan solos con tareas programadas de Claude (ya no con el flu
 Issue de latidos: **#26** («Estado de los agentes»).
 
 ### Revisor: cuándo se fusiona (si falla una sola condición, NO se fusiona)
-- La PR viene de `agente/datos`, `agente/modelo`, `agente/herramientas` o la antigua `agente/semana`. Nada de otras ramas.
+- La PR viene de `agente/datos`, `agente/modelo` o `agente/herramientas`. Nada de otras ramas (la antigua `agente/semana`, PR #25, queda en espera: no se fusiona).
+- **Limpieza en curso (26/11, pedido del dueño: «la web está muy sucia»):** mientras dure, no se acepta ningún bloque ni herramienta nueva, solo arreglos y mejoras de lo que ya existe. El Creador de herramientas está pausado.
 - No toca `.github/workflows/`, `previa.html`, `credenciales.env` ni secretos; no borra JSON ni cambia su formato; no quita el PIN ni saca de `soloIA` una previsión o consejo; no mete amarillo de acento ni librerías o peticiones externas nuevas.
 - Con `origin/main` mezclado dentro y sin conflictos: `node --check` del script de `index.html`; Playwright sirviendo la carpeta con `python -m http.server`, las 4 pestañas a 360, 390 y 420 px, con y sin PIN, claro y oscuro: **cero errores de consola y sin scroll horizontal**; capturas revisadas a ojo.
 - Mismos números que en `main` en lo que la PR no dice cambiar (clasificación, puntos, valores, capitán recomendado, puja ideal).
