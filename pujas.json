@@ -1,7 +1,55 @@
 {
-"updatedAt": "2026-11-25T10:31:33Z",
+"updatedAt": "2026-11-26T04:02:30Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-26T04:02:30Z",
+"playerId": "58438",
+"name": "Flavien Boyomo",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 2536000,
+"listado": 2463000,
+"precio": 2812000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-26T04:02:30Z",
+"playerId": "65625",
+"name": "Tani Oluwaseyi",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 459000,
+"listado": 393000,
+"precio": 893000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-26T04:02:30Z",
+"playerId": "64524",
+"name": "Martim Neto",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 166000,
+"listado": 193000,
+"precio": null,
+"clausulaMinima": true
+},
+{
+"ts": "2026-11-26T04:02:30Z",
+"playerId": "22502",
+"name": "Alex Baena",
+"from": null,
+"to": "8663482",
+"tipo": "mercado",
+"valor": 17119000,
+"listado": 17043000,
+"precio": 25066000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-25T10:31:33Z",
 "playerId": "64031",
