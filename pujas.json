@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-26T04:02:30Z",
+"updatedAt": "2026-11-26T07:56:29Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-26T07:56:29Z",
+"playerId": "60858",
+"name": "Pablo Ramón",
+"from": "8664914",
+"to": "8663482",
+"tipo": "clausula",
+"valor": 1835000,
+"listado": null,
+"precio": 2752500,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-26T04:02:30Z",
 "playerId": "58438",
