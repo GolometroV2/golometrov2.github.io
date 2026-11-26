@@ -115,6 +115,55 @@ def recta(x, y, lam=0.0):
     return [a, my - a * mx]
 
 
+# Nivel esperado según el valor: recta sobre una transformación del valor (en millones). 0 = logaritmo (la de siempre);
+# si no, valor ** exp. Medido el 26/11: los puntos crecen más deprisa con el valor que con su logaritmo (√valor acierta más).
+# El exponente no se fija a mano: se elige cada día con la validación hacia delante.
+EXPONENTES = [0, 0.25, 0.5, 0.75, 1]
+
+
+def tr_valor(v, e):
+    v = max(v or 1e5, 1e5) / 1e6
+    return math.log10(v) if not e else v ** e
+
+
+def rectas_valor(rows, e):
+    out = {}
+    for pos in POS:
+        jt = [f for f in rows if f["pos"] == pos and f["pts"] is not None]
+        out[pos] = (recta([tr_valor(f["valor"], e) for f in jt], [f["pts"] for f in jt]), media([f["pts"] for f in jt]))
+    return out
+
+
+def errores_valor(filas, gws, e):
+    """Errores al cuadrado de la validación hacia delante (cada jornada con lo aprendido en las anteriores), por jornada."""
+    res = {}
+    for g in gws:
+        tr = [f for f in filas if f["gw"] < g]
+        te = [f for f in filas if f["gw"] == g and f["pts"] is not None]
+        if len(tr) < 300 or not te:
+            continue
+        R = rectas_valor(tr, e)
+        res[g] = [((R[f["pos"]][0][0] * tr_valor(f["valor"], e) + R[f["pos"]][0][1] if R[f["pos"]][0] else R[f["pos"]][1]) - f["pts"]) ** 2
+                  for f in te]
+    return res
+
+
+def elegir_exponente(filas, gws):
+    """Exponente con menos error hacia delante y error honesto: en cada jornada se usa el exponente que mejor iba en las
+       anteriores (sin mirar la jornada que se prueba)."""
+    E = {e: errores_valor(filas, gws, e) for e in EXPONENTES}
+    hechas = sorted(E[0])
+    anidado = []
+    for i, g in enumerate(hechas):
+        prev = hechas[:i]
+        e = min(EXPONENTES, key=lambda x: (media([v for h in prev for v in E[x][h]]), x != 0)) if prev else 0
+        anidado += E[e][g]
+    total = {e: media([v for h in hechas for v in E[e][h]]) for e in EXPONENTES}
+    mejor = min(EXPONENTES, key=lambda x: (total[x], x != 0))
+    return mejor, {"rmseLog": round(math.sqrt(total[0]), 3), "rmseElegido": round(math.sqrt(media(anidado)), 3) if anidado else None,
+                   "porExponente": {str(e): round(math.sqrt(total[e]), 3) for e in EXPONENTES}}
+
+
 def construir(H, J, D=None):
     """Observaciones (jugador, jornada): pos, valor, puntos (None = no jugó) y puntos de las 5 jornadas anteriores."""
     jug = {p["id"]: p for p in (J or {}).get("jugadores", [])}
@@ -205,6 +254,14 @@ def ajustar(H, J, D=None):
         r = recta([math.log10(max(f["valor"] or 1e5, 1e5)) for f in jt], [f["pts"] for f in jt])
         prior[pos] = [round(r[0], 4), round(r[1], 4)] if r else None
     out["priorValor"] = prior
+    try:
+        e, val = elegir_exponente(filas, [x for x in gws if x >= GW_MIN + 1])
+        R = rectas_valor(filas, e)
+        out["priorValorPot"] = {"exp": e, **{pos: [round(R[pos][0][0], 4), round(R[pos][0][1], 4)] if R[pos][0] else None for pos in POS},
+                                "validacion": val}
+    except Exception as ex:      # nunca debe romper el modelo
+        out["priorValorPot"] = None
+        print(f"[!] Nivel por valor con exponente no disponible: {ex}")
     out["valorDin"] = valor_dinamica(J, H)
     carpeta = os.path.dirname(os.path.abspath(__file__))
     try:
