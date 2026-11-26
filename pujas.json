@@ -1,7 +1,19 @@
 {
-"updatedAt": "2026-11-26T07:56:29Z",
+"updatedAt": "2026-11-26T10:37:25Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-26T10:37:25Z",
+"playerId": "71003",
+"name": "Diego Murillo",
+"from": "13179902",
+"to": "8664914",
+"tipo": "clausula",
+"valor": 326000,
+"listado": null,
+"precio": 1000000,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-26T07:56:29Z",
 "playerId": "60858",
