@@ -4965,7 +4965,7 @@ const MER = {
   V_REF: 6e6, V_EXP: 0.3, TIER: [0.7, 1.6],     // la sobrepuja relativa baja con el valor del jugador
   RECUP: 0.85, RECUP_MAX: 0.30, TECHO: 1.7       // parte del crecimiento previsto que se está dispuesto a adelantar en la puja
 };
-const merUrlEscudo = id => id ? `https://cdn-mister.mundodeportivo.com/file/cdn-common/teams/${id}.png?version=` : "";
+const merUrlEscudo = id => id ? `fotos/escudos/${id}.png` : "";   // escudos guardados en el repositorio (los 20 de LaLiga)
 
 // Cambio diario esperado del valor de un jugador (modelo de la liga: media, última jornada, valor, lesión, dueño)
 function capCrecModelo(jj) {
@@ -5462,7 +5462,7 @@ function heroMer(r, cierre) {
   const j = r.j, c = r.rival, sobre = Math.round((r.puja / r.V - 1) * 100);
   const quedan = cierre ? Math.max(0, cierre - Date.now() / 1000) : 0, hh = Math.floor(quedan / 3600), mm = Math.floor(quedan % 3600 / 60);
   return `<section class="mh prio-${r.prio}">
-    <div class="ch-top">${`<span class="cara" style="--t:84px"><span class="cara-i">${esc(iniciales(j.name))}</span>${j.photo ? `<img src="${esc(j.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<img class="cara-e" src="${esc(merUrlEscudo(j.teamId))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>`}
+    <div class="ch-top">${`<span class="cara" style="--t:84px"><span class="cara-i">${esc(iniciales(j.name))}</span>${j.photo ? `<img src="${esc(fotoDe(j.id))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<img class="cara-e" src="${esc(merUrlEscudo(j.teamId))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>`}
       <div class="ch-q"><small>${["normal", "evitar"].includes(r.prio) ? "Lo mejor de hoy, sin prisa" : "La oportunidad del día"}${cierre ? ` · se resuelve en ${hh} h ${mm} min` : ""}</small>
         <b>${esc(j.name)} <span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span></b>
         <span class="ch-vs">Vale ${merEur(r.V)}${c ? ` · ${c.casa ? "contra" : "en casa del"} ${esc(c.rivalNombre || "?")}` : ""}</span></div></div>
@@ -5487,7 +5487,7 @@ function merTarjeta(r) {
     ${r.pl ? `<p><b>Puja:</b> en esta liga, ${r.pl.n} compras del mercado con precio conocido. Para un jugador de ${merEur(r.V)} y prioridad «${esc(r.etiqueta)}», hay un ${pc(r.pl.q)} de que alguien más puje; pujando <b>+${sobre} %</b> ${rivalesPuja() ? "y viendo lo que suele pujar cada rival por jugadores de su precio" : "habrías superado a la mayoría de los que ganaron jugadores de su precio"}: te lo llevas un <b>${pc(r.pl.p)}</b>${r.sFF > 0 && r.s <= r.sFF + 1e-9 ? ` (aquí manda la puja máxima rentable de Futbol Fantasy, +${nf1.format(r.sFF * 100)} %: pagar hasta ahí no hace perder dinero)` : ""}${r.pl.tope ? `, que no sube más porque pagar más no compensa para su nivel` : ""}${r.recup > 0 && r.s <= r.recup + 1e-9 ? ` (aquí manda lo que se espera que suba antes de jugar, +${nf1.format(r.recup * 100)} %)` : ""}. ${r.techo > r.puja ? ` ${r.pl.pSeguro >= 0.95 ? "Para asegurarlo" : "Para subir a un " + pc(r.pl.pSeguro)}, como mucho <b>${merPuja(r.techo)}</b>; más no compensa.` : ""}</p>` : `<p><b>Puja:</b> sobrepuja base ${Math.round(r.base * 100)} % por ser «${esc(r.etiqueta)}»${r.bonusTop ? ` + ${Math.round(r.bonusTop * 100)} % por su nivel top` : ""}, ×${nf2.format(r.tf)} por su precio${r.fComp && r.fComp !== 1 ? `, ×${nf2.format(r.fComp)} por la competencia (aquí se fichan ${Math.round(r.tasaC * 100)} de cada 100 libres de su precio)` : ""}${r.recup ? `, ${r.recup > 0 ? "+" : "−"}${nf1.format(Math.abs(r.recup) * 100)} puntos por ${r.recup > 0 ? "la revalorización prevista" : "la caída prevista"}` : ""} = <b>+${sobre} %</b>. No conviene pasar de <b>${merPuja(r.techo)}</b>.</p>`}`;
   return `<li class="mc prio-${r.prio}">
     <div class="mrow">
-      <div class="jp-photo" style="width:48px;height:56px">${img(j.photo, "")}</div>
+      <div class="jp-photo" style="width:48px;height:56px">${img(j.photo ? fotoDe(j.id) : "", "")}</div>
       <div class="jp-info">
         <div class="jp-name"><span>${esc(j.name)}</span><span class="jp-pos2" style="background:var(--${r.pos.toLowerCase()})">${r.pos}</span>${est ? `<span class="st st-${est[0]}" title="${est[2]}">${est[1]}</span>` : ""}</div>
         <div class="jp-val">${img(merUrlEscudo(j.teamId), "shield")} <b>${merEur(r.V)}</b> <span class="note">${rivalTxt}</span></div>
