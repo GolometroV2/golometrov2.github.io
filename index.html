@@ -4380,7 +4380,7 @@ const CAP = {
   SENS_ATAQUE: 0.15,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
   SENS_CS: 0.35,         // 10 % más de probabilidad de portería a cero -> +2 % de puntos
   HOME_EXTRA: 0.02,     // ajuste adicional por jugar en casa (+) o fuera (−)
-  F_SUPLENTE: 0.59,     // puntos de un suplente que entra, respecto a un jugador normal (medido en vuestra liga: 2,7 frente a 4,5)
+  F_SUPLENTE: 0.59,     // puntos de quien FF da como suplente, respecto a su predicción (autoajuste_capitan.py lo mide frente al modelo: ~0,88)
   LIMITE_F: [0.55, 1.6],
   // Un único algoritmo de riesgo: k = premio por el potencial de subida (desviación solo hacia arriba), l = castigo por el
   // riesgo de bajada (desviación solo hacia abajo). Una racha de 10 puntos no se penaliza; un -3 por goleada o expulsión sí.

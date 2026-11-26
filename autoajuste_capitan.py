@@ -437,6 +437,43 @@ def calibrar_ff():
     return {"n": len(filas), "tramos": tramos, "brierFF": round(brier_ff, 4)}
 
 
+SUP_MIN = 150         # actuaciones de suplentes previstos (con jornada terminada) necesarias para medir F_SUPLENTE así
+SUP_LIMITE = (0.4, 1.1)
+
+
+def calibrar_suplente(modelo, filas, P, f_previo):
+    """F_SUPLENTE (lo que multiplica la web los puntos de quien Futbol Fantasy da como suplente, p < 50 %) medido frente a
+       la PREDICCIÓN del modelo, no frente a la media de todos: la media de un suplente habitual ya sale de sus minutos
+       sueltos, así que multiplicarla otra vez por lo que hace un suplente frente a un titular lo cuenta dos veces.
+       Con las jornadas de alineaciones_historial.json: de los que FF daba por suplentes y jugaron, factor de mínimos
+       cuadrados entre sus puntos y la predicción. Se valida dejando fuera cada jornada; si no mejora al valor anterior,
+       se queda el anterior."""
+    A = cargar(os.path.join(CARPETA, "alineaciones_historial.json"), {}) or {}
+    ult = int((cargar(os.path.join(CARPETA, "jugadores_historial.json"), {}) or {}).get("ultimaJornada") or 0)
+    idx = {(o["gw"], o["pid"]): o for o in filas}
+    L = []
+    for gw, jug in A.items():
+        if not str(gw).isdigit() or int(gw) > ult:
+            continue
+        for pid, v in jug.items():
+            o = idx.get((int(gw), pid))
+            if o and v and float(v[0]) < 0.5:
+                L.append((o["gw"], o["pts"], modelo.prediccion(o, P)))
+    if len(L) < SUP_MIN:
+        return None
+    fac = lambda X: min(max(sum(y * p for _, y, p in X) / (sum(p * p for _, _, p in X) or 1), SUP_LIMITE[0]), SUP_LIMITE[1])
+    err = lambda X, f: [(y - f * p) ** 2 for _, y, p in X]
+    gws = sorted({g for g, _, _ in L})
+    anidado = []
+    for g in gws:
+        tr = [x for x in L if x[0] != g]
+        anidado += err([x for x in L if x[0] == g], fac(tr) if len(tr) >= 50 else f_previo)
+    f = fac(L)
+    r_prev, r_an = math.sqrt(media(err(L, f_previo))), math.sqrt(media(anidado))
+    return {"n": len(L), "jornadas": gws, "factor": round(f, 3), "previo": round(f_previo, 3), "rmsePrevio": round(r_prev, 3),
+            "rmseAnidado": round(r_an, 3), "rmseFactor": round(math.sqrt(media(err(L, f))), 3), "usa": r_an < r_prev}
+
+
 
 def calibrar_riesgo(modelo, P, obs):
     """Prueba muchas combinaciones (k, l) con lo que pasó de verdad y elige la mejor, encogida hacia el valor por defecto."""
@@ -592,9 +629,21 @@ def main():
     if len(cortos) >= 40:
         lam = len(cortos) / (len(cortos) + 120)
         params["F_SUPLENTE"] = round(DEFECTO["F_SUPLENTE"] + lam * (media(cortos) / media([o["pts"] for o in jug]) - DEFECTO["F_SUPLENTE"]), 3)
+    # mejor aún: frente a la predicción del modelo, con los suplentes que daba Futbol Fantasy (si mejora sin hacer trampa)
+    suplente = None
+    try:
+        suplente = calibrar_suplente(modelo, filas, {**DEFECTO, **params}, params.get("F_SUPLENTE", DEFECTO["F_SUPLENTE"]))
+        if suplente:
+            if suplente["usa"]:
+                params["F_SUPLENTE"] = suplente["factor"]
+            print(f"Suplentes (FF < 50 %): factor {suplente['factor']} frente a la predicción, {suplente['n']} actuaciones · error "
+                  f"{suplente['rmsePrevio']} con {suplente['previo']} -> {suplente['rmseAnidado']} dejando fuera cada jornada"
+                  + ("" if suplente["usa"] else " (no mejora: se queda el anterior)"))
+    except Exception as e:
+        print(f"[!] Calibración de suplentes no disponible: {e}")
 
     P = {**DEFECTO, **params}
-    metricas = {"fueraDeMuestra": fuera if len(filas) >= FILAS_MIN else None}
+    metricas = {"fueraDeMuestra": fuera if len(filas) >= FILAS_MIN else None, "suplente": suplente}
     if filas:
         pos_base = math.sqrt(media([(modelo.mupos(o["gw"], o["pos"]) - o["pts"]) ** 2 for o in filas]))
         sin_ctx = rmse(modelo, filas, P, ctx=False)
