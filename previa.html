@@ -4599,9 +4599,13 @@ function capPJuega(streak, valor, pos) {
   return Math.min(0.98, Math.max(0.02, 1 / (1 + Math.exp(-z))));
 }
 // puntos esperados al jugar según el valor (un jugador de 15 M rinde más que uno de 1 M)
+// Si modelo_liga.py ha medido que una potencia del valor acierta más que el logaritmo (liga.priorValorPot), se usa esa.
 function capPrior(pos, valor) {
+  if (!valor) return null;
+  const q = LIGA && LIGA.priorValorPot, rq = q && q.exp > 0 && q[pos];
+  if (rq) return Math.min(9, Math.max(1, rq[0] * Math.pow(Math.max(valor, 1e5) / 1e6, q.exp) + rq[1]));
   const r = LIGA && LIGA.priorValor && LIGA.priorValor[pos];
-  if (!r || !valor) return null;
+  if (!r) return null;
   return Math.min(9, Math.max(1, r[0] * Math.log10(Math.max(valor, 1e5)) + r[1]));
 }
 const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
