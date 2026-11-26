@@ -181,7 +181,7 @@ class Modelo:
         """Puntos esperados al jugar según el valor del jugador (recta por posición con datos anteriores a la jornada)."""
         k = (gw, pos)
         if k not in self._pv:
-            x = [(math.log10(max(o["valor"] or 1e5, 1e5)), o["pts"]) for o in self.jug if o["gw"] < gw and o["pos"] == pos and o.get("valor")]
+            x = [(self.tr(o["valor"]), o["pts"]) for o in self.jug if o["gw"] < gw and o["pos"] == pos and o.get("valor")]
             r = None
             if len(x) >= 30:
                 mx, my = media([a for a, _ in x]), media([b for _, b in x])
@@ -193,7 +193,13 @@ class Modelo:
         r = self._pv[k]
         if r is None or not valor:
             return None
-        return r[0] * math.log10(max(valor, 1e5)) + r[1]
+        return r[0] * self.tr(valor) + r[1]
+
+    def tr(self, valor):
+        """Transformación del valor que elige modelo_liga.py (liga.priorValorPot.exp): 0 = logaritmo; si no, valor ** exp."""
+        e = getattr(self, "exp_valor", 0)
+        v = max(valor or 1e5, 1e5)
+        return math.log10(v) if not e else (v / 1e6) ** e
 
     def prediccion(self, o, P, con_contexto=True):
         gw, pos = o["gw"], o["pos"]
@@ -431,6 +437,43 @@ def calibrar_ff():
     return {"n": len(filas), "tramos": tramos, "brierFF": round(brier_ff, 4)}
 
 
+SUP_MIN = 150         # actuaciones de suplentes previstos (con jornada terminada) necesarias para medir F_SUPLENTE así
+SUP_LIMITE = (0.4, 1.1)
+
+
+def calibrar_suplente(modelo, filas, P, f_previo):
+    """F_SUPLENTE (lo que multiplica la web los puntos de quien Futbol Fantasy da como suplente, p < 50 %) medido frente a
+       la PREDICCIÓN del modelo, no frente a la media de todos: la media de un suplente habitual ya sale de sus minutos
+       sueltos, así que multiplicarla otra vez por lo que hace un suplente frente a un titular lo cuenta dos veces.
+       Con las jornadas de alineaciones_historial.json: de los que FF daba por suplentes y jugaron, factor de mínimos
+       cuadrados entre sus puntos y la predicción. Se valida dejando fuera cada jornada; si no mejora al valor anterior,
+       se queda el anterior."""
+    A = cargar(os.path.join(CARPETA, "alineaciones_historial.json"), {}) or {}
+    ult = int((cargar(os.path.join(CARPETA, "jugadores_historial.json"), {}) or {}).get("ultimaJornada") or 0)
+    idx = {(o["gw"], o["pid"]): o for o in filas}
+    L = []
+    for gw, jug in A.items():
+        if not str(gw).isdigit() or int(gw) > ult:
+            continue
+        for pid, v in jug.items():
+            o = idx.get((int(gw), pid))
+            if o and v and float(v[0]) < 0.5:
+                L.append((o["gw"], o["pts"], modelo.prediccion(o, P)))
+    if len(L) < SUP_MIN:
+        return None
+    fac = lambda X: min(max(sum(y * p for _, y, p in X) / (sum(p * p for _, _, p in X) or 1), SUP_LIMITE[0]), SUP_LIMITE[1])
+    err = lambda X, f: [(y - f * p) ** 2 for _, y, p in X]
+    gws = sorted({g for g, _, _ in L})
+    anidado = []
+    for g in gws:
+        tr = [x for x in L if x[0] != g]
+        anidado += err([x for x in L if x[0] == g], fac(tr) if len(tr) >= 50 else f_previo)
+    f = fac(L)
+    r_prev, r_an = math.sqrt(media(err(L, f_previo))), math.sqrt(media(anidado))
+    return {"n": len(L), "jornadas": gws, "factor": round(f, 3), "previo": round(f_previo, 3), "rmsePrevio": round(r_prev, 3),
+            "rmseAnidado": round(r_an, 3), "rmseFactor": round(math.sqrt(media(err(L, f))), 3), "usa": r_an < r_prev}
+
+
 
 def calibrar_riesgo(modelo, P, obs):
     """Prueba muchas combinaciones (k, l) con lo que pasó de verdad y elige la mejor, encogida hacia el valor por defecto."""
@@ -501,6 +544,42 @@ def obs_liga(obs, C):
     return obs + extra
 
 
+def elegir_exp_valor(modelo, filas, liga, D):
+    """Puntos esperados según el valor: recta sobre log(valor) o sobre valor ** e. Se elige el e con menos error del modelo
+       completo (forma + nivel + contexto, el que usa la página) y se comprueba sin trampa: en cada jornada se usa el e que
+       mejor iba en las anteriores. Si no mejora al logaritmo, se queda el logaritmo. Deja en liga.priorValorPot las rectas
+       de ese e (la página las usa en capPrior)."""
+    pot = (liga or {}).get("priorValorPot") if liga else None
+    if not pot or len(filas) < FILAS_MIN:
+        modelo.exp_valor = 0
+        return 0
+    import modelo_liga as ML
+    err = {}
+    for e in ML.EXPONENTES:
+        modelo.exp_valor, modelo._pv = e, {}
+        err[e] = [(o["gw"], (modelo.prediccion(o, DEFECTO) - o["pts"]) ** 2) for o in filas]
+    gws = sorted({o["gw"] for o in filas})
+    tot = lambda e, hasta=None: media([v for g, v in err[e] if hasta is None or g < hasta])
+    anidado = []
+    for g in gws:
+        e = min(ML.EXPONENTES, key=lambda x: (tot(x, g) if any(h < g for h, _ in err[x]) else (0 if x == 0 else 1), x != 0))
+        anidado += [v for h, v in err[e] if h == g]
+    mejor = min(ML.EXPONENTES, key=lambda x: (tot(x), x != 0))
+    r_log, r_an = math.sqrt(tot(0)), math.sqrt(media(anidado))
+    if r_an >= r_log:          # sin trampa no mejora: se queda el logaritmo
+        mejor = 0
+    modelo.exp_valor, modelo._pv = mejor, {}
+    rect = ML.rectas_valor([f for f in ML.construir(cargar(os.path.join(CARPETA, "jugadores_historial.json")),
+                                                    cargar(os.path.join(CARPETA, "jugadores.json")), D) if f["ant"]], mejor)
+    liga["priorValorPot"] = {"exp": mejor, **{p: [round(rect[p][0][0], 4), round(rect[p][0][1], 4)] if rect[p][0] else None for p in POS},
+                             "validacion": {**pot.get("validacion", {}), "capitanRmseLog": round(r_log, 3),
+                                            "capitanRmseAnidado": round(r_an, 3),
+                                            "capitanPorExponente": {str(e): round(math.sqrt(tot(e)), 3) for e in ML.EXPONENTES}}}
+    print(f"Nivel por valor: {'valor ** ' + str(mejor) if mejor else 'logaritmo'} · error del modelo completo {r_log:.3f} con logaritmo, "
+          f"{r_an:.3f} eligiendo sin mirar la jornada")
+    return mejor
+
+
 def main():
     D, C = cargar(F_DATOS), cargar(F_CAL)
     if not D or not C or not C.get("games"):
@@ -511,9 +590,25 @@ def main():
     obs_todo = obs_liga(obs, C)
     modelo_lineas = Modelo(obs, C)       # solo vuestros onces: patrones y capitanes
     modelo = Modelo(obs_todo, C)         # toda la liga: ajuste de parámetros y errores
+    # modelo de la liga entera (probabilidad de jugar y nivel esperado según valor)
+    liga = None
+    try:
+        import modelo_liga as ML
+        liga = ML.ajustar(cargar(os.path.join(CARPETA, "jugadores_historial.json")), cargar(os.path.join(CARPETA, "jugadores.json")), D)
+        v = liga.get("validacion")
+        if v:
+            print(f"Modelo de la liga: error de 'juega' {v['brierLogistica']} (fórmula anterior {v['brierFormulaAnterior']}); "
+                  f"error de puntos con nivel por valor {v['rmsePriorValor']} (media de la posición {v['rmseMediaPosicion']}).")
+    except Exception as e:     # nunca debe romper el autoajuste
+        print(f"[!] Modelo de la liga no disponible: {e}")
+
     jug = modelo_lineas.jug
     total, con_equipo = len(jug), sum(1 for o in jug if o["team"] and o["game"])
     filas = [o for o in modelo.jug if o["gw"] >= GW_MIN_EVAL and o["team"] and o["game"]]
+
+    # el nivel según el valor: logaritmo o potencia del valor, elegido con el modelo completo que usa la página
+    exp_valor = elegir_exp_valor(modelo, filas, liga, D)
+    modelo_lineas.exp_valor = modelo.exp_valor
     print(f"Actuaciones de vuestros onces: {total} | con equipo conocido: {con_equipo} | de toda la liga evaluables (J{GW_MIN_EVAL}+): {len(filas)}")
 
     if len(filas) < FILAS_MIN:
@@ -534,9 +629,21 @@ def main():
     if len(cortos) >= 40:
         lam = len(cortos) / (len(cortos) + 120)
         params["F_SUPLENTE"] = round(DEFECTO["F_SUPLENTE"] + lam * (media(cortos) / media([o["pts"] for o in jug]) - DEFECTO["F_SUPLENTE"]), 3)
+    # mejor aún: frente a la predicción del modelo, con los suplentes que daba Futbol Fantasy (si mejora sin hacer trampa)
+    suplente = None
+    try:
+        suplente = calibrar_suplente(modelo, filas, {**DEFECTO, **params}, params.get("F_SUPLENTE", DEFECTO["F_SUPLENTE"]))
+        if suplente:
+            if suplente["usa"]:
+                params["F_SUPLENTE"] = suplente["factor"]
+            print(f"Suplentes (FF < 50 %): factor {suplente['factor']} frente a la predicción, {suplente['n']} actuaciones · error "
+                  f"{suplente['rmsePrevio']} con {suplente['previo']} -> {suplente['rmseAnidado']} dejando fuera cada jornada"
+                  + ("" if suplente["usa"] else " (no mejora: se queda el anterior)"))
+    except Exception as e:
+        print(f"[!] Calibración de suplentes no disponible: {e}")
 
     P = {**DEFECTO, **params}
-    metricas = {"fueraDeMuestra": fuera if len(filas) >= FILAS_MIN else None}
+    metricas = {"fueraDeMuestra": fuera if len(filas) >= FILAS_MIN else None, "suplente": suplente}
     if filas:
         pos_base = math.sqrt(media([(modelo.mupos(o["gw"], o["pos"]) - o["pts"]) ** 2 for o in filas]))
         sin_ctx = rmse(modelo, filas, P, ctx=False)
@@ -547,18 +654,6 @@ def main():
                     "corrForma": round(corr_f, 3), "corrCompleto": round(corr_c, 3),
                     "rmseDefecto": round(r0, 3) if r0 else None, "rmseAjustado": round(r1, 3) if r1 else None})
         print(f"RMSE: posición {pos_base:.3f} | forma {sin_ctx:.3f} | forma+contexto {con_ctx:.3f} (corr {corr_f:.2f} -> {corr_c:.2f})")
-
-    # modelo de la liga entera (probabilidad de jugar y nivel esperado según valor)
-    liga = None
-    try:
-        import modelo_liga as ML
-        liga = ML.ajustar(cargar(os.path.join(CARPETA, "jugadores_historial.json")), cargar(os.path.join(CARPETA, "jugadores.json")), D)
-        v = liga.get("validacion")
-        if v:
-            print(f"Modelo de la liga: error de 'juega' {v['brierLogistica']} (fórmula anterior {v['brierFormulaAnterior']}); "
-                  f"error de puntos con nivel por valor {v['rmsePriorValor']} (media de la posición {v['rmseMediaPosicion']}).")
-    except Exception as e:     # nunca debe romper el autoajuste
-        print(f"[!] Modelo de la liga no disponible: {e}")
 
     riesgo = None
     try:

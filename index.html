@@ -4380,7 +4380,7 @@ const CAP = {
   SENS_ATAQUE: 0.15,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
   SENS_CS: 0.35,         // 10 % más de probabilidad de portería a cero -> +2 % de puntos
   HOME_EXTRA: 0.02,     // ajuste adicional por jugar en casa (+) o fuera (−)
-  F_SUPLENTE: 0.59,     // puntos de un suplente que entra, respecto a un jugador normal (medido en vuestra liga: 2,7 frente a 4,5)
+  F_SUPLENTE: 0.59,     // puntos de quien FF da como suplente, respecto a su predicción (autoajuste_capitan.py lo mide frente al modelo: ~0,88)
   LIMITE_F: [0.55, 1.6],
   // Un único algoritmo de riesgo: k = premio por el potencial de subida (desviación solo hacia arriba), l = castigo por el
   // riesgo de bajada (desviación solo hacia abajo). Una racha de 10 puntos no se penaliza; un -3 por goleada o expulsión sí.
@@ -4466,9 +4466,13 @@ function capPJuega(streak, valor, pos) {
   return Math.min(0.98, Math.max(0.02, 1 / (1 + Math.exp(-z))));
 }
 // puntos esperados al jugar según el valor (un jugador de 15 M rinde más que uno de 1 M)
+// Si modelo_liga.py ha medido que una potencia del valor acierta más que el logaritmo (liga.priorValorPot), se usa esa.
 function capPrior(pos, valor) {
+  if (!valor) return null;
+  const q = LIGA && LIGA.priorValorPot, rq = q && q.exp > 0 && q[pos];
+  if (rq) return Math.min(9, Math.max(1, rq[0] * Math.pow(Math.max(valor, 1e5) / 1e6, q.exp) + rq[1]));
   const r = LIGA && LIGA.priorValor && LIGA.priorValor[pos];
-  if (!r || !valor) return null;
+  if (!r) return null;
   return Math.min(9, Math.max(1, r[0] * Math.log10(Math.max(valor, 1e5)) + r[1]));
 }
 const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
