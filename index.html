@@ -465,8 +465,6 @@ code{color:var(--accFg)}
 .rvt td{height:34px;min-width:52px;border-radius:var(--r-s);text-align:center;white-space:nowrap}
 .rvt td .shield{width:18px;height:18px;vertical-align:middle}
 .rvt td span{font-size:10.5px;font-weight:700;margin-left:4px;vertical-align:middle}
-.rv1{background:color-mix(in srgb,var(--pos) 45%,var(--panel2))}.rv2{background:color-mix(in srgb,var(--pos) 22%,var(--panel2))}
-.rv3{background:var(--panel2)}.rv4{background:color-mix(in srgb,var(--red) 22%,var(--panel2))}.rv5{background:color-mix(in srgb,var(--red) 45%,var(--panel2))}
 .rv0{color:var(--mut)}
 .vv{margin:-6px 0 14px;padding:6px 12px;border-radius:var(--r-l);background:var(--panel);border:1px solid var(--line)}
 .vv ol{list-style:none;margin:0;padding:0}
@@ -847,25 +845,6 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 #nav,.nav{view-transition-name:none}
 .btn-wa:active,.btn-comp:active,.refresh:active,.tuj-f:active,.pill:active,.indice button:active{transform:scale(.97)}
 .btn-wa,.btn-comp,.refresh,.tuj-f,.pill,.indice button{transition:transform .12s ease,background-color .15s,color .15s}
-/* Radar de pujas (Mercado, con PIN): sónar con los libres; cerca del centro = puja ideal barata, punto grande = más valor */
-.rp-svg{width:100%;max-width:360px;display:block;margin:0 auto;touch-action:manipulation}
-.rp-aro{fill:none;stroke:var(--line,rgba(127,127,127,.3));stroke-width:.6;stroke-dasharray:2 3}
-.rp-eje{stroke:var(--line,rgba(127,127,127,.3));stroke-width:.5}
-.rp-t{font-size:7px;fill:var(--mut,#8a9a90);text-anchor:middle}
-.rp-barre{transform-origin:160px 160px;animation:rp-giro 6s linear infinite}
-@keyframes rp-giro{to{transform:rotate(360deg)}}
-.rp-d{cursor:pointer;outline:none}
-.rp-d circle.rp-p{fill:var(--acc,#2fd46e);stroke:var(--bg,#0b120e);stroke-width:1.2;transition:transform .2s}
-.rp-d.m circle.rp-p{opacity:.55}.rp-d.b circle.rp-p{opacity:.3}
-.rp-d circle.rp-h{fill:none;stroke:var(--acc,#2fd46e);stroke-width:1;opacity:0}
-.rp-d.on circle.rp-h{opacity:1;animation:rp-pulso 1.6s ease-out infinite}
-.rp-d:focus-visible circle.rp-h{opacity:1}
-@keyframes rp-pulso{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
-.rp-d circle{transform-box:fill-box;transform-origin:center}
-.rp-ficha{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:48px}
-.rp-ficha .cq{flex:1;display:flex;flex-direction:column;min-width:0}.rp-ficha .cq span{white-space:normal;overflow:visible;font-size:12px;color:var(--mut,#8a9a90)}
-.rp-ficha button{min-height:44px}
-@media (prefers-reduced-motion:reduce){.rp-barre,.rp-d.on circle.rp-h{animation:none}}
 /* ---- perfil de cada manager (radar) ---- */
 .rd-sel{display:flex;gap:2px;justify-content:space-between;max-width:360px;margin:0 auto}
 .rd-sel button{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;opacity:.55;transition:opacity .15s,border-color .15s}
@@ -927,18 +906,7 @@ body[data-sec]:not([data-sec="clas"]) .head::before{opacity:.45}
 .sp-r:active::-webkit-slider-thumb{transform:scale(1.12)}
 .sp-r:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--accFg)}
 .sp-ejes{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:-6px}
-.rv-reg{position:relative;height:14px;margin:0 0 4px 46px;font-size:9.5px;color:var(--mut)}
-.rv-reg span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.rv-reg span:first-child{transform:none}
 .rvl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
-.prv{display:flex;gap:10px;align-items:flex-start}.prv .av{width:36px;height:36px;font-size:12px;flex:none}
-.rv-c{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.rv-t{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.rv-t b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rv-t>span{font-family:var(--f-disp);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
-.rv-c small{font-size:11px;color:var(--mut);line-height:1.35}
-.rv-eje{position:relative;height:16px;border-radius:var(--r-s);background:linear-gradient(90deg,color-mix(in srgb,var(--panel2) 90%,transparent),color-mix(in srgb,#ff9f43 14%,var(--panel2)))}
-.rv-eje i{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:1.5px solid var(--acc);background:var(--panel);opacity:.9}
-.rv-eje i.g{background:var(--acc);box-shadow:0 0 8px -1px #2fd46e99}
-.prv.yo .rv-eje{outline:1px solid color-mix(in srgb,var(--acc) 50%,transparent)}
 .sp-riv{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);min-height:52px}
 .sp-riv>small{display:block;font-size:11px;color:var(--mut);margin-bottom:6px}
 .sp-riv>div{display:flex;gap:6px;flex-wrap:wrap}
@@ -1737,6 +1705,16 @@ body.wr-abierto{overflow:hidden}
 .pt-ctl{display:flex;gap:6px;width:100%;justify-content:center}
 .pt-comp{flex:1;max-width:190px;font-size:14px;background:#2fd46e;color:#03200e}
 @media (prefers-reduced-motion:reduce){.btn-pt,.pt-fin,.pt-res b.pum{animation:none}.pt-tk,.pt-prob i,.pt-balon{transition:none}}
+/* Mercado limpio (26/11): cabecera con plantilla y saldo, bloques agrupados */
+.mer-saldo{display:flex;align-items:center;gap:10px;margin:10px 0 0;font-size:13px;color:var(--mut)}
+.mer-saldo input{width:110px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font:inherit;font-size:16px;font-weight:800;text-align:right}
+.mer-fil{margin:0 0 12px}.mer-fil button{min-height:44px}.mer-n{opacity:.7;font-weight:600}
+.mg-sub{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.mer-riv>.mg-sub:first-of-type{margin-top:10px}
+.ch-kpi.ch-kpi2{grid-template-columns:1fr 1fr}
+.jugada .mh{margin:6px 0 0}
+.esc-l:not(.todo)>li:nth-child(n+7){display:none}
+.mer-resto{margin-top:10px}
 </style>
 </head>
 <body>
@@ -5320,16 +5298,11 @@ function pujaLiga(V, prio, tasaC, sMin, jf) {
   return { s, sSeguro, p: P(s), pSeguro: P(sSeguro), q, n: obs.length, tope: s >= max - 1e-9 && P(s) < (PUJA.OBJETIVO[prio] ?? 0.5) };
 }
 // Para invertir: libres cuyo valor se espera que suba más de lo que se paga por encima de su valor (modelo con inercia)
-function bloqueInversion(r) {
-  const L = r.lista.filter(x => x.prio !== "evitar" && x.V >= 1e6 && x.cr && x.cr.fuente === "modelo" && x.cr.phi).map(x => {
+function invDatos(r) {
+  return r.lista.filter(x => x.prio !== "evitar" && x.V >= 1e6 && x.cr && x.cr.fuente === "modelo" && x.cr.phi).map(x => {
     const g3 = crecAcum(x.cr, 3), g7 = crecAcum(x.cr, 7), extra = x.puja - x.V;
     return { x, g3, g7, extra, neto3: x.V * g3 - extra, neto7: x.V * g7 - extra };
-  }).filter(y => y.neto7 > 50000).sort((a, b) => b.neto7 - a.neto7).slice(0, 5);
-  if (!L.length) return "";
-  return `<section class="card"><div class="gh"><h2>Para invertir</h2></div>
-    <p class="note" style="margin:0 0 8px">Libres cuyo valor se espera que suba más de lo que pagarías por encima de él con la puja ideal. El valor en Mister tiene mucha inercia: si sube hoy, mañana suele subir casi lo mismo y se va frenando poco a poco.</p>
-    <ul class="clist">${L.map(y => `<li class="crow" data-ficha="${esc(y.x.j.id)}">${cara(y.x.j.id, y.x.j.name, y.x.j.teamId, 36)}<span class="cq"><b>${esc(y.x.j.name)}</b><span>puja ${merEur(y.x.puja)} → ${merEur(y.x.V * (1 + y.g7))}</span></span><span class="cr"><b class="up">+${eur(y.neto7)}</b><small>en 7 días</small></span></li>`).join("")}</ul>
-    <p class="note">A la derecha, lo que ganarías vendiéndolo en 7 días, ya descontado lo que pagas de más. Es una previsión: un mal partido o una lesión la cambian de golpe. Por debajo de 1 M el valor se mueve al azar y no se incluye.</p></section>`;
+  }).filter(y => y.neto7 > 50000).sort((a, b) => b.neto7 - a.neto7);
 }
 // ---------- Simulador de puja ----------
 // Elige cualquier libre (por defecto, la oportunidad del día), mueve la barra y ves al momento la probabilidad de
@@ -5370,11 +5343,11 @@ function bloqueSimPuja(r, mejor) {
   // por defecto, la oportunidad del día; si el usuario ha elegido otro, se respeta
   if (!SIM.manual || !SIM.id || !SIM.datos[SIM.id]) SIM.id = mejor && SIM.datos[String(mejor.j.id)] ? String(mejor.j.id) : Object.keys(SIM.datos)[0];
   const orden = [mejor, ...L.filter(x => x !== mejor)].filter(x => x && SIM.datos[String(x.j.id)]);
-  return `<section class="card sp" id="simPuja"><div class="gh"><h2>Simulador de puja</h2></div>
-    <p class="note" style="margin:0 0 10px">Elige un libre y mueve la barra: verás al momento cuántas veces te lo llevarías con esa cifra en esta liga.</p>
+  return `<div class="mg-sub sp" id="simPuja"><h3 class="sec">Prueba tu puja</h3>
+    <p class="note" style="margin:0 0 10px">Mueve la barra y verás cuántas veces te lo llevarías.</p>
     <div class="sp-sel" role="tablist" aria-label="Jugador">${orden.map(x => { const id = String(x.j.id);
       return `<button role="tab" aria-selected="${id === SIM.id}" class="${id === SIM.id ? "on" : ""}" data-simsel="${esc(id)}">${cara(x.j.id, x.j.name, x.j.teamId, 30)}<span>${esc(apellido(x.j.name))}</span></button>`; }).join("")}</div>
-    <div class="sp-cuerpo" id="spCuerpo">${htmlCuerpoSim()}</div></section>`;
+    <div class="sp-cuerpo" id="spCuerpo">${htmlCuerpoSim()}</div></div>`;
 }
 function htmlCuerpoSim() {
   const d = SIM.datos[SIM.id]; if (!d) return "";
@@ -5438,29 +5411,6 @@ document.addEventListener("click", e => {
     moverSim();
   }
 });
-// Tarjeta «Así pujan tus rivales»: cada puja de los últimos 30 días (ganadora o no) como un punto sobre una regla de
-// sobrepuja, y debajo su estilo. Es lo que usa la probabilidad de llevártelo, rival a rival.
-function bloquePujanRivales() {
-  const R = rivalesPuja(); if (!R) return "";
-  const med = a => { const b = a.slice().sort((x, y) => x - y); return b.length ? b[Math.floor((b.length - 1) / 2)] : 0; };
-  const cuant = (a, q) => { const b = a.slice().sort((x, y) => x - y); return b.length ? b[Math.min(b.length - 1, Math.floor(q * b.length))] : 0; };
-  const X = s => Math.min(97, 2 + Math.sqrt(Math.max(0, s) / 1.2) * 95);   // regla: 0 % a +120 % (raíz: se ven bien las pequeñas)
-  const pcS = x => "+" + (x >= 0.1 ? Math.round(x * 100) : nf1.format(x * 100)) + " %";
-  const L = Object.values(R.porId).filter(r => r.n || r.obs.length).sort((a, b) => b.n - a.n);
-  const estilo = (m, alta) => m <= 0.03 ? (alta > 0.2 ? "Ajusta, pero a veces se dispara" : "Puja casi al valor") : m <= 0.1 ? "Pone algo de más" : "Puja fuerte";
-  const fil = L.map(r => {
-    const ss = r.obs.map(o => o.s), m = med(ss), alta = cuant(ss, 0.85), Vm = med(r.obs.map(o => o.V));
-    const yo = String(r.id) === String(YO || "");
-    return `<li class="prv${yo ? " yo" : ""}">${avatar(r.m, r.i)}<div class="rv-c"><div class="rv-t"><b>${esc(r.m.name)}${yo ? ` <span class="tu">tú</span>` : ""}</b><span>${r.obs.length >= 3 ? pcS(m) : "—"}</span></div>
-      <div class="rv-eje" aria-hidden="true">${r.obs.map(o => `<i class="${o.gana ? "g" : ""}" style="left:${X(o.s).toFixed(1)}%" title="${esc(o.jugador || "")}: ${pcS(o.s)}"></i>`).join("")}</div>
-      <small>${r.n} ${r.n === 1 ? "puja" : "pujas"} en 30 días · ${r.ganadas} ${r.ganadas === 1 ? "ganada" : "ganadas"}${r.contra ? ` (${r.contra} ante otras pujas)` : ""}${r.obs.length >= 3 ? ` · ${estilo(m, alta)}${alta > 0.2 ? `, hasta ${pcS(alta)}` : ""}${Vm ? ` · suele ir a por jugadores de ${merEur(Vm)}` : ""}` : ""}</small></div></li>`;
-  }).join("");
-  return `<section class="card"><div class="gh"><h2>Así pujan tus rivales</h2></div>
-    <p class="note" style="margin:0 0 10px">${R.n} fichajes del mercado en los últimos 30 días, ${R.varias} con varias pujas (las noticias de Mister enseñan también las que perdieron). Cada punto es una puja según cuánto pagó por encima del valor; los rellenos, las que ganó. A la derecha, su sobrepuja típica.</p>
-    <div class="rv-reg" aria-hidden="true"><span style="left:0">valor</span><span style="left:${X(0.05)}%">+5 %</span><span style="left:${X(0.2)}%">+20 %</span><span style="left:${X(0.5)}%">+50 %</span><span style="left:${X(1)}%">+100 %</span></div>
-    <ul class="rvl">${fil}</ul>
-    <p class="note">La probabilidad de llevártelo (en las tarjetas y en el simulador) se calcula rival a rival con estas pujas: lo que suele pujar cada uno por jugadores de precio parecido y lo a menudo que entra al mercado. Probado sobre las subastas reales con varias pujas, acierta más que contar solo las pujas ganadoras.</p></section>`;
-}
 // Tarjeta «Cómo se puja en esta liga»: lo que se ha pagado de verdad en las compras del mercado
 function bloquePujasLiga() {
   const O = obsPujas();
@@ -5475,18 +5425,16 @@ function bloquePujasLiga() {
   const mxM = Math.max(0.01, ...porM.map(x => x.med));
   const ult = O.slice().sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts)).slice(0, 12);
   const barato = tramos.find(x => x.t === "Menos de 3 M");
-  return `<section class="card"><div class="gh"><h2>Cómo se puja en esta liga</h2></div>
+  return `<div class="mg-sub"><h3 class="sec">Cómo se puja en esta liga</h3>
     <p class="note" style="margin:0 0 10px">Lo que se ha pagado de verdad en ${O.length} compras del mercado (el precio sale de la cláusula, que Mister pone en 1,5 veces lo pagado), frente al valor del jugador ese día.</p>
     <div class="pl-tr">${tramos.map(x => `<div><small>${x.t}</small><b>${pcS(x.med)}</b><span>mediana · ${x.n} compras${x.alta ? ` · ${x.alta} por encima de +10 %` : ""}</span></div>`).join("")}</div>
     ${barato && barato.alta ? `<p class="note">Por los baratos se paga mucho más en porcentaje: hasta ${pcS(barato.max)}. Analítica Fantasy recomienda pujar entre un +2 % y un +6 % (lo que se espera que suba hasta el partido), lo que aquí no basta para ganar a nadie que de verdad lo quiera. La «puja máxima rentable» de Futbol Fantasy (sobre +14 % en los baratos, +8 % entre 3 y 8 M y +7 % en los caros) se queda corta en los baratos y suele bastar en los demás.</p>` : ""}
-    <p class="ordlbl" style="margin-top:12px">Cómo puja cada manager (sobrepuja mediana)</p>
-    <ul class="pron">${porM.map(x => `<li>${avatar(x.m, x.i)}<span class="pq"><b>${esc(x.m.name)}</b><span class="pb"><i style="width:${(Math.max(0, x.med) / mxM * 100).toFixed(1)}%;background:${col(x.i)}"></i></span><small>${x.n} ${x.n === 1 ? "compra" : "compras"} · máx. ${pcS(x.max)} · ${eur(x.gasto)} por encima del valor</small></span><span class="pp" style="font-size:15px">${pcS(x.med)}</span></li>`).join("")}</ul>
-    <details class="cdet"><summary>Últimas compras y lo que se pagó</summary><ul class="clist" style="margin-top:6px">${ult.map(o => `<li class="crow" data-ficha="${esc(o.playerId)}">${cara(o.playerId, o.name, null, 34)}<span class="cq"><b>${esc(o.name)}</b><span>${esc(nom(o.to))} · valía ${merEur(o.V)}</span></span><span class="cr"><b class="${o.s >= 0.1 ? "dn" : ""}">${merEur(o.precio)}</b><small>${pcS(o.s)}</small></span></li>`).join("")}</ul></details></section>`;
+    <details class="cdet"><summary>Últimas compras y lo que se pagó</summary><ul class="clist" style="margin-top:6px">${ult.map(o => `<li class="crow" data-ficha="${esc(o.playerId)}">${cara(o.playerId, o.name, null, 34)}<span class="cq"><b>${esc(o.name)}</b><span>${esc(nom(o.to))} · valía ${merEur(o.V)}</span></span><span class="cr"><b class="${o.s >= 0.1 ? "dn" : ""}">${merEur(o.precio)}</b><small>${pcS(o.s)}</small></span></li>`).join("")}</ul></details></div>`;
 }
 // ===== FIN MERCADO-ENGINE =====
 
 // ---------- Pestaña Mercado ----------
-let MER_DATA = null, merTodos = false, merError = false;
+let MER_DATA = null, merError = false;
 function cargarMercado() {
   fetch("mercado.json?t=" + Date.now(), { cache: "no-store" })
     .then(r => r.ok ? r.json() : Promise.reject())
@@ -5495,9 +5443,6 @@ function cargarMercado() {
     .catch(() => { merError = true; if (seccion === "mer") pintarMercado(); });
 }
 
-const MER_GRUPOS = [
-  ["imperdible", "🔥 No dejar pasar"], ["top", "⭐ Top"], ["bueno", "👍 Buenos fichajes"], ["favorable", "🎯 Partido favorable"], ["inversion", "📈 Suben de valor"]
-];
 const merPuja = v => v.toLocaleString("es-ES") + " €";
 const redondeaPuja = x => { let r = Math.ceil(x / 1000) * 1000; if (r % 10000 === 0) r += 1000; return r; };
 const merEur = v => v >= 1e6 ? nf.format(Math.round(v / 1e4) / 100) + " M" : nf.format(Math.round(v / 1e3)) + " k";
@@ -5553,36 +5498,17 @@ function merTarjeta(r) {
     <details class="mdet"><summary>${esc(r.etiqueta)} · ¿por qué?</summary><div class="cd">${detalle}${r.prio !== "evitar" ? `<button class="sp-ir" data-simsel="${esc(r.j.id)}">Probar pujas por ${esc(r.j.name)}</button>` : ""}</div></details></li>`;
 }
 
-// Jugadores de toda la liga con mejores últimas 3 jornadas, y si se pueden conseguir (libres, en venta o de quién son)
-function bloqueRacha(M) {
-  const J = Object.values(M.jug || {});
-  if (!J.length) return "";
-  const libres = new Set((M.libres || []).map(x => String(x.id)));
-  const L = J.map(p => { const s = (p.streak || []).slice(-3), v = s.map(x => capNum(x) ? x : 0); return { p, s, t: v.reduce((a, b) => a + b, 0), jug: s.filter(capNum).length }; })
-    .filter(x => x.jug >= 2 && x.p.status !== "injury").sort((a, b) => b.t - a.t || (b.p.avg || 0) - (a.p.avg || 0)).slice(0, 10);
-  const estado = p => libres.has(String(p.id)) ? `<span class="rc-e libre">Libre en el mercado</span>` : p.onMarket ? `<span class="rc-e venta">En venta · ${esc(p.ownerName || "")}</span>` : p.owner ? `<span class="rc-e">De ${esc(p.ownerName || "otro manager")}</span>` : `<span class="rc-e">Sin dueño</span>`;
-  return `<section class="card"><div class="gh"><h2>En racha</h2></div>
-    <p class="note" style="margin:0 0 6px">Los jugadores de toda la liga que más han puntuado en las 3 últimas jornadas.</p>
-    <ul class="clist">${L.map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 40)}
-      <span class="cq"><b>${esc(x.p.name)} <span class="jp-pos2" style="background:var(--${esc(String(x.p.pos).toLowerCase())})">${esc(x.p.pos)}</span></b>
-        <span><span class="rc-s">${x.s.map(v => `<i class="${capNum(v) ? "mp-" + tramoPts(v) : "n"}">${capNum(v) ? v : "–"}</i>`).join("")}</span>${estado(x.p)}</span></span>
-      <span class="cr"><b>${x.t}</b><small>${merEur(x.p.value)}</small></span></li>`).join("")}</ul></section>`;
-}
-
-// Qué libres mejorarían el once de un manager en la próxima jornada (comparando con su titular más flojo del mismo puesto)
-let merMan = null;
-function bloqueParaTi(r) {
-  if (!E) { cargarEquipos(); return ""; }
-  if (!E.managers || !D || !CAL) return "";
+function paraTiDatos(r) {
+  if (!E) { cargarEquipos(); return null; }
+  if (!E.managers || !D || !CAL) return null;
   if (!merMan || !E.managers.some(m => m.id === merMan)) merMan = YO && E.managers.some(m => m.id === YO) ? YO : capMan && E.managers.some(m => m.id === capMan) ? capMan : E.managers[0].id;
   let rc;
-  try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return ""; }
+  try { rc = recomendarCapitanes({ cal: CAL, D, E, managerId: merMan, gw: r.gw }); } catch (e) { return null; }
   const o = rc && !rc.error ? onceQuiniela(rc.candidatos || []) : null;
-  const pills = selectorM(merMan, "data-mm", null, "Manager");
   // huecos del once (plantilla que no da para 11): un libre de ese puesto suma entero
   const nec = o ? (([d, m, f]) => ({ PT: 1, DF: d, MC: m, DL: f }))(o.form.split("-").map(Number)) : {};
-  let cuerpo = vacioHTML("Faltan datos", "Todavía no hay suficientes datos de esta plantilla.");
-  if (o) {
+  if (!o) return null;
+  {
     const ganan = r.lista.filter(x => x.prio !== "evitar").map(x => {
       if ((o[x.pos] || []).length < (nec[x.pos] || 0)) return { x, tit: null, g: x.espProx };
       const tit = (o[x.pos] || []).slice().sort((a, b) => a.esp - b.esp)[0];
@@ -5602,66 +5528,9 @@ function bloqueParaTi(r) {
         y.pAntes = yo.pGana; y.pDesp = simularJornada(eqs.map((e, i) => i === k ? { ...e, js } : e))[k].pGana;
       });
     }
-    cuerpo = ganan.length ? `<ul class="clist">${ganan.map(({ x, tit, g, pAntes, pDesp }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
-        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>${tit ? `por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)}` : `cubre el hueco de tu once · ${nf1.format(x.espProx)} pts`}</span>${pDesp != null ? `<span class="pq-g">Ganar la J${r.gw}: ${pctF(pAntes)} → <b>${pctF(pDesp)}</b></span>` : ""}</span>
-        <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}</small></span></li>`).join("")}</ul>`
-      : `<p class="note">Ningún libre de hoy mejora el once de ${esc((E.managers.find(m => m.id === merMan) || {}).name || "")} en la jornada ${r.gw}.</p>`;
+    return ganan;
   }
-  return `<section class="card"><div class="gh"><h2>¿Quién mejora tu once?</h2></div>
-    ${pills}${cuerpo}
-    <p class="note">Puntos esperados en la próxima jornada del libre frente al titular más flojo de su puesto en el once recomendado. «Ganar la J»: sus opciones de ganar la jornada con y sin el fichaje, con la simulación de la Predicción de la jornada.</p></section>`;
 }
-
-// Subidas y bajadas de valor de hoy en toda la liga (jugadores.json: valor de hoy frente al de ayer)
-let subVista = "sube";
-function bloqueSubidas(M) {
-  const J = Object.values(M.jug || {}).filter(p => capNum(p.value) && capNum(p.prev) && p.prev > 0 && p.value !== p.prev);
-  if (!J.length) return "";
-  const libres = new Set((M.libres || []).map(x => String(x.id)));
-  const L = J.map(p => ({ p, d: p.value - p.prev, r: p.value / p.prev - 1 }));
-  // «Mañana»: previsión del modelo con inercia (solo jugadores de 1 M o más, por debajo se mueve al azar)
-  const conModelo = LIGA && LIGA.valorDin && LIGA.valorDin.phi;
-  const M2 = conModelo ? Object.values(M.jug || {}).filter(p => capNum(p.value) && p.value >= (LIGA.valorDin.corte || 1e6)).map(p => { const g = capCrecModelo(p); return g && !g.bajo ? { p, d: p.value * g.g, r: g.g } : null; }).filter(Boolean) : [];
-  if (subVista === "manana" && !M2.length) subVista = "sube";
-  const ord = subVista === "manana" ? M2.filter(x => x.d > 0).sort((a, b) => b.d - a.d) : subVista === "sube" ? L.filter(x => x.d > 0).sort((a, b) => b.d - a.d) : L.filter(x => x.d < 0).sort((a, b) => a.d - b.d);
-  const tot = L.reduce((t, x) => t + x.d, 0), suben = L.filter(x => x.d > 0).length, bajan = L.filter(x => x.d < 0).length;
-  const seg = [["sube", `Suben (${suben})`], ["baja", `Bajan (${bajan})`], ...(M2.length ? [["manana", "Mañana"]] : [])].map(([k, t]) => `<button data-sub="${k}" class="${subVista === k ? "on" : ""}">${t}</button>`).join("");
-  return `<section class="card"><div class="gh"><h2>Subidas y bajadas de hoy</h2></div>
-    <p class="note" style="margin:0 0 8px">${subVista === "manana" ? "Los que más se espera que suban mañana (previsión con la inercia de los últimos días; explica en torno al " + Math.round((LIGA.valorDin.r2 || 0.9) * 100) + " % de los cambios diarios)." : `Cambio de valor desde ayer en toda la liga: ${tot >= 0 ? "+" : "−"}${eur(Math.abs(tot))} en total.`}</p>
-    <div class="seg ${M2.length ? "seg3" : "seg2"}">${seg}</div>
-    <ul class="clist">${ord.slice(0, 10).map((x, k) => `<li class="crow" data-ficha="${esc(x.p.id)}"><span class="cn">${k + 1}</span>${cara(x.p.id, x.p.name, x.p.teamId, 36)}
-      <span class="cq"><b>${esc(x.p.name)}</b><span>${merEur(x.p.value)} · ${libres.has(String(x.p.id)) ? `<span class="rc-e libre">libre</span>` : x.p.owner ? esc(x.p.ownerName || "") : "sin dueño"}</span></span>
-      <span class="cr"><b class="${x.d > 0 ? "up" : "dn"}">${x.d > 0 ? "+" : "−"}${eur(Math.abs(x.d))}</b><small>${x.d > 0 ? "+" : "−"}${nf1.format(Math.abs(x.r) * 100)} %</small></span></li>`).join("")}</ul></section>`;
-}
-
-// Calendario de los 20 equipos en las próximas jornadas: qué equipos tienen los partidos más fáciles (para fichar)
-function bloqueCalendario() {
-  if (!CAL || !CAL.games) return "";
-  const ahora = Date.now() / 1000;
-  const pend = CAL.games.filter(g => g.status !== "played" && !capNum(g.gh) && (g.ts || 0) > ahora - 3 * 3600);
-  const gws = [...new Set(pend.map(g => g.gw))].filter(gw => pend.filter(g => g.gw === gw).length >= 5).sort((a, b) => a - b).slice(0, 3);
-  if (!gws.length) return "";
-  const jug = CAL.games.filter(g => capNum(g.gh) && capNum(g.ga)), eq = {}, nombre = {};
-  CAL.games.forEach(g => { nombre[g.home] = g.homeName; nombre[g.away] = g.awayName; });
-  jug.forEach(g => { [[g.home, g.gh, g.ga], [g.away, g.ga, g.gh]].forEach(([t, f, c]) => { const e = eq[t] || (eq[t] = { f: 0, c: 0, n: 0 }); e.f += f; e.c += c; e.n++; }); });
-  const lg = jug.length ? jug.reduce((t, g) => t + g.gh + g.ga, 0) / (2 * jug.length) : 1.3;
-  // facilidad del partido: cuánto encaja el rival (bueno para atacar) y lo poco que marca (bueno para defender), +/− por jugar en casa
-  const facil = (r, casa) => { const e = eq[r]; if (!e || !e.n) return 0; const f = (e.f + 2 * lg) / (e.n + 2) / lg, c = (e.c + 2 * lg) / (e.n + 2) / lg; return 0.5 * (c - 1) - 0.5 * (f - 1) + (casa ? 0.06 : -0.06); };
-  const exs = pend.map(g => extPartido(g.id)).filter(Boolean), lgx = exs.length ? exs.reduce((t, e) => t + e.lh + e.la, 0) / (2 * exs.length) : lg;
-  const equipos = Object.keys(nombre).map(Number).map(t => {
-    const cel = gws.map(gw => { const g = pend.find(x => x.gw === gw && (x.home === t || x.away === t)); if (!g) return null; const casa = g.home === t, r = casa ? g.away : g.home; const ep = extPartido(g.id), gf = ep ? (casa ? ep.lh : ep.la) : null, gc = ep ? (casa ? ep.la : ep.lh) : null;
-      // con goles esperados del partido (cuotas o mercado) mandan ellos; si no, los goles de lo jugado
-      return { r, casa, f: ep && capNum(gf) && capNum(gc) ? 0.5 * (gf / lgx - 1) - 0.5 * (gc / lgx - 1) : facil(r, casa) }; });
-    const val = cel.filter(Boolean), media = val.length ? val.reduce((s, x) => s + x.f, 0) / val.length : -9;
-    return { t, cel, media };
-  }).filter(x => x.media > -9).sort((a, b) => b.media - a.media);
-  const color = f => f >= 0.18 ? "rv1" : f >= 0.06 ? "rv2" : f > -0.06 ? "rv3" : f > -0.18 ? "rv4" : "rv5";
-  const fila = x => `<tr><th>${img(merUrlEscudo(x.t), "shield")} ${esc(nombre[x.t] || "")}</th>${x.cel.map(c => c ? `<td class="${color(c.f)}" title="${esc(nombre[c.r] || "")} ${c.casa ? "(en casa)" : "(fuera)"}">${img(merUrlEscudo(c.r), "shield")}<span>${c.casa ? "C" : "F"}</span></td>` : `<td class="rv0">—</td>`).join("")}</tr>`;
-  return `<details class="card cdet-card"><summary class="sumh">Calendario de los equipos</summary>
-    <p class="note" style="margin:6px 0 8px">Los 20 equipos ordenados por lo fáciles que son sus próximos partidos (arriba, los mejores para fichar). Verde: rival flojo; rojo: rival duro. Se mide con los goles que se esperan en cada partido (cuotas o modelo de mercado).</p>
-    <div class="rvt"><table><thead><tr><th></th>${gws.map(g => `<th>J${g}</th>`).join("")}</tr></thead><tbody>${equipos.map(fila).join("")}</tbody></table></div></details>`;
-}
-
 // El mercado anterior: qué libres había y quién se los llevó (equipos.json -> transfers desde el mercado)
 let MER_HIST = null;
 function cargarMerHist() {
@@ -5698,7 +5567,7 @@ function bloqueMercadoAyer(M) {
   const filas = ids.map(id => { const p = M.jug[id] || { id, name: "Jugador " + id }; const t = fich.find(x => String(x.playerId) === String(id)); return { p, t, v: MER_HIST[f][id] }; })
     .sort((a, b) => (b.t ? 1 : 0) - (a.t ? 1 : 0) || b.v - a.v);
   const n = filas.filter(x => x.t).length;
-  return `<details class="card cdet-card"><summary class="sumh">El mercado anterior</summary>
+  return `<details class="cdet mg-sub"><summary>El mercado anterior: quién se llevó cada libre</summary>
     <p class="note" style="margin:6px 0 8px">Libres del ${f.slice(8, 10)}/${f.slice(5, 7)}: ${n} de ${filas.length} encontraron dueño.</p>
     <ul class="clist">${filas.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 34)}<span class="cq"><b>${esc(x.p.name)}</b><span>${x.t ? `Fichado por <b class="ct-n">${esc(nombreM(x.t.to))}</b>${(pg => pg && pg.precio && x.v ? ` por ${eur(pg.precio)} (${pg.precio >= x.v ? "+" : "−"}${Math.round(Math.abs(pg.precio / x.v - 1) * 100)} %)` : "")(pagoDe(x.t))}` : "Nadie lo fichó"}</span></span><span class="cr"><b>${merEur(x.v)}</b><small>valía</small></span></li>`).join("")}</ul></details>`;
 }
@@ -5873,9 +5742,8 @@ function bloqueMesa(r) {
       <b>${esc(y.j.name)}</b><small><span class="jp-pos2" style="margin:0 4px 0 0;background:var(--${y.pos.toLowerCase()})">${y.pos}</span>puja <b>${merEur(y.puja)}</b></small>
       <small class="${y.ev >= 0 ? "up" : "dn"}">${merEurS(y.ev)} esperados</small><small>${y.dp > 0.05 ? `+${nf1.format(y.dp)} pts en tu once` : "no entra en tu once"}</small><i class="ms-chk">PUJAR</i></button>`).join("");
   requestAnimationFrame(() => mesaPinta(false));
-  return `<section class="card mesa" id="mesa"><div class="gh"><h2>🎛️ Mesa de operaciones</h2></div>
-    <p class="note" style="margin:0 0 10px">Prueba ventas y pujas con la plantilla de ${esc(M.m.name)} y mira al momento cómo quedan tu caja, tu dinero y tu once de la jornada ${M.gw}. O deja que el Golómetro busque la mejor combinación.</p>
-    ${selectorM(merMan, "data-mm", null, "Plantilla")}
+  return `<details class="card cdet-card mesa" id="mesa"><summary class="sumh">🎛️ Mesa de operaciones · prueba combinaciones</summary>
+    <p class="note" style="margin:6px 0 10px">Prueba ventas y pujas con la plantilla de ${esc(M.m.name)} y mira al momento cómo quedan tu caja, tu dinero y tu once de la jornada ${M.gw}. O deja que el Golómetro busque la mejor combinación.</p>
     <div class="ms-hud" id="msHud"><p class="ms-k">De hoy a la víspera de la J${M.gw} · ${M.h} ${M.h === 1 ? "día" : "días"}</p>
       <div class="ms-n"><div><small>Caja si ganas todas las pujas</small>${M.saldo == null ? `<input type="number" inputmode="decimal" step="0.1" placeholder="Tu saldo (M)" data-saldo aria-label="Tu saldo en millones">` : `<b id="msCaja"></b>`}<em id="msCajaS"></em></div>
         <div><small>Dinero que esperas ganar</small><b id="msDin"></b><em>frente a no hacer nada</em></div>
@@ -5889,7 +5757,7 @@ function bloqueMesa(r) {
     <h3 class="sec">Tu plantilla · toca para vender</h3><div class="ms-g">${chips}</div>
     <h3 class="sec">Libres de hoy · toca para pujar</h3>${cartas ? `<div class="ms-ls">${cartas}</div>` : `<p class="note">Hoy no hay libres con puja calculada.</p>`}
     ${clausulas ? `<h3 class="sec">Clausulazos · toca para clausular</h3><p class="note" style="margin:0 0 6px">Jugadores de tus rivales que hoy se pueden clausular y entrarían en tu once: lo que te suman y lo que le quitan al suyo en la J${M.gw}. Pagas la cláusula entera, que es más de lo que valen.</p><div class="ms-ls">${clausulas}</div>` : ""}
-    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></section>`;
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">Vender a Mister te da el valor de hoy; la flecha de cada jugador es lo que se espera que cambie su valor hasta la víspera de la J${M.gw} (misma previsión que el Plan). De cada libre se usa su puja recomendada y la probabilidad de ganarla: «esperados» = probabilidad × (lo que valdrá − la puja). El once es el mejor posible con los que te quedan y los que fichas, sin contar el extra del capitán. «Plan óptimo» prueba combinaciones de ventas y pujas y se queda con la que más suma en dinero esperado y puntos, según lo que marques que vale un punto, sin dejar la caja en negativo aunque ganes todas las pujas${M.saldo == null ? " (sin saldo puesto, como mucho " + PLAN.MAX_COMPRAS + " pujas)" : ""}. Son previsiones: una lesión o un mercado nuevo las cambian.</p></details></details>`;
 }
 function mesaNum(el, v, fmt) {
   if (!el) return;
@@ -5944,12 +5812,11 @@ document.addEventListener("input", e => {
   if (!e.target.matches || !e.target.matches("[data-mesa-lam]")) return;
   MESA.lam = Math.max(0, Math.min(MESA_LAM.length - 1, Number(e.target.value) || 0)); $("#msLam").textContent = MESA_LAM[MESA.lam][1];
 });
-function bloquePlanParon(r) {
-  const d = planDatos(r);
-  if (!d) return "";
+function bloqueJugada(r, mejor, cierre) {
+  const d = planDatos(r), hero = mejor ? heroMer(mejor, cierre) : "";
+  if (!d) return hero ? `<section class="card"><div class="gh"><h2>🎯 Tu jugada de hoy</h2></div>${hero}</section>` : "";
   const { P, m, h } = d;
   const vp = LIGA && LIGA.valorPersist && LIGA.valorPersist.validacion || {}, v10 = vp["10"] || vp["7"];
-  const titulo = P.normal ? `Plan hasta la jornada ${P.despues.gw}` : `Plan del parón`;
   const cuando = P.normal ? `Previsión del valor hasta la víspera de la jornada ${P.despues.gw} (${dia(P.despues.ini)}).`
     : `${P.enCurso ? "Estamos en el parón" : `Después de la jornada ${P.antes.gw} llega el parón`}: ${Math.round((P.despues.ini - P.antes.fin) / 86400) - 1} días sin partidos y la jornada ${P.despues.gw} empieza el ${dia(P.despues.ini)}. Previsión del valor de aquí a la víspera (${h} días).`;
   const fila = (p, izq, der, sub) => `<li class="crow" data-ficha="${esc(p.id)}">${cara(p.id, p.name, p.teamId, 36)}<span class="cq"><b>${esc(p.short || p.name)}</b><span>${izq}</span></span><span class="cr">${der}${sub ? `<small>${sub}</small>` : ""}</span></li>`;
@@ -5957,21 +5824,17 @@ function bloquePlanParon(r) {
   const vender = d.vender.map(x => fila(x.p, `${merEur(x.V)} → ${merEur(x.Vh)} · ${x.juegaAntes ? `véndelo el lunes, después de jugar la J${P.antes.gw}` : "véndelo hoy"}${x.c ? ` · no entra en tu once de la J${P.despues.gw}` : ""}`,
     `<b class="dn">${merEurS(x.d)}</b>`, pct(x))).join("");
   const dudas = d.dudas.map(x => fila(x.p, `${merEur(x.V)} → ${merEur(x.Vh)} · titular en tu once de la J${P.despues.gw} (${x.c ? nf1.format(x.c.esp) : "–"} pts esperados)`, `<b class="dn">${merEurS(x.d)}</b>`, pct(x))).join("");
-  const comprar = d.compras.map(y => fila(y.x.j, `puja ${merEur(y.puja)} (${pc(y.pw)} de ganarla) → valdría ${merEur(y.Vh)}${y.quien.length ? ` · pujarán: ${y.quien.map(q => `${esc(q.o.name)} ${pc(q.p)}`).join(", ")}` : ""}`,
+  const comprar = d.compras.filter(y => !mejor || String(y.x.j.id) !== String(mejor.j.id)).map(y => fila(y.x.j, `puja ${merEur(y.puja)} (${pc(y.pw)} de ganarla) → valdría ${merEur(y.Vh)}${y.quien.length ? ` · pujarán: ${y.quien.map(q => `${esc(q.o.name)} ${pc(q.p)}`).join(", ")}` : ""}`,
     `<b class="up">${merEurS(y.esperado)}</b>`, `si la ganas ${merEurS(y.gan)}`)).join("");
-  const suben = d.suben.slice(0, 4).map(x => fila(x.p, `${merEur(x.V)} → ${merEur(x.Vh)}`, `<b class="up">${merEurS(x.d)}</b>`, pct(x))).join("");
-  const sv = d.saldo != null ? String(d.saldo) : "";      // un campo numérico solo acepta el punto decimal
-  return `<section class="card plan"><div class="gh"><h2>🧭 ${titulo}</h2></div>
-    ${selectorM(merMan, "data-mm", null, "Plantilla")}
-    <p class="note" style="margin:0 0 8px">${cuando}</p>
-    <div class="ch-kpi"><span><b class="${d.cartera >= 0 ? "up" : "dn"}">${merEurS(d.cartera)}</b><small>lo que gana tu plantilla en el parón</small></span><span><b class="up">${merEurS(d.ahorro + d.ganancia)}</b><small>extra con el plan</small></span>
-      <span><label class="pl-saldo"><small>Tu saldo</small><input type="number" inputmode="decimal" step="0.1" placeholder="M €" value="${esc(sv)}" data-saldo aria-label="Tu saldo en millones"><small>millones</small></label></span></div>
+  return `<section class="card plan jugada"><div class="gh"><h2>🎯 Tu jugada de hoy</h2></div>
+    ${hero}
+    <p class="note" style="margin:12px 0 8px">${cuando}</p>
+    <div class="ch-kpi ch-kpi2"><span><b class="${d.cartera >= 0 ? "up" : "dn"}">${merEurS(d.cartera)}</b><small>lo que gana tu plantilla hasta la J${P.despues.gw} sin hacer nada</small></span><span><b class="up">${merEurS(d.ahorro + d.ganancia)}</b><small>extra si haces lo de abajo</small></span></div>
     ${vender ? `<h3 class="sec">1 · Vende</h3><p class="note">Bajan de valor y no entran en tu once de la J${P.despues.gw}: venderlos a Mister te da su valor de hoy y te ahorras la bajada.</p><ul class="clist">${vender}</ul>` : ""}
-    ${comprar ? `<h3 class="sec">${vender ? "2" : "1"} · Compra hoy para revender o reforzarte</h3><p class="note">Libres de hoy que subirán más de lo que pagas. La puja es la que más ganancia espera: pujar más sube la probabilidad de llevártelo pero se come la subida (los que más suben son los que más rivales quieren). A la derecha, lo que se espera ganar contando esa probabilidad${d.saldo == null ? "; pon tu saldo para que el plan no gaste más de lo que tienes" : ""}.</p><ul class="clist">${comprar}</ul>` : `<p class="note">Hoy no hay libres de más de 1 M que vayan a subir lo bastante para compensar la puja. El mercado cambia cada día: vuelve mañana.</p>`}
+    ${comprar ? `<h3 class="sec">${vender ? "2" : "1"} · Compra para revender</h3><p class="note">Libres que subirán más de lo que pagas. A la derecha, lo que se espera ganar.</p><ul class="clist">${comprar}</ul>` : `<p class="note">Hoy no hay libres de más de 1 M que vayan a subir lo bastante para compensar la puja. El mercado cambia cada día: vuelve mañana.</p>`}
     ${d.sinDinero.length ? `<p class="note">Sin saldo para: ${d.sinDinero.slice(0, 3).map(y => `${esc(y.x.j.name)} (${merEur(y.puja)}, ${merEurS(y.esperado)})`).join(", ")}.</p>` : ""}
     ${dudas ? `<h3 class="sec">Piénsatelo</h3><p class="note">Bajan mucho, pero son titulares en tu once de la J${P.despues.gw}: venderlos te ahorra dinero y te cuesta puntos.</p><ul class="clist">${dudas}</ul>` : ""}
-    ${suben ? `<h3 class="sec">Mantén</h3><ul class="clist">${suben}</ul>` : ""}
-    <details class="cdet"><summary>Cómo se calcula y cuánto fiarse</summary><p class="note">El valor de Mister tiene mucha inercia: si un jugador sube hoy, mañana suele subir un 96 % de eso, en una semana aún un 68 % y en 10 días la mitad, también sin partidos. Con esa curva (medida cada día con todos los jugadores de más de 1 M) se proyecta el valor de cada uno hasta la víspera de la J${P.despues.gw}.
+    <details class="cdet"><summary>Cómo se calcula y cuánto fiarse</summary><p class="note">Libres de hoy que subirán más de lo que pagas. La puja es la que más ganancia espera: pujar más sube la probabilidad de llevártelo pero se come la subida (los que más suben son los que más rivales quieren). A la derecha, lo que se espera ganar contando esa probabilidad. El valor de Mister tiene mucha inercia: si un jugador sube hoy, mañana suele subir un 96 % de eso, en una semana aún un 68 % y en 10 días la mitad, también sin partidos. Con esa curva (medida cada día con todos los jugadores de más de 1 M) se proyecta el valor de cada uno hasta la víspera de la J${P.despues.gw}.
       ${v10 ? `Prediciendo solo con los días anteriores, explica el ${Math.round(v10.r2 * 100)} % de la variación a ${vp["10"] ? 10 : 7} días y acierta si sube o baja el ${Math.round(v10.acierta * 100)} % de las veces.` : ""}
       Comprando cada día los 3 libres con más subida prevista y pagando el sobreprecio típico de esta liga (5 %), se habría ganado un 17 % en 10 días; los 3 peores perdieron un 26 %.</p>
       <p class="note">Validado hasta 10 días; más allá, la curva se alarga con su ritmo de caída y la previsión es menos fiable. Los puntos de la J${P.antes ? P.antes.gw : P.despues.gw - 1} y una lesión con la selección pueden cambiar el rumbo de un jugador de un día para otro: el plan se recalcula cada mañana con los valores nuevos. Por debajo de 1 M el valor se mueve al azar y no se proyecta.</p></details>
@@ -6001,16 +5864,16 @@ function bloqueEscudo(r) {
   if (!L.length) return "";
   const tono = x => x.pP >= 0.25 ? "dn" : x.pP >= 0.12 ? "" : "up";
   const filas = L.map(x => `<li class="crow" data-ficha="${esc(x.p.id)}">${cara(x.p.id, x.p.name, x.p.teamId, 36)}<span class="cq"><b>${esc(x.p.short || x.p.name)}</b>
-      <span>${x.protegido ? `protegido hasta el ${esc(dia(x.protegido))} · ` : ""}cláusula ${merEur(x.p.clause)} (${Math.round(x.nivel * 100)} % de ${merEur(x.B)})${x.caro ? " · más cara que cualquier cláusula pagada este mes" : ""}</span>
-      <span>${x.margen >= 0 ? `si te lo clausulan cobras ${merEur(x.margen)} más de lo que costaría uno igual` : `<b class="dn">si te lo clausulan te faltan ${merEur(-x.margen)} para fichar uno igual</b>`}${x.c && x.c.esp >= 5 ? ` · ${nf1.format(x.c.esp)} pts esperados en la J${P.despues.gw}` : ""}</span>
-      <span>Subirla al ${Math.round(x.sube * 100)} % cuesta ${merEur(x.coste)}: ${x.compensa ? "compensa" : "no compensa en dinero"}</span></span>
-      <span class="cr"><b class="${tono(x)}">${pc(x.pP)}</b><small>riesgo en ${h} día${h === 1 ? "" : "s"}</small></span></li>`).join("");
+      <span>${merEur(x.V)} → <b class="${x.Vh >= x.V ? "up" : "dn"}">${merEur(x.Vh)}</b></span><span>cláusula ${merEur(x.p.clause)} (${Math.round(x.nivel * 100)} %)</span>
+      ${x.protegido ? `<span>🔒 protegido hasta el ${esc(dia(x.protegido))}</span>` : ""}${x.margen < 0 ? `<span class="dn">si te lo clausulan te faltan ${merEur(-x.margen)} para fichar uno igual</span>` : ""}${x.compensa ? `<span class="up">sube la cláusula al ${Math.round(x.sube * 100)} % (${merEur(x.coste)}): compensa</span>` : ""}</span>
+      <span class="cr"><b class="${tono(x)}">${pc(x.pP)}</b><small>riesgo</small></span></li>`).join("");
   const alto = L.filter(x => x.pP >= 0.15).length;
-  return `<details class="card cdet-card"><summary class="sumh">🛡️ Escudo anticláusulas</summary>
-    <p class="note" style="margin:6px 0 8px">Riesgo de que te clausulen a cada jugador de aquí a la J${P.despues.gw}${alto ? ` · ${alto} con más del 15 %` : ""}. En esta liga se clausula sobre todo a jugadores que suben de valor y están en forma${quien.length ? `; los que más clausulan: ${quien.join(", ")}` : ""}.</p>
-    <ul class="clist">${filas}</ul>
-    <p class="note">${isFinite(maxPag) ? `La cláusula más cara pagada en el último mes fue de ${merEur(maxPag)}: a las que la superan se les baja el riesgo, porque no hay tanto dinero suelto. ` : ""}Con la cláusula al 150 % casi siempre te pagan más de lo que vale el jugador: el riesgo de verdad es perder sus puntos. Subir medio tramo (+50 % de la base) cuesta el 20 % de la base y solo compensa en dinero si el riesgo pasa del 40 %; además, en esta liga una cláusula más alta no ha frenado los clausulazos (se pagaron cláusulas del 200 %). Súbela solo en jugadores que no podrías reemplazar.</p>
-    <p class="note">Calibrado con los 15 clausulazos del 22/10 al 05/11: 13 fueron a jugadores del 40 % con más riesgo según este cálculo y ninguno al 40 % con menos. Son pocos casos: tómalo como una señal, no como una certeza.</p></details>`;
+  return `<section class="card"><div class="gh"><h2>🛡️ Tu plantilla</h2></div>
+    <p class="note" style="margin:0 0 8px">Lo que valdrá cada jugador en la víspera de la J${P.despues.gw} y, a la derecha, el riesgo de que te lo clausulen antes${alto ? ` (${alto} con más del 15 %)` : ""}${quien.length ? `. Los que más clausulan: ${quien.join(", ")}` : ""}.</p>
+    <ul class="clist esc-l${escTodo ? " todo" : ""}">${filas}</ul>
+    ${L.length > 6 ? `<p style="text-align:center;margin:8px 0 0"><button class="btn-ghost" data-esct="1">${escTodo ? "Ver solo los 6 con más riesgo" : `Ver toda la plantilla (${L.length})`}</button></p>` : ""}
+    <details class="cdet"><summary>Cómo se calcula</summary><p class="note">${isFinite(maxPag) ? `La cláusula más cara pagada en el último mes fue de ${merEur(maxPag)}: a las que la superan se les baja el riesgo, porque no hay tanto dinero suelto. ` : ""}Con la cláusula al 150 % casi siempre te pagan más de lo que vale el jugador: el riesgo de verdad es perder sus puntos. Subir medio tramo (+50 % de la base) cuesta el 20 % de la base y solo compensa en dinero si el riesgo pasa del 40 %; además, en esta liga una cláusula más alta no ha frenado los clausulazos (se pagaron cláusulas del 200 %). Súbela solo en jugadores que no podrías reemplazar.</p>
+    <p class="note">Calibrado con los 15 clausulazos del 22/10 al 05/11: 13 fueron a jugadores del 40 % con más riesgo según este cálculo y ninguno al 40 % con menos. Son pocos casos: tómalo como una señal, no como una certeza.</p></details></section>`;
 }
 function bloqueLeerRivales(r) {
   const d = planDatos(r), R = rivalesPuja();
@@ -6035,58 +5898,48 @@ function bloqueLeerRivales(r) {
     <span>${[perfil(f), f.rr ? `${f.rr.n} pujas en 30 días${f.sob != null ? `, suele pagar un ${Math.round(f.sob * 100)} % sobre el valor` : ""}` : "", f.cls.length ? `${f.cls.length} clausulazo${f.cls.length > 1 ? "s" : ""} (${merEur(f.cls.reduce((t, c) => t + c.precio, 0))})${f.aMi ? `, ${f.aMi} a ti` : ""}` : "no ha clausulado"].filter(Boolean).join(" · ")}</span>
     <span>Últimos 7 días: ${f.flujo >= 0 ? `ha ingresado ${merEur(f.flujo)} netos (tiene caja fresca)` : `ha gastado ${merEur(-f.flujo)} netos`}${f.su2 != null ? ` · su mejor once para la J${P.despues.gw}: ${nf1.format(f.su2)} pts${mi2 != null ? ` (el tuyo ${nf1.format(mi2)})` : ""}` : ""}</span>
     ${f.ints.length ? `<span>Hoy pujará probablemente por: ${f.ints.map(y => `${esc(y.x.j.name)} (${pc(y.p)})`).join(", ")}</span>` : ""}</li>`;
-  return `<details class="card cdet-card"><summary class="sumh">🕵️ Tus rivales</summary>
+  return `<div class="mg-sub"><h3 class="sec">Qué hace cada rival</h3>
     <p class="note" style="margin:6px 0 8px">Qué hace cada uno y qué va a hacer: cómo puja, cuánto paga de más, si clausula, si tiene dinero fresco y por qué libres de hoy pujará.</p>
     <ul class="rvl2s">${filas.map(li).join("")}</ul>
-    <p class="note">«Pujará por» sale de un modelo con todas las pujas del último mes: en esta liga se puja sobre todo por los libres que suben de valor ese día (casi 3 de cada 10 rivales pujan por uno que sube más de un 2 %) y por los que puntúan; las carencias de la plantilla apenas influyen, salvo el portero.${LIGA && LIGA.pujas && LIGA.pujas.auc ? ` Prediciendo cada día con los demás, ordena bien quién puja el ${Math.round(LIGA.pujas.auc * 100)} % de las veces.` : ""} La caja fresca es lo que ha cobrado por ventas y cláusulas menos lo que ha gastado en 7 días: su saldo real no se ve.</p></details>`;
+    <p class="note">«Pujará por» sale de un modelo con todas las pujas del último mes: en esta liga se puja sobre todo por los libres que suben de valor ese día (casi 3 de cada 10 rivales pujan por uno que sube más de un 2 %) y por los que puntúan; las carencias de la plantilla apenas influyen, salvo el portero.${LIGA && LIGA.pujas && LIGA.pujas.auc ? ` Prediciendo cada día con los demás, ordena bien quién puja el ${Math.round(LIGA.pujas.auc * 100)} % de las veces.` : ""} La caja fresca es lo que ha cobrado por ventas y cláusulas menos lo que ha gastado en 7 días: su saldo real no se ve.</p></div>`;
 }
 
-// ---------- Radar de pujas (Mercado, solo con PIN) ----------
-// Sónar: cada libre es un punto. Distancia al centro = lo que hay que pagar por encima de su valor con la puja ideal;
-// tamaño = su valor; opacidad = probabilidad de llevártelo con esa puja. Sectores: portero, defensa, medio, delantero.
-let RADP = { id: null, pts: {} };
-function bloqueRadarPujas(r) {
-  const L = r.lista.filter(x => x.prio !== "evitar" && x.V > 0 && capNum(x.puja) && x.pl && capNum(x.pl.p));
-  if (L.length < 3) return "";
-  const POS = ["PT", "DF", "MC", "DL"], NOM = { PT: "Porteros", DF: "Defensas", MC: "Medios", DL: "Delanteros" };
-  const sobre = x => Math.max(0, x.puja / x.V - 1), mx = Math.max(0.1, ...L.map(sobre)), Vmax = Math.max(...L.map(x => x.V));
-  RADP.pts = {};
-  const g = {}; POS.forEach(p => g[p] = L.filter(x => x.j.pos === p).sort((a, b) => b.V - a.V));
-  const puntos = [];
-  POS.forEach((pos, k) => g[pos].forEach((x, i, a) => {
-    const ang = (-90 + k * 90 + 45 + (a.length > 1 ? (i / (a.length - 1) - 0.5) * 70 : 0)) * Math.PI / 180;
-    const rad = 28 + sobre(x) / mx * 112, cx = 160 + rad * Math.cos(ang), cy = 160 + rad * Math.sin(ang), rr = 3 + 6 * Math.sqrt(x.V / Vmax), p = x.pl.p;
-    RADP.pts[String(x.j.id)] = { x, p };
-    puntos.push({ id: String(x.j.id), x, cx, cy, rr, p });
-  }));
-  if (!RADP.id || !RADP.pts[RADP.id]) RADP.id = puntos.slice().sort((a, b) => b.p * b.x.V - a.p * a.x.V)[0].id;
-  const aros = [0.33, 0.66, 1].map(f => `<circle class="rp-aro" cx="160" cy="160" r="${(28 + f * 112).toFixed(0)}"/><text class="rp-t" x="160" y="${(160 - 28 - f * 112 - 2).toFixed(0)}">+${Math.round(f * mx * 100)} %</text>`).join("");
-  const ejes = POS.map((pos, k) => { const a = (-90 + k * 90) * Math.PI / 180, b = (-45 + k * 90) * Math.PI / 180;
-    return `<line class="rp-eje" x1="160" y1="160" x2="${(160 + 146 * Math.cos(a)).toFixed(1)}" y2="${(160 + 146 * Math.sin(a)).toFixed(1)}"/><text class="rp-t" x="${(160 + 128 * Math.cos(b + Math.PI / 4 * 0)).toFixed(1)}" y="${(160 + 128 * Math.sin(b) + 3).toFixed(1)}" style="opacity:.0"></text>`; }).join("");
-  const rotulos = POS.map((pos, k) => { const a = (-90 + k * 90 + 45) * Math.PI / 180; return `<text class="rp-t" x="${(160 + 152 * Math.cos(a)).toFixed(1)}" y="${(160 + 152 * Math.sin(a) + 2).toFixed(1)}" style="font-weight:700">${NOM[pos]}</text>`; }).join("");
-  const dots = puntos.map(q => `<g class="rp-d ${q.p < 0.35 ? "b" : q.p < 0.6 ? "m" : ""} ${q.id === RADP.id ? "on" : ""}" data-rp="${esc(q.id)}" tabindex="0" role="button" aria-label="${esc(q.x.j.name)}, ${Math.round(q.p * 100)} % de llevártelo"><circle class="rp-h" cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${q.rr.toFixed(1)}"/><circle class="rp-p" cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${q.rr.toFixed(1)}"/><circle cx="${q.cx.toFixed(1)}" cy="${q.cy.toFixed(1)}" r="${(q.rr + 8).toFixed(1)}" fill="transparent"/></g>`).join("");
-  return `<section class="card" id="radarPujas"><div class="gh"><h2>📡 Radar de pujas</h2></div>
-    <p class="note" style="margin:0 0 6px">Cada punto es un libre. Cuanto más cerca del centro, menos hay que pagar por encima de su valor con la puja ideal; cuanto más grande, más vale; cuanto más fuerte, más probable es llevártelo. Toca uno.</p>
-    <svg class="rp-svg" viewBox="0 0 320 320" role="group" aria-label="Radar de pujas por posición">
-      <defs><linearGradient id="rpG" x1="0" x2="1"><stop offset="0" stop-color="var(--acc,#2fd46e)" stop-opacity="0"/><stop offset="1" stop-color="var(--acc,#2fd46e)" stop-opacity=".35"/></linearGradient></defs>
-      ${aros}${ejes}${rotulos}
-      <g class="rp-barre"><path d="M160 160 L160 18 A142 142 0 0 1 230 37 Z" fill="url(#rpG)"/></g>
-      <circle cx="160" cy="160" r="3" fill="var(--acc,#2fd46e)"/>${dots}</svg>
-    <div class="rp-ficha" id="rpFicha" aria-live="polite">${htmlFichaRadar()}</div></section>`;
+// ---------- Pestaña Mercado: cinco bloques (limpieza del 26/11, pedido del dueño: «es imposible enterarse de nada») ----------
+// 1 Tu jugada de hoy (bloqueJugada) · 2 Libres de hoy con filtros (bloqueLibres) · 3 Tu plantilla (bloqueEscudo)
+// 4 Mesa de operaciones, plegada (bloqueMesa) · 5 Tus rivales y cómo se puja, plegado (bloqueRivalesMer).
+// La plantilla elegida y el saldo van una sola vez, en la cabecera, y valen para toda la pestaña.
+let merMan = null, merFiltro = "todos", escTodo = false;
+const MER_ORDEN = { imperdible: 0, top: 1, bueno: 2, favorable: 3, inversion: 4, normal: 5, evitar: 6 };
+function bloqueLibres(r, mejor) {
+  const pt = paraTiDatos(r) || [], inv = invDatos(r), nom = ((E && E.managers || []).find(m => m.id === merMan) || {}).name || "";
+  const todos = r.lista.slice().sort((a, b) => (MER_ORDEN[a.prio] ?? 5) - (MER_ORDEN[b.prio] ?? 5) || b.score - a.score);
+  const fil = [["todos", "Todos", todos.length], ["once", "Para tu once", pt.length], ["inv", "Para invertir", inv.length]];
+  let cuerpo;
+  if (merFiltro === "once") cuerpo = pt.length ? `<p class="note" style="margin:0 0 8px">Libres que harían más puntos en la J${r.gw} que el titular más flojo de su puesto en el once recomendado de ${esc(nom)}. «Ganar la J»: sus opciones de ganar la jornada sin y con el fichaje.</p>
+      <ul class="clist">${pt.map(({ x, tit, g, pAntes, pDesp }) => `<li class="crow" data-ficha="${esc(x.j.id)}">${cara(x.j.id, x.j.name, x.j.teamId, 40)}
+        <span class="cq"><b>${esc(x.j.name)} <span class="jp-pos2" style="background:var(--${x.pos.toLowerCase()})">${x.pos}</span></b><span>${tit ? `por ${esc(tit.p.short || tit.p.name)} · ${nf1.format(x.espProx)} frente a ${nf1.format(tit.esp)} pts` : `cubre un hueco de tu once · ${nf1.format(x.espProx)} pts`}</span>${pDesp != null ? `<span class="pq-g">Ganar la J${r.gw}: ${pctF(pAntes)} → <b>${pctF(pDesp)}</b></span>` : ""}</span>
+        <span class="cr"><b class="up">+${nf1.format(g)}</b><small>pts · puja ${merEur(x.puja)}${x.pl ? ` · ${pc(x.pl.p)}` : ""}</small></span></li>`).join("")}</ul>`
+    : `<p class="note">Ningún libre de hoy mejora el once de ${esc(nom)} en la jornada ${r.gw}.</p>`;
+  else if (merFiltro === "inv") cuerpo = inv.length ? `<p class="note" style="margin:0 0 8px">Libres cuyo valor se espera que suba más de lo que pagas por encima de él con la puja ideal. A la derecha, lo que ganarías vendiéndolo en 7 días, ya descontado lo que pagas de más.</p>
+      <ul class="clist">${inv.map(y => `<li class="crow" data-ficha="${esc(y.x.j.id)}">${cara(y.x.j.id, y.x.j.name, y.x.j.teamId, 36)}<span class="cq"><b>${esc(y.x.j.name)}</b><span>puja ${merEur(y.x.puja)}${y.x.pl ? ` (${pc(y.x.pl.p)})` : ""} → valdría ${merEur(y.x.V * (1 + y.g7))}</span></span><span class="cr"><b class="up">+${eur(y.neto7)}</b><small>en 7 días</small></span></li>`).join("")}</ul>
+      <p class="note">Es una previsión: un mal partido o una lesión la cambian de golpe. Por debajo de 1 M el valor se mueve al azar y no se incluye.</p>`
+    : `<p class="note">Hoy ningún libre de más de 1 M va a subir lo bastante para compensar la puja.</p>`;
+  else { const ok = todos.filter(x => !["normal", "evitar"].includes(x.prio)), resto = todos.filter(x => ["normal", "evitar"].includes(x.prio));
+    cuerpo = (ok.length ? `<ul class="mlist">${ok.map(merTarjeta).join("")}</ul>` : `<p class="note">Hoy ningún libre merece una puja fuerte.</p>`)
+      + (resto.length ? `<details class="cdet mer-resto"><summary>Ver los otros ${resto.length} (sin interés o mejor no ficharlos)</summary><ul class="mlist">${resto.map(merTarjeta).join("")}</ul></details>` : ""); }
+  return `<section class="card" id="merLibres"><div class="gh"><h2>📋 Libres de hoy</h2></div>
+    <div class="seg seg3 mer-fil" role="group" aria-label="Qué libres ver">${fil.map(([k, txt, n]) => `<button data-mf="${k}" class="${merFiltro === k ? "on" : ""}" aria-pressed="${merFiltro === k}">${txt} <span class="mer-n">${n}</span></button>`).join("")}</div>
+    ${cuerpo}
+    <p class="note">La puja ideal sale de lo que de verdad se paga en esta liga por jugadores de precio parecido (el precio de cada compra se deduce de su cláusula, que es 1,5 veces lo pagado). El % es la probabilidad de llevártelo con esa puja.</p>
+    ${bloqueSimPuja(r, mejor)}</section>`;
 }
-function htmlFichaRadar() {
-  const o = RADP.pts[RADP.id]; if (!o) return "";
-  const x = o.x;
-  return `${cara(x.j.id, x.j.name, x.j.teamId, 40)}<span class="cq"><b>${esc(x.j.name)}</b><span>valor ${merEur(x.V)} · puja ideal ${merEur(x.puja)} · te lo llevas ${Math.round(o.p * 100)} %</span></span><button class="sp-ir" data-simsel="${esc(x.j.id)}">Probar pujas</button>`;
+function bloqueRivalesMer(r) {
+  const a = bloqueLeerRivales(r), b = bloquePujasLiga(), c = bloqueMercadoAyer(MER_DATA);
+  if (!a && !b && !c) return "";
+  return `<details class="card cdet-card mer-riv"><summary class="sumh">🕵️ Tus rivales y cómo se puja</summary>${a}${b}${c}</details>`;
 }
-function elegirRadar(id) {
-  if (!RADP.pts[id]) return;
-  RADP.id = id;
-  document.querySelectorAll("#radarPujas .rp-d").forEach(g => g.classList.toggle("on", g.dataset.rp === id));
-  const f = $("#rpFicha"); if (f) f.innerHTML = htmlFichaRadar();
-}
-document.addEventListener("click", e => { const g = e.target.closest && e.target.closest("[data-rp]"); if (g) elegirRadar(g.dataset.rp); });
-document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.dataset && e.target.dataset.rp) { e.preventDefault(); elegirRadar(e.target.dataset.rp); } });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-esct]"); if (b) { escTodo = !escTodo; pintarMercado(); } });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-mf]"); if (!b || b.dataset.mf === merFiltro) return; merFiltro = b.dataset.mf; pintarMercado(); });
 function pintarMercado() {
   const cont = $("#mer");
   if (!iaOk) { cont.innerHTML = htmlBloqueo("Las pujas y recomendaciones del mercado son solo para el dueño de la web."); pin = ""; pintarPin(); return; }
@@ -6100,39 +5953,19 @@ function pintarMercado() {
   const viejo = Date.now() / 1000 - Date.parse(MER_DATA.updatedAt) / 1000 > 30 * 3600;
   const mejor = r.lista.filter(x => !["normal", "evitar"].includes(x.prio)).sort((a, b) => b.score - a.score)[0]
     || r.lista.filter(x => x.prio === "normal").sort((a, b) => b.score - a.score)[0];
-  const grupos = MER_GRUPOS.map(([k, t]) => {
-    const l = r.lista.filter(x => x.prio === k && x !== mejor);
-    return l.length ? `<h3 class="sec">${t}</h3><ul class="mlist">${l.map(merTarjeta).join("")}</ul>` : "";
-  }).join("");
-  const resto = r.lista.filter(x => (x.prio === "normal" || x.prio === "evitar") && x !== mejor);
-  const hay = r.lista.some(x => !["normal", "evitar"].includes(x.prio));
-  const mx = [["mesa", "🎛️", "Mesa", "Simula ventas y pujas", bloqueMesa(r)], ["plan", "🗓️", "Plan del parón", "Qué hacer con el saldo", bloquePlanParon(r)], ["hero", "🎯", "Mejor puja", "El libre que más compensa", mejor ? heroMer(mejor, cierre) : ""],
-    ["rad", "📡", "Radar", "Los libres en un sónar", bloqueRadarPujas(r)], ["esc", "🛡️", "Escudo", "Protege tus cláusulas", bloqueEscudo(r)], ["riv", "🔍", "Tus rivales", "Qué buscan los demás", bloqueLeerRivales(r)], ["cal", "📅", "Calendario", "Próximos partidos de los libres", bloqueCalendario()]].filter(x => x[4]);
-  const mb = k => { const x = mx.find(y => y[0] === k); return x ? `<div id="mex-${k}">${x[4]}</div>` : ""; };
-  const mexplora = `<nav class="indice bento" aria-label="Más del Mercado">${mx.map(x => `<button data-ir="mex-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
+  const d = planDatos(r);      // elige también la plantilla (tú, la del capitán o la primera)
+  const quedan = isFinite(cierre) ? Math.max(0, cierre - Date.now() / 1000) : 0, sv = d && d.saldo != null ? String(d.saldo) : planSaldo() != null ? String(planSaldo()) : "";
   cont.innerHTML = `
-    <section class="card"><div class="gh"><h2>💸 Mercado · jugadores libres</h2></div>
-      <p class="note" style="margin:0">Actualizado ${esc(fechaCorta(MER_DATA.updatedAt))} · se resuelve ${esc(merFecha(cierre))} · jornada ${r.gw} (${r.lista.length} libres, se ignoran los ${MER_DATA.total - r.lista.length} que venden otros managers)</p>
-      ${viejo ? `<p class="aviso" style="margin:8px 0 0">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}</section>
-    ${mexplora}
-    ${mb("mesa")}
-    ${mb("plan")}
-    ${mb("hero")}
-    ${mb("rad")}
-    ${bloqueSimPuja(r, mejor)}
-    ${bloqueParaTi(r)}
-    ${hay ? grupos : `<p class="note" style="text-align:center;margin:14px 0">Hoy no hay ningún libre que merezca una puja fuerte.</p>`}
-    ${resto.length ? `<p style="text-align:center"><button class="btn-ghost" data-mt="1">${merTodos ? "Ocultar" : "Ver"} el resto (${resto.length})</button></p>${merTodos ? `<ul class="mlist">${resto.map(merTarjeta).join("")}</ul>` : ""}` : ""}
-    ${bloqueInversion(r)}
-    ${mb("esc")}
-    ${mb("riv")}
-    ${bloqueMercadoAyer(MER_DATA)}
-    ${bloqueSubidas(MER_DATA)}
-    ${mb("cal")}
-    ${bloqueRacha(MER_DATA)}
-    ${bloquePujanRivales()}
-    ${bloquePujasLiga()}
-    <p class="note">La puja ideal sale de lo que de verdad se paga en esta liga por jugadores de precio parecido (el precio de cada compra se deduce de su cláusula, que es 1,5 veces lo pagado). El % junto a la puja es la probabilidad de llevártelo. Cuanto mejor es el jugador, más alta la probabilidad que se busca.</p>`;
+    <section class="card mer-cab"><div class="gh"><h2>💸 Mercado</h2></div>
+      <p class="note" style="margin:0 0 10px">${isFinite(cierre) ? `Se resuelve ${esc(merFecha(cierre))}${quedan ? ` (en ${Math.floor(quedan / 3600)} h ${Math.floor(quedan % 3600 / 60)} min)` : ""} · ` : ""}${r.lista.length} libres · datos de ${esc(fechaCorta(MER_DATA.updatedAt))}</p>
+      ${viejo ? `<p class="aviso" style="margin:0 0 10px">Los datos tienen más de un día: el mercado de hoy aún no se ha leído.</p>` : ""}
+      ${selectorM(merMan, "data-mm", null, "Plantilla")}
+      <label class="mer-saldo"><span>Tu saldo</span><input type="number" inputmode="decimal" step="0.1" placeholder="—" value="${esc(sv)}" data-saldo aria-label="Tu saldo en millones"><span>millones</span></label></section>
+    ${bloqueJugada(r, mejor, cierre)}
+    ${bloqueLibres(r, mejor)}
+    ${bloqueEscudo(r)}
+    ${bloqueMesa(r)}
+    ${bloqueRivalesMer(r)}`;
   moverSim();
 }
 
@@ -8903,7 +8736,7 @@ document.addEventListener("change", e => {
 });
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-sub],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
+  const t = e.target.closest("[data-compp],[data-compq],[data-clv],[data-jsel],[data-yo],[data-nov],[data-mm],[data-comp],[data-ir],[data-gv],[data-vm],[data-v],[data-o],[data-m],[data-g],[data-gs],[data-gm],[data-cpv],[data-cj],[data-s],[data-e],[data-es],[data-cm],[data-cv],[data-mt],[data-cg]");
   if (!t) return;
   const d = t.dataset;
   if (d.s) {
@@ -8914,7 +8747,6 @@ document.addEventListener("click", e => {
   }
   if (d.e !== undefined) { eqSel = d.e; pintarEquipos(); return; }
   if (d.clv) { clVista = d.clv; pintarEquipos(); return; }
-  if (d.sub) { subVista = d.sub; pintarMercado(); return; }
   if (d.jsel) { jselAbierto = !jselAbierto; pintar(); return; }
   if (d.yo) { YO = YO === d.yo ? null : d.yo; try { YO ? localStorage.setItem("yo", YO) : localStorage.removeItem("yo"); } catch (err) {} if (YO) { capMan = YO; merMan = YO; } if (seccion === "cap") pintarCapitan(); else if (seccion === "mer") pintarMercado(); else if (seccion === "eq") pintarEquipos(); else if (seccion === "clas") pintarTuJornada(); return; }
   if (d.nov) { try { localStorage.setItem("novedades", NOVEDADES_V); } catch (err) {} const n = t.closest(".nov"); if (n) n.remove(); return; }
@@ -8929,7 +8761,6 @@ document.addEventListener("click", e => {
   if (d.cm !== undefined) { capMan = d.cm; pintarCapitan(); return; }
   if (d.cg !== undefined) { capGw = +d.cg; pintarCapitan(); return; }
   if (d.cv !== undefined) { capTodos = !capTodos; pintarCapitan(); return; }
-  if (d.mt !== undefined) { merTodos = !merTodos; pintarMercado(); return; }
   if (!D) return;
   if (d.g !== undefined || d.gs !== undefined || d.gm !== undefined) {
     if (d.g !== undefined) foco = foco === d.g ? null : d.g;
