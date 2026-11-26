@@ -4380,7 +4380,7 @@ const CAP = {
   SENS_ATAQUE: 0.15,     // 10 % más de goles esperados -> +6 % de puntos (en posiciones atacantes)
   SENS_CS: 0.35,         // 10 % más de probabilidad de portería a cero -> +2 % de puntos
   HOME_EXTRA: 0.02,     // ajuste adicional por jugar en casa (+) o fuera (−)
-  F_SUPLENTE: 0.59,     // puntos de quien FF da como suplente, respecto a su predicción (autoajuste_capitan.py lo mide frente al modelo: ~0,88)
+  F_SUPLENTE: 0.59,     // puntos de un suplente que entra, respecto a un jugador normal (medido en vuestra liga: 2,7 frente a 4,5)
   LIMITE_F: [0.55, 1.6],
   // Un único algoritmo de riesgo: k = premio por el potencial de subida (desviación solo hacia arriba), l = castigo por el
   // riesgo de bajada (desviación solo hacia abajo). Una racha de 10 puntos no se penaliza; un -3 por goleada o expulsión sí.
@@ -4466,13 +4466,9 @@ function capPJuega(streak, valor, pos) {
   return Math.min(0.98, Math.max(0.02, 1 / (1 + Math.exp(-z))));
 }
 // puntos esperados al jugar según el valor (un jugador de 15 M rinde más que uno de 1 M)
-// Si modelo_liga.py ha medido que una potencia del valor acierta más que el logaritmo (liga.priorValorPot), se usa esa.
 function capPrior(pos, valor) {
-  if (!valor) return null;
-  const q = LIGA && LIGA.priorValorPot, rq = q && q.exp > 0 && q[pos];
-  if (rq) return Math.min(9, Math.max(1, rq[0] * Math.pow(Math.max(valor, 1e5) / 1e6, q.exp) + rq[1]));
   const r = LIGA && LIGA.priorValor && LIGA.priorValor[pos];
-  if (!r) return null;
+  if (!r || !valor) return null;
   return Math.min(9, Math.max(1, r[0] * Math.log10(Math.max(valor, 1e5)) + r[1]));
 }
 const capMult = v => v > 10e6 ? 1.5 : v >= 5e6 ? 2 : 3;
@@ -5901,10 +5897,9 @@ function panelFactores() {
     ctxGan != null ? ["El rival (antes del partido)", ctxGan, `Antes de jugarse, los goles se prevén con una correlación de ${nf2.format(f.golesPrevistosCorr)}: el rival y cómo puntúa cada posición contra él añaden poco (${pc1(ctxGan)}). Con las cuotas de las casas de apuestas se prevé mejor.`] : null
   ].filter(Boolean);
   const mx = Math.max(...filas.map(x => x[1]), 0.01);
-  return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Qué decide los puntos</summary>
-    <p class="note">Medido cada día con ${f.n} actuaciones de toda LaLiga, prediciendo cada jornada solo con lo anterior.</p>
+  return `<p class="note" style="margin-top:0">Medido cada día con ${f.n} actuaciones de toda LaLiga, prediciendo cada jornada solo con lo anterior.</p>
     <ul class="fz">${filas.map(([t, x, txt]) => `<li><span class="fz-t"><b>${t}</b><em>${pc1(x)}</em></span>${barra(x, mx)}<small>${txt}</small></li>`).join("")}</ul>
-    <p class="note">Por eso el Golómetro pone primero la probabilidad de jugar y el nivel del jugador, usa el rival con poco peso y simula los goles de cada partido para la predicción. Ningún modelo puede quitar la suerte: un mismo jugador puede hacer 2 o 15 puntos en partidos parecidos.</p></details>`;
+    <p class="note">Por eso el Golómetro pone primero la probabilidad de jugar y el nivel del jugador, usa el rival con poco peso y simula los goles de cada partido para la predicción. Ningún modelo puede quitar la suerte: un mismo jugador puede hacer 2 o 15 puntos en partidos parecidos.</p>`;
 }
 // Resultado del recomendador en jornadas ya jugadas (con datos anteriores a cada jornada)
 function panelRendimiento() {
@@ -5917,12 +5912,11 @@ function panelRendimiento() {
     return `<tr><td>J${j.gw}</td><td><b>${nf1.format(j.capModelo)}</b></td><td>${nf1.format(j.capHumano)}</td><td>${nf1.format(j.capAzar)}</td><td class="${d > 0 ? "up" : d < 0 ? "dn" : ""}">${d > 0 ? "+" : d < 0 ? "−" : ""}${nf1.format(Math.abs(d))}</td></tr>`; }).join("");
   const m = (PAR && PAR.metricas) || {};
   const dif = (tot.m - tot.h) / tot.n;
-  return `<details class="card" style="margin-top:14px" open><summary style="cursor:pointer;font-weight:700">📊 Rendimiento en jornadas anteriores</summary>
-    <p class="note">Qué habría pasado si hubieras puesto de capitán al que recomendaba el algoritmo con los datos que había <b>antes</b> de cada jornada, frente al que eligieron los managers. Puntos base del capitán, sin multiplicador, de media por plantilla.</p>
+  return `<p class="note" style="margin-top:0">Qué habría pasado si hubieras puesto de capitán al que recomendaba el algoritmo con los datos que había <b>antes</b> de cada jornada, frente al que eligieron los managers. Puntos base del capitán, sin multiplicador, de media por plantilla.</p>
     <p style="margin:8px 0"><b>${gana} de ${js.length} jornadas</b> mejor que los managers${empata ? ` (${empata} empatadas)` : ""}. En total: algoritmo <b>${nf1.format(tot.m / tot.n)}</b> pts · managers <b>${nf1.format(tot.h / tot.n)}</b> · azar ${nf1.format(tot.a / tot.n)} → <b class="${dif >= 0 ? "up" : "dn"}">${dif >= 0 ? "+" : "−"}${nf1.format(Math.abs(dif))} pts</b> por jornada y plantilla.</p>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Algoritmo</th><th>Managers</th><th>Azar</th><th>Diferencia</th></tr></thead><tbody>${filas}</tbody></table></div>
     ${PAR && PAR.liga && PAR.liga.validacion ? (v => `<p class="note"><b>Modelo de toda la liga</b> (${PAR.liga.muestra} actuaciones de todos los jugadores, no solo los vuestros): predice si un jugador va a jugar con un error de ${nf2.format(v.brierLogistica)} frente a ${nf2.format(v.brierFormulaAnterior)} de la fórmula anterior (menos es mejor), y sus puntos al jugar con un error medio de ${nf2.format(v.rmsePriorValor)} pts frente a ${nf2.format(v.rmseMediaPosicion)} si solo se usara la media de la posición. Se prueba jornada a jornada con lo que se sabía antes.</p>`)(PAR.liga.validacion) : ""}
-    ${m.rmseCompleto ? `<p class="note">Al predecir los puntos de todos los jugadores, el error medio es ${nf2.format(m.rmseCompleto)} pts, frente a ${nf2.format(m.rmsePosicion)} si solo se usara la media de su posición. Con ${js.length} jornadas la muestra es pequeña: una sola jornada puede cambiar mucho estas cifras.</p>` : ""}</details>`;
+    ${m.rmseCompleto ? `<p class="note">Al predecir los puntos de todos los jugadores, el error medio es ${nf2.format(m.rmseCompleto)} pts, frente a ${nf2.format(m.rmsePosicion)} si solo se usara la media de su posición. Con ${js.length} jornadas la muestra es pequeña: una sola jornada puede cambiar mucho estas cifras.</p>` : ""}`;
 }
 
 function panelRiesgo() {
@@ -5931,15 +5925,14 @@ function panelRiesgo() {
   const f = (t, x) => x ? `<tr><td>${t}</td><td><b>${nf1.format(x.media)}</b> ± ${nf1.format(x.error)}</td><td>${nf1.format(x.peor10)}</td></tr>` : "";
   const filas = f("Algoritmo (riesgo calibrado)", r.elegida) + Object.entries(r.modosAntiguos || {}).map(([t, x]) => f("Modo «" + t.toLowerCase() + "»", x)).join("")
     + f("Managers de la liga", r.humano) + f("Capitán al azar", r.azar) + f("Capitán perfecto (imposible)", r.oraculo);
-  return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">⚖️ Análisis del riesgo</summary>
-    <p class="note">Antes había tres modos (seguro, equilibrado, arriesgado). Ahora hay <b>uno solo</b> y el algoritmo decide el riesgo: cada día prueba muchas combinaciones de «premio a la subida» y «castigo a la bajada» con los ${r.lineas} onces de las jornadas ${r.jornadas[0]}–${r.jornadas[r.jornadas.length - 1]} y se queda con lo que más puntos extra habría dado.</p>
+  return `<p class="note" style="margin-top:0">Antes había tres modos (seguro, equilibrado, arriesgado). Ahora hay <b>uno solo</b> y el algoritmo decide el riesgo: cada día prueba muchas combinaciones de «premio a la subida» y «castigo a la bajada» con los ${r.lineas} onces de las jornadas ${r.jornadas[0]}–${r.jornadas[r.jornadas.length - 1]} y se queda con lo que más puntos extra habría dado.</p>
     <p style="margin:8px 0">Ahora mismo premia la subida un <b>${Math.round(CAP.RIESGO.k * 100)} %</b> y castiga la bajada un <b>${Math.round(CAP.RIESGO.l * 100)} %</b>. Con tan pocas jornadas las diferencias entre modos están dentro del margen de error, así que el algoritmo solo se mueve un ${Math.round(r.peso * 100)} % hacia lo observado (${Math.round(r.kObservado * 100)} % / ${Math.round(r.lObservado * 100)} %) y se irá acercando a medida que haya datos.</p>
     <div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Puntos extra por plantilla</th><th>Peor 10 %</th></tr></thead><tbody>${filas}</tbody></table></div>
-    <p class="note">Puntos extra = (multiplicador − 1) × puntos del capitán, de media por jornada y plantilla; «±» es el margen de error. Los multiplicadores usan el valor actual del jugador, que es una aproximación.</p></details>`;
+    <p class="note">Puntos extra = (multiplicador − 1) × puntos del capitán, de media por jornada y plantilla; «±» es el margen de error. Los multiplicadores usan el valor actual del jugador, que es una aproximación.</p>`;
 }
 
 function panelAprendizaje() {
-  if (!PAR) return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">🧠 Aprendizaje</summary><p class="note">Todavía no hay análisis. Se genera con <code>autoajuste_capitan.py</code> (lo ejecuta el workflow diario).</p></details>`;
+  if (!PAR) return `<p class="note" style="margin-top:0">Todavía no hay análisis. Se genera con <code>autoajuste_capitan.py</code> (lo ejecuta el workflow diario).</p>`;
   const m = PAR.metricas || {}, pat = PAR.patrones || {}, f = m.fueraDeMuestra;
   const mejora = m.rmseForma && m.rmseCompleto ? (1 - m.rmseCompleto / m.rmseForma) : null;
   const filaPos = POS.filter(x => (pat.posiciones || {})[x]).map(x => { const q = pat.posiciones[x], r = (pat.resultado || {})[x] || {}, l = (pat.local || {})[x] || {};
@@ -5952,8 +5945,7 @@ function panelAprendizaje() {
   const jor = (PAR.jornadas || []).map(j => `<tr><td>J${j.gw}</td><td>${nf2.format(j.rmseModelo)} <span class="note">vs ${nf2.format(j.rmsePosicion)}</span></td>
       <td>${j.lineas ? `${nf1.format(j.capModelo)} <span class="note">vs ${nf1.format(j.capHumano)} · azar ${nf1.format(j.capAzar)} (${j.lineas})</span>` : "–"}</td></tr>`).join("");
   const params = Object.entries(PAR.params || {}).map(([k, v]) => `${k} ${v}`).join(" · ");
-  return `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">🧠 Aprendizaje del recomendador</summary>
-    <p class="note">Actualizado ${esc(PAR.updatedAt ? fechaMadrid(PAR.updatedAt) : "—")} (hora de Madrid) · ${PAR.muestra ? PAR.muestra.actuaciones : 0} actuaciones analizadas, ${PAR.muestra ? PAR.muestra.conEquipo : 0} con equipo conocido.</p>
+  return `<p class="note" style="margin-top:0">Actualizado ${esc(PAR.updatedAt ? fechaMadrid(PAR.updatedAt) : "—")} (hora de Madrid) · ${PAR.muestra ? PAR.muestra.actuaciones : 0} actuaciones analizadas, ${PAR.muestra ? PAR.muestra.conEquipo : 0} con equipo conocido.</p>
     ${PAR.aviso ? `<p class="note">${esc(PAR.aviso)}</p>` : ""}
     ${m.rmseCompleto ? `<h3 class="sec">¿Acierta? (puntos de cada jugador, usando solo datos anteriores a cada jornada)</h3>
     <p class="note">Error medio (menos es mejor): media de la posición <b>${nf2.format(m.rmsePosicion)}</b> → con la forma del jugador <b>${nf2.format(m.rmseForma)}</b> → con rival y contexto <b>${nf2.format(m.rmseCompleto)}</b>${mejora != null ? ` (${pc(mejora)} menos que solo la forma)` : ""}.
@@ -5965,7 +5957,7 @@ function panelAprendizaje() {
     ${(pat.minutos || {}).menos60 ? `<p class="note">Quien juega menos de 60 minutos hace de media ${nf1.format(pat.minutos.menos60.media)} pts (${pat.minutos.menos60.n} casos) frente a ${nf1.format(pat.minutos.mas60.media)} pts si juega 60 o más (${pat.minutos.mas60.n}).</p>` : ""}
     ${jor ? `<h3 class="sec">Jornada a jornada</h3><div style="overflow-x:auto"><table class="apr"><thead><tr><th></th><th>Error del modelo</th><th>Puntos base del capitán: modelo vs humano</th></tr></thead><tbody>${jor}</tbody></table></div>
     <p class="note">El modelo se reconstruye cada jornada con los datos anteriores. En "capitán" solo cuentan alineaciones con al menos 6 jugadores de equipo conocido; no incluye el multiplicador, que depende del valor de cada jugador.</p>` : ""}
-    <p class="note" style="word-break:break-word">Parámetros en uso: ${esc(params)}</p></details>`;
+    <p class="note" style="word-break:break-word">Parámetros en uso: ${esc(params)}</p>`;
 }
 
 function cargarAlineaciones() {
@@ -6083,7 +6075,7 @@ function bloqueCurvas(cands) {
   const marcas = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) marcas.push(v);
   const eje = marcas.map(v => `<line x1="${X(v).toFixed(1)}" x2="${X(v).toFixed(1)}" y1="0" y2="${H - 4}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="2 4"'}/><text x="${X(v).toFixed(1)}" y="${H + 9}" text-anchor="middle" font-size="8" fill="var(--mut)">${v}</text>`).join("");
   const leyenda = cs.map((c, k) => `<li><i style="background:${cols[k]}"></i><b>${esc(c.p.short || c.p.name)}</b><span>media ${nf1.format(c.esp * c.m)} · juega ${pc(c.pj)}</span></li>`).join("");
-  return `<h3 class="sec">Duelo de curvas</h3><div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
+  return `<div class="card cv-box"><p class="note" style="margin:0 0 6px">Cuántos puntos te daría cada uno como capitán (ya con su multiplicador). Cuanto más a la derecha y más alta la curva, mejor; una curva ancha es más arriesgada.</p>
     <svg viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Distribución de puntos como capitán de ${cs.map(c => esc(c.p.short || c.p.name)).join(", ")}">${eje}${curvas}</svg>
     <ul class="cv-ley">${leyenda}</ul></div>`;
 }
@@ -6339,7 +6331,8 @@ function bloqueRivales(r, candidatos) {
     return `<details class="rv"><summary>${img(inf.escudo, "shield")}<span class="ct"><b>${esc(inf.nombre)}</b><span>rival de ${esc(cs.map(c => c.p.short || c.p.name).join(", "))}</span></span><span class="badge ${inf.n && inf.ga >= inf.lg * 1.15 ? "ok" : inf.n && inf.ga <= inf.lg * 0.85 ? "mal" : "mid"}">${inf.n ? "encaja " + num(inf.ga) : "?"}</span></summary>
       <div class="cd">${bloqueEquipo(inf)}<h4>Cómo puntúa cada posición contra ${esc(inf.nombre)}</h4><p class="note">Porcentaje frente a la media de esa posición en vuestra liga. Pulsa una posición para ver los casos.</p><div class="claves">${filas}</div></div></details>`;
   });
-  return items.length ? `<h3 class="sec">🛡️ Rivales de tus jugadores</h3><div class="claves">${items.join("")}</div>` : "";
+  // plegado (limpieza de Capitán): una fila por rival (hasta 11) empujaba hacia abajo todo lo demás
+  return items.length ? `<details class="card cdet-card"><summary class="sumh">Rivales de tus jugadores (${items.length})</summary><p class="note" style="margin:0 0 8px">Cuánto encaja cada rival de tus candidatos y cómo puntúa cada posición contra él. Verde: rival que da puntos.</p><div class="claves">${items.join("")}</div></details>` : "";
 }
 
 // Selector de manager: todas las caras a la vista en una fila (sin deslizar) y el nombre completo del elegido debajo
@@ -6417,29 +6410,21 @@ function pintarCapitan() {
     const util = r.candidatos.filter(c => c.score > -Infinity);
     const fuera = r.candidatos.filter(c => c.score === -Infinity);
     const top = util.slice(0, 3), resto = util.slice(3);
-    const cx = [["rec", "🏆", "Capitán", "El mejor para esta jornada", top.length ? `<ul class="jplist">${heroCap(top[0], r)}</ul>` : ""],
-      ["once", "🧩", "Tu once", "El mejor once posible", htmlOnceRec(r)],
-      ["ganar", "🎯", "Ganar la jornada", "Tus opciones con cada capitán", bloqueCapGanar(r)],
-      ["liga", "👥", "La liga", "A quién capitanean los demás", htmlCapLiga(cg, gwVer)],
-      ["cur", "📈", "Curvas", "Sus puntos posibles, frente a frente", bloqueCurvas(util)],
-      ["hor", "⏰", "Horario", "Cuándo juega cada uno", htmlHorario(r)],
-      ["alt", "🔁", "Alternativas", "Otras opciones y riesgo", top.length > 1 ? `<h3 class="sec">Alternativas</h3><ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : ""]].filter(x => x[4]);
-    const cb = k => { const x = cx.find(y => y[0] === k); return x ? `<div id="cpx-${k}">${x[4]}</div>` : ""; };
-    const cexplora = `<nav class="indice bento" aria-label="Más del Capitán">${cx.map(x => `<button data-ir="cpx-${x[0]}"><i>${x[1]}</i><b>${x[2]}</b><small>${x[3]}</small></button>`).join("")}</nav>`;
-    cuerpo = `${cexplora}${cb("rec")}${cb("once")}${cb("ganar")}${cb("liga")}${cb("cur")}${cb("hor")}${cb("alt")}
-      ${resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>` : ""}
-      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}
+    // limpieza del 26/11: sin tarjetas «Explora» (empujaban al capitán fuera de la pantalla) y las otras opciones
+    // —alternativas, el resto y el duelo de curvas— juntas en un grupo con pestañas
+    const alt = top.length > 1 ? `<ul class="jplist">${top.slice(1).map((c, i) => tarjetaCap(c, i + 1, true, r)).join("")}</ul>` : "";
+    const resHTML = resto.length ? `<button class="pill" data-cv="1" style="margin:10px 0">${capTodos ? "Ocultar el resto" : `Ver el resto (${resto.length})`}</button>
+      ${capTodos ? `<ul class="jplist">${resto.map((c, i) => tarjetaCap(c, i + 3, false, r)).join("")}</ul>` : ""}` : "";
+    cuerpo = `${top.length ? `<ul class="jplist">${heroCap(top[0], r)}</ul>` : ""}${htmlOnceRec(r)}${bloqueCapGanar(r)}
+      ${htmlGrupo("capop", "🔁 Otras opciones", [["cpoAlt", `Alternativas${util.length > 1 ? ` (${util.length - 1})` : ""}`, alt || resHTML ? alt + resHTML : ""], ["cpoCur", "Curvas frente a frente", bloqueCurvas(util)]])}
+      ${htmlCapLiga(cg, gwVer)}${htmlHorario(r)}
       ${bloqueRivales(r, util)}
       ${fuera.length ? `<p class="note">Sin partido pendiente: ${fuera.map(c => esc(c.p.short || c.p.name) + " (" + c.sinPartido.toLowerCase() + ")").join(", ")}.</p>` : ""}
-      <details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Cómo se calcula</summary>
-        <p class="note">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
+      ${htmlGrupo("capfi", "🔬 ¿Cuánto fiarse del algoritmo?", [["cpfRend", "Acierto", panelRendimiento()], ["cpfCalc", "Cómo se calcula", `<p class="note" style="margin-top:0">Para cada jugador se estima cuántos puntos hará: su <b>forma</b> (últimas 5 jornadas y media, encogida hacia la media de su posición) × el <b>contexto del partido</b> × la <b>probabilidad de jugar</b>.
         El contexto mezcla un modelo de goles (ataque, defensa y localía de ambos equipos, ${r.modelo.partidos} partidos) con los puntos que el rival ha concedido a esa posición (${r.observaciones} actuaciones de vuestra liga).
         El capitán suma <b>(multiplicador − 1) × puntos esperados</b>; el multiplicador depende del valor: más de 10 M → x1,5 · de 5 a 10 M → x2 · menos de 5 M → x3.
-        Los puntos no se reparten igual en todas las posiciones: la distribución sale de las actuaciones reales de vuestra liga, de modo que un delantero tiene cola alta (un gol dispara el resultado), mientras que un defensa rara vez pasa de 9 puntos. Los parámetros del modelo se reajustan solos cada día con lo ocurrido en las jornadas pasadas (panel "Aprendizaje" más abajo). El algoritmo premia la subida posible y castiga solo el riesgo de bajada (una gran jornada no se penaliza como variabilidad); cuánto premia y cuánto castiga se calibra con las jornadas pasadas (panel «Análisis del riesgo»), sin que tengas que elegir un modo. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p></details>
-      ${panelFactores()}
-      ${panelRendimiento()}
-      ${panelRiesgo()}
-      ${panelAprendizaje()}`;
+        Los puntos no se reparten igual en todas las posiciones: la distribución sale de las actuaciones reales de vuestra liga, de modo que un delantero tiene cola alta (un gol dispara el resultado), mientras que un defensa rara vez pasa de 9 puntos. Los parámetros del modelo se reajustan solos cada día con lo ocurrido en las jornadas pasadas (pestaña «Aprendizaje» de este mismo grupo). El algoritmo premia la subida posible y castiga solo el riesgo de bajada (una gran jornada no se penaliza como variabilidad); cuánto premia y cuánto castiga se calibra con las jornadas pasadas (pestaña «Análisis del riesgo»), sin que tengas que elegir un modo. Es una estimación, no una garantía: con pocas jornadas jugadas los datos son escasos.</p>`],
+        ["cpfFact", "Qué decide los puntos", panelFactores()], ["cpfRiesgo", "Análisis del riesgo", panelRiesgo()], ["cpfApr", "Aprendizaje", panelAprendizaje()]])}`;
   }
   const abiertas = capJornadasAbiertas(CAL).slice(0, 2), actual = capJornadaObjetivo(CAL).gw;
   const selJ = abiertas.length > 1 ? `<div class="pills wrap" role="group" aria-label="Jornada" style="margin:0 0 10px">${abiertas.map(n => `<button class="pill ${(capGw ?? actual) === n ? "on" : ""}" data-cg="${n}">J${n}${n === actual ? " · próxima" : n === actual + 1 ? " · siguiente" : ""}</button>`).join("")}</div>` : "";
