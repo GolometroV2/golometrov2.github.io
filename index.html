@@ -2016,7 +2016,9 @@ function cargarFotos() {
   if (FOTOS) return;
   FOTOS = {};
   fetch("fotos/indice.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({}))
-    .then(j => { FOTOS = j || {}; if (seccion === "clas" && D) { pintarCapitanes(); pintarCronica(); } });
+    .then(j => { FOTOS = j || {}; if (seccion === "clas" && D) { pintarCapitanes(); pintarCronica(); }
+      // si el índice llega tarde (móvil lento), las caras ya pintadas salieron del CDN de Mister: se repintan con las fotos de fotos/
+      if (seccion === "mer" && MER_DATA) pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "cap" && CAL) pintarCapitan(); });
 }
 function fotoDe(id) {
   id = String(id);
