@@ -372,6 +372,9 @@ code{color:var(--accFg)}
 .ct-nav button:disabled{opacity:.3;cursor:default}
 .ct-hero{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r-l);background:linear-gradient(120deg,var(--accBg),transparent 75%);box-shadow:inset 0 0 0 1px var(--acc)}
 .ct-hero{position:relative;overflow:hidden}
+.ct-vivo{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:var(--r-full);background:var(--acc);color:var(--accTxt);font-weight:800;font-size:11px;letter-spacing:.02em;vertical-align:1px}
+@media (prefers-reduced-motion:no-preference){.ct-vivo{animation:ctVivo 1.6s ease-in-out infinite}}
+@keyframes ctVivo{50%{opacity:.55}}
 .ct-hero .av{width:52px;height:52px;font-size:17px}
 .ct-copa{flex:none;width:34px;height:40px;transform-origin:50% 100%;animation:copaEnt .7s cubic-bezier(.2,1.4,.4,1) .15s both}
 .wr-copa{width:68px;height:80px;margin:0 auto 6px;display:block;filter:drop-shadow(0 0 18px #2fd46e66)}
@@ -2807,6 +2810,11 @@ function pintarCronica() {
     const PJ = probJornada(+cronJ.slice(1)), fav = filas.filter(f => PJ.res[f.m.id]).sort((a, b) => PJ.res[b.m.id].pGana - PJ.res[a.m.id].pGana)[0];
     if (fav && PJ.res[gan.m.id]) prev = { fav, pf: PJ.res[fav.m.id].pGana, pg: PJ.res[gan.m.id].pGana };
   } catch (e) {} }
+  // Jornada aún en juego (la última, con partidos sin terminar): todo es provisional, nada de «ganador» ni de juzgar la previa
+  const cjG = CAL && CAL.games ? CAL.games.filter(g => "J" + g.gw === cronJ) : [];
+  const vivo = cronJ === js[js.length - 1] && cjG.some(g => g.status !== "played") ? { q: cjG.filter(g => g.status !== "played").length, t: cjG.length } : null;
+  const qTxt = vivo ? `quedan ${vivo.q} de ${vivo.t} partidos` : "";
+  if (vivo) prev = null;
   const tile = (ico, tit, main, sub, extra = "") => `<div class="ct-t">${extra || `<span class="ct-ico">${ico}</span>`}<span class="ct-x"><small>${tit}</small><b>${main}</b><span>${sub}</span></span></div>`;
   const nav = `<div class="ct-nav"><button data-cj="-1" ${k === 0 ? "disabled" : ""} aria-label="Jornada anterior">‹</button><span>Jornada ${esc(cronJ.slice(1))}</span><button data-cj="1" ${k === js.length - 1 ? "disabled" : ""} aria-label="Jornada siguiente">›</button></div>`;
   const tiles = [
@@ -2815,37 +2823,37 @@ function pintarCronica() {
     sube ? tile("📈", "La remontada", esc(sube.f.m.name), `Sube ${sube.dlt} ${sube.dlt === 1 ? "puesto" : "puestos"}: ahora ${S.rank[k][sube.f.x]}.º`) : "",
     baja ? tile("📉", "El batacazo", esc(baja.f.m.name), `Baja ${-baja.dlt} ${baja.dlt === -1 ? "puesto" : "puestos"}: ahora ${S.rank[k][baja.f.x]}.º`) : "",
     gol && gol.d.goals ? tile("⚽", "Lluvia de goles", esc(gol.m.name), `${gol.d.goals} ${gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`) : "",
-    tile("🐢", "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
+    tile("🐢", vivo ? "Va último" : "Farolillo rojo", esc(ult.m.name), `${ult.p} puntos, ${Math.round(media - ult.p)} por debajo de la media`),
     prev ? tile("🔮", prev.fav === gan ? "La previa acertó" : "La previa falló", prev.fav === gan ? esc(gan.m.name) : `Favorito: ${esc(prev.fav.m.name)}`, prev.fav === gan ? `Era el favorito, con un ${pctQ(prev.pf)} de ganar` : `Tenía un ${pctQ(prev.pf)}; ${esc(gan.m.name)} ganó con un ${pctQ(prev.pg)}`) : "",
-    bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
-    bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
+    !vivo && bqTop ? tile("🪑", "Banquillo de oro", esc(bqTop.f.m.name), `Se dejó <b class="ct-n">${bqTop.b.perdidos}</b> pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` · ${esc(apellido(bqTop.b.banco[0].name))} ${bqTop.b.banco[0].pts}` : ""}`) : "",
+    !vivo && bqPerf.length ? tile("🎯", bqPerf.length === 1 ? "Alineación perfecta" : "Alineaciones perfectas", bqPerf.length > 2 ? `${bqPerf.length} managers` : esc(bqPerf.map(f => f.m.name).join(" y ")), bqPerf.length > 2 ? esc(bqPerf.map(f => f.m.name).join(", ")) : "El mejor once posible con su plantilla") : ""
   ].join("");
   // texto listo para pegar en el grupo de WhatsApp de la liga
   const general = S.ms.map((o, x) => ({ o, x })).sort((a, b) => S.rank[k][a.x] - S.rank[k][b.x]);
-  EST_DAT.cron = { n: +cronJ.slice(1), mapa: filas.filter(f => (f.d.players || []).length).sort((a, b) => b.p - a.p), gan, seg2, porPts, media, caps, mvp, sube, baja, gol, ult, prev, bqTop, bqPerf, general, S, k,
+  EST_DAT.cron = { vivo, n: +cronJ.slice(1), mapa: filas.filter(f => (f.d.players || []).length).sort((a, b) => b.p - a.p), gan, seg2, porPts, media, caps, mvp, sube, baja, gol, ult, prev, bqTop: vivo ? null : bqTop, bqPerf: vivo ? [] : bqPerf, general, S, k,
     once: LIGAJ && !LIGAJ.cargando ? onceIdeal(cronJ) : null };
-  CRON_TXT = [`*📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}*`, "",
-    `🥇 *Ganador:* ${gan.m.name} — *${gan.p} pts*${seg2 ? ` (${gan.p - seg2.p} más que ${seg2.m.name})` : ""}`,
+  CRON_TXT = [`*📰 ${$("#titulo").textContent} · Jornada ${cronJ.slice(1)}*${vivo ? ` (en juego: ${qTxt})` : ""}`, "",
+    `🥇 *${vivo ? "Va ganando" : "Ganador"}:* ${gan.m.name} — *${gan.p} pts*${seg2 ? ` (${gan.p - seg2.p} más que ${seg2.m.name})` : ""}`,
     caps[0] ? `🎖️ Mejor capitán: ${caps[0].d.captain.name} ${caps[0].d.captain.points} pts (${caps[0].m.name})` : "",
     caps.length > 2 ? `🙈 Peor capitán: ${caps[caps.length - 1].d.captain.name} ${caps[caps.length - 1].d.captain.points} pts (${caps[caps.length - 1].m.name})` : "",
     mvp ? `⭐ Jugador de la jornada: ${mvp.p.name} ${mvp.p.basePoints ?? mvp.p.points} pts` : "",
     gol && gol.d.goals ? `⚽ Más goles: ${gol.m.name} (${gol.d.goals})` : "",
     sube ? `📈 Remontada: ${sube.f.m.name} sube ${sube.dlt}` : "", baja ? `📉 Batacazo: ${baja.f.m.name} baja ${-baja.dlt}` : "",
-    `🐢 Farolillo rojo: ${ult.m.name} (${ult.p} pts)`,
+    `🐢 ${vivo ? "Va último" : "Farolillo rojo"}: ${ult.m.name} (${ult.p} pts)`,
     prev ? (prev.fav === gan ? `🔮 La previa acertó: ${gan.m.name} era el favorito (${pctQ(prev.pf)})` : `🔮 La previa daba favorito a ${prev.fav.m.name} (${pctQ(prev.pf)}); ${gan.m.name} ganó con un ${pctQ(prev.pg)}`) : "",
-    bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
-    bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", "*📊 Clasificación*",
+    !vivo && bqTop ? `🪑 Banquillo de oro: ${bqTop.f.m.name} se dejó ${bqTop.b.perdidos} pts fuera${bqTop.b.banco[0] && bqTop.b.banco[0].pts > 0 ? ` (${bqTop.b.banco[0].name} ${bqTop.b.banco[0].pts})` : ""}` : "",
+    !vivo && bqPerf.length ? `🎯 Alineación perfecta: ${bqPerf.map(f => f.m.name).join(", ")}` : "", "", vivo ? "*📊 Clasificación (provisional)*" : "*📊 Clasificación*",
     ...general.map(({ o, x }) => { const dl = k > 0 ? S.rank[k - 1][x] - S.rank[k][x] : 0;
       return `${S.rank[k][x]}. ${o.m.name} · *${S.cum[x][k]}* (+${S.pts[x][k]})${dl > 0 ? ` ▲${dl}` : dl < 0 ? ` ▼${-dl}` : ""}`; }),
-    "_golometrov2.github.io_"].filter(l => l !== "").join("\n").replace("*📊 Clasificación*", "\n*📊 Clasificación*").replace("\n_golometrov2", "\n\n_golometrov2");
+    "_golometrov2.github.io_"].filter(l => l !== "").join("\n").replace(/\*📊 Clasificación/, "\n*📊 Clasificación").replace("\n_golometrov2", "\n\n_golometrov2");
   cont.innerHTML = `${nav}
-    <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>Ganador de la jornada</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · media de la liga ${nf1c(media)}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
+    <div class="ct-hero">${avatar(gan.m, gan.i)}<span class="ct-x"><small>${vivo ? `<span class="ct-vivo">En juego</span> Va ganando` : "Ganador de la jornada"}</small><b>${esc(gan.m.name)}</b><span>${seg2 ? `${gan.p - seg2.p} puntos más que ${esc(seg2.m.name)}` : ""} · ${vivo ? `${qTxt}` : `media de la liga ${nf1c(media)}`}</span></span><svg class="ct-copa" viewBox="0 0 34 40" aria-hidden="true"><path d="M8 3h18v10a9 9 0 0 1-18 0z" fill="var(--acc)"/><path d="M8 6H3c0 7 3 10 6 10M26 6h5c0 7-3 10-6 10" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-linecap="round"/><path class="brillo" d="M12 6v7a5 5 0 0 0 3 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="15.5" y="22" width="3" height="8" fill="var(--acc)"/><rect x="9" y="30" width="16" height="5" rx="2" fill="var(--acc)"/><rect x="6" y="35" width="22" height="4" rx="2" fill="var(--acc)" opacity=".7"/></svg><span class="ct-pts">${gan.p}</span></div>
     <div class="ct-grid">${tiles}</div>
     <div class="comp-b"><a class="btn-wa" href="${esc(waHref(CRON_TXT))}"${waDestino} aria-label="Enviar por WhatsApp">💬 WhatsApp</a><button class="btn-comp" data-comp="1">📋 Copiar</button><button class="btn-comp" data-img="cron" aria-label="Imágenes para compartir">🖼️ Imágenes</button>${seg2 ? `<button class="btn-comp" data-cr-pt="${esc(gan.m.id)}|${esc(seg2.m.id)}|${esc(cronJ)}" aria-label="Ver el partido en 3D">🏟️ Partido 3D</button>` : ""}</div>
     ${htmlMapaCalor(filas)}
-    ${bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
+    ${!vivo && bqL.length ? `<details class="cdet"><summary>Puntos en el banquillo</summary><ul class="pron" style="margin-top:8px">${bqL.slice().sort((a, b) => a.b.perdidos - b.b.perdidos).map(({ f, b }) => `<li>${avatar(f.m, f.i)}<span class="pq"><b>${esc(f.m.name)}</b><span class="pb"><i style="width:${(b.max > 0 ? Math.max(0, Math.min(1, b.real / b.max)) * 100 : 0).toFixed(1)}%;background:${col(f.i)}"></i></span><small>${b.perdidos ? `${b.real} de ${b.max} posibles${b.banco[0] && b.banco[0].pts > 0 ? ` · fuera ${esc(apellido(b.banco[0].name))} (${b.banco[0].pts})` : ""}` : "el mejor once posible"}</small></span><span class="pp ${b.perdidos ? "dn" : "up"}" style="font-size:16px">${b.perdidos ? "−" + b.perdidos : "✔"}</span></li>`).join("")}</ul><p class="note">Puntos de la plantilla que tenía cada uno al empezar la jornada frente a su mejor once posible a toro pasado (sin contar el capitán).</p></details>` : ""}
     <details class="cdet" ${onceAbierto ? "open" : ""} data-oi="1"><summary>Once ideal de la jornada</summary>${onceAbierto ? htmlOnceIdeal(cronJ) : ""}</details>`;
-  IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · resultado`, sub: `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
+  IMG_DATOS.cron = { titulo: `Jornada ${cronJ.slice(1)} · ${vivo ? "en juego" : "resultado"}`, sub: vivo ? `Va ganando ${gan.m.name} con ${gan.p} puntos (${qTxt})` : `Ganó ${gan.m.name} con ${gan.p} puntos`, filas: porPts.map(f => ({ m: f.m, i: f.i, valor: String(f.p), det: f.d.captain ? `capitán ${apellido(f.d.captain.name)} ${f.d.captain.points ?? ""}` : "", w: gan.p > 0 ? Math.max(0, f.p) / gan.p : 0 })), pie: "" };
 }
 // Puntos que cada manager dejó en el banquillo: su plantilla al empezar la jornada (la de hoy deshaciendo los movimientos
 // posteriores) frente al mejor once posible a toro pasado, sin contar el capitán. null si los movimientos guardados no llegan tan atrás.
@@ -6733,12 +6741,12 @@ async function esPortada(d, pag, total) {
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, g = d.gan;
   const [imG, ...imP] = await Promise.all([esImg(g.m.avatarUrl), ...d.porPts.slice(1, 4).map(f => esImg(f.m.avatarUrl))]);
   esFondo(x, col(g.i));
-  esCabecera(x, { titulo: `JORNADA ${d.n}`, kicker: "El resultado", pag, total });
+  esCabecera(x, { titulo: `JORNADA ${d.n}`, kicker: d.vivo ? "En juego · provisional" : "El resultado", pag, total });
   // ganador
   const cy = 600;
   esA(x, 0.5, () => { const r = x.createRadialGradient(W / 2, cy, 0, W / 2, cy, 420); r.addColorStop(0, col(g.i)); r.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = r; x.fillRect(0, cy - 420, W, 840); });
   esAvatar(x, g.m, g.i, imG, W / 2, cy - 30, 150, ES.luz);
-  esChapa(x, "GANADOR", W / 2, cy + 148, ES.verde, "#04140b", 30);
+  esChapa(x, d.vivo ? "VA GANANDO" : "GANADOR", W / 2, cy + 148, ES.verde, "#04140b", 30);
   x.textAlign = "center"; x.fillStyle = ES.txt; x.fillText(esAjusta(x, g.m.name, W - 2 * M, 800, 64, 40), W / 2, cy + 250);
   x.save(); x.shadowColor = ES.verde; x.shadowBlur = 40; x.fillStyle = ES.luz; x.font = esF(800, 210, "condensed"); x.fillText(String(g.p), W / 2, cy + 450); x.restore();
   x.fillStyle = ES.mut; x.fillText(esAjusta(x, `puntos${d.seg2 ? ` · ${g.p - d.seg2.p} más que ${d.seg2.m.name}` : ""} · media ${nf1c(d.media)}`, W - 2 * M, 600, 34, 24), W / 2, cy + 504);
@@ -6803,7 +6811,7 @@ async function esPremios(d, pag, total) {
   if (d.sube) P.push({ ico: "📈", t: "La remontada", nom: d.sube.f.m.name, det: `sube ${d.sube.dlt} · ahora ${d.S.rank[d.k][d.sube.f.x]}.º`, m: d.sube.f });
   if (d.baja) P.push({ ico: "📉", t: "El batacazo", nom: d.baja.f.m.name, det: `baja ${-d.baja.dlt} · ahora ${d.S.rank[d.k][d.baja.f.x]}.º`, m: d.baja.f });
   if (d.gol && d.gol.d.goals) P.push({ ico: "⚽", t: "Lluvia de goles", nom: d.gol.m.name, det: `${d.gol.d.goals} ${d.gol.d.goals === 1 ? "gol" : "goles"} de sus jugadores`, m: d.gol });
-  P.push({ ico: "🐢", t: "Farolillo rojo", nom: d.ult.m.name, det: `${d.ult.p} pts · ${Math.round(d.media - d.ult.p)} bajo la media`, m: d.ult, malo: true });
+  P.push({ ico: "🐢", t: d.vivo ? "Va último" : "Farolillo rojo", nom: d.ult.m.name, det: `${d.ult.p} pts · ${Math.round(d.media - d.ult.p)} bajo la media`, m: d.ult, malo: true });
   if (P.length < 6 && d.caps.length > 2) { const k = d.caps[d.caps.length - 1], cp = k.d.captain; P.splice(P.length - 1, 0, { ico: "🙈", t: "Peor capitán", nom: apellido(cp.name), det: `${cp.points} pts · ${k.m.name}`, foto: cp.id, eq: equipoEn("J" + d.n, k.m.id, cp.id), malo: true }); }
   const L = P.slice(0, 6);
   const ims = await Promise.all(L.map(p => p.foto ? esImg(esFoto(p.foto)) : esImg(p.m.m.avatarUrl)));
@@ -6824,7 +6832,7 @@ async function esPremios(d, pag, total) {
     x.fillStyle = ES.txt; x.fillText(esAjusta(x, p.nom, cw - (p.foto ? 210 : 170), 800, 44, 30, "condensed"), X + 28, Y + 180);
     x.fillStyle = ES.mut; x.font = esS(400, 25); x.fillText(esCorta(x, p.det, cw - (p.foto ? 200 : 60)), X + 28, Y + 220);
   });
-  esPie(x, d.bqPerf && d.bqPerf.length ? `🎯 Alineación perfecta: ${d.bqPerf.map(f => f.m.name).join(", ")}` : `Ganó ${d.gan.m.name} con ${d.gan.p} puntos`);
+  esPie(x, d.bqPerf && d.bqPerf.length ? `🎯 Alineación perfecta: ${d.bqPerf.map(f => f.m.name).join(", ")}` : `${d.vivo ? "Va ganando" : "Ganó"} ${d.gan.m.name} con ${d.gan.p} puntos`);
   return c;
 }
 async function esClasif(d, pag, total) {
@@ -6846,7 +6854,7 @@ async function esClasif(d, pag, total) {
     x.textAlign = "right"; x.fillStyle = ES.txt; x.font = esF(800, 54, "condensed"); x.fillText(String(f.t), W - M - 130, Y + h / 2 + 19);
     x.fillStyle = ES.luz; x.font = esF(700, 30, "condensed"); x.fillText(`+${f.p}`, W - M - 28, Y + h / 2 + 12); x.textAlign = "left";
   });
-  esPie(x, `Ganador de la jornada: ${d.gan.m.name} (${d.gan.p})`);
+  esPie(x, `${d.vivo ? "Va ganando" : "Ganador de la jornada"}: ${d.gan.m.name} (${d.gan.p})`);
   return c;
 }
 
@@ -6953,7 +6961,7 @@ async function esGenerar(clave) {
   const d = EST_DAT[clave]; if (!d) return [];
   await esPrepara();
   if (!FOTOS) await new Promise(res => { cargarFotos(); let k = 0; const t = setInterval(() => { if (FOTOS || ++k > 40) { clearInterval(t); res(); } }, 100); });
-  const set = ES_SETS[clave].filter(([nom]) => nom !== "Once ideal" || d.once), out = [];
+  const set = ES_SETS[clave].filter(([nom]) => (nom !== "Once ideal" || d.once) && !(d.vivo && nom === "La copa")), out = [];
   for (let k = 0; k < set.length; k++) {
     try { const c = await set[k][1](d, k, set.length); if (c) out.push({ nombre: set[k][0], c }); } catch (e) { console.warn("Estudio:", set[k][0], e); }
   }
@@ -7873,7 +7881,7 @@ async function esOnceGanador(d, pag, total) {
   const g = d.gan, pl = (g && g.d && g.d.players) || []; if (pl.length < 11) return null;
   const c = esCanvas(), x = c.getContext("2d"), bp = p => p.basePoints ?? p.points ?? 0, cap = g.d.captain && g.d.captain.id;
   esFondo(x, col(g.i));
-  esCabecera(x, { titulo: "SU ONCE", kicker: `Ganador J${d.n} · ${g.m.name}${g.x && g.x.formation ? " · " + g.x.formation : ""}`, pag, total });
+  esCabecera(x, { titulo: "SU ONCE", kicker: `${d.vivo ? "Va ganando" : "Ganador"} J${d.n} · ${g.m.name}${g.x && g.x.formation ? " · " + g.x.formation : ""}`, pag, total });
   await esDibujaOnce(x, Object.fromEntries(["PT", "DF", "MC", "DL"].map(k => [k, pl.filter(p => p.pos === k).map(p => ({ ...p, chapa: (p.id === cap ? "©" : "") + (p.played === false ? "–" : bp(p)) }))])));
   esPie(x, `${g.p} puntos · © = capitán`);
   return c;
@@ -7882,7 +7890,7 @@ ES_SETS.cron.splice(5, 0, ["Once del ganador", esOnceGanador]);
 
 // Lámina extra de la crónica: la copa del ganador de la jornada dibujada con trazos propios (metal verde plateado), con su avatar, placa y puntos
 async function esTrofeo(d, pag, total) {
-  const g = d.gan; if (!g) return null;
+  const g = d.gan; if (!g || d.vivo) return null;   // sin copa hasta que acabe la jornada
   const c = esCanvas(), x = c.getContext("2d"), { W, M } = ES, cx = W / 2, im = await esImg(g.m.avatarUrl);
   esFondo(x, col(g.i));
   esCabecera(x, { titulo: "LA COPA", kicker: `Jornada ${d.n} · ${g.m.name}`, pag, total });
