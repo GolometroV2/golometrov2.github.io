@@ -2018,7 +2018,9 @@ function cargarFotos() {
   fetch("fotos/indice.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).catch(() => ({}))
     .then(j => { FOTOS = j || {}; if (seccion === "clas" && D) { pintarCapitanes(); pintarCronica(); }
       // si el índice llega tarde (móvil lento), las caras ya pintadas salieron del CDN de Mister: se repintan con las fotos de fotos/
-      if (seccion === "mer" && MER_DATA) pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "cap" && CAL) pintarCapitan(); });
+      if (seccion === "mer" && MER_DATA) pintarMercado(); if (seccion === "eq" && E) pintarEquipos(); if (seccion === "cap" && CAL) pintarCapitan();
+      // y el resto de grupos ya pintados (Rotación, Plantones…): cada cara del CDN que tenga copia en fotos/ pasa a la local
+      document.querySelectorAll('img[src*="cdn-common/players/"]').forEach(im => { const m = (im.getAttribute("src") || "").match(/players\/(\d+)\.png/); if (m && FOTOS[m[1]]) im.src = FOTOS[m[1]]; }); });
 }
 function fotoDe(id) {
   id = String(id);
