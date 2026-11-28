@@ -1,7 +1,91 @@
 {
-"updatedAt": "2026-11-26T10:37:25Z",
+"updatedAt": "2026-11-28T04:04:19Z",
 "nota": "precio = cláusula inicial / 1,5 (regla de Mister). Si la cláusula es la mínima (1.000.000) solo se sabe que se pagó 666.667 € o menos.",
 "compras": [
+{
+"ts": "2026-11-28T04:04:19Z",
+"playerId": "17452",
+"name": "Éder Militão",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 3166000,
+"listado": 3247000,
+"precio": 3589999,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-28T04:04:19Z",
+"playerId": "65136",
+"name": "Fede Redondo",
+"from": null,
+"to": "8664919",
+"tipo": "mercado",
+"valor": 1711000,
+"listado": 1664000,
+"precio": 1899000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-28T04:04:19Z",
+"playerId": "65704",
+"name": "Georges Mikautadze",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 10386000,
+"listado": 10439000,
+"precio": 11339000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-27T04:04:56Z",
+"playerId": "23664",
+"name": "Sergio Carreira",
+"from": null,
+"to": "8658507",
+"tipo": "mercado",
+"valor": 4179000,
+"listado": 4043000,
+"precio": 5289900,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-27T04:04:56Z",
+"playerId": "61092",
+"name": "Tajon Buchanan",
+"from": null,
+"to": "13179902",
+"tipo": "mercado",
+"valor": 5603000,
+"listado": 5491000,
+"precio": 6149000,
+"clausulaMinima": false
+},
+{
+"ts": "2026-11-27T04:04:56Z",
+"playerId": "67942",
+"name": "Íñigo Arguibide",
+"from": null,
+"to": "10303392",
+"tipo": "mercado",
+"valor": 185000,
+"listado": 205000,
+"precio": null,
+"clausulaMinima": true
+},
+{
+"ts": "2026-11-27T04:04:56Z",
+"playerId": "64033",
+"name": "Jon Gorrotxategi",
+"from": null,
+"to": "8664914",
+"tipo": "mercado",
+"valor": 1780000,
+"listado": 1724000,
+"precio": 2058555,
+"clausulaMinima": false
+},
 {
 "ts": "2026-11-26T10:37:25Z",
 "playerId": "71003",
